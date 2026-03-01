@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>See Them In Action | Robotic Mower Videos | Smart Lawn NY</title>
+  <meta name="description" content="Watch robotic mowers in action. Official Segway Navimow and Yarbo videos showing autonomous mowing, snow blowing, and more.">
+  <link rel="canonical" href="https://smartlawnny.com/videos.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://smartlawnny.com/videos.html">
+  <meta property="og:title" content="See Them In Action | Smart Lawn NY">
+  <meta property="og:description" content="Watch robotic mowers in action. Official Segway Navimow and Yarbo videos.">
+  <meta property="og:image" content="https://smartlawnny.com/og-share.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --green: #6abb1e; --green-dark: #5a9e18; --green-darker: #4a8214; --green-light: #7ecc35;
+      --teal: #1a5c5c; --teal-dark: #134545;
+      --dark: #1a1a2e; --white: #fff;
+      --g50: #f9fafb; --g100: #f3f4f6; --g200: #e5e7eb; --g300: #d1d5db;
+      --g500: #6b7280; --g600: #4b5563; --g700: #374151; --g800: #1f2937; --g900: #111827;
+    }
+    body { font-family: 'Inter', sans-serif; color: var(--g800); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header { background: rgba(255,255,255,.85); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,.08); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; max-width: 1400px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .logo-text .name { color: #1d1d1f; font-size: 1.15rem; font-weight: 800; }
+    .logo-text .tagline { font-size: .6rem; color: #86868b; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+    nav ul { display: flex; gap: 24px; align-items: center; }
+    nav a { font-weight: 500; font-size: .82rem; color: #1d1d1f; transition: color .2s; }
+    nav a:hover { color: #86868b; }
+    nav a.active { color: var(--green); }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .header-social { display: flex; gap: 12px; }
+    .header-social a { color: #86868b; font-size: .95rem; transition: color .2s; }
+    .header-social a:hover { color: #1d1d1f; }
+    .order-btn { background: var(--green); color: #fff; padding: 10px 24px; border-radius: 980px; font-weight: 600; font-size: .82rem; transition: all .3s; }
+    .order-btn:hover { background: var(--green-dark); }
+    .mobile-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: var(--g700); cursor: pointer; }
+
+    /* Hero Banner */
+    .page-hero { padding: 80px 0 40px; background: linear-gradient(135deg, #0d2e2e 0%, #1a4545 40%, #0f3333 100%); text-align: center; color: #fff; }
+    .page-hero h1 { font-size: 3.2rem; font-weight: 800; letter-spacing: -.02em; margin-bottom: 12px; }
+    .page-hero h1 .accent { color: var(--green-light); }
+    .page-hero p { font-size: 1.15rem; color: rgba(255,255,255,.6); max-width: 600px; margin: 0 auto; }
+
+    /* Section headers */
+    .section-header { text-align: center; margin-bottom: 40px; }
+    .section-header h2 { font-size: 2.2rem; font-weight: 800; color: #1d1d1f; margin-bottom: 12px; letter-spacing: -.02em; }
+    .section-header p { font-size: 1.05rem; color: #86868b; }
+    .section-header .underline-accent { display: inline-block; position: relative; color: var(--green); }
+    .section-header .underline-accent::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 4px; background: var(--green); border-radius: 2px; }
+
+    /* Video Sections */
+    .video-section { padding: 64px 0; }
+    .video-section:nth-child(even) { background: var(--g50); }
+    .video-row-label { font-size: .85rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--green); margin-bottom: 20px; text-align: center; }
+    .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+    .video-card { border-radius: 16px; overflow: hidden; background: #fff; border: 1px solid var(--g200); transition: all .3s; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+    .video-card:hover { border-color: var(--green); box-shadow: 0 8px 32px rgba(106,187,30,.12); transform: translateY(-2px); }
+    .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; }
+    .video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .video-card .video-label { padding: 14px 18px; font-size: .88rem; font-weight: 600; color: var(--g800); }
+    .video-card .video-label .brand-tag { color: var(--green); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 4px; font-weight: 700; }
+    .shorts-grid { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+    .short-card { width: 240px; border-radius: 16px; overflow: hidden; background: #fff; border: 1px solid var(--g200); transition: all .3s; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+    .short-card:hover { border-color: var(--green); box-shadow: 0 8px 32px rgba(106,187,30,.12); transform: translateY(-2px); }
+    .short-wrap { position: relative; padding-bottom: 177.78%; height: 0; }
+    .short-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+    .short-card .video-label { padding: 10px 14px; font-size: .85rem; font-weight: 600; color: var(--g800); }
+    .short-card .video-label .brand-tag { color: var(--green); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; display: block; margin-bottom: 4px; font-weight: 700; }
+
+    /* CTA */
+    .cta-bar { padding: 48px 0; background: #1d1d1f; text-align: center; color: #fff; }
+    .cta-bar h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; }
+    .cta-bar p { color: rgba(255,255,255,.6); margin-bottom: 24px; font-size: .95rem; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 32px; border-radius: 980px; font-weight: 600; font-size: .92rem; transition: all .3s; cursor: pointer; border: none; }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { background: var(--green-dark); }
+
+    /* Footer */
+    footer { background: #111; color: var(--g500); padding: 48px 0 24px; font-size: .85rem; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+    .footer-brand .footer-logo { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+    .footer-brand .footer-logo .accent { color: var(--green); }
+    .footer-social { display: flex; gap: 16px; margin-top: 16px; }
+    .footer-social a { color: var(--g500); font-size: 1.1rem; transition: color .2s; }
+    .footer-social a:hover { color: var(--green); }
+    .footer-col h4 { color: #fff; font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
+    .footer-col li { margin-bottom: 10px; }
+    .footer-col a { color: var(--g500); transition: color .2s; }
+    .footer-col a:hover { color: var(--green); }
+    .footer-bottom { text-align: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08); color: var(--g500); font-size: .78rem; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .page-hero h1 { font-size: 2rem; }
+      .video-grid { grid-template-columns: 1fr; }
+      .shorts-grid { flex-direction: column; align-items: center; }
+      .short-card { width: 280px; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      nav { display: none; position: absolute; top: 52px; left: 0; right: 0; background: #fff; padding: 16px 24px; border-bottom: 1px solid rgba(0,0,0,.08); }
+      nav ul { flex-direction: column; gap: 12px; }
+      .mobile-toggle { display: block; }
+      .header-social { display: none; }
+    }
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .video-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .fade-in { opacity: 0; transform: translateY(20px); transition: all .6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:40px;width:40px;">
+        <circle cx="30" cy="30" r="30" fill="#f0f7e6"/>
+        <rect x="16" y="28" width="28" height="12" rx="4" fill="#1a5c5c"/>
+        <circle cx="30" cy="24" r="3" fill="#1a5c5c" opacity="0.6"/>
+        <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <circle cx="20" cy="40" r="3" fill="#333"/><circle cx="40" cy="40" r="3" fill="#333"/>
+      </svg>
+      <div class="logo-text">
+        <div class="name">Smart <span>Lawn</span></div>
+        <div class="tagline">Automation & Robotics</div>
+      </div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="index.html#products">Products</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="index.html#quiz-section">Find a Mower</a></li>
+        <li><a href="videos.html" class="active">Videos</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-right">
+      <div class="header-social">
+        <a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://instagram.com/SmartLawnNY" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/@SmartLawnNY" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://nextdoor.com/pages/smart-lawn-ny-peekskill-ny/" target="_blank" aria-label="Nextdoor"><i class="fas fa-house-user"></i></a>
+      </div>
+      <a href="index.html#contact" class="order-btn">Get a Quote</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.querySelector('nav').style.display=document.querySelector('nav').style.display==='block'?'none':'block'"><i class="fas fa-bars"></i></button>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <h1>See Them <span class="accent">In Action</span></h1>
+    <p>Official manufacturer videos from Segway Navimow and Yarbo</p>
+  </div>
+</section>
+
+<!-- Navimow Videos -->
+<section class="video-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Segway <span class="underline-accent">Navimow</span></h2>
+      <p>Wire-free robotic mowers with RTK, LiDAR, and Vision navigation</p>
+    </div>
+    <div class="video-grid">
+      <div class="video-card fade-in">
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/Z5Mkkz4IVjY" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Navimow Circle - A Garden for Rhythm and Quiet"></iframe></div>
+        <div class="video-label"><span class="brand-tag">Segway Navimow</span>A Garden for Rhythm and Quiet</div>
+      </div>
+      <div class="video-card fade-in">
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/9nN0fL7Xhpg" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Navimow i Series - Smart Gardening Makes Life Easier"></iframe></div>
+        <div class="video-label"><span class="brand-tag">Segway Navimow</span>Smart Gardening Makes Life Easier</div>
+      </div>
+      <div class="video-card fade-in">
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/0rJJ3MlKNoU" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Navimow i2 LiDAR - Drop and Mow"></iframe></div>
+        <div class="video-label"><span class="brand-tag">Segway Navimow</span>i2 LiDAR: Drop and Mow</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Yarbo Videos -->
+<section class="video-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2><span class="underline-accent">Yarbo</span></h2>
+      <p>Modular all-season yard robot: mow, snow blow, and more</p>
+    </div>
+    <div class="shorts-grid">
+      <div class="short-card fade-in">
+        <div class="short-wrap"><iframe src="https://www.youtube.com/embed/ZW6WzYHCYEI" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Yarbo Robot Lawn Mower"></iframe></div>
+        <div class="video-label"><span class="brand-tag">Yarbo</span>Robot Lawn Mower</div>
+      </div>
+      <div class="short-card fade-in">
+        <div class="short-wrap"><iframe src="https://www.youtube.com/embed/62VGo36giQQ" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Yarbo Snow Clearing"></iframe></div>
+        <div class="video-label"><span class="brand-tag">Yarbo</span>Loves the Deep Snow</div>
+      </div>
+      <div class="short-card fade-in">
+        <div class="short-wrap"><iframe src="https://www.youtube.com/embed/yZN3eORFYQM" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Yarbo Snow Blower Review"></iframe></div>
+        <div class="video-label"><span class="brand-tag">Yarbo</span>Snow Blower Review</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-bar">
+  <div class="container">
+    <h3>Ready to see one in person?</h3>
+    <p>Visit our showroom in Peekskill, NY or schedule a free demo at your property.</p>
+    <a href="index.html#contact" class="btn btn-primary">Schedule a Demo</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">Smart <span class="accent">Lawn</span> NY</div>
+        <p>Westchester & Putnam County's first robotic mower showroom.</p>
+        <p style="font-size:.82rem;color:var(--g500);margin-bottom:16px;">1 Highland Industrial Park, Peekskill, NY 10566</p>
+        <div class="footer-social"><a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank"><i class="fab fa-facebook-f"></i></a><a href="https://instagram.com/SmartLawnNY" target="_blank"><i class="fab fa-instagram"></i></a><a href="https://youtube.com/@SmartLawnNY" target="_blank"><i class="fab fa-youtube"></i></a><a href="https://nextdoor.com/pages/smart-lawn-ny-peekskill-ny/" target="_blank"><i class="fas fa-house-user"></i></a></div>
+      </div>
+      <div class="footer-col"><h4>Site Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="index.html#about">About</a></li><li><a href="index.html#products">Products</a></li><li><a href="services.html">Services</a></li><li><a href="videos.html">Videos</a></li><li><a href="index.html#contact">Contact</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li><a href="tel:9143915233">(914) 391-5233</a></li><li><a href="mailto:smartlawnny@gmail.com">smartlawnny@gmail.com</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 Smart Lawn LLC. All Rights Reserved. | SmartLawnNY.com</div>
+  </div>
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Dev tools & social media drafts (not deployed)
+_dev/
+
+# macOS
+.DS_Store
+
+# Claude config
+.claude/
