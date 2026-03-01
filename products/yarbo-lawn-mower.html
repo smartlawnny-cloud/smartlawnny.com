@@ -30,6 +30,8 @@
     .logo { display: flex; align-items: center; gap: 10px; }
     .logo-text .name { color: #1d1d1f; font-size: 1.15rem; font-weight: 800; }
     .logo-text .tagline { font-size: .6rem; color: #86868b; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+    .logo-text .dealer-tag { font-size: .5rem; color: var(--green); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-top: 1px; }
+    .logo-img { height: 36px; width: auto; }
     nav ul { display: flex; gap: 24px; list-style: none; }
     nav a { font-weight: 500; font-size: .82rem; color: #1d1d1f; transition: color .2s; }
     nav a:hover { color: #86868b; }
@@ -104,7 +106,9 @@
       .features-grid { grid-template-columns: 1fr; }
       .product-info .key-specs { grid-template-columns: 1fr; }
       nav { display: none; }
-      .mobile-toggle { display: block; }
+      .mobile-toggle { display: none; }
+      .order-btn { display: none !important; }
+      .header-right { display: none !important; }
     }
   </style>
 </head>
@@ -113,17 +117,11 @@
 <header>
   <div class="header-inner">
     <a href="../index.html" class="logo">
-      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:36px;width:36px;">
-        <circle cx="30" cy="30" r="30" fill="#f0f7e6"/>
-        <rect x="16" y="28" width="28" height="12" rx="4" fill="#1a5c5c"/>
-        <circle cx="30" cy="24" r="3" fill="#1a5c5c" opacity="0.6"/>
-        <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
-        <circle cx="20" cy="40" r="3" fill="#333"/><circle cx="40" cy="40" r="3" fill="#333"/>
-      </svg>
+      <img src="../images/logo.png" alt="Smart Lawn Logo" class="logo-img">
       <div class="logo-text">
         <div class="name">Smart Lawn</div>
         <div class="tagline">Automation & Robotics</div>
+        <div class="dealer-tag">Authorized Dealer &amp; Service Center</div>
       </div>
     </a>
     <nav>
