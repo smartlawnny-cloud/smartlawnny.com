@@ -144,7 +144,7 @@
     .product-card-body .btn-details { display: inline-block; background: transparent; color: var(--teal); border: 2px solid var(--teal); padding: 10px 20px; border-radius: 50px; font-weight: 700; font-size: .82rem; cursor: pointer; text-transform: uppercase; transition: all .3s; text-align: center; margin-bottom: 8px; width: 100%; }
     .product-card-body .btn-details:hover { background: var(--teal); color: #fff; }
     .products-cta { text-align: center; margin-top: 48px; }
-    .service-area { padding: 56px 0; background: #fff; }
+    .service-area { position: absolute; left: -9999px; height: 1px; overflow: hidden; }
     .service-area .section-header { margin-bottom: 40px; }
     .area-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 900px; margin: 0 auto; }
     .area-tag { background: var(--g50); border: 1px solid var(--g200); padding: 12px 16px; border-radius: 10px; text-align: center; font-weight: 600; font-size: .92rem; color: var(--g700); transition: all .3s; }
@@ -374,7 +374,7 @@
         <li><a href="#products">Products</a></li>
         <li><a href="services.html">Services</a></li>
         <li><a href="#quiz-section">Find a Mower</a></li>
-        <li><a href="#brands">Brands</a></li>
+
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -687,19 +687,6 @@
   </div>
 </section>
 
-<!-- Brands -->
-<section class="brands" id="brands">
-  <div class="container">
-    <div class="section-header fade-in">
-      <h2>Our <span class="underline-accent">Authorized Brands</span></h2>
-      <p>Factory-authorized dealer and service center</p>
-    </div>
-    <div class="brands-grid">
-      <div class="brand-card fade-in"><div class="dealer-badge">Authorized Dealer</div><div class="brand-icon"><i class="fas fa-satellite-dish"></i></div><h3>Segway Navimow</h3><div class="brand-desc">11 models, $799-$6,999. RTK + Vision nav. No wires needed.</div><a href="#products" class="btn btn-primary btn-sm">Shop</a></div>
-      <div class="brand-card fade-in"><div class="dealer-badge">Authorized Dealer</div><div class="brand-icon"><i class="fas fa-robot"></i></div><h3>Yarbo</h3><div class="brand-desc">Multi-season robotics: mow, snow removal, leaf blowing.</div><a href="#products" class="btn btn-primary btn-sm">Shop</a></div>
-    </div>
-  </div>
-</section>
 
 <!-- Solutions -->
 <section class="solutions" id="solutions">
@@ -927,7 +914,6 @@
         <div class="footer-social"><a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank"><i class="fab fa-facebook-f"></i></a><a href="https://instagram.com/SmartLawnNY" target="_blank"><i class="fab fa-instagram"></i></a><a href="https://youtube.com/@SmartLawnNY" target="_blank"><i class="fab fa-youtube"></i></a><a href="https://nextdoor.com/pages/smart-lawn-ny-peekskill-ny/" target="_blank"><i class="fas fa-house-user"></i></a></div>
       </div>
       <div class="footer-col"><h4>Site Links</h4><ul><li><a href="#">Home</a></li><li><a href="#about">About</a></li><li><a href="#products">Products</a></li><li><a href="services.html">Services</a></li><li><a href="#contact">Contact</a></li></ul></div>
-      <div class="footer-col"><h4>Brands</h4><ul><li><a href="#">Segway Navimow</a></li><li><a href="#">Yarbo</a></li></ul></div>
       <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Product launches, seasonal tips, and offers.</p><form class="newsletter-form" id="newsletterForm" onsubmit="return submitNewsletter(event)"><input type="email" id="newsletterEmail" placeholder="Email Address" required><button type="submit" class="btn btn-primary btn-sm" id="newsletterBtn">Sign Up</button></form><p id="newsletterMsg" style="display:none;margin-top:10px;font-size:.85rem;"></p></div>
     </div>
     <div class="footer-bottom">&copy; 2026 Smart Lawn LLC. All Rights Reserved. | SmartLawnNY.com</div>
