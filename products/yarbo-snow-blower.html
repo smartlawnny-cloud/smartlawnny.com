@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yarbo Snow Blower Robot | Peekskill, Sleepy Hollow | Smart Lawn NY</title>
+  <meta name="description" content="Yarbo Snow Blower autonomous snow removal robot for sale in Westchester County. 2-stage system, 24-inch clearing width, teleoperation control. Serving Peekskill, Sleepy Hollow, Tarrytown for winter snow clearing.">
+  <meta name="keywords" content="Yarbo Snow Blower, robot snow blower Westchester, autonomous snow removal Peekskill, robotic snow blower Sleepy Hollow, Yarbo snow module Tarrytown, winter robot NY">
+  <link rel="canonical" href="https://smartlawnny.com/products/yarbo-snow-blower.html">
+  <meta property="og:title" content="Yarbo Snow Blower Robot | Smart Lawn NY">
+  <meta property="og:description" content="Autonomous 2-stage snow blower with 24-inch clearing width and teleoperation. Module $1,299 | Bundle $4,999.">
+  <meta property="og:image" content="https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Snow-Blower-(15).png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --green: #6abb1e; --green-dark: #5a9e18; --green-light: #7ecc35;
+      --teal: #1a5c5c; --teal-dark: #134545;
+    }
+    body { font-family: 'Inter', sans-serif; color: #1d1d1f; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header { background: rgba(255,255,255,.8); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,.08); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 52px; max-width: 1400px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-text .name { color: #1d1d1f; font-size: 1.15rem; font-weight: 800; }
+    .logo-text .tagline { font-size: .6rem; color: #86868b; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+    nav ul { display: flex; gap: 24px; list-style: none; }
+    nav a { font-weight: 500; font-size: .82rem; color: #1d1d1f; transition: color .2s; }
+    nav a:hover { color: #86868b; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .order-btn { background: var(--green); color: #fff; padding: 8px 20px; border-radius: 980px; font-weight: 600; font-size: .82rem; transition: all .3s; }
+    .order-btn:hover { background: var(--green-dark); }
+    .mobile-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: #1d1d1f; cursor: pointer; }
+
+    /* Breadcrumb */
+    .breadcrumb { padding: 16px 0; font-size: .82rem; color: #86868b; }
+    .breadcrumb a { color: #86868b; transition: color .2s; }
+    .breadcrumb a:hover { color: #1d1d1f; }
+    .breadcrumb span { margin: 0 8px; }
+
+    /* Product Hero */
+    .product-hero { padding: 40px 0 80px; background: #f5f5f7; }
+    .product-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .product-image-main { background: #fff; border-radius: 24px; padding: 48px; display: flex; align-items: center; justify-content: center; min-height: 400px; }
+    .product-image-main img { max-height: 360px; object-fit: contain; }
+    .product-info .badge { display: inline-block; background: var(--teal); color: #fff; padding: 5px 14px; border-radius: 20px; font-size: .72rem; font-weight: 600; letter-spacing: .03em; margin-bottom: 16px; }
+    .product-info .brand { font-size: .78rem; font-weight: 600; color: #86868b; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+    .product-info h1 { font-size: 3rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin-bottom: 16px; }
+    .product-info .price { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+    .product-info .price-secondary { font-size: 1.15rem; font-weight: 600; color: #86868b; margin-bottom: 8px; }
+    .product-info .price-note { font-size: .88rem; color: #86868b; margin-bottom: 32px; }
+    .product-info .key-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .spec-pill { background: #fff; padding: 14px 18px; border-radius: 14px; }
+    .spec-pill .spec-label { font-size: .72rem; color: #86868b; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .spec-pill .spec-value { font-size: 1.05rem; font-weight: 700; color: #1d1d1f; }
+    .btn-add { background: var(--green); color: #fff; border: none; padding: 16px 40px; border-radius: 980px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all .3s; width: 100%; margin-bottom: 12px; }
+    .btn-add:hover { background: var(--green-dark); }
+    .btn-module { background: transparent; color: #1d1d1f; border: 2px solid var(--green); padding: 14px 40px; border-radius: 980px; font-weight: 600; font-size: .95rem; cursor: pointer; transition: all .3s; width: 100%; margin-bottom: 12px; }
+    .btn-module:hover { background: var(--green); color: #fff; }
+    .btn-quote { background: transparent; color: #1d1d1f; border: 2px solid #d2d2d7; padding: 14px 40px; border-radius: 980px; font-weight: 600; font-size: .95rem; cursor: pointer; transition: all .3s; width: 100%; display: block; text-align: center; }
+    .btn-quote:hover { border-color: #1d1d1f; }
+
+    /* Features */
+    .features { padding: 100px 0; background: #fff; }
+    .features h2 { font-size: 2.4rem; font-weight: 800; text-align: center; margin-bottom: 64px; letter-spacing: -.02em; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .feature-card { text-align: center; padding: 40px 28px; background: #f5f5f7; border-radius: 24px; }
+    .feature-card i { font-size: 1.5rem; color: var(--teal); margin-bottom: 16px; display: block; }
+    .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { font-size: .88rem; color: #86868b; line-height: 1.7; }
+
+    /* Specs Table */
+    .specs-section { padding: 100px 0; background: #f5f5f7; }
+    .specs-section h2 { font-size: 2.4rem; font-weight: 800; text-align: center; margin-bottom: 64px; letter-spacing: -.02em; }
+    .specs-table { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 24px; overflow: hidden; }
+    .specs-table table { width: 100%; border-collapse: collapse; }
+    .specs-table tr { border-bottom: 1px solid #f5f5f7; }
+    .specs-table tr:last-child { border-bottom: none; }
+    .specs-table td { padding: 18px 28px; font-size: .92rem; }
+    .specs-table td:first-child { font-weight: 600; color: #1d1d1f; width: 45%; }
+    .specs-table td:last-child { color: #86868b; }
+
+    /* CTA */
+    .product-cta { padding: 100px 0; background: #1d1d1f; color: #fff; text-align: center; }
+    .product-cta h2 { font-size: 2.8rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -.02em; }
+    .product-cta p { font-size: 1.1rem; opacity: .7; max-width: 500px; margin: 0 auto 40px; }
+    .product-cta .btn { display: inline-flex; align-items: center; padding: 16px 40px; border-radius: 980px; font-weight: 600; font-size: .95rem; border: none; cursor: pointer; transition: all .3s; background: #fff; color: #1d1d1f; }
+    .product-cta .btn:hover { background: #f5f5f7; }
+
+    /* Footer */
+    footer { background: #1d1d1f; color: #86868b; padding: 48px 0; text-align: center; }
+    footer p { font-size: .82rem; }
+    footer a { color: var(--green-light); }
+
+    @media (max-width: 768px) {
+      .product-hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .product-info h1 { font-size: 2.2rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .product-info .key-specs { grid-template-columns: 1fr; }
+      nav { display: none; }
+      .mobile-toggle { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="../index.html" class="logo">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:36px;width:36px;">
+        <circle cx="30" cy="30" r="30" fill="#f0f7e6"/>
+        <rect x="16" y="28" width="28" height="12" rx="4" fill="#1a5c5c"/>
+        <circle cx="30" cy="24" r="3" fill="#1a5c5c" opacity="0.6"/>
+        <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <circle cx="20" cy="40" r="3" fill="#333"/><circle cx="40" cy="40" r="3" fill="#333"/>
+      </svg>
+      <div class="logo-text">
+        <div class="name">Smart Lawn</div>
+        <div class="tagline">Automation & Robotics</div>
+      </div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="../index.html#products">Products</a></li>
+        <li><a href="../services.html">Services</a></li>
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-right">
+      <a href="../index.html#contact" class="order-btn">Get a Quote</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.querySelector('nav').style.display=document.querySelector('nav').style.display==='block'?'none':'block'"><i class="fas fa-bars"></i></button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="breadcrumb">
+    <a href="../index.html">Home</a><span>/</span><a href="../index.html#products">Products</a><span>/</span>Yarbo Snow Blower
+  </div>
+</div>
+
+<section class="product-hero">
+  <div class="container">
+    <div class="product-hero-grid">
+      <div class="product-image-main">
+        <img src="https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Snow-Blower-(15).png" alt="Yarbo Snow Blower Robot">
+      </div>
+      <div class="product-info">
+        <span class="badge">Winter</span>
+        <div class="brand">Yarbo</div>
+        <h1>Yarbo Snow Blower</h1>
+        <div class="price">Core + Module Bundle $4,999</div>
+        <div class="price-secondary">Module Only $1,299</div>
+        <div class="price-note">Professional installation available from $499</div>
+        <div class="key-specs">
+          <div class="spec-pill"><div class="spec-label">Type</div><div class="spec-value">2-Stage</div></div>
+          <div class="spec-pill"><div class="spec-label">Clearing Width</div><div class="spec-value">24 in (60 cm)</div></div>
+          <div class="spec-pill"><div class="spec-label">Throw Distance</div><div class="spec-value">6&ndash;40 ft</div></div>
+          <div class="spec-pill"><div class="spec-label">Runtime</div><div class="spec-value">1.5 hrs/charge</div></div>
+        </div>
+        <a href="YOUR_STRIPE_LINK_BUNDLE" class="btn-add" target="_blank">Buy Bundle &mdash; $4,999</a>
+        <a href="YOUR_STRIPE_LINK_MODULE" class="btn-add-alt" target="_blank">Buy Module Only &mdash; $1,299</a>
+        <a href="../index.html#contact" class="btn-quote">Request a Quote</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="container">
+    <h2>Winter, Handled Autonomously</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <i class="fas fa-snowflake"></i>
+        <h3>2-Stage System</h3>
+        <p>Industrial-grade 2-stage snow blowing handles dry, wet, and packed snow with powerful auger and impeller action.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-robot"></i>
+        <h3>Autonomous Clearing</h3>
+        <p>Set your snow clearing paths once and the Yarbo handles every storm automatically. Wake up to clear driveways and walkways.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-gamepad"></i>
+        <h3>Teleoperation Control</h3>
+        <p>Take manual control remotely from your phone. Steer the snow blower in real-time from the warmth of your home.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-cloud-meatball"></i>
+        <h3>All Snow Types</h3>
+        <p>Engineered for dry powder, heavy wet snow, and packed accumulation. Throws snow 6 to 40 feet with adjustable chute.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-battery-full"></i>
+        <h3>Automatic Recharge</h3>
+        <p>Returns to its charging station when battery is low and resumes clearing automatically. No babysitting required.</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-ruler-horizontal"></i>
+        <h3>24-Inch Clearing Path</h3>
+        <p>Wide 24-inch clearing width with 12-inch intake height makes quick work of even heavy Westchester snowfalls.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="specs-section">
+  <div class="container">
+    <h2>Technical Specifications</h2>
+    <div class="specs-table">
+      <table>
+        <tr><td>Model</td><td>Yarbo Snow Blower</td></tr>
+        <tr><td>Module Weight</td><td>77 lbs (35 kg)</td></tr>
+        <tr><td>Type</td><td>2-Stage</td></tr>
+        <tr><td>Clearing Width</td><td>24 in (60 cm)</td></tr>
+        <tr><td>Intake Height</td><td>12 in (30 cm)</td></tr>
+        <tr><td>Throw Distance</td><td>6&ndash;40 ft</td></tr>
+        <tr><td>Chute Rotation</td><td>&minus;10&deg; to 190&deg;</td></tr>
+        <tr><td>Deflector Angle</td><td>&minus;5&deg; to 50&deg;</td></tr>
+        <tr><td>Coverage (1 in snow)</td><td>6,000 sq ft per charge</td></tr>
+        <tr><td>Operation Time</td><td>1.5 hrs per charge</td></tr>
+        <tr><td>Charge Time</td><td>1.5 hrs (20&ndash;80%)</td></tr>
+        <tr><td>Waterproof Rating</td><td>IPX5</td></tr>
+        <tr><td>Max Slope</td><td>Up to 36%</td></tr>
+        <tr><td>Snow Types</td><td>Dry, wet, packed</td></tr>
+        <tr><td>Surfaces</td><td>Paved, concrete, gravel</td></tr>
+        <tr><td>Connectivity</td><td>4G, Wi-Fi, Bluetooth, Wi-Fi HaLow</td></tr>
+        <tr><td>Teleoperation</td><td>Yes</td></tr>
+        <tr><td>Operating Temp</td><td>&minus;13&deg;F to 113&deg;F</td></tr>
+        <tr><td>Module Price</td><td>$1,299</td></tr>
+        <tr><td>Bundle Price (Core + Module)</td><td>$4,999</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="product-cta">
+  <div class="container">
+    <h2>Never shovel snow again.</h2>
+    <p>Schedule a free on-site assessment. We'll plan your snow clearing paths before the first storm hits.</p>
+    <a href="../index.html#contact" class="btn">Schedule Free Assessment</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Smart Lawn NY &mdash; Second Nature Tree LLC. <a href="../index.html">SmartLawnNY.com</a> | (914) 391-5233</p>
+  </div>
+</footer>
+
+<!-- Schema.org Product -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Yarbo Snow Blower (Core + Module Bundle)",
+  "brand": {"@type": "Brand", "name": "Yarbo"},
+  "description": "Autonomous 2-stage snow blower robot with 24-inch clearing width, 6-40ft throw distance, and teleoperation control. Handles dry, wet, and packed snow on paved, concrete, and gravel surfaces.",
+  "image": "https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Snow-Blower-(15).png",
+  "offers": {
+    "@type": "Offer",
+    "price": "4999.00",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "seller": {"@type": "Organization", "name": "Smart Lawn NY"}
+  }
+}
+</script>
+
+</body>
+</html>

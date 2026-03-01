@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robotic Mower Services & Pricing | Scarsdale, Bedford, Westchester | Smart Lawn NY</title>
+  <meta name="description" content="Professional robotic mower installation, service plans & Mowing-as-a-Service in Westchester County. Serving Scarsdale, Bedford, Chappaqua, Rye, Bronxville. Installation from $299.">
+  <meta name="keywords" content="robotic mower installation Westchester, robot lawn mower service Scarsdale, mowing service Bedford, lawn automation Chappaqua, Navimow installation NY, robotic mower service plan">
+  <link rel="canonical" href="https://smartlawnny.com/services.html">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://smartlawnny.com/services.html">
+  <meta property="og:title" content="Services & Pricing | Smart Lawn NY">
+  <meta property="og:description" content="Professional robotic mower installation from $299, annual service plans from $199/yr, and Mowing as a Service from $99/mo. Serving Westchester & Putnam County.">
+  <meta property="og:image" content="https://smartlawnny.com/og-share.png">
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Services & Pricing | Smart Lawn NY">
+  <meta name="twitter:description" content="Robotic mower installation, service plans & Mowing as a Service. Peekskill, NY.">
+  <meta name="twitter:image" content="https://smartlawnny.com/og-share.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --green: #6abb1e; --green-dark: #5a9e18; --green-darker: #4a8214; --green-light: #7ecc35;
+      --teal: #1a5c5c; --teal-dark: #134545;
+      --dark: #1a1a2e; --white: #fff;
+      --g50: #f9fafb; --g100: #f3f4f6; --g200: #e5e7eb; --g300: #d1d5db;
+      --g500: #6b7280; --g600: #4b5563; --g700: #374151; --g800: #1f2937; --g900: #111827;
+      --sh: 0 4px 6px -1px rgba(0,0,0,.1); --sh-lg: 0 10px 15px -3px rgba(0,0,0,.1);
+      --sh-xl: 0 20px 25px -5px rgba(0,0,0,.1);
+    }
+    body { font-family: 'Inter', sans-serif; color: var(--g800); line-height: 1.6; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* === HEADER === */
+    header { background: #fff; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--g200); box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 80px; max-width: 1400px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .logo-text .name { color: var(--green); font-size: 1.4rem; font-weight: 800; }
+    .logo-text .name span { color: var(--g700); }
+    .logo-text .tagline { font-size: .65rem; color: var(--g500); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+    nav ul { display: flex; gap: 28px; align-items: center; }
+    nav a { font-weight: 600; font-size: .92rem; color: var(--g700); transition: color .2s; text-transform: uppercase; letter-spacing: .02em; }
+    nav a:hover, nav a.active { color: var(--green); }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .header-social { display: flex; gap: 12px; }
+    .header-social a { color: var(--g500); font-size: 1.1rem; transition: color .2s; }
+    .header-social a:hover { color: var(--green); }
+    .cart-icon { position: relative; font-size: 1.3rem; color: var(--g700); cursor: pointer; }
+    .cart-count { position: absolute; top: -8px; right: -10px; background: var(--green); color: #fff; width: 20px; height: 20px; border-radius: 50%; font-size: .7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .order-btn { background: var(--green); color: #fff; padding: 12px 28px; border-radius: 50px; font-weight: 700; font-size: .9rem; text-transform: uppercase; letter-spacing: .05em; transition: all .3s; }
+    .order-btn:hover { background: var(--green-dark); }
+    .mobile-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: var(--g700); cursor: pointer; }
+
+    /* === BUTTONS === */
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 32px; border-radius: 50px; font-weight: 700; font-size: .95rem; transition: all .3s; cursor: pointer; border: none; text-transform: uppercase; letter-spacing: .05em; }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); box-shadow: var(--sh-lg); }
+    .btn-outline { background: transparent; color: #fff; border: 2px solid #fff; }
+    .btn-outline:hover { background: #fff; color: var(--green); }
+    .btn-white { background: #fff; color: var(--teal); }
+    .btn-white:hover { background: var(--g100); transform: translateY(-1px); }
+    .btn-dark { background: var(--g800); color: #fff; }
+    .btn-dark:hover { background: var(--g900); }
+    .btn-teal { background: var(--teal); color: #fff; }
+    .btn-teal:hover { background: var(--teal-dark); }
+    .btn-sm { padding: 10px 24px; font-size: .85rem; }
+    .btn-cart { background: var(--green); color: #fff; border: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; font-size: .85rem; cursor: pointer; width: 100%; text-transform: uppercase; transition: all .3s; }
+    .btn-cart:hover { background: var(--green-dark); }
+
+    /* === SECTION HEADERS === */
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header h2 { font-size: 2.6rem; font-weight: 800; color: var(--g900); margin-bottom: 12px; }
+    .section-header p { font-size: 1.1rem; color: var(--g500); max-width: 600px; margin: 0 auto; }
+    .section-header .underline-accent { display: inline-block; position: relative; }
+    .section-header .underline-accent::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 4px; background: var(--green); border-radius: 2px; }
+
+    /* === PAGE HERO === */
+    .page-hero { position: relative; padding: 100px 0 80px; background: linear-gradient(135deg, rgba(18,50,40,.88), rgba(20,60,35,.7)), url('https://navimow.com/cdn/shop/files/product_card_-i2_awd_series.jpg') center/cover no-repeat; color: #fff; text-align: center; }
+    .page-hero h1 { font-size: 3.2rem; font-weight: 900; margin-bottom: 16px; }
+    .page-hero p { font-size: 1.2rem; opacity: .9; max-width: 640px; margin: 0 auto 32px; }
+    .page-hero .anchor-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .page-hero .anchor-links a { background: rgba(255,255,255,.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.25); padding: 10px 24px; border-radius: 50px; font-weight: 600; font-size: .9rem; color: #fff; transition: all .3s; }
+    .page-hero .anchor-links a:hover { background: var(--green); border-color: var(--green); }
+
+    /* === PRICING CARDS === */
+    .pricing-section { padding: 100px 0; }
+    .pricing-section:nth-child(even) { background: var(--g50); }
+    .pricing-section:nth-child(odd) { background: #fff; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; max-width: 1080px; margin: 0 auto; }
+    .pricing-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: var(--sh); border: 2px solid var(--g200); transition: all .3s; display: flex; flex-direction: column; }
+    .pricing-card:hover { transform: translateY(-6px); box-shadow: var(--sh-xl); }
+    .pricing-card.featured { border-color: var(--green); position: relative; }
+    .pricing-card.featured::before { content: 'Most Popular'; position: absolute; top: 0; left: 0; right: 0; background: var(--green); color: #fff; text-align: center; font-size: .78rem; font-weight: 700; padding: 6px; text-transform: uppercase; letter-spacing: .06em; }
+    .pricing-card.featured .card-header { padding-top: 42px; }
+    .card-header { padding: 32px 28px 24px; text-align: center; border-bottom: 1px solid var(--g100); }
+    .card-header .card-icon { width: 56px; height: 56px; margin: 0 auto 16px; background: linear-gradient(135deg, var(--green), var(--green-light)); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.3rem; }
+    .card-header h3 { font-size: 1.25rem; font-weight: 800; color: var(--g900); margin-bottom: 4px; }
+    .card-header .card-subtitle { font-size: .85rem; color: var(--g500); margin-bottom: 16px; }
+    .card-header .price { font-size: 2.8rem; font-weight: 900; color: var(--teal); line-height: 1; }
+    .card-header .price .period { font-size: .9rem; font-weight: 500; color: var(--g500); }
+    .card-header .price .starting { font-size: .85rem; font-weight: 500; color: var(--g500); display: block; margin-bottom: 4px; }
+    .card-body { padding: 28px; flex: 1; display: flex; flex-direction: column; }
+    .card-body ul { flex: 1; }
+    .card-body ul li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; font-size: .92rem; color: var(--g700); }
+    .card-body ul li i { color: var(--green); margin-top: 4px; font-size: .8rem; flex-shrink: 0; }
+    .card-body .btn-cart { margin-top: 24px; }
+
+    /* === CUSTOM CARD (Call for quote) === */
+    .custom-card { background: linear-gradient(135deg, var(--teal-dark), var(--teal)); border-radius: 20px; padding: 40px 32px; text-align: center; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; box-shadow: var(--sh-lg); }
+    .custom-card h3 { font-size: 1.4rem; font-weight: 800; }
+    .custom-card p { font-size: .95rem; opacity: .9; max-width: 280px; }
+    .custom-card .btn-white { padding: 14px 32px; }
+
+    /* === SEASONAL GRID === */
+    .seasonal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 1200px; margin: 0 auto; }
+    .seasonal-card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: var(--sh); border: 2px solid var(--g200); transition: all .3s; display: flex; flex-direction: column; }
+    .seasonal-card:hover { transform: translateY(-6px); box-shadow: var(--sh-xl); }
+    .seasonal-card.bundle { border-color: var(--green); background: linear-gradient(180deg, rgba(106,187,30,.04), #fff); }
+    .seasonal-card .card-header { padding: 28px 24px 20px; }
+    .seasonal-card .card-header .card-icon { width: 48px; height: 48px; font-size: 1.1rem; border-radius: 12px; }
+    .seasonal-card .card-header h3 { font-size: 1.1rem; }
+    .seasonal-card .card-header .price { font-size: 2.2rem; }
+    .seasonal-card .card-body { padding: 20px 24px 28px; }
+    .seasonal-card .card-body ul li { font-size: .88rem; padding: 6px 0; }
+    .savings-tag { display: inline-block; background: var(--green); color: #fff; font-size: .75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 8px; }
+
+    /* === HOW IT WORKS === */
+    .how-it-works { padding: 80px 0; background: var(--g50); }
+    .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; max-width: 1080px; margin: 0 auto; }
+    .step { text-align: center; position: relative; }
+    .step::after { content: ''; position: absolute; top: 32px; right: -16px; width: 32px; height: 2px; background: var(--g300); }
+    .step:last-child::after { display: none; }
+    .step-number { width: 64px; height: 64px; margin: 0 auto 16px; background: var(--green); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; }
+    .step h4 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--g900); }
+    .step p { font-size: .88rem; color: var(--g500); line-height: 1.6; }
+
+    /* === COMPARISON TABLE === */
+    .comparison-wrap { max-width: 900px; margin: 60px auto 0; overflow-x: auto; }
+    .comparison-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    .comparison-table th, .comparison-table td { padding: 14px 20px; text-align: center; border-bottom: 1px solid var(--g200); }
+    .comparison-table th:first-child, .comparison-table td:first-child { text-align: left; font-weight: 600; color: var(--g700); }
+    .comparison-table thead th { background: var(--g50); font-weight: 700; color: var(--g900); font-size: .85rem; text-transform: uppercase; letter-spacing: .04em; }
+    .comparison-table thead th.highlight { background: rgba(106,187,30,.1); color: var(--green-dark); }
+    .comparison-table tbody tr:hover { background: var(--g50); }
+    .comparison-table .check { color: var(--green); font-weight: 700; }
+    .comparison-table .dash { color: var(--g300); }
+
+    /* === MAAS === */
+    .maas-how { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1000px; margin: 0 auto 48px; }
+    .maas-how-item { text-align: center; padding: 20px 16px; background: var(--g50); border-radius: 14px; border: 1px solid var(--g200); }
+    .maas-how-item i { font-size: 1.5rem; color: var(--green); margin-bottom: 10px; display: block; }
+    .maas-how-item strong { display: block; font-size: .92rem; color: var(--g900); margin-bottom: 4px; }
+    .maas-how-item span { font-size: .82rem; color: var(--g500); }
+    .maas-note { display: flex; align-items: flex-start; gap: 14px; max-width: 700px; margin: 40px auto 0; padding: 20px 24px; background: rgba(106,187,30,.06); border: 1px solid rgba(106,187,30,.2); border-radius: 14px; font-size: .92rem; color: var(--g700); }
+    .maas-note i { color: var(--green); font-size: 1.2rem; margin-top: 2px; flex-shrink: 0; }
+
+    /* === CTA === */
+    .cta-section { padding: 100px 0; background: linear-gradient(135deg, var(--teal-dark), var(--teal) 50%, var(--green-darker)); color: #fff; text-align: center; }
+    .cta-section h2 { font-size: 2.6rem; font-weight: 800; margin-bottom: 16px; }
+    .cta-section p { font-size: 1.15rem; opacity: .92; max-width: 600px; margin: 0 auto 40px; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* === FAQ === */
+    .faq-section { padding: 80px 0; background: #fff; }
+    .faq-grid { max-width: 780px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--g200); }
+    .faq-question { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; cursor: pointer; font-weight: 600; font-size: 1rem; color: var(--g800); }
+    .faq-question i { color: var(--green); transition: transform .3s; font-size: .9rem; }
+    .faq-question.open i { transform: rotate(180deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .faq-answer p { padding: 0 0 20px; font-size: .95rem; color: var(--g600); line-height: 1.7; }
+
+    /* === CART SIDEBAR === */
+    .cart-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.5); z-index: 9998; display: none; }
+    .cart-overlay.open { display: block; }
+    .cart-sidebar { position: fixed; top: 0; right: -420px; width: 400px; height: 100vh; background: #fff; z-index: 9999; box-shadow: -4px 0 20px rgba(0,0,0,.15); transition: right .3s; display: flex; flex-direction: column; }
+    .cart-sidebar.open { right: 0; }
+    .cart-header { padding: 24px; border-bottom: 1px solid var(--g200); display: flex; justify-content: space-between; align-items: center; }
+    .cart-header h3 { font-size: 1.2rem; font-weight: 700; }
+    .cart-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--g500); }
+    .cart-items { flex: 1; overflow-y: auto; padding: 24px; }
+    .cart-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--g100); }
+    .cart-item-icon { width: 48px; height: 48px; background: linear-gradient(135deg, var(--green), var(--green-light)); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; flex-shrink: 0; }
+    .cart-item-info { flex: 1; }
+    .cart-item-info h4 { font-size: .9rem; font-weight: 600; margin-bottom: 4px; }
+    .cart-item-info .cart-item-price { font-weight: 700; color: var(--teal); }
+    .cart-item-remove { background: none; border: none; color: var(--g500); cursor: pointer; font-size: .85rem; }
+    .cart-item-remove:hover { color: red; }
+    .cart-empty { text-align: center; color: var(--g500); padding: 40px 0; }
+    .cart-empty i { font-size: 3rem; margin-bottom: 16px; color: var(--g300); }
+    .cart-footer { padding: 24px; border-top: 1px solid var(--g200); }
+    .cart-total { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+    .cart-footer .btn { width: 100%; }
+    .cart-footer .note { font-size: .8rem; color: var(--g500); text-align: center; margin-top: 8px; }
+
+    /* === FOOTER === */
+    footer { background: var(--dark); color: var(--g300); padding: 80px 0 0; }
+    .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .footer-brand .footer-logo { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 16px; }
+    .footer-brand .footer-logo .accent { color: var(--green-light); }
+    .footer-brand p { font-size: .92rem; line-height: 1.7; color: var(--g500); margin-bottom: 20px; }
+    .footer-social { display: flex; gap: 12px; }
+    .footer-social a { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; color: var(--g300); transition: all .3s; }
+    .footer-social a:hover { background: var(--green); color: #fff; }
+    .footer-col h4 { color: #fff; font-weight: 700; margin-bottom: 20px; font-size: 1rem; text-transform: uppercase; letter-spacing: .03em; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a { color: var(--g500); transition: color .2s; font-size: .92rem; }
+    .footer-col ul a:hover { color: var(--green-light); }
+    .footer-newsletter p { color: var(--g500); font-size: .92rem; margin-bottom: 16px; }
+    .newsletter-form { display: flex; gap: 8px; }
+    .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid rgba(255,255,255,.15); border-radius: 10px; background: rgba(255,255,255,.05); color: #fff; font-size: .92rem; }
+    .newsletter-form input::placeholder { color: var(--g500); }
+    .newsletter-form input:focus { outline: none; border-color: var(--green); }
+    .newsletter-form .btn { padding: 14px 24px; white-space: nowrap; }
+    .footer-bottom { padding: 24px 0; text-align: center; color: var(--g500); font-size: .85rem; }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .seasonal-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .step::after { display: none; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .maas-how { grid-template-columns: repeat(2, 1fr); }
+      #maas .pricing-grid { grid-template-columns: repeat(2, 1fr) !important; max-width: 900px !important; }
+    }
+    @media (max-width: 768px) {
+      nav { display: none; } .mobile-toggle { display: block; }
+      .page-hero h1 { font-size: 2.2rem; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .seasonal-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .steps-grid { grid-template-columns: 1fr; max-width: 360px; }
+      .section-header h2 { font-size: 2rem; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .cart-sidebar { width: 100%; right: -100%; }
+      .comparison-wrap { margin: 40px -12px 0; }
+      .maas-how { grid-template-columns: 1fr 1fr; }
+      #maas .pricing-grid { grid-template-columns: 1fr !important; max-width: 420px !important; }
+    }
+
+    /* === ANIMATIONS === */
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:50px;width:50px;">
+        <circle cx="30" cy="30" r="30" fill="#f0f7e6"/>
+        <rect x="16" y="28" width="28" height="12" rx="4" fill="#1a5c5c"/>
+        <circle cx="30" cy="24" r="3" fill="#1a5c5c" opacity="0.6"/>
+        <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <circle cx="20" cy="40" r="3" fill="#333"/><circle cx="40" cy="40" r="3" fill="#333"/>
+      </svg>
+      <div class="logo-text">
+        <div class="name">Smart <span>Lawn</span></div>
+        <div class="tagline">Automation & Robotics</div>
+      </div>
+    </a>
+    <nav>
+      <ul>
+        <li><a href="index.html#products">Products</a></li>
+        <li><a href="services.html" class="active">Services</a></li>
+        <li><a href="index.html#quiz-section">Find a Mower</a></li>
+        <li><a href="index.html#brands">Brands</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-right">
+      <div class="header-social">
+        <a href="https://facebook.com/SmartLawnNY" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://instagram.com/SmartLawnNY" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/@SmartLawnNY" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      </div>
+      <a href="index.html#contact" class="order-btn">Get a Quote</a>
+    </div>
+    <button class="mobile-toggle" onclick="document.querySelector('nav').style.display=document.querySelector('nav').style.display==='block'?'none':'block'"><i class="fas fa-bars"></i></button>
+  </div>
+</header>
+
+<!-- Cart Sidebar -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
+    <button class="cart-close" onclick="toggleCart()">&times;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <i class="fas fa-shopping-bag"></i>
+      <p>Your cart is empty</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>Total:</span><span id="cartTotal">$0</span></div>
+    <button class="btn btn-primary" onclick="checkout()">Request Order</button>
+    <div class="note">We'll confirm details and schedule your service within 24 hours.</div>
+  </div>
+</div>
+
+<!-- Page Hero -->
+<section class="page-hero">
+  <div class="container">
+    <h1>Services & Pricing</h1>
+    <p>Professional installation, ongoing maintenance, and seasonal care for your robotic mower. Clear pricing, no surprises.</p>
+    <div class="anchor-links">
+      <a href="#installation"><i class="fas fa-tools"></i> Installation</a>
+      <a href="#plans"><i class="fas fa-clipboard-check"></i> Service Plans</a>
+      <a href="#seasonal"><i class="fas fa-snowflake"></i> Seasonal Care</a>
+      <a href="#maas"><i class="fas fa-robot"></i> Mowing as a Service</a>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>How It <span class="underline-accent">Works</span></h2>
+      <p>From purchase to a perfectly maintained lawn in four simple steps</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step fade-in">
+        <div class="step-number">1</div>
+        <h4>Free Assessment</h4>
+        <p>We visit your property, measure the lawn, and recommend the best mower for your yard.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-number">2</div>
+        <h4>Purchase & Install</h4>
+        <p>Pick your mower and installation package. We handle everything from delivery to first mow.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-number">3</div>
+        <h4>Choose a Plan</h4>
+        <p>Select an annual service plan for worry-free maintenance, blade changes, and support.</p>
+      </div>
+      <div class="step fade-in">
+        <div class="step-number">4</div>
+        <h4>Enjoy Your Lawn</h4>
+        <p>Sit back while your robot keeps the lawn perfect. We handle seasonal prep and tune-ups.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Installation Section -->
+<section class="pricing-section" id="installation">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Professional <span class="underline-accent">Installation</span></h2>
+      <p>Expert setup by factory-certified technicians. Your mower will be running perfectly the same day.</p>
+    </div>
+    <div class="pricing-grid fade-in">
+      <!-- Basic -->
+      <div class="pricing-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-home"></i></div>
+          <h3>Basic</h3>
+          <div class="card-subtitle">Up to 1/4 Acre</div>
+          <div class="price">$299</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> On-site survey & lawn assessment</li>
+            <li><i class="fas fa-check"></i> Charging station installation</li>
+            <li><i class="fas fa-check"></i> Boundary wire or RTK setup</li>
+            <li><i class="fas fa-check"></i> Mower configuration & programming</li>
+            <li><i class="fas fa-check"></i> Schedule & zone setup</li>
+            <li><i class="fas fa-check"></i> Owner walkthrough & training</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Basic Installation (up to 1/4 acre)', 299, 'tools')">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Standard -->
+      <div class="pricing-card featured">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-tree"></i></div>
+          <h3>Standard</h3>
+          <div class="card-subtitle">1/4 to 1/2 Acre</div>
+          <div class="price">$599</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Everything in Basic</li>
+            <li><i class="fas fa-check"></i> Multi-zone programming</li>
+            <li><i class="fas fa-check"></i> Complex obstacle mapping</li>
+            <li><i class="fas fa-check"></i> Optimized mowing patterns</li>
+            <li><i class="fas fa-check"></i> Extended training session</li>
+            <li><i class="fas fa-check"></i> 30-day follow-up check</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Standard Installation (1/4-1/2 acre)', 599, 'tools')">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Premium -->
+      <div class="pricing-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-mountain"></i></div>
+          <h3>Premium</h3>
+          <div class="card-subtitle">1/2 to 1 Acre</div>
+          <div class="price">$999</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Everything in Standard</li>
+            <li><i class="fas fa-check"></i> Multi-zone + slope mapping</li>
+            <li><i class="fas fa-check"></i> Smart home integration assist</li>
+            <li><i class="fas fa-check"></i> Signal range optimization</li>
+            <li><i class="fas fa-check"></i> Priority scheduling</li>
+            <li><i class="fas fa-check"></i> 60-day follow-up check</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Premium Installation (1/2-1 acre)', 999, 'tools')">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+    <!-- Custom -->
+    <div style="max-width:480px;margin:32px auto 0;" class="fade-in">
+      <div class="custom-card">
+        <i class="fas fa-ruler-combined" style="font-size:2rem;opacity:.7;"></i>
+        <h3>1+ Acre Property?</h3>
+        <p>We'll create a custom installation plan for large or complex properties. Multi-mower setups available.</p>
+        <a href="index.html#contact" class="btn btn-white">Get Custom Quote</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Service Plans Section -->
+<section class="pricing-section" id="plans">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Annual <span class="underline-accent">Service Plans</span></h2>
+      <p>Keep your mower running at peak performance year-round. Every plan includes spring startup and fall winterization.</p>
+    </div>
+    <div class="pricing-grid fade-in">
+      <!-- Essential -->
+      <div class="pricing-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Essential</h3>
+          <div class="card-subtitle">Core Coverage</div>
+          <div class="price">$199<span class="period">/year</span></div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Spring startup visit</li>
+            <li><i class="fas fa-check"></i> Fall winterization visit</li>
+            <li><i class="fas fa-check"></i> 1 blade replacement per season</li>
+            <li><i class="fas fa-check"></i> Software & firmware updates</li>
+            <li><i class="fas fa-check"></i> Phone & email support</li>
+            <li><i class="fas fa-check"></i> Basic diagnostics</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Essential Service Plan (Annual)', 199, 'shield')">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Pro -->
+      <div class="pricing-card featured">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-star"></i></div>
+          <h3>Pro</h3>
+          <div class="card-subtitle">Complete Care</div>
+          <div class="price">$349<span class="period">/year</span></div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Everything in Essential</li>
+            <li><i class="fas fa-check"></i> 2 blade replacements per season</li>
+            <li><i class="fas fa-check"></i> Mid-season tune-up visit</li>
+            <li><i class="fas fa-check"></i> Priority phone support</li>
+            <li><i class="fas fa-check"></i> Boundary recalibration</li>
+            <li><i class="fas fa-check"></i> 10% off parts & accessories</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Pro Service Plan (Annual)', 349, 'star')">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Elite -->
+      <div class="pricing-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-crown"></i></div>
+          <h3>Elite</h3>
+          <div class="card-subtitle">Total Peace of Mind</div>
+          <div class="price">$549<span class="period">/year</span></div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Everything in Pro</li>
+            <li><i class="fas fa-check"></i> Unlimited blade replacements</li>
+            <li><i class="fas fa-check"></i> 4 scheduled maintenance visits</li>
+            <li><i class="fas fa-check"></i> Same-day emergency support</li>
+            <li><i class="fas fa-check"></i> 20% off parts & accessories</li>
+            <li><i class="fas fa-check"></i> Loaner mower during repairs</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Elite Service Plan (Annual)', 549, 'crown')">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison Table -->
+    <div class="comparison-wrap fade-in">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Essential</th>
+            <th class="highlight">Pro</th>
+            <th>Elite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Spring Startup</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+          </tr>
+          <tr>
+            <td>Fall Winterization</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+          </tr>
+          <tr>
+            <td>Blade Replacements</td>
+            <td>1/season</td>
+            <td>2/season</td>
+            <td>Unlimited</td>
+          </tr>
+          <tr>
+            <td>Software Updates</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+          </tr>
+          <tr>
+            <td>Mid-Season Tune-Up</td>
+            <td class="dash">&mdash;</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+          </tr>
+          <tr>
+            <td>Scheduled Visits</td>
+            <td>2/year</td>
+            <td>3/year</td>
+            <td>4/year</td>
+          </tr>
+          <tr>
+            <td>Priority Support</td>
+            <td class="dash">&mdash;</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td class="check"><i class="fas fa-check"></i></td>
+          </tr>
+          <tr>
+            <td>Same-Day Emergency</td>
+            <td class="dash">&mdash;</td>
+            <td class="dash">&mdash;</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+          </tr>
+          <tr>
+            <td>Parts Discount</td>
+            <td class="dash">&mdash;</td>
+            <td>10%</td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td>Loaner Mower</td>
+            <td class="dash">&mdash;</td>
+            <td class="dash">&mdash;</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+          </tr>
+          <tr>
+            <td><strong>Annual Price</strong></td>
+            <td><strong>$199</strong></td>
+            <td><strong style="color:var(--green);">$349</strong></td>
+            <td><strong>$549</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Seasonal Care Section -->
+<section class="pricing-section" id="seasonal">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Seasonal <span class="underline-accent">Care</span></h2>
+      <p>Individual services for customers who prefer a la carte. Perfect if you don't have an annual plan or need an extra visit.</p>
+    </div>
+    <div class="seasonal-grid fade-in">
+      <!-- Spring Startup -->
+      <div class="seasonal-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-sun"></i></div>
+          <h3>Spring Startup</h3>
+          <div class="price">$149</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Battery check & full charge</li>
+            <li><i class="fas fa-check"></i> Blade inspection & replacement</li>
+            <li><i class="fas fa-check"></i> Software & firmware update</li>
+            <li><i class="fas fa-check"></i> Boundary/RTK recalibration</li>
+            <li><i class="fas fa-check"></i> First-mow test run</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Spring Startup Service', 149, 'sun')">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Mid-Season Tune-Up -->
+      <div class="seasonal-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-wrench"></i></div>
+          <h3>Mid-Season Tune-Up</h3>
+          <div class="price">$99</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Full cleaning & inspection</li>
+            <li><i class="fas fa-check"></i> Blade sharpening or replace</li>
+            <li><i class="fas fa-check"></i> Software update check</li>
+            <li><i class="fas fa-check"></i> Performance optimization</li>
+            <li><i class="fas fa-check"></i> Wheel & sensor cleaning</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Mid-Season Tune-Up', 99, 'wrench')">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Winterization -->
+      <div class="seasonal-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-snowflake"></i></div>
+          <h3>Winterization</h3>
+          <div class="price">$149</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Full cleaning & inspection</li>
+            <li><i class="fas fa-check"></i> Battery conditioning & prep</li>
+            <li><i class="fas fa-check"></i> Charging station winterizing</li>
+            <li><i class="fas fa-check"></i> Indoor storage guidance</li>
+            <li><i class="fas fa-check"></i> End-of-season report</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Winterization Service', 149, 'snowflake')">Add to Cart</button>
+        </div>
+      </div>
+      <!-- Bundle -->
+      <div class="seasonal-card bundle">
+        <div class="card-header">
+          <div class="savings-tag">Save $48</div>
+          <div class="card-icon" style="background:linear-gradient(135deg, var(--teal), var(--green));"><i class="fas fa-box-open"></i></div>
+          <h3>Seasonal Bundle</h3>
+          <div class="price">$349</div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Spring Startup ($149 value)</li>
+            <li><i class="fas fa-check"></i> Mid-Season Tune-Up ($99 value)</li>
+            <li><i class="fas fa-check"></i> Winterization ($149 value)</li>
+            <li><i class="fas fa-check"></i> Priority scheduling</li>
+            <li><i class="fas fa-check"></i> All 3 visits for one price</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('Seasonal Bundle (All 3 Services)', 349, 'box-open')">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mowing as a Service -->
+<section class="pricing-section" id="maas">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Mowing as a <span class="underline-accent">Service</span></h2>
+      <p>No mower to buy. No maintenance to worry about. We own the robot, install it, maintain it, and keep your lawn perfect — you just pay a flat monthly rate.</p>
+    </div>
+
+    <div class="maas-how fade-in">
+      <div class="maas-how-item"><i class="fas fa-robot"></i><strong>We Supply the Mower</strong><span>No upfront hardware cost</span></div>
+      <div class="maas-how-item"><i class="fas fa-tools"></i><strong>We Install & Maintain</strong><span>All service visits included</span></div>
+      <div class="maas-how-item"><i class="fas fa-calendar-check"></i><strong>12-Month Minimum</strong><span>Month-to-month after year 1</span></div>
+      <div class="maas-how-item"><i class="fas fa-leaf"></i><strong>Seasonal Care Included</strong><span>Spring startup & winterization</span></div>
+    </div>
+
+    <div class="pricing-grid fade-in" style="grid-template-columns: repeat(4, 1fr); max-width: 1200px;">
+      <!-- Small Yard -->
+      <div class="pricing-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-home"></i></div>
+          <h3>Small Yard</h3>
+          <div class="card-subtitle">Under 1/4 Acre</div>
+          <div class="price"><span class="starting">Starting at</span>$99<span class="period">/mo</span></div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Navimow i-Series mower provided</li>
+            <li><i class="fas fa-check"></i> Professional installation</li>
+            <li><i class="fas fa-check"></i> All blade changes & maintenance</li>
+            <li><i class="fas fa-check"></i> Spring startup & winterization</li>
+            <li><i class="fas fa-check"></i> Software & firmware updates</li>
+            <li><i class="fas fa-check"></i> Phone & email support</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('MaaS — Small Yard (under 1/4 acre)', 99, 'robot')">Get Started</button>
+        </div>
+      </div>
+      <!-- Medium Yard -->
+      <div class="pricing-card featured">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-tree"></i></div>
+          <h3>Medium Yard</h3>
+          <div class="card-subtitle">1/4 to 1/2 Acre</div>
+          <div class="price"><span class="starting">Starting at</span>$149<span class="period">/mo</span></div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Navimow H-Series mower provided</li>
+            <li><i class="fas fa-check"></i> Professional installation</li>
+            <li><i class="fas fa-check"></i> All blade changes & maintenance</li>
+            <li><i class="fas fa-check"></i> Spring startup & winterization</li>
+            <li><i class="fas fa-check"></i> Mid-season tune-up included</li>
+            <li><i class="fas fa-check"></i> Priority support</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('MaaS — Medium Yard (1/4-1/2 acre)', 149, 'robot')">Get Started</button>
+        </div>
+      </div>
+      <!-- Large Yard -->
+      <div class="pricing-card">
+        <div class="card-header">
+          <div class="card-icon"><i class="fas fa-mountain"></i></div>
+          <h3>Large Yard</h3>
+          <div class="card-subtitle">1/2 to 1 Acre</div>
+          <div class="price"><span class="starting">Starting at</span>$199<span class="period">/mo</span></div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li><i class="fas fa-check"></i> Navimow X-Series mower provided</li>
+            <li><i class="fas fa-check"></i> Professional installation</li>
+            <li><i class="fas fa-check"></i> All blade changes & maintenance</li>
+            <li><i class="fas fa-check"></i> Full seasonal care package</li>
+            <li><i class="fas fa-check"></i> Quarterly on-site check-ins</li>
+            <li><i class="fas fa-check"></i> Same-day emergency support</li>
+          </ul>
+          <button class="btn-cart" onclick="addToCart('MaaS — Large Yard (1/2-1 acre)', 199, 'robot')">Get Started</button>
+        </div>
+      </div>
+      <!-- Estate / Custom -->
+      <div class="custom-card">
+        <i class="fas fa-building" style="font-size:2rem;opacity:.7;"></i>
+        <h3>Estate & HOA</h3>
+        <p>1+ acre properties, multi-mower setups, and commercial grounds. Custom monthly pricing.</p>
+        <a href="index.html#contact" class="btn btn-white">Get Custom Quote</a>
+      </div>
+    </div>
+
+    <!-- Complex property note -->
+    <div class="maas-note fade-in">
+      <i class="fas fa-info-circle"></i>
+      <div>
+        <strong>Complex property?</strong> Yards with steep slopes, multiple zones, or heavy obstacles may require a higher-tier mower. We'll assess your property for free and recommend the right plan — no surprises.
+      </div>
+    </div>
+
+    <!-- Comparison vs Traditional -->
+    <div class="comparison-wrap fade-in">
+      <h3 style="text-align:center;font-size:1.3rem;font-weight:700;margin-bottom:24px;color:var(--g900);">MaaS vs. Traditional Lawn Service</h3>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Traditional Mowing</th>
+            <th class="highlight">Mowing as a Service</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mowing Frequency</td>
+            <td>Weekly (weather permitting)</td>
+            <td><strong>Daily — always perfect</strong></td>
+          </tr>
+          <tr>
+            <td>Typical Monthly Cost</td>
+            <td>$200–$400/mo</td>
+            <td><strong>$99–$199/mo</strong></td>
+          </tr>
+          <tr>
+            <td>Noise & Disruption</td>
+            <td>Loud crews, 30-60 min</td>
+            <td><strong>Whisper-quiet, autonomous</strong></td>
+          </tr>
+          <tr>
+            <td>Emissions</td>
+            <td>Gas-powered</td>
+            <td><strong>Zero emissions</strong></td>
+          </tr>
+          <tr>
+            <td>Cut Quality</td>
+            <td>Varies by crew</td>
+            <td><strong>Consistent, mulch-cut</strong></td>
+          </tr>
+          <tr>
+            <td>Cancel Anytime</td>
+            <td class="check"><i class="fas fa-check"></i></td>
+            <td>After 12 months</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Frequently Asked <span class="underline-accent">Questions</span></h2>
+    </div>
+    <div class="faq-grid fade-in">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Do I need a service plan if I buy a mower? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>Service plans are optional but highly recommended. Robotic mowers need regular blade changes, software updates, and seasonal prep to perform their best. A service plan covers all of that and saves you money compared to individual service calls.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Can I add a service plan later? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>Yes! You can add a service plan at any time. However, we recommend signing up at installation to get the best value and ensure your mower stays covered from day one.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">What's included in a typical installation? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>Every installation includes an on-site property survey, charging station setup, boundary mapping (wire or RTK depending on model), mower programming and configuration, zone scheduling, and a full owner training walkthrough. You'll be mowing the same day.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Do you service mowers bought elsewhere? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>We service Navimow and Yarbo mowers regardless of where they were purchased. Contact us for a diagnostic assessment and we'll get your mower running right.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">What areas do you serve? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>We serve Westchester and Putnam County and surrounding areas within 30 miles of our Peekskill showroom. This includes Cortlandt, Yorktown, Croton, Ossining, Bedford, Katonah, Mahopac, Carmel, and more.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">How long does installation take? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>Most installations take 2-4 hours depending on property size and complexity. Your mower will be cutting grass the same day. We'll also spend time training you on the app and controls.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">How does Mowing as a Service work? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>We provide, install, and maintain a robotic mower on your property — you pay a flat monthly fee with no equipment to buy. The minimum commitment is 12 months, after which you can continue month-to-month or cancel anytime. If you cancel, we simply remove the equipment. It's like a lawn service, but quieter, cheaper, and your lawn gets cut daily.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">Is Mowing as a Service cheaper than a lawn crew? <i class="fas fa-chevron-down"></i></div>
+        <div class="faq-answer"><p>In most cases, yes. Traditional lawn services in Westchester typically run $200-$400/month during the mowing season. Our MaaS plans start at $99/month and your lawn gets mowed daily instead of weekly — with zero emissions and no noisy crews.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container fade-in">
+    <h2>Ready to Get Started?</h2>
+    <p>Schedule a free property assessment and we'll recommend the right mower, installation package, and service plan for your yard.</p>
+    <div class="cta-buttons">
+      <a href="index.html#contact" class="btn btn-white">Get Free Assessment</a>
+      <a href="tel:9143915233" class="btn btn-outline">Call Us Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">Smart <span class="accent">Lawn</span> NY</div>
+        <p>Westchester & Putnam County's first robotic mower showroom. A division of Second Nature Tree LLC.</p>
+        <p style="font-size:.82rem;color:var(--g500);margin-bottom:16px;">1 Highland Industrial Park, Peekskill, NY 10566</p>
+        <div class="footer-social"><a href="https://facebook.com/SmartLawnNY" target="_blank"><i class="fab fa-facebook-f"></i></a><a href="https://instagram.com/SmartLawnNY" target="_blank"><i class="fab fa-instagram"></i></a><a href="https://youtube.com/@SmartLawnNY" target="_blank"><i class="fab fa-youtube"></i></a></div>
+      </div>
+      <div class="footer-col"><h4>Site Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="index.html#about">About</a></li><li><a href="index.html#products">Products</a></li><li><a href="services.html">Services</a></li><li><a href="index.html#contact">Contact</a></li></ul></div>
+      <div class="footer-col"><h4>Brands</h4><ul><li><a href="#">Segway Navimow</a></li><li><a href="#">Yarbo</a></li><li><a href="#">Lymow</a></li><li><a href="#">Mammotion</a></li></ul><h4 style="margin-top:24px;">Also Visit</h4><ul><li><a href="https://peekskilltree.com" target="_blank">Peekskill Tree Service</a></li></ul></div>
+      <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Product launches, seasonal tips, and offers.</p><div class="newsletter-form"><input type="email" placeholder="Email Address"><button class="btn btn-primary btn-sm">Sign Up</button></div></div>
+    </div>
+    <div class="footer-bottom">&copy; 2026 Smart Lawn NY &mdash; Second Nature Tree LLC. All Rights Reserved. | SmartLawnNY.com</div>
+  </div>
+</footer>
+
+<script>
+// === CART ===
+let cart = [];
+function toggleCart() {
+  document.getElementById('cartSidebar').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+const iconMap = {
+  'tools': 'fa-tools', 'shield': 'fa-shield-alt', 'star': 'fa-star', 'crown': 'fa-crown',
+  'sun': 'fa-sun', 'wrench': 'fa-wrench', 'snowflake': 'fa-snowflake', 'box-open': 'fa-box-open',
+  'robot': 'fa-robot'
+};
+function addToCart(name, price, icon) {
+  cart.push({name, price, icon, id: Date.now()});
+  updateCart();
+  toggleCart();
+}
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  updateCart();
+}
+function updateCart() {
+  const countEl = document.getElementById('cartCount');
+  const itemsEl = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  countEl.textContent = cart.length;
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<div class="cart-empty"><i class="fas fa-shopping-bag"></i><p>Your cart is empty</p></div>';
+  } else {
+    itemsEl.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-icon"><i class="fas ${iconMap[item.icon] || 'fa-concierge-bell'}"></i></div>
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <div class="cart-item-price">$${item.price.toLocaleString()}</div>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
+      </div>
+    `).join('');
+  }
+  totalEl.textContent = '$' + cart.reduce((sum, item) => sum + item.price, 0).toLocaleString();
+}
+function checkout() {
+  if (cart.length === 0) return alert('Your cart is empty!');
+  const items = cart.map(i => i.name + ' ($' + i.price.toLocaleString() + ')').join(', ');
+  window.location.href = 'index.html#contact';
+  // Store cart data for contact form
+  sessionStorage.setItem('cartItems', items);
+}
+
+// === FAQ ===
+function toggleFaq(el) {
+  const answer = el.nextElementSibling;
+  const isOpen = el.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-question').forEach(q => {
+    q.classList.remove('open');
+    q.nextElementSibling.style.maxHeight = null;
+  });
+  if (!isOpen) {
+    el.classList.add('open');
+    answer.style.maxHeight = answer.scrollHeight + 'px';
+  }
+}
+
+// === SCROLL ANIMATIONS ===
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// === SMOOTH SCROLL ===
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+});
+</script>
+
+</body>
+</html>

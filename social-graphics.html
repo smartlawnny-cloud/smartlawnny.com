@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Lawn NY - Social Media Graphics Kit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f3f4f6; padding: 40px; color: #1f2937; }
+    h1 { text-align: center; font-size: 1.8rem; margin-bottom: 6px; }
+    .subtitle { text-align: center; color: #6b7280; margin-bottom: 24px; font-size: .95rem; }
+    .platform-nav { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 48px; }
+    .platform-nav a { padding: 8px 18px; background: #fff; border-radius: 50px; font-size: .85rem; font-weight: 600; color: #374151; border: 1px solid #e5e7eb; transition: all .2s; }
+    .platform-nav a:hover, .platform-nav a:focus { background: #6abb1e; color: #fff; border-color: #6abb1e; text-decoration: none; }
+    .graphic-section { margin-bottom: 60px; }
+    .graphic-section h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; padding-top: 20px; }
+    .dimensions { color: #6b7280; font-size: .85rem; margin-bottom: 12px; }
+    .note { color: #6b7280; font-size: .8rem; margin-bottom: 12px; font-style: italic; }
+    .graphic-row { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+    .graphic-item { margin-bottom: 24px; }
+    .graphic-item .label { font-size: .85rem; color: #6b7280; margin-top: 8px; font-weight: 600; }
+    .scroll-wrap { overflow: auto; max-width: 100%; max-height: 700px; border: 1px solid #e5e7eb; border-radius: 4px; }
+    .dl { display: inline-block; margin-top: 10px; padding: 8px 22px; background: #6abb1e; color: #fff; border: none; border-radius: 50px; font-weight: 700; font-size: .82rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .dl:hover { background: #5a9e18; }
+
+    /* ===== SHARED GRAPHIC STYLES ===== */
+    .g-teal { background: linear-gradient(135deg, #0d3b3b 0%, #1a5c5c 40%, #134545 100%); position: relative; overflow: hidden; }
+    .g-teal::before { content: ''; position: absolute; inset: 0; background: url('https://navimow.com/cdn/shop/files/kv-6-2560.jpg') center/cover no-repeat; opacity: .15; }
+    .g-green { background: linear-gradient(135deg, #6abb1e 0%, #5a9e18 100%); }
+    .g-white { background: #fff; }
+    .g-badge { display: inline-block; background: rgba(106,187,30,.2); border: 1px solid rgba(106,187,30,.4); color: #7ecc35; padding: 4px 14px; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    .g-brand { font-weight: 900; color: #fff; line-height: 1.05; }
+    .g-brand .gr { color: #6abb1e; }
+    .g-tagline { font-weight: 600; color: #7ecc35; }
+    .g-info { color: rgba(255,255,255,.7); line-height: 1.6; }
+    .g-info strong { color: #fff; }
+    .g-mower { filter: drop-shadow(0 8px 24px rgba(0,0,0,.4)); }
+    .g-accent { position: absolute; width: 200px; height: 200px; background: radial-gradient(circle, rgba(106,187,30,.15), transparent 70%); border-radius: 50%; }
+    .g-corner { position: absolute; display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,.08); backdrop-filter: blur(6px); padding: 5px 12px; border-radius: 50px; border: 1px solid rgba(255,255,255,.12); }
+    .g-corner span { color: rgba(255,255,255,.6); font-weight: 600; }
+
+    /* Profile circle shared */
+    .prof-circle { border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .prof-circle .p-name { font-weight: 900; color: #fff; line-height: 1.1; }
+    .prof-circle .p-sub { font-weight: 700; color: rgba(255,255,255,.75); text-transform: uppercase; letter-spacing: .1em; }
+
+    /* Square profile shared */
+    .prof-square { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border-radius: 8px; overflow: hidden; }
+    .prof-square .sq-bar { width: 100%; position: absolute; top: 0; left: 0; background: linear-gradient(135deg, #6abb1e, #5a9e18); }
+    .prof-square .sq-name { font-weight: 900; color: #1f2937; position: relative; z-index: 2; }
+    .prof-square .sq-name .gr { color: #6abb1e; }
+    .prof-square .sq-sub { font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .1em; position: relative; z-index: 2; }
+  </style>
+</head>
+<body>
+
+<h1>Smart Lawn NY - Social Media Graphics Kit</h1>
+<p class="subtitle">Click "Download" under each graphic to save as PNG. All graphics are at exact platform dimensions.</p>
+
+<nav class="platform-nav">
+  <a href="#sec-ig">Instagram</a>
+  <a href="#sec-google">Google Business</a>
+  <a href="#sec-yt">YouTube</a>
+  <a href="#sec-li">LinkedIn</a>
+  <a href="#sec-nd">Nextdoor</a>
+  <a href="#sec-og">OG / Share Image</a>
+  <a href="#sec-fb">Facebook</a>
+</nav>
+
+<!-- ============================================================ -->
+<!-- INSTAGRAM -->
+<!-- ============================================================ -->
+<div class="graphic-section" id="sec-ig">
+  <h2>Instagram</h2>
+  <div class="graphic-row">
+
+    <!-- IG Profile 320x320 -->
+    <div class="graphic-item">
+      <p class="dimensions">Profile Picture &mdash; 320 x 320 px</p>
+      <div id="ig-profile" class="prof-circle g-green" style="width:320px;height:320px;">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:130px;height:130px;margin-bottom:4px;">
+          <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+          <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+          <circle cx="30" cy="24" r="3" fill="#fff" opacity="0.5"/>
+          <path d="M26 20 L30 12 L34 20" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M22 16 L30 8 L38 16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+          <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+        </svg>
+        <div class="p-name" style="font-size:28px;">Smart <span style="opacity:.85">Lawn</span></div>
+        <div class="p-sub" style="font-size:9px;margin-top:2px;">Automation & Robotics</div>
+      </div>
+      <button class="dl" onclick="dl('ig-profile','smartlawn-ig-profile.png')">Download</button>
+    </div>
+
+    <!-- IG Post 1080x1080 -->
+    <div class="graphic-item">
+      <p class="dimensions">Post Template &mdash; 1080 x 1080 px</p>
+      <div class="scroll-wrap" style="max-height:500px;">
+        <div id="ig-post" class="g-teal" style="width:1080px;height:1080px;display:flex;flex-direction:column;justify-content:space-between;padding:60px;">
+          <div class="g-accent" style="top:-80px;right:-80px;width:300px;height:300px;"></div>
+          <div style="position:relative;z-index:2;">
+            <div class="g-badge" style="font-size:14px;margin-bottom:20px;">Authorized Navimow & Yarbo Dealer</div>
+            <div class="g-brand" style="font-size:72px;"><span class="gr">Smart</span> Lawn</div>
+            <div class="g-tagline" style="font-size:24px;margin-top:4px;">Automation & Robotics</div>
+          </div>
+          <div style="position:relative;z-index:2;text-align:center;">
+            <img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/Nav_Bar_i206_AWD_Front45.png" crossorigin="anonymous" style="width:480px;margin:0 auto;" class="g-mower" alt="Navimow">
+          </div>
+          <div style="position:relative;z-index:2;">
+            <div style="background:rgba(0,0,0,.3);backdrop-filter:blur(8px);border-radius:16px;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="color:#fff;font-weight:800;font-size:20px;">Robotic Mower Sales, Installation & Service</div>
+                <div style="color:rgba(255,255,255,.6);font-size:15px;margin-top:4px;">Peekskill, NY &bull; Westchester & Putnam County</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="color:#7ecc35;font-weight:800;font-size:18px;">smartlawnny.com</div>
+                <div style="color:rgba(255,255,255,.6);font-size:14px;">(914) 391-5233</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="dl" onclick="dl('ig-post','smartlawn-ig-post.png')">Download</button>
+    </div>
+  </div>
+
+  <!-- IG Story 1080x1920 -->
+  <div class="graphic-item">
+    <p class="dimensions">Story Template &mdash; 1080 x 1920 px</p>
+    <div class="scroll-wrap" style="max-height:500px;">
+      <div id="ig-story" style="width:1080px;height:1920px;background:linear-gradient(180deg,#0d3b3b 0%,#1a5c5c 30%,#134545 60%,#1a1a2e 100%);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:80px 60px;">
+        <div class="g-accent" style="top:200px;left:-100px;width:400px;height:400px;"></div>
+        <div class="g-accent" style="bottom:300px;right:-100px;width:350px;height:350px;"></div>
+        <div style="position:relative;z-index:2;text-align:center;margin-bottom:40px;">
+          <div class="g-badge" style="font-size:16px;margin-bottom:24px;">Authorized Navimow & Yarbo Dealer</div>
+          <div class="g-brand" style="font-size:80px;"><span class="gr">Smart</span> Lawn</div>
+          <div class="g-tagline" style="font-size:26px;margin-top:8px;">Automation & Robotics</div>
+        </div>
+        <div style="position:relative;z-index:2;flex:1;display:flex;align-items:center;">
+          <img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/Nav_Bar_i206_AWD_Front45.png" crossorigin="anonymous" style="width:700px;" class="g-mower" alt="Navimow">
+        </div>
+        <div style="position:relative;z-index:2;text-align:center;margin-top:40px;">
+          <div style="display:flex;gap:24px;justify-content:center;margin-bottom:40px;">
+            <div style="background:rgba(106,187,30,.15);border:1px solid rgba(106,187,30,.3);border-radius:14px;padding:16px 20px;text-align:center;">
+              <div style="color:#7ecc35;font-size:14px;font-weight:700;">Zero Emissions</div>
+            </div>
+            <div style="background:rgba(106,187,30,.15);border:1px solid rgba(106,187,30,.3);border-radius:14px;padding:16px 20px;text-align:center;">
+              <div style="color:#7ecc35;font-size:14px;font-weight:700;">Whisper Quiet</div>
+            </div>
+            <div style="background:rgba(106,187,30,.15);border:1px solid rgba(106,187,30,.3);border-radius:14px;padding:16px 20px;text-align:center;">
+              <div style="color:#7ecc35;font-size:14px;font-weight:700;">App Controlled</div>
+            </div>
+          </div>
+          <div style="color:#fff;font-weight:800;font-size:28px;margin-bottom:8px;">smartlawnny.com</div>
+          <div style="color:rgba(255,255,255,.5);font-size:18px;">Peekskill, NY &bull; (914) 391-5233</div>
+          <div style="margin-top:40px;color:rgba(255,255,255,.3);font-size:16px;">&#9650; Swipe Up</div>
+        </div>
+      </div>
+    </div>
+    <button class="dl" onclick="dl('ig-story','smartlawn-ig-story.png')">Download</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- GOOGLE BUSINESS PROFILE -->
+<!-- ============================================================ -->
+<div class="graphic-section" id="sec-google">
+  <h2>Google Business Profile</h2>
+  <div class="graphic-item">
+    <p class="dimensions">Profile Photo &mdash; 720 x 720 px</p>
+    <div class="scroll-wrap" style="max-height:500px;">
+      <div id="gbp-photo" class="g-white" style="width:720px;height:720px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:200px;background:linear-gradient(135deg,#6abb1e,#5a9e18);"></div>
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:200px;height:200px;position:relative;z-index:2;">
+          <circle cx="30" cy="30" r="30" fill="#f0f7e6"/>
+          <rect x="16" y="28" width="28" height="12" rx="4" fill="#1a5c5c"/>
+          <circle cx="30" cy="24" r="3" fill="#1a5c5c" opacity="0.6"/>
+          <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="20" cy="40" r="3" fill="#333"/>
+          <circle cx="40" cy="40" r="3" fill="#333"/>
+        </svg>
+        <div style="position:relative;z-index:2;text-align:center;margin-top:16px;">
+          <div style="font-size:52px;font-weight:900;color:#1f2937;"><span style="color:#6abb1e;">Smart</span> Lawn <span style="color:#6b7280;font-size:36px;">NY</span></div>
+          <div style="font-size:14px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.12em;margin-top:4px;">Automation & Robotics</div>
+        </div>
+        <div style="position:relative;z-index:2;text-align:center;margin-top:24px;color:#9ca3af;font-size:16px;">
+          Peekskill, NY &bull; (914) 391-5233<br>smartlawnny.com
+        </div>
+      </div>
+    </div>
+    <button class="dl" onclick="dl('gbp-photo','smartlawn-google-business.png')">Download</button>
+    <p class="note">Upload at: Google Business Profile &gt; Photos &gt; Logo</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- YOUTUBE -->
+<!-- ============================================================ -->
+<div class="graphic-section" id="sec-yt">
+  <h2>YouTube</h2>
+
+  <!-- YT Banner 2560x1440 -->
+  <div class="graphic-item">
+    <p class="dimensions">Channel Banner &mdash; 2560 x 1440 px (safe area: 1546 x 423 center)</p>
+    <p class="note">Scroll horizontally to see the full banner. Critical content is centered in the safe zone.</p>
+    <div class="scroll-wrap" style="max-height:520px;">
+      <div id="yt-banner" class="g-teal" style="width:2560px;height:1440px;display:flex;align-items:center;justify-content:center;">
+        <div class="g-accent" style="top:-100px;left:200px;width:400px;height:400px;"></div>
+        <div class="g-accent" style="bottom:-100px;right:300px;width:500px;height:500px;"></div>
+        <!-- Safe area content -->
+        <div style="width:1546px;height:423px;position:relative;z-index:2;display:flex;align-items:center;padding:0 60px;">
+          <div style="flex:1;">
+            <div class="g-badge" style="font-size:13px;margin-bottom:16px;">Authorized Navimow & Yarbo Dealer</div>
+            <div class="g-brand" style="font-size:64px;"><span class="gr">Smart</span> Lawn</div>
+            <div class="g-tagline" style="font-size:20px;margin-top:4px;">Automation & Robotics</div>
+            <div class="g-info" style="font-size:15px;margin-top:16px;">
+              <strong>Robotic Mower Sales, Installation & Service</strong><br>
+              Peekskill, NY &bull; smartlawnny.com &bull; (914) 391-5233
+            </div>
+          </div>
+          <div style="flex:0 0 420px;text-align:center;">
+            <img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/Nav_Bar_i206_AWD_Front45.png" crossorigin="anonymous" style="width:380px;" class="g-mower" alt="Navimow">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="dl" onclick="dl('yt-banner','smartlawn-youtube-banner.png',1)">Download</button>
+    <p class="note">Upload at: YouTube Studio &gt; Customization &gt; Branding &gt; Banner image</p>
+  </div>
+
+  <!-- YT Profile 800x800 -->
+  <div class="graphic-item">
+    <p class="dimensions">Profile Picture &mdash; 800 x 800 px</p>
+    <div class="scroll-wrap" style="max-height:500px;">
+      <div id="yt-profile" class="prof-circle g-green" style="width:800px;height:800px;">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:320px;height:320px;margin-bottom:8px;">
+          <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+          <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+          <circle cx="30" cy="24" r="3" fill="#fff" opacity="0.5"/>
+          <path d="M26 20 L30 12 L34 20" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M22 16 L30 8 L38 16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+          <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+        </svg>
+        <div class="p-name" style="font-size:68px;">Smart <span style="opacity:.85">Lawn</span></div>
+        <div class="p-sub" style="font-size:18px;margin-top:4px;">Automation & Robotics</div>
+      </div>
+    </div>
+    <button class="dl" onclick="dl('yt-profile','smartlawn-youtube-profile.png')">Download</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- LINKEDIN -->
+<!-- ============================================================ -->
+<div class="graphic-section" id="sec-li">
+  <h2>LinkedIn</h2>
+  <div class="graphic-row">
+
+    <!-- LinkedIn Logo 300x300 -->
+    <div class="graphic-item">
+      <p class="dimensions">Company Logo &mdash; 300 x 300 px</p>
+      <div id="li-logo" class="prof-square g-white" style="width:300px;height:300px;">
+        <div class="sq-bar" style="height:90px;"></div>
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:110px;height:110px;position:relative;z-index:2;margin-top:28px;">
+          <circle cx="30" cy="30" r="30" fill="#f0f7e6"/>
+          <rect x="16" y="28" width="28" height="12" rx="4" fill="#1a5c5c"/>
+          <circle cx="30" cy="24" r="3" fill="#1a5c5c" opacity="0.6"/>
+          <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="20" cy="40" r="3" fill="#333"/>
+          <circle cx="40" cy="40" r="3" fill="#333"/>
+        </svg>
+        <div class="sq-name" style="font-size:32px;margin-top:8px;"><span class="gr">Smart</span> Lawn</div>
+        <div class="sq-sub" style="font-size:9px;">Automation & Robotics</div>
+      </div>
+      <button class="dl" onclick="dl('li-logo','smartlawn-linkedin-logo.png')">Download</button>
+    </div>
+
+    <!-- LinkedIn Cover 1128x191 -->
+    <div class="graphic-item">
+      <p class="dimensions">Company Cover &mdash; 1128 x 191 px</p>
+      <div id="li-cover" class="g-teal" style="width:1128px;height:191px;display:flex;align-items:center;padding:0 40px;">
+        <div class="g-accent" style="top:-60px;right:-60px;width:200px;height:200px;"></div>
+        <div style="flex:1;position:relative;z-index:2;">
+          <div class="g-brand" style="font-size:36px;"><span class="gr">Smart</span> Lawn <span style="opacity:.5;font-size:24px;">NY</span></div>
+          <div style="color:rgba(255,255,255,.6);font-size:13px;font-weight:600;margin-top:4px;">Robotic Mower Sales, Installation & Service &bull; Peekskill, NY &bull; smartlawnny.com</div>
+        </div>
+        <div style="position:relative;z-index:2;">
+          <img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/Nav_Bar_i206_AWD_Front45.png" crossorigin="anonymous" style="height:155px;" class="g-mower" alt="Navimow">
+        </div>
+      </div>
+      <button class="dl" onclick="dl('li-cover','smartlawn-linkedin-cover.png')">Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NEXTDOOR -->
+<!-- ============================================================ -->
+<div class="graphic-section" id="sec-nd">
+  <h2>Nextdoor</h2>
+  <div class="graphic-item">
+    <p class="dimensions">Business Profile &mdash; 400 x 400 px</p>
+    <div id="nd-profile" class="prof-circle g-green" style="width:400px;height:400px;">
+      <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:150px;height:150px;margin-bottom:4px;">
+        <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+        <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+        <circle cx="30" cy="24" r="3" fill="#fff" opacity="0.5"/>
+        <path d="M26 20 L30 12 L34 20" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M22 16 L30 8 L38 16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+        <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+        <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+      </svg>
+      <div class="p-name" style="font-size:34px;">Smart <span style="opacity:.85">Lawn</span></div>
+      <div class="p-sub" style="font-size:10px;margin-top:2px;">Peekskill, NY</div>
+    </div>
+    <button class="dl" onclick="dl('nd-profile','smartlawn-nextdoor-profile.png')">Download</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- OG / SHARE IMAGE -->
+<!-- ============================================================ -->
+<div class="graphic-section" id="sec-og">
+  <h2>Open Graph / Link Preview</h2>
+  <div class="graphic-item">
+    <p class="dimensions">Share Image &mdash; 1200 x 630 px (used when sharing smartlawnny.com links)</p>
+    <div class="scroll-wrap">
+      <div id="og-image" class="g-teal" style="width:1200px;height:630px;display:flex;align-items:center;padding:0 64px;">
+        <div class="g-accent" style="top:-80px;right:-80px;width:300px;height:300px;"></div>
+        <div style="flex:1;position:relative;z-index:2;">
+          <div class="g-badge" style="font-size:13px;margin-bottom:18px;">Authorized Navimow & Yarbo Dealer</div>
+          <div class="g-brand" style="font-size:56px;"><span class="gr">Smart</span> Lawn</div>
+          <div class="g-tagline" style="font-size:18px;margin-top:4px;">Automation & Robotics</div>
+          <div class="g-info" style="font-size:14px;margin-top:20px;">
+            <strong>Robotic Mower Sales, Installation & Service</strong><br>
+            Peekskill, NY &bull; Serving Westchester & Putnam County<br>
+            smartlawnny.com &bull; (914) 391-5233
+          </div>
+        </div>
+        <div style="flex:0 0 400px;position:relative;z-index:2;text-align:center;">
+          <img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/Nav_Bar_i206_AWD_Front45.png" crossorigin="anonymous" style="width:360px;" class="g-mower" alt="Navimow">
+        </div>
+        <div class="g-corner" style="bottom:24px;right:64px;">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:20px;width:20px;">
+            <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+            <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+            <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+            <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+          </svg>
+          <span style="font-size:11px;">smartlawnny.com</span>
+        </div>
+      </div>
+    </div>
+    <button class="dl" onclick="dl('og-image','smartlawn-og-share.png')">Download</button>
+    <p class="note">Add to your website &lt;head&gt;: &lt;meta property="og:image" content="https://smartlawnny.com/og-share.png"&gt;</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FACEBOOK (re-include) -->
+<!-- ============================================================ -->
+<div class="graphic-section" id="sec-fb">
+  <h2>Facebook</h2>
+  <div class="graphic-row">
+
+    <!-- FB Cover 820x312 -->
+    <div class="graphic-item">
+      <p class="dimensions">Cover Photo &mdash; 820 x 312 px</p>
+      <div id="fb-cover" class="g-teal" style="width:820px;height:312px;display:flex;align-items:center;padding:0 48px;">
+        <div class="g-accent" style="top:-60px;right:-60px;width:200px;height:200px;"></div>
+        <div style="flex:1;position:relative;z-index:2;">
+          <div class="g-badge" style="font-size:11px;margin-bottom:14px;">Authorized Navimow & Yarbo Dealer</div>
+          <div class="g-brand" style="font-size:42px;"><span class="gr">Smart</span> Lawn</div>
+          <div class="g-tagline" style="font-size:14px;margin-top:2px;">Automation & Robotics</div>
+          <div class="g-info" style="font-size:12px;margin-top:14px;">
+            <strong>Robotic Mower Sales, Installation & Service</strong><br>
+            Peekskill, NY &bull; Serving Westchester & Putnam County<br>
+            smartlawnny.com &bull; (914) 391-5233
+          </div>
+        </div>
+        <div style="flex:0 0 300px;position:relative;z-index:2;text-align:center;">
+          <img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/Nav_Bar_i206_AWD_Front45.png" crossorigin="anonymous" style="width:280px;" class="g-mower" alt="Navimow">
+        </div>
+        <div class="g-corner" style="bottom:20px;right:48px;">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:20px;width:20px;">
+            <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+            <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+            <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+            <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+          </svg>
+          <span style="font-size:11px;">smartlawnny.com</span>
+        </div>
+      </div>
+      <button class="dl" onclick="dl('fb-cover','smartlawn-fb-cover.png')">Download</button>
+    </div>
+
+    <!-- FB Profile 170x170 -->
+    <div class="graphic-item">
+      <p class="dimensions">Profile Picture &mdash; 170 x 170 px</p>
+      <div id="fb-profile" class="prof-circle g-green" style="width:170px;height:170px;">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:70px;height:70px;margin-bottom:2px;">
+          <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+          <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+          <circle cx="30" cy="24" r="3" fill="#fff" opacity="0.5"/>
+          <path d="M26 20 L30 12 L34 20" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M22 16 L30 8 L38 16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+          <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+        </svg>
+        <div class="p-name" style="font-size:16px;">Smart <span style="opacity:.85">Lawn</span></div>
+        <div class="p-sub" style="font-size:7px;margin-top:1px;">Automation & Robotics</div>
+      </div>
+      <button class="dl" onclick="dl('fb-profile','smartlawn-fb-profile.png')">Download</button>
+    </div>
+  </div>
+</div>
+
+<script>
+async function dl(id, filename, scale) {
+  const el = document.getElementById(id);
+  try {
+    const canvas = await html2canvas(el, {
+      scale: scale || 2,
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: null,
+      logging: false
+    });
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (e) {
+    alert('Download failed. Try right-clicking the graphic and "Save image as..." instead.\n\n' + e.message);
+  }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Lawn NY - Facebook Graphics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f3f4f6; padding: 40px; color: #1f2937; }
+    h1 { text-align: center; font-size: 1.8rem; margin-bottom: 8px; }
+    .subtitle { text-align: center; color: #6b7280; margin-bottom: 48px; font-size: .95rem; }
+    .graphic-section { margin-bottom: 60px; }
+    .graphic-section h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+    .graphic-section .dimensions { color: #6b7280; font-size: .85rem; margin-bottom: 16px; }
+    .download-btn {
+      display: inline-block; margin-top: 14px; padding: 10px 28px;
+      background: #6abb1e; color: #fff; border: none; border-radius: 50px;
+      font-weight: 700; font-size: .9rem; cursor: pointer; font-family: 'Inter', sans-serif;
+    }
+    .download-btn:hover { background: #5a9e18; }
+
+    /* ===== COVER PHOTO ===== */
+    .cover-photo {
+      width: 820px; height: 312px; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #0d3b3b 0%, #1a5c5c 40%, #134545 100%);
+      border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    }
+    .cover-photo::before {
+      content: ''; position: absolute; inset: 0;
+      background: url('https://navimow.com/cdn/shop/files/kv-6-2560.jpg') center/cover no-repeat;
+      opacity: 0.18;
+    }
+    .cover-content { position: relative; z-index: 2; display: flex; height: 100%; align-items: center; padding: 0 48px; }
+    .cover-left { flex: 1; }
+    .cover-badge {
+      display: inline-block; background: rgba(106,187,30,.2); border: 1px solid rgba(106,187,30,.4);
+      color: #7ecc35; padding: 4px 14px; border-radius: 50px; font-size: 11px;
+      font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px;
+    }
+    .cover-brand { font-size: 42px; font-weight: 900; line-height: 1.05; color: #fff; margin-bottom: 4px; }
+    .cover-brand .green { color: #6abb1e; }
+    .cover-tagline { font-size: 14px; font-weight: 600; color: #7ecc35; margin-bottom: 16px; letter-spacing: .03em; }
+    .cover-info { font-size: 12px; color: rgba(255,255,255,.7); line-height: 1.6; }
+    .cover-info strong { color: #fff; }
+    .cover-right { flex: 0 0 320px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .cover-mower { width: 300px; height: auto; filter: drop-shadow(0 8px 24px rgba(0,0,0,.4)); }
+    .cover-logo {
+      position: absolute; bottom: 20px; right: 48px; display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.08); backdrop-filter: blur(6px);
+      padding: 6px 14px; border-radius: 50px; border: 1px solid rgba(255,255,255,.12);
+    }
+    .cover-logo span { color: rgba(255,255,255,.6); font-size: 11px; font-weight: 600; }
+    .cover-accent {
+      position: absolute; top: -60px; right: -60px; width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(106,187,30,.15), transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* ===== PROFILE PICTURE ===== */
+    .profile-pic {
+      width: 170px; height: 170px; border-radius: 50%; overflow: hidden; position: relative;
+      background: linear-gradient(135deg, #6abb1e 0%, #5a9e18 100%);
+      box-shadow: 0 4px 20px rgba(0,0,0,.15);
+      display: flex; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .profile-pic svg { width: 80px; height: 80px; margin-bottom: 2px; }
+    .profile-text { text-align: center; }
+    .profile-text .name { font-size: 16px; font-weight: 900; color: #fff; line-height: 1.1; }
+    .profile-text .name span { opacity: .85; }
+    .profile-text .sub { font-size: 7.5px; font-weight: 700; color: rgba(255,255,255,.75); text-transform: uppercase; letter-spacing: .1em; }
+
+    /* ===== ALT PROFILE (square for versatility) ===== */
+    .profile-square {
+      width: 170px; height: 170px; overflow: hidden; position: relative;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,.15); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .profile-square .sq-top {
+      width: 100%; height: 50px; background: linear-gradient(135deg, #6abb1e, #5a9e18);
+      position: absolute; top: 0; left: 0;
+    }
+    .profile-square svg { width: 60px; height: 60px; position: relative; z-index: 2; margin-top: 14px; }
+    .profile-square .sq-brand { font-size: 18px; font-weight: 900; color: #1f2937; margin-top: 4px; position: relative; z-index: 2; }
+    .profile-square .sq-brand .green { color: #6abb1e; }
+    .profile-square .sq-sub { font-size: 7px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .1em; position: relative; z-index: 2; }
+
+    .profiles-row { display: flex; gap: 32px; align-items: flex-start; }
+    .profile-option { text-align: center; }
+    .profile-option .label { font-size: .8rem; color: #6b7280; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Smart Lawn NY - Facebook Graphics</h1>
+  <p class="subtitle">Right-click any graphic to "Save image as..." or use the Download button below each one.</p>
+
+  <!-- ===== COVER PHOTO ===== -->
+  <div class="graphic-section">
+    <h2>Cover Photo</h2>
+    <p class="dimensions">820 x 312 px (Facebook recommended)</p>
+
+    <div class="cover-photo" id="cover">
+      <div class="cover-accent"></div>
+      <div class="cover-content">
+        <div class="cover-left">
+          <div class="cover-badge">Authorized Navimow & Yarbo Dealer</div>
+          <div class="cover-brand"><span class="green">Smart</span> Lawn</div>
+          <div class="cover-tagline">Automation & Robotics</div>
+          <div class="cover-info">
+            <strong>Robotic Mower Sales, Installation & Service</strong><br>
+            Peekskill, NY &bull; Serving Westchester & Putnam County<br>
+            smartlawnny.com &bull; (914) 391-5233
+          </div>
+        </div>
+        <div class="cover-right">
+          <img class="cover-mower" src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/Nav_Bar_i206_AWD_Front45.png" alt="Navimow" crossorigin="anonymous">
+        </div>
+      </div>
+      <div class="cover-logo">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:22px;width:22px;">
+          <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+          <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+          <circle cx="30" cy="24" r="3" fill="#fff" opacity="0.5"/>
+          <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+          <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+        </svg>
+        <span>smartlawnny.com</span>
+      </div>
+    </div>
+
+    <button class="download-btn" onclick="downloadGraphic('cover', 'smartlawn-cover-photo.png')">Download Cover Photo</button>
+  </div>
+
+  <!-- ===== PROFILE PICTURES ===== -->
+  <div class="graphic-section">
+    <h2>Profile Picture</h2>
+    <p class="dimensions">170 x 170 px (pick either option)</p>
+
+    <div class="profiles-row">
+      <!-- Option A: Circle with logo -->
+      <div class="profile-option">
+        <div class="profile-pic" id="profile-a">
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="30" fill="rgba(255,255,255,.15)"/>
+            <rect x="16" y="28" width="28" height="12" rx="4" fill="#fff"/>
+            <circle cx="30" cy="24" r="3" fill="#fff" opacity="0.5"/>
+            <path d="M26 20 L30 12 L34 20" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M22 16 L30 8 L38 16" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <circle cx="20" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+            <circle cx="40" cy="40" r="3" fill="rgba(255,255,255,.5)"/>
+          </svg>
+          <div class="profile-text">
+            <div class="name">Smart <span>Lawn</span></div>
+            <div class="sub">Automation & Robotics</div>
+          </div>
+        </div>
+        <div class="label">Option A: Green circle</div>
+        <button class="download-btn" onclick="downloadGraphic('profile-a', 'smartlawn-profile-circle.png')" style="margin-top:8px;font-size:.8rem;padding:8px 20px;">Download</button>
+      </div>
+
+      <!-- Option B: Square with brand -->
+      <div class="profile-option">
+        <div class="profile-square" id="profile-b">
+          <div class="sq-top"></div>
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="30" cy="30" r="30" fill="#f0f7e6"/>
+            <rect x="16" y="28" width="28" height="12" rx="4" fill="#1a5c5c"/>
+            <circle cx="30" cy="24" r="3" fill="#1a5c5c" opacity="0.6"/>
+            <path d="M26 20 L30 12 L34 20" stroke="#6abb1e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M22 16 L30 8 L38 16" stroke="#6abb1e" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <circle cx="20" cy="40" r="3" fill="#333"/>
+            <circle cx="40" cy="40" r="3" fill="#333"/>
+          </svg>
+          <div class="sq-brand"><span class="green">Smart</span> Lawn</div>
+          <div class="sq-sub">Automation & Robotics</div>
+        </div>
+        <div class="label">Option B: White square</div>
+        <button class="download-btn" onclick="downloadGraphic('profile-b', 'smartlawn-profile-square.png')" style="margin-top:8px;font-size:.8rem;padding:8px 20px;">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function downloadGraphic(elementId, filename) {
+      const el = document.getElementById(elementId);
+      try {
+        const canvas = await html2canvas(el, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: null,
+          logging: false
+        });
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (e) {
+        alert('Download failed — try right-clicking the graphic and choosing "Save image as..." instead.\n\nError: ' + e.message);
+      }
+    }
+  </script>
+
+</body>
+</html>
