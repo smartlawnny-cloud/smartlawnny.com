@@ -91,8 +91,9 @@
     .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
     .hero-badge { display: inline-block; background: rgba(106,187,30,.08); border: 1px solid rgba(106,187,30,.2); padding: 8px 20px; border-radius: 50px; font-size: .75rem; font-weight: 600; margin-bottom: 24px; letter-spacing: .04em; color: var(--green-dark); }
     .hero-product { position: relative; display: flex; align-items: center; justify-content: center; min-height: 480px; background: #fff; border-radius: 32px; box-shadow: 0 8px 40px rgba(0,0,0,.06); padding: 32px; }
-    .hero-product img { position: absolute; max-width: 90%; max-height: 400px; object-fit: contain; opacity: 0; transition: opacity 1.2s ease; }
-    .hero-product img.active { opacity: 1; }
+    .hero-product-link { position: absolute; max-width: 90%; max-height: 400px; opacity: 0; transition: opacity 1.2s ease; cursor: pointer; }
+    .hero-product-link.active { opacity: 1; }
+    .hero-product-link img { max-width: 100%; max-height: 400px; object-fit: contain; }
 
     /* === SERVICES === */
     .services { padding: 72px 0; background: #f5f5f7; }
@@ -210,6 +211,24 @@
     .why-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; color: #1d1d1f; }
     .why-card p { font-size: .9rem; color: #86868b; line-height: 1.7; }
 
+    /* === HANDS-FREE BANNER === */
+    .hands-free-banner { padding: 60px 0; background: linear-gradient(135deg, #1a3a2a 0%, #2d6a4f 100%); }
+    .hands-free-content { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
+    .hands-free-text h2 { color: #fff; font-size: 2rem; margin-bottom: 10px; }
+    .hands-free-text h2 .underline-accent::after { background: #4ecdc4; }
+    .hands-free-text p { color: rgba(255,255,255,.85); font-size: 1.15rem; margin: 0; }
+    .btn-light { display: inline-block; padding: 16px 36px; background: #fff; color: #1a3a2a; border-radius: 100px; font-weight: 600; font-size: 1rem; text-decoration: none; transition: all .3s; white-space: nowrap; }
+    .btn-light:hover { background: #f0f0f0; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+
+    /* === WHY BUY FROM US === */
+    .why-buy { padding: 80px 0; background: #fff; }
+    .why-buy-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; max-width: 1100px; margin: 40px auto 0; }
+    .why-buy-card { text-align: center; padding: 30px 20px; }
+    .why-buy-card .trust-icon { width: 72px; height: 72px; background: #f5f5f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+    .why-buy-card .trust-icon i { font-size: 1.6rem; color: #2d6a4f; }
+    .why-buy-card h3 { font-size: 1.1rem; font-weight: 700; color: #1d1d1f; margin-bottom: 10px; }
+    .why-buy-card p { font-size: .92rem; color: #6e6e73; line-height: 1.6; margin: 0; }
+
     /* === ROI CALCULATOR === */
     .roi-calc { padding: 80px 0; background: #fff; }
     .roi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; max-width: 1000px; margin: 0 auto; }
@@ -326,9 +345,13 @@
       .hero-buttons { justify-content: center; }
       .hero-badge { margin-left: auto; margin-right: auto; }
       .hero-product { min-height: 280px; padding: 24px; }
-      .hero-product img { max-height: 240px; }
+      .hero-product-link { max-height: 240px; }
+      .hero-product-link img { max-height: 240px; }
       .about-grid, .contact-grid { grid-template-columns: 1fr; }
       .product-grid, .solutions-grid, .testimonial-grid, .why-grid, .brands-grid, .services-grid { grid-template-columns: 1fr; }
+      .hands-free-content { flex-direction: column; text-align: center; }
+      .hands-free-text h2 { font-size: 1.5rem; }
+      .why-buy-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
       .footer-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
       .section-header h2, .find-mower h2, .cta-section h2 { font-size: 2rem; }
@@ -407,8 +430,8 @@
       </div>
     </div>
     <div class="hero-product">
-      <img class="active" src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png" alt="Navimow X450 Robotic Mower">
-      <img src="https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(3).png" alt="Yarbo Robotic Lawn Mower">
+      <a href="products/navimow-x450.html" class="hero-product-link active"><img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png" alt="Navimow X450 Robotic Mower"></a>
+      <a href="products/yarbo-lawn-mower.html" class="hero-product-link"><img src="https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(3).png" alt="Yarbo Robotic Lawn Mower"></a>
     </div>
   </div>
 </section>
@@ -734,6 +757,19 @@
   </div>
 </section>
 
+<!-- Hands-Free Lawn Care Banner -->
+<section class="hands-free-banner">
+  <div class="container">
+    <div class="hands-free-content fade-in">
+      <div class="hands-free-text">
+        <h2>Hands-Free Lawn Care — <span class="underline-accent">Starting at $99/mo</span></h2>
+        <p>We own the mower. We install it. We maintain it. You just enjoy a perfect lawn.</p>
+      </div>
+      <a href="services.html#maas" class="btn btn-light">Learn More →</a>
+    </div>
+  </div>
+</section>
+
 <!-- ROI Calculator -->
 <section class="roi-calc" id="roi-calculator">
   <div class="container">
@@ -796,6 +832,39 @@
   </div>
 </section>
 
+<!-- Why Buy From Us -->
+<section class="why-buy" id="why-us">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Why Buy From <span class="underline-accent">Smart Lawn</span></h2>
+    </div>
+    <div class="why-buy-grid">
+      <div class="why-buy-card fade-in">
+        <div class="trust-icon"><i class="fas fa-certificate"></i></div>
+        <h3>Authorized Dealer</h3>
+        <p>Factory-authorized for Segway Navimow &amp; Yarbo. Full warranty coverage on every mower.</p>
+      </div>
+      <div class="why-buy-card fade-in">
+        <div class="trust-icon"><i class="fas fa-store"></i></div>
+        <h3>Local Showroom</h3>
+        <p>See and test mowers in person at our Peekskill location. No pressure — just hands-on experience.</p>
+      </div>
+      <div class="why-buy-card fade-in">
+        <div class="trust-icon"><i class="fas fa-tools"></i></div>
+        <h3>Expert Installation</h3>
+        <p>Professional setup, boundary mapping, and training included with every mower purchase.</p>
+      </div>
+      <div class="why-buy-card fade-in">
+        <div class="trust-icon"><i class="fas fa-headset"></i></div>
+        <h3>Ongoing Support</h3>
+        <p>Annual service plans, seasonal care, and priority repairs. We're with you long after the sale.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:40px;" class="fade-in">
+      <a href="services.html" class="btn btn-primary">Explore Our Services</a>
+    </div>
+  </div>
+</section>
 
 <!-- Testimonials -->
 <section class="testimonials">
@@ -926,13 +995,13 @@
 <script>
 // === HERO PRODUCT CROSSFADE ===
 (function() {
-  var imgs = document.querySelectorAll('.hero-product img');
-  if (imgs.length < 2) return;
+  var links = document.querySelectorAll('.hero-product-link');
+  if (links.length < 2) return;
   var idx = 0;
   setInterval(function() {
-    imgs[idx].classList.remove('active');
-    idx = (idx + 1) % imgs.length;
-    imgs[idx].classList.add('active');
+    links[idx].classList.remove('active');
+    idx = (idx + 1) % links.length;
+    links[idx].classList.add('active');
   }, 5000);
 })();
 
