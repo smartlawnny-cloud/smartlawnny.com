@@ -249,6 +249,14 @@
     .roi-highlight { margin-top: 24px; background: rgba(106,187,30,.08); border: 1px solid rgba(106,187,30,.2); border-radius: 16px; padding: 24px; text-align: center; }
     .roi-highlight .big-number { font-size: 2.4rem; font-weight: 800; color: var(--green); line-height: 1.1; }
     .roi-highlight .big-label { font-size: .88rem; color: #86868b; margin-top: 4px; }
+    .roi-toggle { display: flex; background: #f0f0f3; border-radius: 10px; padding: 3px; margin-bottom: 24px; }
+    .roi-toggle button { flex: 1; padding: 10px 12px; border: none; border-radius: 8px; font-size: .82rem; font-weight: 600; font-family: inherit; cursor: pointer; background: transparent; color: #86868b; transition: all .2s; }
+    .roi-toggle button.active { background: #fff; color: #1d1d1f; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+    .roi-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+    .roi-metric-card { background: #fff; border-radius: 14px; padding: 16px; text-align: center; }
+    .roi-metric-card .metric-icon { font-size: 1.2rem; margin-bottom: 6px; }
+    .roi-metric-card .metric-value { font-size: 1.3rem; font-weight: 800; color: #1d1d1f; line-height: 1.2; }
+    .roi-metric-card .metric-label { font-size: .72rem; color: #86868b; margin-top: 4px; line-height: 1.3; }
     @media (max-width: 768px) { .roi-grid { grid-template-columns: 1fr; } }
 
     /* === VIDEOS === */
@@ -785,26 +793,39 @@
     </div>
     <div class="roi-grid">
       <div class="roi-inputs fade-in">
-        <div class="input-group">
-          <label for="roiLawnCost">What do you pay per lawn service visit?</label>
-          <input type="number" id="roiLawnCost" value="75" min="0" step="5" oninput="calcROI()">
-          <div class="hint">Average in Westchester: $60–$120 per cut</div>
+        <div class="roi-toggle">
+          <button class="active" onclick="setRoiMode('visit')">Calculate by visit</button>
+          <button onclick="setRoiMode('annual')">I know my annual cost</button>
         </div>
-        <div class="input-group">
-          <label for="roiFrequency">How often do you mow per month? (season)</label>
-          <select id="roiFrequency" onchange="calcROI()">
-            <option value="4" selected>Weekly (4x/mo)</option>
-            <option value="2">Bi-weekly (2x/mo)</option>
-            <option value="6">Twice a week (6x/mo)</option>
-          </select>
+        <div id="roiVisitInputs">
+          <div class="input-group">
+            <label for="roiLawnCost">What do you pay per lawn service visit?</label>
+            <input type="number" id="roiLawnCost" value="75" min="0" step="5" oninput="calcROI()">
+            <div class="hint">Average in Westchester: $60–$120 per cut</div>
+          </div>
+          <div class="input-group">
+            <label for="roiFrequency">How often do you mow per month? (season)</label>
+            <select id="roiFrequency" onchange="calcROI()">
+              <option value="4" selected>Weekly (4x/mo)</option>
+              <option value="2">Bi-weekly (2x/mo)</option>
+              <option value="6">Twice a week (6x/mo)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="roiMonths">How many months is your mowing season?</label>
+            <select id="roiMonths" onchange="calcROI()">
+              <option value="6">6 months (Apr–Sep)</option>
+              <option value="7" selected>7 months (Apr–Oct)</option>
+              <option value="8">8 months (Mar–Oct)</option>
+            </select>
+          </div>
         </div>
-        <div class="input-group">
-          <label for="roiMonths">How many months is your mowing season?</label>
-          <select id="roiMonths" onchange="calcROI()">
-            <option value="6">6 months (Apr–Sep)</option>
-            <option value="7" selected>7 months (Apr–Oct)</option>
-            <option value="8">8 months (Mar–Oct)</option>
-          </select>
+        <div id="roiAnnualInput" style="display:none;">
+          <div class="input-group">
+            <label for="roiAnnualCost">What do you spend per year on lawn care?</label>
+            <input type="number" id="roiAnnualCost" value="2100" min="0" step="100" oninput="calcROI()">
+            <div class="hint">Include mowing, trimming, edging, cleanup</div>
+          </div>
         </div>
         <div class="input-group">
           <label for="roiMower">Choose a robotic mower</label>
@@ -815,6 +836,11 @@
             <option value="6999" data-service="249">Navimow Terranox CM240M1 — $6,999</option>
             <option value="6194" data-service="199">Yarbo Complete Bundle — $6,194</option>
           </select>
+        </div>
+        <div class="input-group">
+          <label for="roiHours">Hours spent on lawn care per session?</label>
+          <input type="number" id="roiHours" value="1.5" min="0" max="8" step="0.5" oninput="calcROI()">
+          <div class="hint">Include setup, mowing, trimming, cleanup</div>
         </div>
       </div>
       <div class="roi-results fade-in">
@@ -829,6 +855,28 @@
           <div class="big-label">estimated 5-year savings</div>
         </div>
         <div class="roi-stat" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--g200);"><span class="label"><i class="fas fa-clock" style="color:var(--green);margin-right:6px;"></i>Break-even time</span><span class="value" id="roiBreakEven" style="font-weight:700;color:var(--green);">5 months</span></div>
+        <div class="roi-metrics">
+          <div class="roi-metric-card">
+            <div class="metric-icon" style="color:var(--green);"><i class="fas fa-piggy-bank"></i></div>
+            <div class="metric-value" id="roiMonthlySavings">$105</div>
+            <div class="metric-label">saved per month</div>
+          </div>
+          <div class="roi-metric-card">
+            <div class="metric-icon" style="color:#3b82f6;"><i class="fas fa-hourglass-half"></i></div>
+            <div class="metric-value" id="roiHoursSaved">42 hrs</div>
+            <div class="metric-label">freed up per year</div>
+          </div>
+          <div class="roi-metric-card">
+            <div class="metric-icon" style="color:#f59e0b;"><i class="fas fa-calculator"></i></div>
+            <div class="metric-value" id="roiDailyCost">$2.30</div>
+            <div class="metric-label">robotic mower per day</div>
+          </div>
+          <div class="roi-metric-card">
+            <div class="metric-icon" style="color:#10b981;"><i class="fas fa-leaf"></i></div>
+            <div class="metric-value" id="roiCO2">560 lbs</div>
+            <div class="metric-label">CO&#8322; eliminated per year</div>
+          </div>
+        </div>
         <div style="text-align:center;margin-top:20px;">
           <a href="#contact" class="btn btn-primary btn-sm">Get a Free Quote</a>
         </div>
@@ -1068,20 +1116,38 @@ function showQuizResult() {
 }
 
 // === ROI CALCULATOR ===
+var roiMode = 'visit';
+function setRoiMode(mode) {
+  roiMode = mode;
+  var btns = document.querySelectorAll('.roi-toggle button');
+  btns[0].classList.toggle('active', mode === 'visit');
+  btns[1].classList.toggle('active', mode === 'annual');
+  document.getElementById('roiVisitInputs').style.display = mode === 'visit' ? '' : 'none';
+  document.getElementById('roiAnnualInput').style.display = mode === 'annual' ? '' : 'none';
+  calcROI();
+}
 function calcROI() {
-  var cost = parseFloat(document.getElementById('roiLawnCost').value) || 0;
   var freq = parseInt(document.getElementById('roiFrequency').value);
   var months = parseInt(document.getElementById('roiMonths').value);
+  var cost = parseFloat(document.getElementById('roiLawnCost').value) || 0;
+  var hours = parseFloat(document.getElementById('roiHours').value) || 0;
   var mowerSelect = document.getElementById('roiMower');
   var mowerCost = parseInt(mowerSelect.value);
   var servicePlan = parseInt(mowerSelect.options[mowerSelect.selectedIndex].dataset.service);
   var installCost = 199;
-  var annual = cost * freq * months;
+  // Annual cost: either calculated from per-visit or entered directly
+  var annual;
+  if (roiMode === 'annual') {
+    annual = parseFloat(document.getElementById('roiAnnualCost').value) || 0;
+  } else {
+    annual = cost * freq * months;
+  }
   var fiveYrService = annual * 5;
   var totalMower = mowerCost + installCost;
   var fiveYrPlans = servicePlan * 5;
   var totalRobot = totalMower + fiveYrPlans;
   var savings = fiveYrService - totalRobot;
+  // Update main results
   document.getElementById('roiAnnual').textContent = '$' + annual.toLocaleString();
   document.getElementById('roi5yrService').textContent = '$' + fiveYrService.toLocaleString();
   document.getElementById('roiMowerCost').textContent = '$' + totalMower.toLocaleString();
@@ -1089,7 +1155,8 @@ function calcROI() {
   document.getElementById('roiTotalRobot').textContent = '$' + totalRobot.toLocaleString();
   document.getElementById('roiSavings').textContent = (savings >= 0 ? '$' : '-$') + Math.abs(savings).toLocaleString();
   document.getElementById('roiSavings').style.color = savings >= 0 ? 'var(--green)' : '#e53e3e';
-  var monthlyServiceCost = cost * freq;
+  // Break-even
+  var monthlyServiceCost = annual / 12;
   var monthlyRobotService = servicePlan / 12;
   var monthlySavings = monthlyServiceCost - monthlyRobotService;
   var breakEl = document.getElementById('roiBreakEven');
@@ -1098,10 +1165,22 @@ function calcROI() {
     if (beMonths < 12) { breakEl.textContent = beMonths + ' month' + (beMonths !== 1 ? 's' : ''); }
     else { var yrs = Math.floor(beMonths / 12); var mo = beMonths % 12; breakEl.textContent = yrs + ' year' + (yrs !== 1 ? 's' : '') + (mo > 0 ? ', ' + mo + ' mo' : ''); }
     breakEl.style.color = 'var(--green)';
-  } else {
-    breakEl.textContent = 'N/A';
-    breakEl.style.color = '#e53e3e';
-  }
+  } else { breakEl.textContent = 'N/A'; breakEl.style.color = '#e53e3e'; }
+  // New metrics
+  var annualSavings = savings / 5;
+  var mSave = annualSavings / 12;
+  document.getElementById('roiMonthlySavings').textContent = (mSave >= 0 ? '$' : '-$') + Math.abs(Math.round(mSave)).toLocaleString();
+  // Hours saved: use freq & months from visit mode even in annual mode (default 4x/mo, 7mo)
+  var sessionsPerYear = freq * months;
+  var hoursSaved = Math.round(hours * sessionsPerYear);
+  var weekends = Math.round(hoursSaved / 8);
+  document.getElementById('roiHoursSaved').textContent = hoursSaved + ' hrs';
+  // Daily cost of robotic mower (amortized over 5 years)
+  var dailyRobot = totalRobot / (5 * 365);
+  document.getElementById('roiDailyCost').textContent = '$' + dailyRobot.toFixed(2);
+  // CO2: ~20 lbs CO2 per gallon gas, ~1 gallon per mow session
+  var co2 = Math.round(20 * sessionsPerYear);
+  document.getElementById('roiCO2').textContent = co2.toLocaleString() + ' lbs';
 }
 calcROI();
 
