@@ -255,11 +255,17 @@
     .roi-annual-check { display: flex !important; align-items: center; gap: 8px; font-weight: 500 !important; font-size: .88rem; color: #6e6e73 !important; cursor: pointer; margin-bottom: 0 !important; }
     .roi-annual-check input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
     .roi-time-value { background: rgba(106,187,30,.08); border: 1px solid rgba(106,187,30,.2); border-radius: 10px; padding: 12px 16px; font-size: .88rem; color: #1d1d1f; margin-top: 4px; }
-    .roi-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-    .roi-metric-card { background: #fff; border-radius: 14px; padding: 16px; text-align: center; }
-    .roi-metric-card .metric-icon { font-size: 1.2rem; margin-bottom: 6px; }
-    .roi-metric-card .metric-value { font-size: 1.3rem; font-weight: 800; color: #1d1d1f; line-height: 1.2; }
-    .roi-metric-card .metric-label { font-size: .72rem; color: #86868b; margin-top: 4px; line-height: 1.3; }
+    .roi-benefits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 1000px; margin: 40px auto 0; }
+    .roi-benefit-card { text-align: center; padding: 28px 16px; background: #f5f5f7; border-radius: 18px; transition: all .3s; }
+    .roi-benefit-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+    .roi-benefit-card .benefit-icon { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 1.4rem; }
+    .roi-benefit-card:nth-child(1) .benefit-icon { background: rgba(59,130,246,.1); color: #3b82f6; }
+    .roi-benefit-card:nth-child(2) .benefit-icon { background: rgba(16,185,129,.1); color: #10b981; }
+    .roi-benefit-card:nth-child(3) .benefit-icon { background: rgba(139,92,246,.1); color: #8b5cf6; }
+    .roi-benefit-card:nth-child(4) .benefit-icon { background: rgba(106,187,30,.1); color: var(--green); }
+    .roi-benefit-card .benefit-value { font-size: 1.5rem; font-weight: 800; color: #1d1d1f; line-height: 1.2; }
+    .roi-benefit-card .benefit-label { font-size: .82rem; color: #86868b; margin-top: 6px; line-height: 1.4; }
+    @media (max-width: 768px) { .roi-benefits { grid-template-columns: 1fr 1fr; gap: 16px; } }
     @media (max-width: 768px) { .roi-grid { grid-template-columns: 1fr; } }
 
     /* === VIDEOS === */
@@ -906,34 +912,34 @@
           <div class="big-label">estimated 5-year savings</div>
         </div>
         <div class="roi-stat" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--g200);"><span class="label"><i class="fas fa-clock" style="color:var(--green);margin-right:6px;"></i>Break-even time</span><span class="value" id="roiBreakEven" style="font-weight:700;color:var(--green);">5 months</span></div>
-        <div class="roi-metrics">
-          <div class="roi-metric-card">
-            <div class="metric-icon" style="color:var(--green);"><i class="fas fa-piggy-bank"></i></div>
-            <div class="metric-value" id="roiMonthlySavings">$105</div>
-            <div class="metric-label">saved per month</div>
-          </div>
-          <div class="roi-metric-card">
-            <div class="metric-icon" style="color:#3b82f6;"><i class="fas fa-hourglass-half"></i></div>
-            <div class="metric-value" id="roiHoursSaved">42 hrs</div>
-            <div class="metric-label">freed up per year</div>
-          </div>
-          <div class="roi-metric-card">
-            <div class="metric-icon" style="color:#f59e0b;"><i class="fas fa-calculator"></i></div>
-            <div class="metric-value" id="roiDailyCost">$2.30</div>
-            <div class="metric-label">robotic mower per day</div>
-          </div>
-          <div class="roi-metric-card">
-            <div class="metric-icon" style="color:#10b981;"><i class="fas fa-leaf"></i></div>
-            <div class="metric-value" id="roiCO2">560 lbs</div>
-            <div class="metric-label">CO&#8322; eliminated per year</div>
-          </div>
-        </div>
         <div style="text-align:center;margin-top:20px;">
           <a href="#contact" class="btn btn-primary btn-sm">Get a Free Quote</a>
         </div>
       </div>
     </div>
     <p id="roiBottomText" style="text-align:center;max-width:760px;margin:40px auto 0;font-size:.95rem;color:#86868b;line-height:1.8;">And the savings are just the beginning. Robotic mowers deliver a superior cut&mdash;mowing daily keeps your lawn at the perfect height, promoting thicker, healthier grass. They're whisper-quiet, fully autonomous, and far more reliable than scheduling around a lawn crew. No gas, no emissions, no noise complaints&mdash;just a perfectly maintained yard, every single day.</p>
+    <div class="roi-benefits fade-in">
+      <div class="roi-benefit-card">
+        <div class="benefit-icon"><i class="fas fa-couch"></i></div>
+        <div class="benefit-value" id="roiHoursSaved">42 hrs</div>
+        <div class="benefit-label">of free time back per year</div>
+      </div>
+      <div class="roi-benefit-card">
+        <div class="benefit-icon"><i class="fas fa-leaf"></i></div>
+        <div class="benefit-value" id="roiCO2">560 lbs</div>
+        <div class="benefit-label">CO&#8322; eliminated per year</div>
+      </div>
+      <div class="roi-benefit-card">
+        <div class="benefit-icon"><i class="fas fa-volume-mute"></i></div>
+        <div class="benefit-value">Zero</div>
+        <div class="benefit-label">noise complaints</div>
+      </div>
+      <div class="roi-benefit-card">
+        <div class="benefit-icon"><i class="fas fa-seedling"></i></div>
+        <div class="benefit-value">Daily</div>
+        <div class="benefit-label">mowing for a healthier lawn</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1246,23 +1252,16 @@ function calcROI() {
     else if (beMonths < 12) { breakEl.textContent = beMonths + ' month' + (beMonths !== 1 ? 's' : ''); breakEl.style.color = 'var(--green)'; }
     else { var yrs = Math.floor(beMonths / 12); var mo = beMonths % 12; breakEl.textContent = yrs + ' year' + (yrs !== 1 ? 's' : '') + (mo > 0 ? ', ' + mo + ' mo' : ''); breakEl.style.color = 'var(--green)'; }
   } else { breakEl.textContent = 'N/A'; breakEl.style.color = '#e53e3e'; }
-  // Metric cards
-  var annualSavings = savings / 5;
-  var mSave = annualSavings / 12;
-  document.getElementById('roiMonthlySavings').textContent = (mSave >= 0 ? '$' : '-$') + Math.abs(Math.round(mSave)).toLocaleString();
-  // Hours saved
+  // Benefit cards (time & environment)
   var sessionsPerYear = freq * months;
   var hoursEl = document.getElementById('roiHoursSaved');
   if (roiMode === 'diy' && hours > 0) {
     var hoursSaved = Math.round(hours * sessionsPerYear);
     hoursEl.textContent = hoursSaved + ' hrs';
   } else {
-    hoursEl.textContent = '\u2014';
+    hoursEl.textContent = '42+ hrs';
   }
-  // Daily cost of robotic mower
-  var dailyRobot = totalRobot / (5 * 365);
-  document.getElementById('roiDailyCost').textContent = '$' + dailyRobot.toFixed(2);
-  // CO2: landscaper uses gas mowers too, DIY obviously does
+  // CO2: ~20 lbs CO2 per gallon gas, ~1 gallon per mow session
   var co2 = Math.round(20 * sessionsPerYear);
   document.getElementById('roiCO2').textContent = co2.toLocaleString() + ' lbs';
 }
