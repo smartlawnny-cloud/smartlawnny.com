@@ -254,6 +254,7 @@
     .roi-toggle button.active { background: #fff; color: #1d1d1f; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
     .roi-annual-check { display: flex !important; align-items: center; gap: 8px; font-weight: 500 !important; font-size: .88rem; color: #6e6e73 !important; cursor: pointer; margin-bottom: 0 !important; }
     .roi-annual-check input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
+    .roi-time-value { background: rgba(106,187,30,.08); border: 1px solid rgba(106,187,30,.2); border-radius: 10px; padding: 12px 16px; font-size: .88rem; color: #1d1d1f; margin-top: 4px; }
     .roi-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
     .roi-metric-card { background: #fff; border-radius: 14px; padding: 16px; text-align: center; }
     .roi-metric-card .metric-icon { font-size: 1.2rem; margin-bottom: 6px; }
@@ -841,9 +842,34 @@
         <!-- DIY Homeowner Inputs -->
         <div id="roiDiyInputs" style="display:none;">
           <div class="input-group">
-            <label for="roiDiyAnnual">Annual lawn maintenance cost?</label>
+            <label for="roiHours">Hours spent mowing per session?</label>
+            <input type="number" id="roiHours" value="1.5" min="0" max="8" step="0.5" oninput="calcROI()">
+            <div class="hint">Include setup, mowing, trimming, cleanup</div>
+          </div>
+          <div class="input-group">
+            <label for="roiFreqDiy">How often do you mow per month?</label>
+            <select id="roiFreqDiy" onchange="calcROI()">
+              <option value="4" selected>Weekly (4x/mo)</option>
+              <option value="2">Bi-weekly (2x/mo)</option>
+              <option value="6">Twice a week (6x/mo)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="roiMonthsDiy">How many months is your mowing season?</label>
+            <select id="roiMonthsDiy" onchange="calcROI()">
+              <option value="6">6 months (Apr–Sep)</option>
+              <option value="7" selected>7 months (Apr–Oct)</option>
+              <option value="8">8 months (Mar–Oct)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="roiDiyAnnual">Annual maintenance cost? (gas, oil, repairs)</label>
             <input type="number" id="roiDiyAnnual" value="500" min="0" step="50" oninput="calcROI()">
-            <div class="hint">Gas, oil, blade sharpening, filters, equipment repairs</div>
+            <div class="hint">Gas, blade sharpening, oil, filters, equipment repairs</div>
+          </div>
+          <div class="roi-time-value">
+            <i class="fas fa-clock" style="color:var(--green);margin-right:6px;"></i>
+            Your time valued at <strong>$25/hr</strong> = <strong id="roiTimeValue">$1,050</strong>/yr
           </div>
         </div>
         <!-- Shared: Mower + Service Plan -->
@@ -1184,10 +1210,16 @@ function calcROI() {
     }
     hours = 0;
   } else {
-    // DIY mode — single annual cost input
-    annual = parseFloat(document.getElementById('roiDiyAnnual').value) || 0;
-    freq = 4; months = 7; // defaults for CO2 calc
-    hours = 0;
+    // DIY mode — maintenance cost + time valued at $25/hr
+    hours = parseFloat(document.getElementById('roiHours').value) || 0;
+    freq = parseInt(document.getElementById('roiFreqDiy').value);
+    months = parseInt(document.getElementById('roiMonthsDiy').value);
+    var maintCost = parseFloat(document.getElementById('roiDiyAnnual').value) || 0;
+    var sessionsYr = freq * months;
+    var timeValue = hours * sessionsYr * 25;
+    annual = maintCost + timeValue;
+    // Update time value display
+    document.getElementById('roiTimeValue').textContent = '$' + Math.round(timeValue).toLocaleString();
   }
   var fiveYrService = annual * 5;
   var totalMower = mowerCost + installCost;
@@ -1221,8 +1253,9 @@ function calcROI() {
   // Hours saved
   var sessionsPerYear = freq * months;
   var hoursEl = document.getElementById('roiHoursSaved');
-  if (roiMode === 'diy') {
-    hoursEl.textContent = '42+ hrs'; // ~1.5 hrs/session × 4x/mo × 7 months
+  if (roiMode === 'diy' && hours > 0) {
+    var hoursSaved = Math.round(hours * sessionsPerYear);
+    hoursEl.textContent = hoursSaved + ' hrs';
   } else {
     hoursEl.textContent = '\u2014';
   }
