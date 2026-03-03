@@ -841,35 +841,9 @@
         <!-- DIY Homeowner Inputs -->
         <div id="roiDiyInputs" style="display:none;">
           <div class="input-group">
-            <label for="roiHours">Hours spent mowing per session?</label>
-            <input type="number" id="roiHours" value="1.5" min="0" max="8" step="0.5" oninput="calcROI()">
-            <div class="hint">Include setup, mowing, trimming, cleanup</div>
-          </div>
-          <div class="input-group">
-            <label for="roiFreqDiy">How often do you mow per month?</label>
-            <select id="roiFreqDiy" onchange="calcROI()">
-              <option value="4" selected>Weekly (4x/mo)</option>
-              <option value="2">Bi-weekly (2x/mo)</option>
-              <option value="6">Twice a week (6x/mo)</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="roiMonthsDiy">How many months is your mowing season?</label>
-            <select id="roiMonthsDiy" onchange="calcROI()">
-              <option value="6">6 months (Apr–Sep)</option>
-              <option value="7" selected>7 months (Apr–Oct)</option>
-              <option value="8">8 months (Mar–Oct)</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="roiGas">Gas cost per season?</label>
-            <input type="number" id="roiGas" value="100" min="0" step="10" oninput="calcROI()">
-            <div class="hint">~$3–5 per fill, once a week during season</div>
-          </div>
-          <div class="input-group">
-            <label for="roiEquipment">Equipment maintenance per year?</label>
-            <input type="number" id="roiEquipment" value="150" min="0" step="25" oninput="calcROI()">
-            <div class="hint">Blade sharpening, oil, filters, repairs</div>
+            <label for="roiDiyAnnual">Annual lawn maintenance cost?</label>
+            <input type="number" id="roiDiyAnnual" value="500" min="0" step="50" oninput="calcROI()">
+            <div class="hint">Gas, oil, blade sharpening, filters, equipment repairs</div>
           </div>
         </div>
         <!-- Shared: Mower + Service Plan -->
@@ -933,7 +907,7 @@
         </div>
       </div>
     </div>
-    <p style="text-align:center;max-width:760px;margin:40px auto 0;font-size:.95rem;color:#86868b;line-height:1.8;">And the savings are just the beginning. Robotic mowers deliver a superior cut&mdash;mowing daily keeps your lawn at the perfect height, promoting thicker, healthier grass. They're whisper-quiet, fully autonomous, and far more reliable than scheduling around a lawn crew. No gas, no emissions, no noise complaints&mdash;just a perfectly maintained yard, every single day.</p>
+    <p id="roiBottomText" style="text-align:center;max-width:760px;margin:40px auto 0;font-size:.95rem;color:#86868b;line-height:1.8;">And the savings are just the beginning. Robotic mowers deliver a superior cut&mdash;mowing daily keeps your lawn at the perfect height, promoting thicker, healthier grass. They're whisper-quiet, fully autonomous, and far more reliable than scheduling around a lawn crew. No gas, no emissions, no noise complaints&mdash;just a perfectly maintained yard, every single day.</p>
   </div>
 </section>
 
@@ -1178,6 +1152,13 @@ function setRoiMode(mode) {
   // Update result labels
   document.getElementById('roiAnnualLabel').textContent = mode === 'landscaper' ? 'Annual lawn service cost' : 'Annual DIY lawn care cost';
   document.getElementById('roi5yrLabel').textContent = mode === 'landscaper' ? '5-year lawn service total' : '5-year DIY total';
+  // Swap bottom paragraph
+  var btmEl = document.getElementById('roiBottomText');
+  if (mode === 'landscaper') {
+    btmEl.innerHTML = 'And the savings are just the beginning. Robotic mowers deliver a superior cut\u2014mowing daily keeps your lawn at the perfect height, promoting thicker, healthier grass. They\u2019re whisper-quiet, fully autonomous, and far more reliable than scheduling around a lawn crew. No gas, no emissions, no noise complaints\u2014just a perfectly maintained yard, every single day.';
+  } else {
+    btmEl.innerHTML = 'Stop spending your weekends behind a mower. A robotic mower gives you back <strong>hours every week</strong>\u2014no more sweating in the summer heat, no more trips to the gas station, no more wasted Saturday mornings. It mows daily while you relax, delivering a healthier lawn than manual mowing ever could. Your time is worth more than the cost of gas and oil.';
+  }
   calcROI();
 }
 function toggleAnnualInput() {
@@ -1203,13 +1184,10 @@ function calcROI() {
     }
     hours = 0;
   } else {
-    // DIY mode
-    hours = parseFloat(document.getElementById('roiHours').value) || 0;
-    freq = parseInt(document.getElementById('roiFreqDiy').value);
-    months = parseInt(document.getElementById('roiMonthsDiy').value);
-    var gasCost = parseFloat(document.getElementById('roiGas').value) || 0;
-    var equipCost = parseFloat(document.getElementById('roiEquipment').value) || 0;
-    annual = gasCost + equipCost;
+    // DIY mode — single annual cost input
+    annual = parseFloat(document.getElementById('roiDiyAnnual').value) || 0;
+    freq = 4; months = 7; // defaults for CO2 calc
+    hours = 0;
   }
   var fiveYrService = annual * 5;
   var totalMower = mowerCost + installCost;
@@ -1242,12 +1220,11 @@ function calcROI() {
   document.getElementById('roiMonthlySavings').textContent = (mSave >= 0 ? '$' : '-$') + Math.abs(Math.round(mSave)).toLocaleString();
   // Hours saved
   var sessionsPerYear = freq * months;
-  var hoursSaved = Math.round(hours * sessionsPerYear);
   var hoursEl = document.getElementById('roiHoursSaved');
-  if (roiMode === 'diy' && hoursSaved > 0) {
-    hoursEl.textContent = hoursSaved + ' hrs';
+  if (roiMode === 'diy') {
+    hoursEl.textContent = '42+ hrs'; // ~1.5 hrs/session × 4x/mo × 7 months
   } else {
-    hoursEl.textContent = '—';
+    hoursEl.textContent = '\u2014';
   }
   // Daily cost of robotic mower
   var dailyRobot = totalRobot / (5 * 365);
