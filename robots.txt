@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /sales-rep.html
+Disallow: /_dev/
+Disallow: /js/stripe-config.js
+
+Sitemap: https://smartlawnny.com/sitemap.xml

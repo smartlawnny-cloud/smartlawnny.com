@@ -18,6 +18,8 @@
   <meta name="twitter:title" content="Services & Pricing | Smart Lawn NY">
   <meta name="twitter:description" content="Robotic mower installation, service plans & Mowing as a Service. Peekskill, NY.">
   <meta name="twitter:image" content="https://smartlawnny.com/og-share.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -825,7 +827,7 @@
       </div>
       <div class="faq-item">
         <div class="faq-question" onclick="toggleFaq(this)">What areas do you serve? <i class="fas fa-chevron-down"></i></div>
-        <div class="faq-answer"><p>We serve Westchester and Putnam County and surrounding areas within 30 miles of our Peekskill showroom. This includes Cortlandt, Yorktown, Croton, Ossining, Bedford, Katonah, Mahopac, Carmel, and more.</p></div>
+        <div class="faq-answer"><p>We serve Westchester, Putnam, and Dutchess County and surrounding areas. This includes Cortlandt, Yorktown, Croton, Ossining, Bedford, Katonah, Mahopac, Carmel, Cold Spring, Beacon, Fishkill, Wappingers Falls, Poughkeepsie, and more.</p></div>
       </div>
       <div class="faq-item">
         <div class="faq-question" onclick="toggleFaq(this)">How long does installation take? <i class="fas fa-chevron-down"></i></div>
@@ -872,6 +874,60 @@
     <div class="footer-bottom">&copy; 2026 Smart Lawn LLC. All Rights Reserved. | SmartLawnNY.com</div>
   </div>
 </footer>
+
+<!-- Schema.org FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "What is included in a robotic mower installation?", "acceptedAnswer": {"@type": "Answer", "text": "Every installation includes an on-site property survey, charging station setup, boundary mapping (wire or RTK depending on model), mower programming and configuration, zone scheduling, and a full owner training walkthrough. You'll be mowing the same day."}},
+    {"@type": "Question", "name": "Do you service mowers bought elsewhere?", "acceptedAnswer": {"@type": "Answer", "text": "We service Navimow and Yarbo mowers regardless of where they were purchased. Contact us for a diagnostic assessment and we'll get your mower running right."}},
+    {"@type": "Question", "name": "What areas does Smart Lawn NY serve?", "acceptedAnswer": {"@type": "Answer", "text": "We serve Westchester, Putnam, and Dutchess County and surrounding areas. This includes Cortlandt, Yorktown, Croton, Ossining, Bedford, Katonah, Mahopac, Carmel, Cold Spring, Beacon, Fishkill, Wappingers Falls, Poughkeepsie, and more."}},
+    {"@type": "Question", "name": "How long does robotic mower installation take?", "acceptedAnswer": {"@type": "Answer", "text": "Most installations take 2-4 hours depending on property size and complexity. Your mower will be cutting grass the same day. We'll also spend time training you on the app and controls."}},
+    {"@type": "Question", "name": "How does Mowing as a Service work?", "acceptedAnswer": {"@type": "Answer", "text": "We provide, install, and maintain a robotic mower on your property — you pay a flat weekly fee with no equipment to buy. The minimum commitment is 12 months, after which you can continue month-to-month or cancel anytime. Plans start at $99/week."}},
+    {"@type": "Question", "name": "Is Mowing as a Service cheaper than a lawn crew?", "acceptedAnswer": {"@type": "Answer", "text": "In most cases, yes. Traditional lawn services in Westchester typically run $200-$400/month during the mowing season. Our MaaS plans start at $99/week and your lawn gets mowed daily instead of weekly — with zero emissions and no noisy crews."}}
+  ]
+}
+</script>
+
+<!-- Schema.org Service -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "Robotic Mower Installation and Service",
+  "provider": {
+    "@type": "LocalBusiness",
+    "name": "Smart Lawn NY",
+    "url": "https://smartlawnny.com",
+    "telephone": "(914) 647-7276",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 Highland Industrial Park",
+      "addressLocality": "Peekskill",
+      "addressRegion": "NY",
+      "postalCode": "10566"
+    }
+  },
+  "areaServed": {
+    "@type": "GeoCircle",
+    "geoMidpoint": {"@type": "GeoCoordinates", "latitude": 41.2901, "longitude": -73.9209},
+    "geoRadius": "50000"
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Robotic Mower Services",
+    "itemListElement": [
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Basic Installation"}, "price": "199", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Standard Installation"}, "price": "499", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Premium Installation"}, "price": "799", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Annual Service Plan"}, "price": "199", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Mowing as a Service (Small Yard)"}, "price": "99", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "unitText": "week"}}
+    ]
+  }
+}
+</script>
 
 <script>
 // === CART ===
