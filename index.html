@@ -1040,14 +1040,18 @@
       </div>
       <div class="contact-form fade-in">
         <h3>Request a Free Property Assessment</h3>
-        <form id="contactForm" onsubmit="event.preventDefault(); alert('Thank you! Smart Lawn NY will be in touch within 24 hours.');">
-          <div class="form-row"><div class="form-group"><label>First Name</label><input type="text" placeholder="John" required></div><div class="form-group"><label>Last Name</label><input type="text" placeholder="Doe" required></div></div>
-          <div class="form-row"><div class="form-group"><label>Email</label><input type="email" placeholder="john@example.com" required></div><div class="form-group"><label>Phone</label><input type="tel" placeholder="(914) 555-1234"></div></div>
-          <div class="form-group"><label>County</label><select><option value="">Select...</option><option>Westchester</option><option>Putnam</option><option>Dutchess</option><option>Rockland</option><option>Other</option></select></div>
-          <div class="form-group"><label>Lawn Size</label><select><option value="">Select...</option><option>Under 1/4 acre</option><option>1/4-1/2 acre</option><option>1/2-1 acre</option><option>1-2 acres</option><option>2+ acres</option></select></div>
-          <div class="form-group"><label>Interest</label><select><option value="">Select...</option><option>Buy a Robotic Mower</option><option>Installation</option><option>Service Plan</option><option>Free Demo</option><option>Subscription (Mowing-as-a-Service)</option><option>General Info</option></select></div>
-          <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your property..."></textarea></div>
-          <button type="submit" class="btn btn-primary">Submit Request</button>
+        <form id="contactForm" action="https://formspree.io/f/FORMSPREE_ID" method="POST" onsubmit="return submitContactForm(event)">
+          <input type="hidden" name="_subject" value="New Smart Lawn NY Property Assessment Request">
+          <input type="hidden" name="_next" value="https://smartlawnny.com#thank-you">
+          <div class="form-row"><div class="form-group"><label>First Name</label><input type="text" name="firstName" placeholder="John" required></div><div class="form-group"><label>Last Name</label><input type="text" name="lastName" placeholder="Doe" required></div></div>
+          <div class="form-row"><div class="form-group"><label>Email</label><input type="email" name="email" placeholder="john@example.com" required></div><div class="form-group"><label>Phone</label><input type="tel" name="phone" placeholder="(914) 555-1234"></div></div>
+          <div class="form-group"><label>Street Address</label><input type="text" name="street" placeholder="123 Main St" required></div>
+          <div class="form-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;"><div class="form-group"><label>City</label><input type="text" name="city" placeholder="Peekskill" required></div><div class="form-group"><label>State</label><select name="state"><option value="NY" selected>NY</option><option value="CT">CT</option><option value="NJ">NJ</option><option value="Other">Other</option></select></div><div class="form-group"><label>Zip</label><input type="text" name="zip" placeholder="10566" pattern="[0-9]{5}" required></div></div>
+          <div class="form-group"><label>County</label><select name="county"><option value="">Select...</option><option>Westchester</option><option>Putnam</option><option>Dutchess</option><option>Rockland</option><option>Other</option></select></div>
+          <div class="form-group"><label>Lawn Size</label><select name="lawnSize"><option value="">Select...</option><option>Under 1/4 acre</option><option>1/4-1/2 acre</option><option>1/2-1 acre</option><option>1-2 acres</option><option>2+ acres</option></select></div>
+          <div class="form-group"><label>Interest</label><select name="interest"><option value="">Select...</option><option>Buy a Robotic Mower</option><option>Installation</option><option>Service Plan</option><option>Free Demo</option><option>Subscription (Mowing-as-a-Service)</option><option>General Info</option></select></div>
+          <div class="form-group"><label>Message</label><textarea name="message" placeholder="Tell us about your property..."></textarea></div>
+          <button type="submit" class="btn btn-primary" id="contactBtn">Submit Request</button>
         </form>
       </div>
     </div>
@@ -1284,6 +1288,33 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
   });
 });
+
+/* Contact Form → Formspree + Google Sheets backup */
+function submitContactForm(e) {
+  var form = document.getElementById('contactForm');
+  var btn = document.getElementById('contactBtn');
+  var data = {};
+  new FormData(form).forEach(function(v, k) { if (k.charAt(0) !== '_') data[k] = v; });
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  /* Google Sheets backup (async, fire-and-forget) */
+  var SHEET_URL = 'GOOGLE_APPS_SCRIPT_URL';
+  if (SHEET_URL !== 'GOOGLE_APPS_SCRIPT_URL') {
+    data.date = new Date().toISOString();
+    fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) });
+  }
+  /* If Formspree is configured, let the form submit normally */
+  if (form.action.indexOf('FORMSPREE_ID') === -1) {
+    return true; /* normal POST to Formspree */
+  }
+  /* Fallback: no Formspree yet — show local confirmation */
+  e.preventDefault();
+  btn.textContent = 'Sent!';
+  btn.style.background = '#4caf50';
+  form.reset();
+  setTimeout(function() { btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = ''; }, 3000);
+  return false;
+}
 
 /* Newsletter → Google Sheets */
 function submitNewsletter(e) {
