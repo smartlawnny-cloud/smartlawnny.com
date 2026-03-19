@@ -1298,15 +1298,7 @@ function submitContactForm(e) {
   data.date = new Date().toISOString();
   btn.textContent = 'Sending...';
   btn.disabled = true;
-  var SCRIPT_URL = 'GOOGLE_APPS_SCRIPT_URL';
-  if (SCRIPT_URL === 'GOOGLE_APPS_SCRIPT_URL') {
-    /* Placeholder — show local confirmation until script is deployed */
-    btn.textContent = 'Sent!';
-    btn.style.background = '#4caf50';
-    form.reset();
-    setTimeout(function() { btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = ''; }, 3000);
-    return false;
-  }
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4EdYGft-cIzGx4b9X5C2J-OOKBk6r7klGvRghZ3wd4NwDSNh2uJ2xvtkRDYSX6PqWpw/exec';
   fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
   .then(function() {
     btn.textContent = 'Sent!';
