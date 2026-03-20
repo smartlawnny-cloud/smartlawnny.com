@@ -71,7 +71,7 @@
 
 <div class="property-bar">
   <div><strong>543 Byram Lake Road</strong>, Mount Kisco, NY 10549</div>
-  <div>92.75 acres total &nbsp;|&nbsp; ~65 acres mowable &nbsp;|&nbsp; <strong>12 Mower Zones</strong></div>
+  <div>92.75 acres total &nbsp;|&nbsp; ~60 acres mowable &nbsp;|&nbsp; <strong>12 Mower Zones</strong></div>
 </div>
 
 <div id="map-container" style="position:relative;">
@@ -164,119 +164,122 @@ var parcelCoords = [
   [41.182066503773,  -73.694587732838]
 ];
 
-// ── 12 Mowing Zones (rectangular grid) ──
-// Based on satellite imagery — zones mapped to actual cleared lawn/turf areas
-// Each zone is a clean rectangle (~5-6 acres) for efficient mower routing
-// NW meadow grid: rows top-to-bottom, cols left-to-right
-// At 41.178°N: 0.0014° lat ≈ 156m, 0.0019° lng ≈ 143m → ~5.5 acre rectangles
+// ── 12 Mowing Zones (rectangular, mapped to actual cleared lawn only) ──
+// Based on satellite imagery analysis — avoids wooded areas
+// Charging stations placed near garage/outbuildings where power is available
 var mowerZones = [
-  // ── NORTH MEADOW (large open field, 6 zones in 2x3 grid) ──
+  // ── NORTH MEADOW — large open grass field NW of residence ──
+  // Visible cleared turf: ~41.1822 to ~41.1798, ~-73.7008 to ~-73.6968
   {
-    id: 1, name: "North Meadow A1",
-    color: "#4CAF50", acres: 5.8,
+    id: 1, name: "Meadow NW",
+    color: "#4CAF50", acres: 5.5,
     coords: [
-      [41.1824, -73.6995], [41.1824, -73.6975],
-      [41.1810, -73.6975], [41.1810, -73.6995]
+      [41.1822, -73.7008], [41.1822, -73.6988],
+      [41.1810, -73.6988], [41.1810, -73.7008]
     ]
   },
   {
-    id: 2, name: "North Meadow A2",
-    color: "#2196F3", acres: 5.8,
+    id: 2, name: "Meadow NE",
+    color: "#2196F3", acres: 5.5,
     coords: [
-      [41.1824, -73.6975], [41.1824, -73.6955],
-      [41.1810, -73.6955], [41.1810, -73.6975]
+      [41.1822, -73.6988], [41.1822, -73.6968],
+      [41.1810, -73.6968], [41.1810, -73.6988]
     ]
   },
   {
-    id: 3, name: "North Meadow A3",
+    id: 3, name: "Meadow SW",
     color: "#FF9800", acres: 5.5,
     coords: [
-      [41.1824, -73.6955], [41.1824, -73.6938],
-      [41.1810, -73.6938], [41.1810, -73.6955]
+      [41.1810, -73.7008], [41.1810, -73.6988],
+      [41.1798, -73.6988], [41.1798, -73.7008]
     ]
   },
   {
-    id: 4, name: "North Meadow B1",
-    color: "#E91E63", acres: 5.8,
+    id: 4, name: "Meadow SE",
+    color: "#E91E63", acres: 5.5,
     coords: [
-      [41.1810, -73.6995], [41.1810, -73.6975],
-      [41.1796, -73.6975], [41.1796, -73.6995]
+      [41.1810, -73.6988], [41.1810, -73.6968],
+      [41.1798, -73.6968], [41.1798, -73.6988]
     ]
   },
+  // ── RESIDENCE NORTH — lawn between meadow and house ──
   {
-    id: 5, name: "North Meadow B2",
-    color: "#9C27B0", acres: 5.8,
+    id: 5, name: "North Lawn West",
+    color: "#9C27B0", acres: 5.0,
     coords: [
-      [41.1810, -73.6975], [41.1810, -73.6955],
-      [41.1796, -73.6955], [41.1796, -73.6975]
+      [41.1798, -73.6988], [41.1798, -73.6968],
+      [41.1790, -73.6968], [41.1790, -73.6988]
     ]
   },
   {
-    id: 6, name: "North Meadow B3",
-    color: "#00BCD4", acres: 5.5,
+    id: 6, name: "North Lawn East",
+    color: "#00BCD4", acres: 4.5,
     coords: [
-      [41.1810, -73.6955], [41.1810, -73.6938],
-      [41.1796, -73.6938], [41.1796, -73.6955]
+      [41.1798, -73.6968], [41.1798, -73.6952],
+      [41.1790, -73.6952], [41.1790, -73.6968]
     ]
   },
-  // ── WEST GROUNDS (2 zones along west side) ──
+  // ── RESIDENCE GROUNDS — lawns around main house ──
   {
-    id: 7, name: "West Grounds Upper",
-    color: "#8BC34A", acres: 5.5,
+    id: 7, name: "Residence West",
+    color: "#8BC34A", acres: 4.5,
     coords: [
-      [41.1810, -73.7015], [41.1810, -73.6995],
-      [41.1796, -73.6995], [41.1796, -73.7015]
+      [41.1790, -73.6980], [41.1790, -73.6963],
+      [41.1782, -73.6963], [41.1782, -73.6980]
     ]
   },
   {
-    id: 8, name: "West Grounds Lower",
-    color: "#FFC107", acres: 5.2,
+    id: 8, name: "Residence East",
+    color: "#FFC107", acres: 4.0,
     coords: [
-      [41.1796, -73.7015], [41.1796, -73.6995],
-      [41.1782, -73.6995], [41.1782, -73.7015]
+      [41.1790, -73.6963], [41.1790, -73.6948],
+      [41.1782, -73.6948], [41.1782, -73.6963]
     ]
   },
-  // ── RESIDENCE & SOUTH LAWNS (4 zones around compound) ──
+  // ── SOUTH GROUNDS — cleared areas south of compound ──
   {
-    id: 9, name: "Residence West",
+    id: 9, name: "South Lawn",
     color: "#FF5722", acres: 5.0,
     coords: [
-      [41.1796, -73.6975], [41.1796, -73.6955],
-      [41.1782, -73.6955], [41.1782, -73.6975]
+      [41.1782, -73.6980], [41.1782, -73.6960],
+      [41.1772, -73.6960], [41.1772, -73.6980]
     ]
   },
   {
-    id: 10, name: "Residence East",
-    color: "#607D8B", acres: 4.8,
+    id: 10, name: "South Field",
+    color: "#607D8B", acres: 5.0,
     coords: [
-      [41.1796, -73.6955], [41.1796, -73.6938],
-      [41.1782, -73.6938], [41.1782, -73.6955]
+      [41.1782, -73.6960], [41.1782, -73.6942],
+      [41.1772, -73.6942], [41.1772, -73.6960]
+    ]
+  },
+  // ── WEST SLOPE — open grass west of driveway ──
+  {
+    id: 11, name: "West Slope Upper",
+    color: "#795548", acres: 5.0,
+    coords: [
+      [41.1798, -73.7008], [41.1798, -73.6988],
+      [41.1788, -73.6988], [41.1788, -73.7008]
     ]
   },
   {
-    id: 11, name: "South Lawn West",
-    color: "#795548", acres: 4.8,
+    id: 12, name: "West Slope Lower",
+    color: "#3F51B5", acres: 4.5,
     coords: [
-      [41.1782, -73.6975], [41.1782, -73.6955],
-      [41.1768, -73.6955], [41.1768, -73.6975]
-    ]
-  },
-  {
-    id: 12, name: "South Lawn East",
-    color: "#3F51B5", acres: 5.0,
-    coords: [
-      [41.1782, -73.6955], [41.1782, -73.6938],
-      [41.1768, -73.6938], [41.1768, -73.6955]
+      [41.1788, -73.7008], [41.1788, -73.6988],
+      [41.1778, -73.6988], [41.1778, -73.7008]
     ]
   }
 ];
 
 // ── Charging Stations ──
+// Charging stations near garage/outbuildings where electrical power is available
+// Main garage is at ~41.1793, -73.6963 (south side of main residence)
 var chargers = [
-  { id: "A", lat: 41.1810, lng: -73.6975, label: "Station A — North Center (Mowers 1, 2, 4, 5)" },
-  { id: "B", lat: 41.1810, lng: -73.6955, label: "Station B — North East (Mowers 3, 6)" },
-  { id: "C", lat: 41.1796, lng: -73.6995, label: "Station C — West (Mowers 7, 8)" },
-  { id: "D", lat: 41.1782, lng: -73.6955, label: "Station D — South Central (Mowers 9, 10, 11, 12)" }
+  { id: "A", lat: 41.17935, lng: -73.69660, label: "Station A — Main Garage (Mowers 5-8)" },
+  { id: "B", lat: 41.17920, lng: -73.69620, label: "Station B — Garage East (Mowers 9, 10)" },
+  { id: "C", lat: 41.17950, lng: -73.69660, label: "Station C — Garage North (Mowers 1-4)" },
+  { id: "D", lat: 41.17920, lng: -73.69700, label: "Station D — Garage West (Mowers 11, 12)" }
 ];
 
 // ── Build Map ──
