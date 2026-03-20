@@ -192,8 +192,8 @@
       <label class="layer-toggle"><input type="checkbox" id="togBoundary" checked> Property Boundary</label>
       <label class="layer-toggle"><input type="checkbox" id="togTopo" checked> Topo Contours</label>
       <label class="layer-toggle"><input type="checkbox" id="togTerrain" checked> 3D Terrain</label>
-      <label class="layer-toggle"><input type="checkbox" id="togSlope"> Slope Analysis</label>
-      <div id="slopeLegend" style="display:none;margin-top:6px;padding:6px 0;">
+      <label class="layer-toggle"><input type="checkbox" id="togSlope" checked> Slope Analysis</label>
+      <div id="slopeLegend" style="margin-top:6px;padding:6px 0;">
         <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> &lt;22° — All mowers</div>
         <div class="legend-row"><span class="legend-dot" style="background:#ffeb3b;"></span> 22–30° — RM21/Yarbo limit</div>
         <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> 30–43° — TerraNox/X430</div>
@@ -806,7 +806,21 @@ map.on('load', function() {
 
   // ── Slope analysis overlay ──
   // Build grid cells, compute slope from terrain DEM, color by steepness
-  setTimeout(function() { buildSlopeOverlay(); }, 2000); // wait for terrain tiles
+  // DEM tiles need time to fully decode after map idle
+  map.once('idle', function() {
+    function tryBuild(attempts) {
+      var testElev = map.queryTerrainElevation({ lng: -73.6975, lat: 41.1770 });
+      if (testElev !== null && testElev !== 0) {
+        buildSlopeOverlay();
+      } else if (attempts > 0) {
+        setTimeout(function() { tryBuild(attempts - 1); }, 500);
+      } else {
+        // Fallback: build anyway after 5s even if elevation reads 0
+        buildSlopeOverlay();
+      }
+    }
+    setTimeout(function() { tryBuild(10); }, 1000);
+  });
 });
 
 function buildSlopeOverlay() {
@@ -882,7 +896,7 @@ function buildSlopeOverlay() {
       'fill-color': ['get', 'color'],
       'fill-opacity': ['get', 'opacity']
     },
-    layout: { visibility: 'none' }
+    layout: { visibility: 'visible' }
   }, 'boundary-line');
 
   map.addLayer({
@@ -892,7 +906,7 @@ function buildSlopeOverlay() {
       'text-field': ['concat', ['to-string', ['get', 'slope']], '°'],
       'text-size': 10,
       'text-allow-overlap': false,
-      visibility: 'none'
+      visibility: 'visible'
     },
     paint: {
       'text-color': '#fff',
