@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Mowing Plan — 543 Byram Lake Rd | Smart Lawn NY</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background:#fff; color:#1d1d1f; }
+
+  .header { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; background:#fff; border-bottom:3px solid #6abb1e; }
+  .header-left { display:flex; align-items:center; gap:12px; }
+  .header-left img { height:44px; }
+  .header-left h1 { font-size:15px; line-height:1.2; }
+  .header-left h1 span { color:#6abb1e; font-weight:400; font-size:11px; display:block; }
+  .header-right { text-align:right; font-size:12px; color:#555; }
+  .header-right strong { color:#1d1d1f; font-size:13px; display:block; }
+
+  .property-bar { display:flex; align-items:center; justify-content:space-between; padding:8px 20px; background:#f5f5f5; border-bottom:1px solid #e0e0e0; font-size:12px; color:#555; }
+  .property-bar strong { color:#1d1d1f; }
+
+  #map { width:100%; height:calc(100vh - 200px); min-height:500px; }
+
+  .panel { position:absolute; top:10px; right:10px; z-index:1000; background:rgba(255,255,255,0.96); border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.15); padding:14px; width:220px; max-height:calc(100vh - 260px); overflow-y:auto; }
+  .panel h3 { font-size:13px; margin-bottom:8px; color:#1d1d1f; border-bottom:2px solid #6abb1e; padding-bottom:6px; }
+  .panel h4 { font-size:11px; margin:10px 0 6px; color:#888; text-transform:uppercase; letter-spacing:0.5px; }
+
+  .mower-toggle { display:flex; align-items:center; gap:8px; padding:4px 0; cursor:pointer; font-size:12px; user-select:none; }
+  .mower-toggle:hover { background:#f5f5f5; border-radius:4px; }
+  .mower-swatch { width:14px; height:14px; border-radius:3px; border:1px solid rgba(0,0,0,0.15); flex-shrink:0; }
+  .mower-toggle.off { opacity:0.35; }
+  .mower-toggle.off .mower-swatch { background:#ccc !important; }
+  .mower-label { flex:1; }
+  .mower-acres { font-size:10px; color:#888; }
+
+  .layer-toggle { display:flex; align-items:center; gap:6px; padding:3px 0; cursor:pointer; font-size:12px; user-select:none; }
+  .layer-toggle input { margin:0; }
+
+  .legend-row { display:flex; align-items:center; gap:6px; font-size:11px; padding:2px 0; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+  .charger-icon { background:#ff3b30; color:#fff; font-size:10px; font-weight:700; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,0.3); }
+
+  .stats-bar { display:flex; gap:20px; padding:10px 20px; background:#fff; border-top:1px solid #e0e0e0; font-size:12px; color:#555; flex-wrap:wrap; }
+  .stat { display:flex; align-items:center; gap:4px; }
+  .stat strong { color:#1d1d1f; }
+  .stat-dot { width:8px; height:8px; border-radius:50%; }
+
+  @media(max-width:640px) {
+    .panel { width:180px; padding:10px; font-size:11px; top:6px; right:6px; }
+    .header { flex-direction:column; gap:8px; text-align:center; }
+    .header-right { text-align:center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <img src="../images/logo.png" alt="Smart Lawn NY" onerror="this.style.display='none'">
+    <h1>Smart Lawn <span>AUTOMATION & ROBOTICS</span></h1>
+  </div>
+  <div class="header-right">
+    <strong>Robotic Mower Fleet — Property Plan</strong>
+    Prepared for Jay Shea, Property Manager
+  </div>
+</div>
+
+<div class="property-bar">
+  <div><strong>543 Byram Lake Road</strong>, Mount Kisco, NY 10549</div>
+  <div>92.75 acres total &nbsp;|&nbsp; ~65 acres mowable &nbsp;|&nbsp; <strong>12 Mower Zones</strong></div>
+</div>
+
+<div id="map-container" style="position:relative;">
+  <div id="map"></div>
+  <div class="panel" id="panel">
+    <h3>Mower Zones</h3>
+    <div id="mower-list"></div>
+    <h4>Charging Stations</h4>
+    <div class="legend-row"><div class="legend-dot" style="background:#ff3b30;"></div> Charging Station (4 locations)</div>
+    <h4>Map Layers</h4>
+    <label class="layer-toggle"><input type="checkbox" id="togBoundary" checked> Property Boundary</label>
+    <label class="layer-toggle"><input type="checkbox" id="togTopo"> Topographic Overlay</label>
+    <label class="layer-toggle"><input type="checkbox" id="togChargers" checked> Charging Stations</label>
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e0e0e0;">
+      <button onclick="toggleAll(true)" style="font-size:11px;padding:4px 10px;border:1px solid #6abb1e;background:#e8f5e0;color:#4a8a10;border-radius:4px;cursor:pointer;margin-right:4px;">All On</button>
+      <button onclick="toggleAll(false)" style="font-size:11px;padding:4px 10px;border:1px solid #ccc;background:#f5f5f5;color:#555;border-radius:4px;cursor:pointer;">All Off</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar" id="stats-bar">
+  <div class="stat"><strong>Active Mowers:</strong> <span id="activeMowers">12</span> / 12</div>
+  <div class="stat"><strong>Coverage:</strong> <span id="activeCoverage">~65</span> acres</div>
+  <div class="stat"><div class="stat-dot" style="background:#ff3b30;"></div> <strong>4</strong> Charging Stations</div>
+  <div class="stat" style="margin-left:auto;color:#888;">Smart Lawn NY &nbsp;|&nbsp; (914) 647-7276 &nbsp;|&nbsp; smartlawnny.com</div>
+</div>
+
+<script>
+// ── Property boundary (from Westchester County GIS) ──
+var parcelCoords = [
+  [41.182066503773,  -73.694587732838],
+  [41.181687554743,  -73.694503796950],
+  [41.181484306328,  -73.694516508771],
+  [41.181269833884,  -73.694396488618],
+  [41.180556853508,  -73.694027069023],
+  [41.180431743848,  -73.693803753581],
+  [41.179881035299,  -73.693155478458],
+  [41.179714282322,  -73.693131199215],
+  [41.179143137618,  -73.693048037564],
+  [41.178993530571,  -73.692965338499],
+  [41.178849129415,  -73.693017832478],
+  [41.178293757128,  -73.692840011905],
+  [41.178133028538,  -73.695245313392],
+  [41.176380592189,  -73.694730678470],
+  [41.176238487722,  -73.694319413282],
+  [41.174821970458,  -73.695675374876],
+  [41.174457574289,  -73.695793505893],
+  [41.174404321506,  -73.695876108598],
+  [41.174346393006,  -73.695953002933],
+  [41.174284136626,  -73.696023723023],
+  [41.174217925930,  -73.696087847789],
+  [41.174148160064,  -73.696144987838],
+  [41.174075259425,  -73.696194801046],
+  [41.174195973430,  -73.696279754242],
+  [41.174328912497,  -73.696278130261],
+  [41.174365145070,  -73.696463153916],
+  [41.174397994936,  -73.696485344117],
+  [41.174415264861,  -73.696499867774],
+  [41.174430504938,  -73.696517935400],
+  [41.174443305229,  -73.696539061573],
+  [41.174453319690,  -73.696562676156],
+  [41.174460278971,  -73.696588140727],
+  [41.174463994262,  -73.696614769965],
+  [41.174470171081,  -73.696655702663],
+  [41.174481127792,  -73.696694844192],
+  [41.174496593974,  -73.696731222357],
+  [41.174516183792,  -73.696763934011],
+  [41.174539412469,  -73.696792168570],
+  [41.174563222887,  -73.696816489715],
+  [41.174584244642,  -73.696844959991],
+  [41.174602067914,  -73.696877024828],
+  [41.174616345151,  -73.696912060464],
+  [41.174626799314,  -73.696949385709],
+  [41.174648411109,  -73.697009228903],
+  [41.175006427606,  -73.697549838777],
+  [41.175001140163,  -73.698094885412],
+  [41.174996797248,  -73.698240595705],
+  [41.175664830274,  -73.698387019976],
+  [41.176031842108,  -73.698526937241],
+  [41.176477252478,  -73.698849465472],
+  [41.177114175956,  -73.699302113403],
+  [41.177056982453,  -73.699643383881],
+  [41.179087666585,  -73.700772870316],
+  [41.181248016039,  -73.701705322748],
+  [41.181465095866,  -73.700712430034],
+  [41.181579308833,  -73.699885401142],
+  [41.180943592688,  -73.699657243915],
+  [41.182110677165,  -73.695752351385],
+  [41.182367433323,  -73.694556789577],
+  [41.182066503773,  -73.694587732838]
+];
+
+// ── 12 Mowing Zones ──
+// Divided by area: main lawns, sports field, golf course, gardens, helipad, perimeters
+var mowerZones = [
+  {
+    id: 1, name: "North Lawn (Main)",
+    color: "#4CAF50", acres: 7.2,
+    coords: [
+      [41.1824, -73.6946], [41.1818, -73.6945], [41.1813, -73.6945],
+      [41.1810, -73.6948], [41.1812, -73.6960], [41.1816, -73.6965],
+      [41.1822, -73.6960], [41.1824, -73.6952]
+    ]
+  },
+  {
+    id: 2, name: "Northwest Ridge",
+    color: "#2196F3", acres: 6.5,
+    coords: [
+      [41.1822, -73.6960], [41.1816, -73.6965], [41.1812, -73.6975],
+      [41.1815, -73.6990], [41.1820, -73.6995], [41.1824, -73.6985],
+      [41.1825, -73.6970]
+    ]
+  },
+  {
+    id: 3, name: "West Hillside",
+    color: "#FF9800", acres: 6.0,
+    coords: [
+      [41.1815, -73.6990], [41.1812, -73.6975], [41.1805, -73.6980],
+      [41.1798, -73.6990], [41.1795, -73.7000], [41.1800, -73.7010],
+      [41.1810, -73.7005]
+    ]
+  },
+  {
+    id: 4, name: "Sports Field",
+    color: "#E91E63", acres: 5.8,
+    coords: [
+      [41.1810, -73.6948], [41.1805, -73.6940], [41.1798, -73.6942],
+      [41.1795, -73.6950], [41.1798, -73.6960], [41.1805, -73.6965],
+      [41.1810, -73.6960]
+    ]
+  },
+  {
+    id: 5, name: "Central Grounds",
+    color: "#9C27B0", acres: 5.5,
+    coords: [
+      [41.1805, -73.6965], [41.1798, -73.6960], [41.1792, -73.6965],
+      [41.1790, -73.6975], [41.1795, -73.6985], [41.1805, -73.6980]
+    ]
+  },
+  {
+    id: 6, name: "Residence East",
+    color: "#00BCD4", acres: 5.2,
+    coords: [
+      [41.1798, -73.6942], [41.1793, -73.6935], [41.1787, -73.6932],
+      [41.1783, -73.6940], [41.1785, -73.6950], [41.1792, -73.6955],
+      [41.1795, -73.6950]
+    ]
+  },
+  {
+    id: 7, name: "Golf Course North",
+    color: "#8BC34A", acres: 5.5,
+    coords: [
+      [41.1795, -73.7000], [41.1790, -73.6990], [41.1785, -73.6995],
+      [41.1780, -73.7005], [41.1785, -73.7015], [41.1792, -73.7010]
+    ]
+  },
+  {
+    id: 8, name: "Golf Course South",
+    color: "#FFC107", acres: 5.0,
+    coords: [
+      [41.1780, -73.7005], [41.1775, -73.6998], [41.1770, -73.7002],
+      [41.1768, -73.7012], [41.1772, -73.7018], [41.1778, -73.7015]
+    ]
+  },
+  {
+    id: 9, name: "South Meadow",
+    color: "#FF5722", acres: 5.5,
+    coords: [
+      [41.1783, -73.6940], [41.1778, -73.6935], [41.1772, -73.6940],
+      [41.1768, -73.6950], [41.1772, -73.6960], [41.1780, -73.6958],
+      [41.1785, -73.6950]
+    ]
+  },
+  {
+    id: 10, name: "Helipad & East Lawn",
+    color: "#607D8B", acres: 4.8,
+    coords: [
+      [41.1793, -73.6935], [41.1790, -73.6930], [41.1785, -73.6928],
+      [41.1780, -73.6930], [41.1778, -73.6935], [41.1783, -73.6940],
+      [41.1787, -73.6932]
+    ]
+  },
+  {
+    id: 11, name: "Southeast Perimeter",
+    color: "#795548", acres: 4.0,
+    coords: [
+      [41.1772, -73.6940], [41.1768, -73.6935], [41.1762, -73.6940],
+      [41.1758, -73.6948], [41.1760, -73.6958], [41.1765, -73.6960],
+      [41.1768, -73.6950]
+    ]
+  },
+  {
+    id: 12, name: "Garden Terraces",
+    color: "#3F51B5", acres: 4.0,
+    coords: [
+      [41.1790, -73.6975], [41.1785, -73.6970], [41.1780, -73.6975],
+      [41.1778, -73.6985], [41.1782, -73.6992], [41.1788, -73.6988]
+    ]
+  }
+];
+
+// ── Charging Stations ──
+var chargers = [
+  { id: "A", lat: 41.1815, lng: -73.6958, label: "Station A — North (Mowers 1, 2, 4)" },
+  { id: "B", lat: 41.1795, lng: -73.7005, label: "Station B — West (Mowers 3, 7, 8)" },
+  { id: "C", lat: 41.1788, lng: -73.6940, label: "Station C — East (Mowers 6, 9, 10)" },
+  { id: "D", lat: 41.1790, lng: -73.6975, label: "Station D — Central (Mowers 5, 11, 12)" }
+];
+
+// ── Build Map ──
+var map = L.map('map', { zoomControl: true }).setView([41.1785, -73.6970], 16);
+
+// Satellite base layer (ESRI)
+var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles: Esri',
+  maxZoom: 19
+}).addTo(map);
+
+// Topo overlay (USGS)
+var topoLayer = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'USGS',
+  maxZoom: 19,
+  opacity: 0.55
+});
+
+// Satellite labels
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 19, opacity: 0.6
+}).addTo(map);
+
+// ── Property Boundary ──
+var boundaryLayer = L.polygon(parcelCoords, {
+  color: '#fff', weight: 3, dashArray: '8,6',
+  fillColor: 'transparent', fillOpacity: 0,
+  className: 'boundary'
+}).addTo(map);
+
+// ── Mower Zone Layers ──
+var zoneLayers = {};
+var zoneStates = {};
+
+mowerZones.forEach(function(z) {
+  var poly = L.polygon(z.coords, {
+    color: z.color, weight: 2,
+    fillColor: z.color, fillOpacity: 0.30
+  }).addTo(map);
+
+  // Center label
+  var center = poly.getBounds().getCenter();
+  var label = L.marker(center, {
+    icon: L.divIcon({
+      className: 'zone-label',
+      html: '<div style="background:' + z.color + ';color:#fff;font-size:11px;font-weight:700;padding:2px 6px;border-radius:10px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.4);text-align:center;line-height:1.3;">#' + z.id + '</div>',
+      iconSize: [30, 20],
+      iconAnchor: [15, 10]
+    })
+  }).addTo(map);
+
+  poly.bindPopup('<strong style="color:' + z.color + '">Mower #' + z.id + ': ' + z.name + '</strong><br>Coverage: ~' + z.acres + ' acres<br>Zone color: <span style="display:inline-block;width:12px;height:12px;background:' + z.color + ';border-radius:2px;vertical-align:middle;"></span>');
+
+  zoneLayers[z.id] = { poly: poly, label: label };
+  zoneStates[z.id] = true;
+});
+
+// ── Charging Stations ──
+var chargerMarkers = L.layerGroup().addTo(map);
+chargers.forEach(function(ch) {
+  L.marker([ch.lat, ch.lng], {
+    icon: L.divIcon({
+      className: '',
+      html: '<div class="charger-icon">&#9889;</div>',
+      iconSize: [22, 22],
+      iconAnchor: [11, 11]
+    })
+  }).bindPopup('<strong>' + ch.label + '</strong><br>3-bay charging hub').addTo(chargerMarkers);
+});
+
+// ── Control Panel ──
+var listEl = document.getElementById('mower-list');
+mowerZones.forEach(function(z) {
+  var row = document.createElement('div');
+  row.className = 'mower-toggle';
+  row.dataset.id = z.id;
+  row.innerHTML = '<div class="mower-swatch" style="background:' + z.color + ';"></div>'
+    + '<span class="mower-label">#' + z.id + ' ' + z.name + '</span>'
+    + '<span class="mower-acres">~' + z.acres + 'ac</span>';
+  row.onclick = function() {
+    var id = parseInt(this.dataset.id);
+    zoneStates[id] = !zoneStates[id];
+    if (zoneStates[id]) {
+      this.classList.remove('off');
+      zoneLayers[id].poly.addTo(map);
+      zoneLayers[id].label.addTo(map);
+    } else {
+      this.classList.add('off');
+      map.removeLayer(zoneLayers[id].poly);
+      map.removeLayer(zoneLayers[id].label);
+    }
+    updateStats();
+  };
+  listEl.appendChild(row);
+});
+
+// Layer toggles
+document.getElementById('togBoundary').onchange = function() {
+  this.checked ? boundaryLayer.addTo(map) : map.removeLayer(boundaryLayer);
+};
+document.getElementById('togTopo').onchange = function() {
+  this.checked ? topoLayer.addTo(map) : map.removeLayer(topoLayer);
+};
+document.getElementById('togChargers').onchange = function() {
+  this.checked ? chargerMarkers.addTo(map) : map.removeLayer(chargerMarkers);
+};
+
+function toggleAll(on) {
+  mowerZones.forEach(function(z) {
+    zoneStates[z.id] = on;
+    var row = listEl.querySelector('[data-id="' + z.id + '"]');
+    if (on) {
+      row.classList.remove('off');
+      zoneLayers[z.id].poly.addTo(map);
+      zoneLayers[z.id].label.addTo(map);
+    } else {
+      row.classList.add('off');
+      map.removeLayer(zoneLayers[z.id].poly);
+      map.removeLayer(zoneLayers[z.id].label);
+    }
+  });
+  updateStats();
+}
+
+function updateStats() {
+  var count = 0, acres = 0;
+  mowerZones.forEach(function(z) {
+    if (zoneStates[z.id]) { count++; acres += z.acres; }
+  });
+  document.getElementById('activeMowers').textContent = count;
+  document.getElementById('activeCoverage').textContent = '~' + acres.toFixed(1);
+}
+
+// Fit to boundary
+map.fitBounds(boundaryLayer.getBounds().pad(0.05));
+</script>
+</body>
+</html>
