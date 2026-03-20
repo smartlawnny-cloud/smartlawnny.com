@@ -194,10 +194,10 @@
       <label class="layer-toggle"><input type="checkbox" id="togTerrain" checked> 3D Terrain</label>
       <label class="layer-toggle"><input type="checkbox" id="togSlope"> Slope Analysis</label>
       <div id="slopeLegend" style="display:none;margin-top:6px;padding:6px 0;">
-        <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> &lt;20° — All mowers</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#ffeb3b;"></span> 20–30° — RM21 limit</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> 30–40° — X430 only</div>
-        <div class="legend-row"><span class="legend-dot" style="background:#f44336;"></span> &gt;40° — No mower</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> &lt;22° — All mowers</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#ffeb3b;"></span> 22–30° — RM21/Yarbo limit</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> 30–43° — TerraNox/X430</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#f44336;"></span> &gt;43° — No mower</div>
       </div>
       <h4>View</h4>
       <div class="view-btns">
@@ -243,7 +243,7 @@
               <li><span class="label">Cutting Height</span><span class="value">30–90 mm</span></li>
               <li><span class="label">Coverage per Unit</span><span class="value">Up to 1.5 acres</span></li>
               <li><span class="label">Navigation</span><span class="value">RTK + Vision AI</span></li>
-              <li><span class="label">Slope Capability</span><span class="value">Up to 45% (24°)</span></li>
+              <li><span class="label">Slope Capability</span><span class="value">Up to 43° (93%)</span></li>
               <li><span class="label">Weather Rating</span><span class="value">IPX6 All-Weather</span></li>
               <li><span class="label">Noise Level</span><span class="value">&lt; 62 dB</span></li>
               <li><span class="label">Boundary</span><span class="value">No perimeter wire</span></li>
@@ -850,9 +850,9 @@ function buildSlopeOverlay() {
       var slopeDeg = Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM) + (dzY/dyM)*(dzY/dyM))) * 180 / Math.PI;
 
       var color, opacity;
-      if (slopeDeg < 20) { color = '#4caf50'; opacity = 0.2; }
+      if (slopeDeg < 22) { color = '#4caf50'; opacity = 0.2; }
       else if (slopeDeg < 30) { color = '#ffeb3b'; opacity = 0.4; }
-      else if (slopeDeg < 40) { color = '#ff9800'; opacity = 0.5; }
+      else if (slopeDeg < 43) { color = '#ff9800'; opacity = 0.5; }
       else { color = '#f44336'; opacity = 0.6; }
 
       features.push({
@@ -887,7 +887,7 @@ function buildSlopeOverlay() {
 
   map.addLayer({
     id: 'slope-labels', type: 'symbol', source: 'slope-grid',
-    filter: ['>=', ['get', 'slope'], 30],
+    filter: ['>=', ['get', 'slope'], 22],
     layout: {
       'text-field': ['concat', ['to-string', ['get', 'slope']], '°'],
       'text-size': 10,
@@ -904,9 +904,9 @@ function buildSlopeOverlay() {
   // Click popup for slope cells
   map.on('click', 'slope-fill', function(e) {
     var props = e.features[0].properties;
-    var label = props.slope < 20 ? 'All mowers OK' :
-                props.slope < 30 ? 'RM21 max — use X430 or Yarbo' :
-                props.slope < 40 ? 'X430 only (4WD)' : 'Too steep — no mower';
+    var label = props.slope < 22 ? 'All mowers OK' :
+                props.slope < 30 ? 'RM21/Yarbo limit — use TerraNox or X430' :
+                props.slope < 43 ? 'TerraNox or X430 (4WD)' : 'Too steep — no mower';
     new maplibregl.Popup({ offset: 5 })
       .setLngLat(e.lngLat)
       .setHTML('<strong>' + props.slope + '° slope</strong><br>' + label)
