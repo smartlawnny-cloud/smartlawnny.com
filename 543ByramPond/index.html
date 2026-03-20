@@ -190,7 +190,15 @@
       <div class="legend-row" style="padding:4px 0;font-size:12px;">92.75 acres &bull; Significant elevation changes</div>
       <h4>Map Layers</h4>
       <label class="layer-toggle"><input type="checkbox" id="togBoundary" checked> Property Boundary</label>
+      <label class="layer-toggle"><input type="checkbox" id="togTopo" checked> Topo Contours</label>
       <label class="layer-toggle"><input type="checkbox" id="togTerrain" checked> 3D Terrain</label>
+      <label class="layer-toggle"><input type="checkbox" id="togSlope"> Slope Analysis</label>
+      <div id="slopeLegend" style="display:none;margin-top:6px;padding:6px 0;">
+        <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> &lt;20° — All mowers</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#ffeb3b;"></span> 20–30° — RM21 limit</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> 30–40° — X430 only</div>
+        <div class="legend-row"><span class="legend-dot" style="background:#f44336;"></span> &gt;40° — No mower</div>
+      </div>
       <h4>View</h4>
       <div class="view-btns">
         <button class="view-btn" onclick="setView2D()">2D</button>
@@ -758,10 +766,17 @@ var map = new maplibregl.Map({
         tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}'],
         tileSize: 256,
         maxzoom: 19
+      },
+      'topo': {
+        type: 'raster',
+        tiles: ['https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256,
+        maxzoom: 16
       }
     },
     layers: [
       { id: 'satellite-layer', type: 'raster', source: 'satellite' },
+      { id: 'topo-layer', type: 'raster', source: 'topo', paint: { 'raster-opacity': 0.45 } },
       { id: 'labels-layer', type: 'raster', source: 'labels', paint: { 'raster-opacity': 0.6 } }
     ],
     terrain: { source: 'terrain-dem', exaggeration: 1.8 }
@@ -789,12 +804,147 @@ map.on('load', function() {
     paint: { 'line-color':'#ffffff', 'line-width':3, 'line-dasharray':[3,2] }
   });
 
+  // ── Slope analysis overlay ──
+  // Build grid cells, compute slope from terrain DEM, color by steepness
+  setTimeout(function() { buildSlopeOverlay(); }, 2000); // wait for terrain tiles
 });
+
+function buildSlopeOverlay() {
+  var gridSize = 40;
+  // Property bounding box (from boundary coordinates)
+  var minLng = -73.7018, maxLng = -73.6926;
+  var minLat = 41.1742, maxLat = 41.1825;
+  var lngStep = (maxLng - minLng) / gridSize;
+  var latStep = (maxLat - minLat) / gridSize;
+  var mPerDegreeLat = 111320;
+
+  // Sample elevations
+  var elevs = [];
+  for (var i = 0; i <= gridSize; i++) {
+    elevs[i] = [];
+    for (var j = 0; j <= gridSize; j++) {
+      var lng = minLng + j * lngStep;
+      var lat = minLat + i * latStep;
+      elevs[i][j] = map.queryTerrainElevation({ lng: lng, lat: lat }) || 0;
+    }
+  }
+
+  // Build GeoJSON features for each cell
+  var features = [];
+  for (var i = 0; i < gridSize; i++) {
+    for (var j = 0; j < gridSize; j++) {
+      var lat = minLat + i * latStep;
+      var lng = minLng + j * lngStep;
+
+      // Check if cell center is inside property boundary (ray casting)
+      var cx = lng + lngStep / 2;
+      var cy = lat + latStep / 2;
+      if (!pointInPolygon(cx, cy, boundaryRing)) continue;
+
+      // Compute slope from 4 corners
+      var e00 = elevs[i][j], e10 = elevs[i+1][j], e01 = elevs[i][j+1], e11 = elevs[i+1][j+1];
+      var dxM = lngStep * mPerDegreeLat * Math.cos(lat * Math.PI / 180);
+      var dyM = latStep * mPerDegreeLat;
+      var dzX = ((e01 - e00) + (e11 - e10)) / 2;
+      var dzY = ((e10 - e00) + (e11 - e01)) / 2;
+      var slopeDeg = Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM) + (dzY/dyM)*(dzY/dyM))) * 180 / Math.PI;
+
+      var color, opacity;
+      if (slopeDeg < 20) { color = '#4caf50'; opacity = 0.2; }
+      else if (slopeDeg < 30) { color = '#ffeb3b'; opacity = 0.4; }
+      else if (slopeDeg < 40) { color = '#ff9800'; opacity = 0.5; }
+      else { color = '#f44336'; opacity = 0.6; }
+
+      features.push({
+        type: 'Feature',
+        properties: { slope: Math.round(slopeDeg), color: color, opacity: opacity },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [[
+            [lng, lat], [lng + lngStep, lat],
+            [lng + lngStep, lat + latStep], [lng, lat + latStep],
+            [lng, lat]
+          ]]
+        }
+      });
+    }
+  }
+
+  map.addSource('slope-grid', {
+    type: 'geojson',
+    data: { type: 'FeatureCollection', features: features }
+  });
+
+  // Separate layers for each slope band so we can use data-driven colors
+  map.addLayer({
+    id: 'slope-fill', type: 'fill', source: 'slope-grid',
+    paint: {
+      'fill-color': ['get', 'color'],
+      'fill-opacity': ['get', 'opacity']
+    },
+    layout: { visibility: 'none' }
+  }, 'boundary-line');
+
+  map.addLayer({
+    id: 'slope-labels', type: 'symbol', source: 'slope-grid',
+    filter: ['>=', ['get', 'slope'], 30],
+    layout: {
+      'text-field': ['concat', ['to-string', ['get', 'slope']], '°'],
+      'text-size': 10,
+      'text-allow-overlap': false,
+      visibility: 'none'
+    },
+    paint: {
+      'text-color': '#fff',
+      'text-halo-color': 'rgba(0,0,0,0.7)',
+      'text-halo-width': 1
+    }
+  });
+
+  // Click popup for slope cells
+  map.on('click', 'slope-fill', function(e) {
+    var props = e.features[0].properties;
+    var label = props.slope < 20 ? 'All mowers OK' :
+                props.slope < 30 ? 'RM21 max — use X430 or Yarbo' :
+                props.slope < 40 ? 'X430 only (4WD)' : 'Too steep — no mower';
+    new maplibregl.Popup({ offset: 5 })
+      .setLngLat(e.lngLat)
+      .setHTML('<strong>' + props.slope + '° slope</strong><br>' + label)
+      .addTo(map);
+  });
+  map.on('mouseenter', 'slope-fill', function() { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'slope-fill', function() { map.getCanvas().style.cursor = ''; });
+}
+
+// Ray casting point-in-polygon
+function pointInPolygon(x, y, ring) {
+  var inside = false;
+  for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    var xi = ring[i][0], yi = ring[i][1];
+    var xj = ring[j][0], yj = ring[j][1];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
 
 // Layer toggles
 document.getElementById('togBoundary').onchange = function() {
   var vis = this.checked ? 'visible' : 'none';
   if (map.getLayer('boundary-line')) map.setLayoutProperty('boundary-line', 'visibility', vis);
+};
+
+document.getElementById('togTopo').onchange = function() {
+  var vis = this.checked ? 'visible' : 'none';
+  if (map.getLayer('topo-layer')) map.setLayoutProperty('topo-layer', 'visibility', vis);
+};
+
+document.getElementById('togSlope').onchange = function() {
+  var vis = this.checked ? 'visible' : 'none';
+  if (map.getLayer('slope-fill')) map.setLayoutProperty('slope-fill', 'visibility', vis);
+  if (map.getLayer('slope-labels')) map.setLayoutProperty('slope-labels', 'visibility', vis);
+  document.getElementById('slopeLegend').style.display = this.checked ? 'block' : 'none';
 };
 
 document.getElementById('togTerrain').onchange = function() {
