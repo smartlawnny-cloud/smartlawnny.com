@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instant Property Quote — Smart Lawn NY</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
+
+/* ── Header ── */
+.header { display:flex; align-items:center; justify-content:space-between; padding:14px 24px; background:#fff; border-bottom:3px solid #6abb1e; position:sticky; top:0; z-index:2000; }
+.header-left { display:flex; align-items:center; gap:10px; }
+.header-left h1 { font-size:15px; line-height:1.2; }
+.header-left h1 span { color:#6abb1e; font-weight:400; font-size:11px; display:block; }
+.header-right { text-align:right; font-size:12px; color:#555; }
+.header-right strong { color:#1d1d1f; font-size:13px; display:block; }
+
+/* ── Hero / Address Input ── */
+.hero { background:linear-gradient(135deg,#1a1a2e 0%,#2d3a2e 100%); padding:60px 24px; text-align:center; }
+.hero h2 { color:#fff; font-size:28px; font-weight:800; margin-bottom:8px; }
+.hero p { color:#aaa; font-size:15px; margin-bottom:28px; }
+.search-box { max-width:600px; margin:0 auto; position:relative; }
+.search-box input { width:100%; padding:16px 140px 16px 20px; font-size:16px; border:2px solid #444; border-radius:12px; background:#2a2a3e; color:#fff; font-family:'Inter',sans-serif; outline:none; transition:border 0.2s; }
+.search-box input:focus { border-color:#6abb1e; }
+.search-box input::placeholder { color:#777; }
+.search-box button { position:absolute; right:6px; top:6px; bottom:6px; padding:0 24px; background:#6abb1e; color:#fff; font-weight:700; font-size:14px; border:none; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif; }
+.search-box button:hover { background:#5a9e18; }
+.search-box button:disabled { background:#555; cursor:not-allowed; }
+.autocomplete { position:absolute; top:100%; left:0; right:0; background:#2a2a3e; border:1px solid #444; border-radius:0 0 12px 12px; max-height:240px; overflow-y:auto; z-index:100; display:none; }
+.autocomplete-item { padding:12px 20px; color:#ddd; font-size:14px; cursor:pointer; border-bottom:1px solid #333; }
+.autocomplete-item:hover { background:#3a3a4e; color:#fff; }
+.autocomplete-item:last-child { border-bottom:none; }
+
+/* ── Analysis Section ── */
+#analysis { display:none; }
+.analysis-grid { display:grid; grid-template-columns:1fr 360px; gap:0; min-height:500px; }
+#map { width:100%; height:500px; }
+.stats-panel { padding:24px; background:#f9fafb; border-left:1px solid #e0e0e0; overflow-y:auto; }
+.stats-panel h3 { font-size:16px; font-weight:700; margin-bottom:16px; color:#1d1d1f; }
+.stat-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee; font-size:14px; }
+.stat-row .label { color:#666; }
+.stat-row .value { font-weight:600; color:#1d1d1f; }
+.slope-bar { margin-top:16px; }
+.slope-bar h4 { font-size:13px; font-weight:600; margin-bottom:8px; color:#555; }
+.slope-segment { display:flex; align-items:center; gap:8px; padding:4px 0; font-size:13px; }
+.slope-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+.slope-pct { font-weight:600; min-width:36px; }
+
+/* ── Map Controls Panel ── */
+.map-controls { position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.95); border-radius:8px; padding:12px 14px; font-size:12px; z-index:10; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+.map-controls h4 { font-size:11px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.map-controls label { display:flex; align-items:center; gap:6px; padding:3px 0; cursor:pointer; color:#333; font-size:12px; }
+.map-controls input[type="checkbox"] { accent-color:#6abb1e; }
+
+/* ── Packages ── */
+.packages { padding:40px 24px; max-width:1100px; margin:0 auto; }
+.packages h2 { text-align:center; font-size:22px; font-weight:800; margin-bottom:6px; }
+.packages .sub { text-align:center; color:#666; font-size:14px; margin-bottom:28px; }
+.pkg-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.pkg-card { border:2px solid #e0e0e0; border-radius:12px; overflow:hidden; transition:border-color 0.2s, box-shadow 0.2s; cursor:pointer; }
+.pkg-card:hover { border-color:#6abb1e; box-shadow:0 4px 16px rgba(106,187,30,0.15); }
+.pkg-card.selected { border-color:#6abb1e; box-shadow:0 4px 20px rgba(106,187,30,0.25); }
+.pkg-head { padding:20px; background:#f9fafb; border-bottom:1px solid #eee; }
+.pkg-head.featured { background:#6abb1e; color:#fff; }
+.pkg-head.featured .pkg-price span { color:rgba(255,255,255,0.7); }
+.pkg-badge { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#6abb1e; margin-bottom:4px; }
+.pkg-head.featured .pkg-badge { color:rgba(255,255,255,0.8); }
+.pkg-name { font-size:16px; font-weight:700; }
+.pkg-price { font-size:28px; font-weight:800; margin-top:4px; }
+.pkg-price span { font-size:14px; font-weight:400; color:#888; }
+.pkg-body { padding:16px 20px; }
+.pkg-body li { padding:6px 0; font-size:13px; color:#555; list-style:none; }
+.pkg-body li::before { content:"✓ "; color:#6abb1e; font-weight:700; }
+.pkg-foot { padding:12px 20px; border-top:1px solid #eee; }
+.pkg-foot button { width:100%; padding:10px; background:#6abb1e; color:#fff; font-weight:700; font-size:13px; border:none; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif; }
+.pkg-foot button:hover { background:#5a9e18; }
+
+/* ── Quote Output ── */
+#quote-output { display:none; max-width:800px; margin:0 auto; padding:40px 24px; }
+.quote-box { border:1px solid #e0e0e0; border-radius:12px; overflow:hidden; }
+.quote-header { background:#6abb1e; color:#fff; padding:24px 28px; display:flex; justify-content:space-between; align-items:center; }
+.quote-header h3 { font-size:20px; font-weight:800; }
+.quote-header .quote-num { font-size:13px; opacity:0.8; }
+.quote-body { padding:28px; }
+.quote-row { display:flex; justify-content:space-between; padding:8px 0; font-size:14px; border-bottom:1px solid #f0f0f0; }
+.quote-row.total { border-top:2px solid #1d1d1f; border-bottom:none; font-size:16px; font-weight:700; padding-top:12px; margin-top:4px; }
+.quote-row.deposit { color:#6abb1e; font-weight:600; }
+.quote-actions { display:flex; gap:12px; justify-content:center; margin-top:24px; }
+.quote-actions button { padding:12px 28px; font-size:14px; font-weight:600; border-radius:8px; cursor:pointer; font-family:'Inter',sans-serif; border:none; }
+.btn-print { background:#1d1d1f; color:#fff; }
+.btn-print:hover { background:#333; }
+.btn-email { background:#fff; color:#1d1d1f; border:2px solid #e0e0e0 !important; }
+.btn-email:hover { border-color:#6abb1e !important; color:#6abb1e; }
+
+/* ── Footer ── */
+.footer { text-align:center; padding:24px; font-size:12px; color:#888; border-top:1px solid #eee; margin-top:40px; }
+
+/* ── Loading ── */
+.loading { text-align:center; padding:60px 24px; }
+.spinner { width:40px; height:40px; border:4px solid #eee; border-top-color:#6abb1e; border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── Draw Mode Banner ── */
+.draw-banner { background:#fff3cd; color:#856404; padding:10px 20px; text-align:center; font-size:13px; font-weight:500; display:none; }
+.draw-banner button { background:#856404; color:#fff; border:none; padding:6px 16px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer; margin-left:12px; }
+
+/* ── Responsive ── */
+@media (max-width:900px) {
+  .analysis-grid { grid-template-columns:1fr; }
+  .stats-panel { border-left:none; border-top:1px solid #e0e0e0; }
+  .pkg-grid { grid-template-columns:1fr; }
+  #map { height:400px; }
+}
+
+/* ── Print ── */
+@media print {
+  .header, .hero, .map-controls, .draw-banner, .quote-actions, .footer, .packages, .analysis-grid { display:none !important; }
+  #quote-output { display:block !important; padding:0; }
+  .quote-box { border:none; }
+  .quote-header { background:#6abb1e !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body { font-size:12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="header">
+  <div class="header-left">
+    <h1>Smart Lawn<span>AUTOMATION & ROBOTICS</span></h1>
+  </div>
+  <div class="header-right">
+    <strong>Instant Property Quote</strong>
+    (914) 647-7276 &nbsp;|&nbsp; smartlawnny.com
+  </div>
+</div>
+
+<!-- ── Hero / Address Input ── -->
+<div class="hero" id="hero-section">
+  <h2>Get Your Robotic Mower Quote in 60 Seconds</h2>
+  <p>Enter any property address — we'll measure the lawn, analyze the terrain, and recommend the right fleet.</p>
+  <div class="search-box">
+    <input type="text" id="addressInput" placeholder="Enter property address..." autocomplete="off">
+    <button id="goBtn" onclick="geocodeAddress()">Get Quote →</button>
+    <div class="autocomplete" id="autocomplete"></div>
+  </div>
+</div>
+
+<!-- ── Loading ── -->
+<div class="loading" id="loading" style="display:none;">
+  <div class="spinner"></div>
+  <div style="font-size:15px;color:#555;">Analyzing property...</div>
+  <div style="font-size:12px;color:#999;margin-top:4px;">Fetching parcel boundary, terrain, and slope data</div>
+</div>
+
+<!-- ── Draw Mode Banner ── -->
+<div class="draw-banner" id="drawBanner">
+  Parcel boundary not found. Click points on the map to draw your property boundary.
+  <button onclick="finishDrawing()">Done Drawing</button>
+</div>
+
+<!-- ── Property Analysis ── -->
+<div id="analysis">
+  <div class="analysis-grid">
+    <div style="position:relative;">
+      <div id="map"></div>
+      <div class="map-controls">
+        <h4>Layers</h4>
+        <label><input type="checkbox" id="togBoundary" checked> Boundary</label>
+        <label><input type="checkbox" id="togTopo"> Topo Contours</label>
+        <label><input type="checkbox" id="togTerrain" checked> 3D Terrain</label>
+        <label><input type="checkbox" id="togSlope" checked> Slope Analysis</label>
+        <h4 style="margin-top:8px;">View</h4>
+        <div style="display:flex;gap:4px;">
+          <button onclick="setView2D()" style="padding:4px 12px;font-size:11px;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;">2D</button>
+          <button onclick="setView3D()" style="padding:4px 12px;font-size:11px;border:1px solid #6abb1e;border-radius:4px;background:#6abb1e;color:#fff;cursor:pointer;">3D</button>
+        </div>
+      </div>
+    </div>
+    <div class="stats-panel" id="statsPanel">
+      <h3 id="propAddress">Property Analysis</h3>
+      <div class="stat-row"><span class="label">Total Lot</span><span class="value" id="statLot">—</span></div>
+      <div class="stat-row"><span class="label">Mowable Area</span><span class="value" id="statMowable">—</span></div>
+      <div class="stat-row"><span class="label">Elevation Range</span><span class="value" id="statElev">—</span></div>
+      <div class="stat-row"><span class="label">Distance from Base</span><span class="value" id="statDist">—</span></div>
+      <div class="slope-bar" id="slopeBar">
+        <h4>Slope Breakdown</h4>
+        <div class="slope-segment"><span class="slope-dot" style="background:#4caf50;"></span><span class="slope-pct" id="slopeGreen">—</span> Flat (&lt;22°) — All mowers</div>
+        <div class="slope-segment"><span class="slope-dot" style="background:#ffeb3b;"></span><span class="slope-pct" id="slopeYellow">—</span> Moderate (22–30°) — Yarbo limit</div>
+        <div class="slope-segment"><span class="slope-dot" style="background:#ff9800;"></span><span class="slope-pct" id="slopeOrange">—</span> Steep (30–43°) — TerraNox only</div>
+        <div class="slope-segment"><span class="slope-dot" style="background:#f44336;"></span><span class="slope-pct" id="slopeRed">—</span> Extreme (&gt;43°) — No mower</div>
+      </div>
+      <div style="margin-top:20px;padding:12px;background:#f0f8e8;border-radius:8px;font-size:12px;color:#4a8a10;">
+        <strong>TerraNox CM240M1</strong> handles slopes up to 43° — covering nearly any terrain on this property.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Mower Packages ── -->
+<div class="packages" id="packages" style="display:none;">
+  <h2>Recommended Mower Packages</h2>
+  <p class="sub">Auto-calculated for your property. Click to select and generate your quote.</p>
+  <div class="pkg-grid">
+
+    <div class="pkg-card" onclick="selectPackage('a')">
+      <div class="pkg-head">
+        <div class="pkg-badge">Mowing Only</div>
+        <div class="pkg-name">TerraNox Fleet</div>
+        <div class="pkg-price" id="pkgAPrice">—</div>
+      </div>
+      <ul class="pkg-body">
+        <li><span id="pkgAUnits">—</span> TerraNox CM240M1 units</li>
+        <li>43° slope capability</li>
+        <li>RTK + Vision AI navigation</li>
+        <li>Autonomous 24/7 mowing</li>
+        <li id="pkgAMaint">Maintenance: —/week</li>
+        <li>No snow clearing</li>
+      </ul>
+      <div class="pkg-foot"><button>Select This Package</button></div>
+    </div>
+
+    <div class="pkg-card" onclick="selectPackage('b')">
+      <div class="pkg-head featured">
+        <div class="pkg-badge">4-Season</div>
+        <div class="pkg-name">TerraNox + Yarbo</div>
+        <div class="pkg-price" id="pkgBPrice">—</div>
+      </div>
+      <ul class="pkg-body">
+        <li><span id="pkgBUnits">—</span> TerraNox + 3 Yarbo units</li>
+        <li>Mowing + snow + leaf blowing</li>
+        <li>Walkway snow clearing included</li>
+        <li>True 4-season automation</li>
+        <li id="pkgBMaint">Maintenance: —/week</li>
+        <li>Year-round property care</li>
+      </ul>
+      <div class="pkg-foot"><button>Select This Package</button></div>
+    </div>
+
+    <div class="pkg-card" onclick="selectPackage('c')">
+      <div class="pkg-head">
+        <div class="pkg-badge">Zero Hassle</div>
+        <div class="pkg-name">Done-For-You</div>
+        <div class="pkg-price">$3,999<span>/month</span></div>
+      </div>
+      <ul class="pkg-body">
+        <li>Full fleet — we own the equipment</li>
+        <li>Installation, mapping, maintenance</li>
+        <li>Weekly monitoring & adjustments</li>
+        <li>All parts & labor included</li>
+        <li>Equipment replacement warranty</li>
+        <li>+$599/mo for walkway snow clearing</li>
+      </ul>
+      <div class="pkg-foot"><button>Select This Package</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Quote Output ── -->
+<div id="quote-output">
+  <div class="quote-box">
+    <div class="quote-header">
+      <div>
+        <h3>Smart Lawn NY</h3>
+        <div style="font-size:12px;opacity:0.8;">Automation & Robotics</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:18px;font-weight:800;">QUOTE</div>
+        <div class="quote-num" id="quoteNum">—</div>
+      </div>
+    </div>
+    <div class="quote-body">
+      <div style="display:flex;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #eee;">
+        <div>
+          <div style="font-size:12px;color:#888;font-weight:600;">PROPERTY</div>
+          <div style="font-size:14px;font-weight:600;" id="quoteAddress">—</div>
+          <div style="font-size:13px;color:#666;" id="quotePropStats">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:12px;color:#888;font-weight:600;">DATE</div>
+          <div style="font-size:14px;" id="quoteDate">—</div>
+          <div style="font-size:12px;color:#888;margin-top:8px;font-weight:600;">TERMS</div>
+          <div style="font-size:13px;">50% Deposit</div>
+        </div>
+      </div>
+      <div id="quoteLines"></div>
+    </div>
+  </div>
+  <div class="quote-actions" id="quoteActions">
+    <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+    <button class="btn-email" id="emailBtn">Email Quote</button>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<div class="footer">
+  &copy; 2026 Smart Lawn NY &nbsp;|&nbsp; (914) 647-7276 &nbsp;|&nbsp; smartlawnny@gmail.com &nbsp;|&nbsp; smartlawnny.com
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// GLOBALS
+// ═══════════════════════════════════════
+var map, boundaryRing = [], currentAddress = '', propertyData = {};
+var PEEKSKILL = { lat: 41.2901, lng: -73.9215 };
+var drawMode = false, drawPoints = [];
+
+// ═══════════════════════════════════════
+// GEOCODING (Nominatim)
+// ═══════════════════════════════════════
+var debounceTimer;
+document.getElementById('addressInput').addEventListener('input', function() {
+  clearTimeout(debounceTimer);
+  var q = this.value.trim();
+  if (q.length < 5) { document.getElementById('autocomplete').style.display = 'none'; return; }
+  debounceTimer = setTimeout(function() {
+    fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) + '&format=json&addressdetails=1&countrycodes=us&limit=5', {
+      headers: { 'User-Agent': 'SmartLawnNY-QuoteTool/1.0' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(results) {
+      var ac = document.getElementById('autocomplete');
+      ac.innerHTML = '';
+      if (!results.length) { ac.style.display = 'none'; return; }
+      results.forEach(function(r) {
+        var div = document.createElement('div');
+        div.className = 'autocomplete-item';
+        div.textContent = r.display_name;
+        div.onclick = function() {
+          document.getElementById('addressInput').value = r.display_name;
+          ac.style.display = 'none';
+          startAnalysis(parseFloat(r.lat), parseFloat(r.lon), r.display_name);
+        };
+        ac.appendChild(div);
+      });
+      ac.style.display = 'block';
+    });
+  }, 500);
+});
+
+document.getElementById('addressInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); geocodeAddress(); }
+});
+
+function geocodeAddress() {
+  var q = document.getElementById('addressInput').value.trim();
+  if (!q) return;
+  document.getElementById('autocomplete').style.display = 'none';
+  document.getElementById('goBtn').disabled = true;
+  document.getElementById('goBtn').textContent = 'Searching...';
+
+  fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) + '&format=json&addressdetails=1&countrycodes=us&limit=1', {
+    headers: { 'User-Agent': 'SmartLawnNY-QuoteTool/1.0' }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(results) {
+    document.getElementById('goBtn').disabled = false;
+    document.getElementById('goBtn').textContent = 'Get Quote →';
+    if (!results.length) { alert('Address not found. Try a more specific address.'); return; }
+    var r = results[0];
+    startAnalysis(parseFloat(r.lat), parseFloat(r.lon), r.display_name);
+  })
+  .catch(function() {
+    document.getElementById('goBtn').disabled = false;
+    document.getElementById('goBtn').textContent = 'Get Quote →';
+    alert('Geocoding error. Please try again.');
+  });
+}
+
+// ═══════════════════════════════════════
+// MAIN ANALYSIS FLOW
+// ═══════════════════════════════════════
+function startAnalysis(lat, lng, displayName) {
+  currentAddress = displayName;
+  document.getElementById('hero-section').style.padding = '20px 24px';
+  document.getElementById('hero-section').querySelector('h2').style.display = 'none';
+  document.getElementById('hero-section').querySelector('p').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('analysis').style.display = 'none';
+  document.getElementById('packages').style.display = 'none';
+  document.getElementById('quote-output').style.display = 'none';
+
+  // Distance from Peekskill
+  var dist = haversine(lat, lng, PEEKSKILL.lat, PEEKSKILL.lng);
+  propertyData.distance = dist;
+  propertyData.lat = lat;
+  propertyData.lng = lng;
+
+  // Try NYS GIS parcel lookup
+  fetchParcel(lat, lng, function(parcelRing) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('analysis').style.display = 'block';
+
+    if (parcelRing && parcelRing.length > 3) {
+      boundaryRing = parcelRing;
+      initMap(lng, lat, false);
+    } else {
+      boundaryRing = [];
+      initMap(lng, lat, true);
+    }
+  });
+}
+
+// ═══════════════════════════════════════
+// PARCEL LOOKUP — NYS GIS
+// ═══════════════════════════════════════
+function fetchParcel(lat, lng, callback) {
+  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels/FeatureServer/0/query?' +
+    'geometry=' + lng + ',' + lat +
+    '&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=*&returnGeometry=true&f=geojson&inSR=4326&outSR=4326';
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.features && data.features.length > 0) {
+        var geom = data.features[0].geometry;
+        if (geom.type === 'Polygon') {
+          callback(geom.coordinates[0]);
+        } else if (geom.type === 'MultiPolygon') {
+          // Use largest polygon
+          var largest = geom.coordinates.reduce(function(a, b) { return a.length > b.length ? a : b; });
+          callback(largest[0]);
+        } else {
+          callback(null);
+        }
+      } else {
+        callback(null);
+      }
+    })
+    .catch(function() { callback(null); });
+}
+
+// ═══════════════════════════════════════
+// MAP INITIALIZATION
+// ═══════════════════════════════════════
+function initMap(lng, lat, needsDraw) {
+  if (map) { map.remove(); }
+
+  map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {
+        'satellite': { type:'raster', tiles:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom:19 },
+        'terrain-dem': { type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding:'terrarium', tileSize:256, maxzoom:15 },
+        'topo': { type:'raster', tiles:['https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom:16 }
+      },
+      layers: [
+        { id:'satellite-layer', type:'raster', source:'satellite' },
+        { id:'topo-layer', type:'raster', source:'topo', paint:{'raster-opacity':0.45}, layout:{visibility:'none'} }
+      ],
+      terrain: { source:'terrain-dem', exaggeration:1.5 }
+    },
+    center: [lng, lat],
+    zoom: 17,
+    pitch: 50,
+    bearing: -20,
+    maxPitch: 85,
+    antialias: true
+  });
+
+  map.addControl(new maplibregl.NavigationControl({ visualizePitch:true }), 'top-left');
+
+  map.on('load', function() {
+    if (boundaryRing.length > 0) {
+      addBoundaryAndAnalyze();
+    } else if (needsDraw) {
+      enableDrawMode();
+    }
+  });
+
+  // Toggle handlers
+  document.getElementById('togBoundary').onchange = function() {
+    var v = this.checked ? 'visible' : 'none';
+    if (map.getLayer('boundary-line')) map.setLayoutProperty('boundary-line','visibility',v);
+  };
+  document.getElementById('togTopo').onchange = function() {
+    var v = this.checked ? 'visible' : 'none';
+    if (map.getLayer('topo-layer')) map.setLayoutProperty('topo-layer','visibility',v);
+  };
+  document.getElementById('togTerrain').onchange = function() {
+    if (this.checked) { map.setTerrain({source:'terrain-dem',exaggeration:1.5}); }
+    else { map.setTerrain(null); }
+  };
+  document.getElementById('togSlope').onchange = function() {
+    var v = this.checked ? 'visible' : 'none';
+    if (map.getLayer('slope-fill')) map.setLayoutProperty('slope-fill','visibility',v);
+    if (map.getLayer('slope-labels')) map.setLayoutProperty('slope-labels','visibility',v);
+  };
+}
+
+function setView2D() { map.easeTo({pitch:0, bearing:0, duration:800}); }
+function setView3D() { map.easeTo({pitch:50, bearing:-20, duration:800}); }
+
+// ═══════════════════════════════════════
+// DRAW MODE (fallback when no parcel)
+// ═══════════════════════════════════════
+function enableDrawMode() {
+  drawMode = true;
+  drawPoints = [];
+  document.getElementById('drawBanner').style.display = 'block';
+
+  // Add click-to-draw points
+  map.getCanvas().style.cursor = 'crosshair';
+
+  map.on('click', function drawClick(e) {
+    if (!drawMode) return;
+    drawPoints.push([e.lngLat.lng, e.lngLat.lat]);
+
+    // Update visual
+    if (map.getSource('draw-points')) {
+      map.getSource('draw-points').setData({
+        type:'FeatureCollection',
+        features: drawPoints.map(function(p) {
+          return { type:'Feature', geometry:{type:'Point',coordinates:p} };
+        })
+      });
+    } else {
+      map.addSource('draw-points', {
+        type:'geojson',
+        data: { type:'FeatureCollection', features: drawPoints.map(function(p) { return {type:'Feature',geometry:{type:'Point',coordinates:p}}; }) }
+      });
+      map.addLayer({ id:'draw-dots', type:'circle', source:'draw-points', paint:{'circle-radius':6,'circle-color':'#6abb1e','circle-stroke-color':'#fff','circle-stroke-width':2} });
+    }
+
+    // Draw line preview
+    if (drawPoints.length > 1) {
+      var lineCoords = drawPoints.concat([drawPoints[0]]);
+      if (map.getSource('draw-line')) {
+        map.getSource('draw-line').setData({ type:'Feature', geometry:{type:'LineString',coordinates:lineCoords} });
+      } else {
+        map.addSource('draw-line', { type:'geojson', data:{type:'Feature',geometry:{type:'LineString',coordinates:lineCoords}} });
+        map.addLayer({ id:'draw-line-layer', type:'line', source:'draw-line', paint:{'line-color':'#6abb1e','line-width':2,'line-dasharray':[3,2]} });
+      }
+    }
+  });
+}
+
+function finishDrawing() {
+  if (drawPoints.length < 3) { alert('Please click at least 3 points to define your property.'); return; }
+  drawMode = false;
+  document.getElementById('drawBanner').style.display = 'none';
+  map.getCanvas().style.cursor = '';
+
+  // Close polygon
+  boundaryRing = drawPoints.concat([drawPoints[0]]);
+
+  // Clean up draw layers
+  if (map.getLayer('draw-dots')) map.removeLayer('draw-dots');
+  if (map.getSource('draw-points')) map.removeSource('draw-points');
+  if (map.getLayer('draw-line-layer')) map.removeLayer('draw-line-layer');
+  if (map.getSource('draw-line')) map.removeSource('draw-line');
+
+  addBoundaryAndAnalyze();
+}
+
+// ═══════════════════════════════════════
+// BOUNDARY + SLOPE ANALYSIS
+// ═══════════════════════════════════════
+function addBoundaryAndAnalyze() {
+  // Add boundary to map
+  map.addSource('boundary', {
+    type:'geojson',
+    data:{ type:'Feature', geometry:{type:'Polygon', coordinates:[boundaryRing]} }
+  });
+  map.addLayer({
+    id:'boundary-line', type:'line', source:'boundary',
+    paint:{'line-color':'#ffffff','line-width':3,'line-dasharray':[3,2]}
+  });
+
+  // Compute lot area
+  var areaM2 = polygonArea(boundaryRing);
+  var areaAcres = areaM2 / 4046.86;
+  var mowableAcres = areaAcres * 0.85; // 15% structures/driveways
+  propertyData.totalAcres = areaAcres;
+  propertyData.mowableAcres = mowableAcres;
+
+  // Fit map to boundary
+  var bounds = boundaryRing.reduce(function(b, c) {
+    return b.extend(c);
+  }, new maplibregl.LngLatBounds(boundaryRing[0], boundaryRing[0]));
+  map.fitBounds(bounds, { padding:60, pitch:50, bearing:-20, duration:1200 });
+
+  // Update stats
+  document.getElementById('propAddress').textContent = currentAddress.split(',').slice(0,2).join(',');
+  document.getElementById('statLot').textContent = areaAcres.toFixed(2) + ' acres';
+  document.getElementById('statMowable').textContent = mowableAcres.toFixed(1) + ' acres';
+  document.getElementById('statDist').textContent = propertyData.distance.toFixed(1) + ' miles';
+
+  // Build slope overlay after terrain loads
+  map.once('idle', function() {
+    function tryBuild(attempts) {
+      var center = bounds.getCenter();
+      var testElev = map.queryTerrainElevation(center);
+      if (testElev !== null && testElev !== 0) {
+        buildSlopeOverlay(bounds);
+      } else if (attempts > 0) {
+        setTimeout(function() { tryBuild(attempts - 1); }, 500);
+      } else {
+        buildSlopeOverlay(bounds);
+      }
+    }
+    setTimeout(function() { tryBuild(10); }, 1000);
+  });
+}
+
+function buildSlopeOverlay(bounds) {
+  var gridSize = 30;
+  var sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
+  var minLng = sw.lng, maxLng = ne.lng, minLat = sw.lat, maxLat = ne.lat;
+  var lngStep = (maxLng - minLng) / gridSize;
+  var latStep = (maxLat - minLat) / gridSize;
+  var mPerDegreeLat = 111320;
+
+  // Sample elevations
+  var elevs = [], minElev = 9999, maxElev = -9999;
+  for (var i = 0; i <= gridSize; i++) {
+    elevs[i] = [];
+    for (var j = 0; j <= gridSize; j++) {
+      var lng = minLng + j * lngStep;
+      var lat = minLat + i * latStep;
+      var e = map.queryTerrainElevation({lng:lng, lat:lat}) || 0;
+      elevs[i][j] = e;
+      if (e > 0) { minElev = Math.min(minElev, e); maxElev = Math.max(maxElev, e); }
+    }
+  }
+
+  document.getElementById('statElev').textContent = Math.round(minElev * 3.281) + '–' + Math.round(maxElev * 3.281) + ' ft';
+
+  // Build slope grid
+  var features = [], slopeCounts = {green:0, yellow:0, orange:0, red:0}, totalCells = 0;
+  for (var i = 0; i < gridSize; i++) {
+    for (var j = 0; j < gridSize; j++) {
+      var lat = minLat + i * latStep;
+      var lng = minLng + j * lngStep;
+      var cx = lng + lngStep / 2;
+      var cy = lat + latStep / 2;
+      if (!pointInPolygon(cx, cy, boundaryRing)) continue;
+      totalCells++;
+
+      var e00=elevs[i][j], e10=elevs[i+1][j], e01=elevs[i][j+1], e11=elevs[i+1][j+1];
+      var dxM = lngStep * mPerDegreeLat * Math.cos(lat * Math.PI/180);
+      var dyM = latStep * mPerDegreeLat;
+      var dzX = ((e01-e00)+(e11-e10))/2;
+      var dzY = ((e10-e00)+(e11-e01))/2;
+      var slopeDeg = Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM)+(dzY/dyM)*(dzY/dyM)))*180/Math.PI;
+
+      var color, opacity;
+      if (slopeDeg < 22) { color='#4caf50'; opacity=0.2; slopeCounts.green++; }
+      else if (slopeDeg < 30) { color='#ffeb3b'; opacity=0.4; slopeCounts.yellow++; }
+      else if (slopeDeg < 43) { color='#ff9800'; opacity=0.5; slopeCounts.orange++; }
+      else { color='#f44336'; opacity=0.6; slopeCounts.red++; }
+
+      features.push({
+        type:'Feature',
+        properties:{slope:Math.round(slopeDeg), color:color, opacity:opacity},
+        geometry:{type:'Polygon', coordinates:[[[lng,lat],[lng+lngStep,lat],[lng+lngStep,lat+latStep],[lng,lat+latStep],[lng,lat]]]}
+      });
+    }
+  }
+
+  // Update slope stats
+  if (totalCells > 0) {
+    document.getElementById('slopeGreen').textContent = Math.round(slopeCounts.green/totalCells*100) + '%';
+    document.getElementById('slopeYellow').textContent = Math.round(slopeCounts.yellow/totalCells*100) + '%';
+    document.getElementById('slopeOrange').textContent = Math.round(slopeCounts.orange/totalCells*100) + '%';
+    document.getElementById('slopeRed').textContent = Math.round(slopeCounts.red/totalCells*100) + '%';
+    propertyData.slopeCounts = slopeCounts;
+    propertyData.totalCells = totalCells;
+  }
+
+  // Add to map
+  map.addSource('slope-grid', { type:'geojson', data:{type:'FeatureCollection', features:features} });
+  map.addLayer({
+    id:'slope-fill', type:'fill', source:'slope-grid',
+    paint:{'fill-color':['get','color'],'fill-opacity':['get','opacity']},
+    layout:{visibility:'visible'}
+  }, 'boundary-line');
+  map.addLayer({
+    id:'slope-labels', type:'symbol', source:'slope-grid',
+    filter:['>=',['get','slope'],22],
+    layout:{'text-field':['concat',['to-string',['get','slope']],'°'],'text-size':10,'text-allow-overlap':false, visibility:'visible'},
+    paint:{'text-color':'#fff','text-halo-color':'rgba(0,0,0,0.7)','text-halo-width':1}
+  });
+
+  // Click popup
+  map.on('click','slope-fill', function(e) {
+    var props = e.features[0].properties;
+    var label = props.slope < 22 ? 'All mowers OK' :
+                props.slope < 30 ? 'Yarbo limit — use TerraNox' :
+                props.slope < 43 ? 'TerraNox only' : 'Too steep — no mower';
+    new maplibregl.Popup({offset:5}).setLngLat(e.lngLat).setHTML('<strong>'+props.slope+'° slope</strong><br>'+label).addTo(map);
+  });
+  map.on('mouseenter','slope-fill', function() { map.getCanvas().style.cursor='pointer'; });
+  map.on('mouseleave','slope-fill', function() { map.getCanvas().style.cursor=''; });
+
+  // Show packages
+  calculatePackages();
+}
+
+// ═══════════════════════════════════════
+// PACKAGE CALCULATOR
+// ═══════════════════════════════════════
+function calculatePackages() {
+  var acres = propertyData.mowableAcres;
+  var terraUnits = Math.max(1, Math.ceil(acres / 1.5));
+  var terraTotal = terraUnits * 6999;
+  var yarboUnits = 3;
+  var yarboTotal = yarboUnits * 5999;
+  var mappingCost = Math.ceil(acres) * 199;
+  var taxRate = 0.08375;
+
+  propertyData.packages = {
+    a: {
+      name: 'TerraNox Fleet',
+      terraUnits: terraUnits,
+      equipment: terraTotal,
+      mapping: mappingCost,
+      subtotal: terraTotal + mappingCost,
+      tax: Math.round((terraTotal + mappingCost) * taxRate * 100) / 100,
+      maintenanceWeekly: 250 + (terraUnits * 10),
+    },
+    b: {
+      name: 'TerraNox + Yarbo',
+      terraUnits: terraUnits,
+      yarboUnits: yarboUnits,
+      equipment: terraTotal + yarboTotal,
+      mapping: mappingCost,
+      subtotal: terraTotal + yarboTotal + mappingCost,
+      tax: Math.round((terraTotal + yarboTotal + mappingCost) * taxRate * 100) / 100,
+      maintenanceWeekly: 250 + (terraUnits * 10) + (yarboUnits * 20),
+    },
+    c: {
+      name: 'Done-For-You Managed',
+      monthly: 3999,
+      snowAddon: 599,
+    }
+  };
+
+  var a = propertyData.packages.a;
+  var b = propertyData.packages.b;
+
+  // Update package cards
+  document.getElementById('pkgAPrice').innerHTML = '$' + num(a.subtotal + a.tax) + '<span> total</span>';
+  document.getElementById('pkgAUnits').textContent = a.terraUnits;
+  document.getElementById('pkgAMaint').textContent = 'Maintenance: $' + num(a.maintenanceWeekly) + '/week';
+
+  document.getElementById('pkgBPrice').innerHTML = '$' + num(b.subtotal + b.tax) + '<span> total</span>';
+  document.getElementById('pkgBUnits').textContent = b.terraUnits + ' TerraNox';
+  document.getElementById('pkgBMaint').textContent = 'Maintenance: $' + num(b.maintenanceWeekly) + '/week';
+
+  document.getElementById('packages').style.display = 'block';
+  document.getElementById('packages').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════
+// QUOTE GENERATION
+// ═══════════════════════════════════════
+function selectPackage(pkg) {
+  // Highlight card
+  document.querySelectorAll('.pkg-card').forEach(function(c) { c.classList.remove('selected'); });
+  event.currentTarget.closest('.pkg-card').classList.add('selected');
+
+  var today = new Date();
+  var dateStr = today.toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+  var quoteId = 'Q-' + today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0') + '-' + Math.floor(Math.random()*900+100);
+
+  document.getElementById('quoteNum').textContent = quoteId;
+  document.getElementById('quoteDate').textContent = dateStr;
+  document.getElementById('quoteAddress').textContent = currentAddress.split(',').slice(0,3).join(',');
+  document.getElementById('quotePropStats').textContent = propertyData.totalAcres.toFixed(2) + ' acres total | ' + propertyData.mowableAcres.toFixed(1) + ' acres mowable';
+
+  var lines = document.getElementById('quoteLines');
+  lines.innerHTML = '';
+
+  if (pkg === 'c') {
+    addQuoteRow(lines, 'Monthly Managed Service', '$3,999.00/month');
+    addQuoteRow(lines, 'Snow Clearing Add-On', '+$599.00/month');
+    addQuoteRow(lines, 'Annual Total (mowing only)', '$47,988.00');
+    addQuoteRow(lines, 'Annual Total (with snow)', '$55,176.00');
+    addQuoteRow(lines, '', '');
+    addQuoteRow(lines, 'Equipment, installation, mapping, maintenance — all included.', '', true);
+  } else {
+    var p = propertyData.packages[pkg];
+    if (pkg === 'a') {
+      addQuoteRow(lines, p.terraUnits + '× Segway TerraNox CM240M1 @ $6,999', '$' + num(p.terraUnits * 6999));
+    } else {
+      addQuoteRow(lines, p.terraUnits + '× Segway TerraNox CM240M1 @ $6,999', '$' + num(p.terraUnits * 6999));
+      addQuoteRow(lines, '3× Yarbo (Snow + Blow modules) @ $5,999', '$' + num(3 * 5999));
+    }
+    addQuoteRow(lines, 'RTK Mapping (' + Math.ceil(propertyData.mowableAcres) + ' acres × $199)', '$' + num(p.mapping));
+    addQuoteRow(lines, 'Subtotal', '$' + num(p.subtotal));
+    addQuoteRow(lines, 'NY Sales Tax (8.375%)', '$' + num(p.tax));
+
+    var total = p.subtotal + p.tax;
+    var deposit = Math.round(total * 50) / 100;
+    var el = document.createElement('div'); el.className = 'quote-row total';
+    el.innerHTML = '<span>Total Due</span><span>$' + num(total) + '</span>';
+    lines.appendChild(el);
+
+    var dep = document.createElement('div'); dep.className = 'quote-row deposit';
+    dep.innerHTML = '<span>50% Deposit Due</span><span>$' + num(deposit) + '</span>';
+    lines.appendChild(dep);
+
+    addQuoteRow(lines, 'Balance Due on Delivery', '$' + num(total - deposit));
+    addQuoteRow(lines, '', '');
+    addQuoteRow(lines, 'Weekly Maintenance: $' + num(p.maintenanceWeekly) + '/week ($250 base + $10–$20/unit)', '', true);
+  }
+
+  // Email button
+  var subject = encodeURIComponent('Smart Lawn NY Quote — ' + currentAddress.split(',')[0]);
+  var body = encodeURIComponent('Your robotic mower quote from Smart Lawn NY is ready.\n\nProperty: ' + currentAddress + '\nQuote ID: ' + quoteId + '\n\nContact us at (914) 647-7276 or smartlawnny@gmail.com to proceed.');
+  document.getElementById('emailBtn').onclick = function() { window.open('mailto:?subject=' + subject + '&body=' + body); };
+
+  document.getElementById('quote-output').style.display = 'block';
+  document.getElementById('quote-output').scrollIntoView({behavior:'smooth'});
+}
+
+function addQuoteRow(container, label, value, isNote) {
+  var div = document.createElement('div');
+  div.className = 'quote-row';
+  if (isNote) { div.style.cssText = 'font-size:12px;color:#888;font-style:italic;border:none;'; }
+  div.innerHTML = '<span>' + label + '</span><span>' + value + '</span>';
+  container.appendChild(div);
+}
+
+// ═══════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════
+function num(n) { return n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+function haversine(lat1, lon1, lat2, lon2) {
+  var R = 3959; // miles
+  var dLat = (lat2-lat1) * Math.PI/180;
+  var dLon = (lon2-lon1) * Math.PI/180;
+  var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function pointInPolygon(x, y, ring) {
+  var inside = false;
+  for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    var xi=ring[i][0], yi=ring[i][1], xj=ring[j][0], yj=ring[j][1];
+    if (((yi>y)!==(yj>y)) && (x<(xj-xi)*(y-yi)/(yj-yi)+xi)) inside=!inside;
+  }
+  return inside;
+}
+
+function polygonArea(ring) {
+  // Shoelace formula on projected coordinates (approximate for small areas)
+  var n = ring.length;
+  if (n < 3) return 0;
+  var area = 0;
+  var R = 6371000; // earth radius meters
+  for (var i = 0; i < n - 1; i++) {
+    var lat1 = ring[i][1] * Math.PI/180, lng1 = ring[i][0] * Math.PI/180;
+    var lat2 = ring[i+1][1] * Math.PI/180, lng2 = ring[i+1][0] * Math.PI/180;
+    area += (lng2 - lng1) * (2 + Math.sin(lat1) + Math.sin(lat2));
+  }
+  return Math.abs(area * R * R / 2);
+}
+</script>
+</body>
+</html>
