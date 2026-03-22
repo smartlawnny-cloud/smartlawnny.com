@@ -146,6 +146,14 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
         <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer;">
           <input type="checkbox" id="togSlope" checked style="accent-color:#6abb1e;"> Slope Analysis
         </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer;">
+          <input type="checkbox" id="togContours" checked style="accent-color:#6abb1e;"> 10' Contour Lines
+        </label>
+        <div style="margin-top:6px;display:flex;gap:4px;">
+          <button onclick="set2D()" class="btn-small secondary" style="font-size:11px;padding:4px 12px;margin:0;">2D</button>
+          <button onclick="set3D()" class="btn-small" style="font-size:11px;padding:4px 12px;margin:0;">3D</button>
+          <button onclick="rotateMap()" class="btn-small secondary" style="font-size:11px;padding:4px 12px;margin:0;">Rotate</button>
+        </div>
       </div>
 
       <div class="draw-instructions" id="drawInstructions">
@@ -266,7 +274,7 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
 
 <script>
 var map, drawingManager, drawnPolygon, geocoder, elevationService, topoOverlay;
-var slopeCells = [], mowablePolygon;
+var slopeCells = [], mowablePolygon, contourLines = [];
 var currentAddress = '', propertyData = {};
 var PEEKSKILL = {lat:41.2901, lng:-73.9215};
 var GOOGLE_API_KEY = 'AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk';
@@ -282,14 +290,17 @@ function initMap() {
     center: {lat:41.27, lng:-73.92},
     zoom: 10,
     mapTypeId: 'satellite',
-    tilt: 0,
+    tilt: 45,
+    heading: 0,
     mapTypeControl: true,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
       mapTypeIds: ['satellite','hybrid','roadmap','terrain']
     },
     streetViewControl: false,
-    fullscreenControl: true
+    fullscreenControl: true,
+    rotateControl: true,
+    gestureHandling: 'greedy'
   });
 
   // USGS Topo overlay
@@ -312,6 +323,12 @@ function initMap() {
   document.getElementById('togSlope').addEventListener('change', function() {
     var vis = this.checked;
     slopeCells.forEach(function(cell) { cell.setVisible(vis); });
+  });
+
+  // Contour toggle
+  document.getElementById('togContours').addEventListener('change', function() {
+    var vis = this.checked;
+    contourLines.forEach(function(line) { line.setVisible(vis); });
   });
 
   // Mowable % change
@@ -416,10 +433,12 @@ function startAnalysis(lat, lng, displayName) {
   // Clear previous polygon
   if (drawnPolygon) { drawnPolygon.setMap(null); drawnPolygon = null; }
 
-  // Fly to property
+  // Fly to property in 3D
   map.setCenter({lat:lat, lng:lng});
   map.setZoom(18);
   map.setMapTypeId('satellite');
+  map.setTilt(45);
+  map.setHeading(0);
 
   // Place a marker
   new google.maps.Marker({
@@ -478,10 +497,22 @@ function clearDrawing() {
   if (mowablePolygon) { mowablePolygon.setMap(null); mowablePolygon = null; }
   slopeCells.forEach(function(c) { c.setMap(null); });
   slopeCells = [];
+  contourLines.forEach(function(l) { l.setMap(null); });
+  contourLines = [];
   document.getElementById('statLot').textContent = '—';
   document.getElementById('statMowable').textContent = '—';
   document.getElementById('statElev').textContent = '—';
   drawingManager.setDrawingMode('polygon');
+}
+
+// ══════════════════════════════════════
+// 3D VIEW CONTROLS
+// ══════════════════════════════════════
+function set2D() { map.setTilt(0); map.setHeading(0); }
+function set3D() { map.setTilt(45); }
+function rotateMap() {
+  var h = map.getHeading() || 0;
+  map.setHeading(h + 90);
 }
 
 // ══════════════════════════════════════
@@ -538,96 +569,193 @@ function runSlopeAnalysis() {
   for (var i = 0; i < path.getLength(); i++) { bounds.extend(path.getAt(i)); }
 
   var sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
-  var gridSize = 15; // Keep grid small to stay within Elevation API limits (512 pts max per request)
+  var gridSize = 22; // 23x23 = 529 points (under 512 limit, split into 2 requests)
   var latStep = (ne.lat() - sw.lat()) / gridSize;
   var lngStep = (ne.lng() - sw.lng()) / gridSize;
 
-  // Build grid of sample points
-  var locations = [];
-  var gridMap = []; // [row][col] index into locations
+  // Build grid of sample points — split into 2 batches to stay under 512/request
+  var allLocations = [];
+  var gridMap = [];
   for (var r = 0; r <= gridSize; r++) {
     gridMap[r] = [];
     for (var c = 0; c <= gridSize; c++) {
-      var lat = sw.lat() + r * latStep;
-      var lng = sw.lng() + c * lngStep;
-      gridMap[r][c] = locations.length;
-      locations.push(new google.maps.LatLng(lat, lng));
+      gridMap[r][c] = allLocations.length;
+      allLocations.push(new google.maps.LatLng(sw.lat() + r * latStep, sw.lng() + c * lngStep));
     }
   }
 
-  // Query elevation (max 512 locations per request)
-  elevationService.getElevationForLocations({locations: locations}, function(results, status) {
-    if (status !== 'OK' || !results) {
-      console.log('Elevation API error:', status);
-      return;
-    }
+  // Split into 2 batches
+  var mid = Math.ceil(allLocations.length / 2);
+  var batch1 = allLocations.slice(0, mid);
+  var batch2 = allLocations.slice(mid);
+  var allResults = [];
 
-    var minElev = 99999, maxElev = -99999;
-    var slopeCounts = {green:0, yellow:0, orange:0, red:0};
-    var totalCells = 0;
-    var mPerDegreeLat = 111320;
+  elevationService.getElevationForLocations({locations: batch1}, function(res1, s1) {
+    if (s1 !== 'OK') { console.log('Elevation batch 1 error:', s1); return; }
+    allResults = res1;
+    elevationService.getElevationForLocations({locations: batch2}, function(res2, s2) {
+      if (s2 !== 'OK') { console.log('Elevation batch 2 error:', s2); return; }
+      allResults = allResults.concat(res2);
+      processElevationData(allResults, gridMap, gridSize, sw, latStep, lngStep);
+    });
+  });
+}
+
+function processElevationData(results, gridMap, gridSize, sw, latStep, lngStep) {
+  var minElev = 99999, maxElev = -99999;
+  var slopeCounts = {green:0, yellow:0, orange:0, red:0};
+  var totalCells = 0;
+  var mPerDegreeLat = 111320;
+
+  // Build elevation grid for contour lines
+  var elevGrid = [];
+  for (var r = 0; r <= gridSize; r++) {
+    elevGrid[r] = [];
+    for (var c = 0; c <= gridSize; c++) {
+      var e = results[gridMap[r][c]].elevation;
+      elevGrid[r][c] = e * 3.281; // Convert to feet
+      minElev = Math.min(minElev, e);
+      maxElev = Math.max(maxElev, e);
+    }
+  }
+
+  // Slope analysis
+  for (var r = 0; r < gridSize; r++) {
+    for (var c = 0; c < gridSize; c++) {
+      var lat = sw.lat() + r * latStep;
+      var lng = sw.lng() + c * lngStep;
+      var cx = lng + lngStep / 2;
+      var cy = lat + latStep / 2;
+
+      if (!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(cy, cx), drawnPolygon)) continue;
+      totalCells++;
+
+      var e00 = results[gridMap[r][c]].elevation;
+      var e10 = results[gridMap[r+1][c]].elevation;
+      var e01 = results[gridMap[r][c+1]].elevation;
+      var e11 = results[gridMap[r+1][c+1]].elevation;
+
+      var dxM = lngStep * mPerDegreeLat * Math.cos(lat * Math.PI / 180);
+      var dyM = latStep * mPerDegreeLat;
+      var dzX = ((e01 - e00) + (e11 - e10)) / 2;
+      var dzY = ((e10 - e00) + (e11 - e01)) / 2;
+      var slopeDeg = Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM) + (dzY/dyM)*(dzY/dyM))) * 180 / Math.PI;
+
+      var color, opacity;
+      if (slopeDeg < 22) { color = '#4caf50'; opacity = 0.15; slopeCounts.green++; }
+      else if (slopeDeg < 30) { color = '#ffeb3b'; opacity = 0.3; slopeCounts.yellow++; }
+      else if (slopeDeg < 43) { color = '#ff9800'; opacity = 0.4; slopeCounts.orange++; }
+      else { color = '#f44336'; opacity = 0.5; slopeCounts.red++; }
+
+      var cell = new google.maps.Polygon({
+        paths: [{lat:lat,lng:lng},{lat:lat,lng:lng+lngStep},{lat:lat+latStep,lng:lng+lngStep},{lat:lat+latStep,lng:lng}],
+        fillColor: color, fillOpacity: opacity, strokeWeight: 0, map: map
+      });
+      slopeCells.push(cell);
+    }
+  }
+
+  // Update stats
+  document.getElementById('statElev').textContent = Math.round(minElev * 3.281) + '–' + Math.round(maxElev * 3.281) + ' ft';
+  if (totalCells > 0) {
+    document.getElementById('slopeGreen').textContent = Math.round(slopeCounts.green / totalCells * 100) + '%';
+    document.getElementById('slopeYellow').textContent = Math.round(slopeCounts.yellow / totalCells * 100) + '%';
+    document.getElementById('slopeOrange').textContent = Math.round(slopeCounts.orange / totalCells * 100) + '%';
+    document.getElementById('slopeRed').textContent = Math.round(slopeCounts.red / totalCells * 100) + '%';
+  }
+
+  // Generate 10-foot contour lines using marching squares
+  generateContourLines(elevGrid, gridSize, sw, latStep, lngStep);
+}
+
+// ══════════════════════════════════════
+// 10-FOOT CONTOUR LINES (Marching Squares)
+// ══════════════════════════════════════
+function generateContourLines(elevGrid, gridSize, sw, latStep, lngStep) {
+  contourLines.forEach(function(l) { l.setMap(null); });
+  contourLines = [];
+
+  var minFt = 99999, maxFt = -99999;
+  for (var r = 0; r <= gridSize; r++) {
+    for (var c = 0; c <= gridSize; c++) {
+      minFt = Math.min(minFt, elevGrid[r][c]);
+      maxFt = Math.max(maxFt, elevGrid[r][c]);
+    }
+  }
+
+  // Round to nearest 10-foot intervals
+  var startElev = Math.ceil(minFt / 10) * 10;
+  var endElev = Math.floor(maxFt / 10) * 10;
+
+  for (var level = startElev; level <= endElev; level += 10) {
+    var segments = [];
 
     for (var r = 0; r < gridSize; r++) {
       for (var c = 0; c < gridSize; c++) {
-        var lat = sw.lat() + r * latStep;
-        var lng = sw.lng() + c * lngStep;
-        var cx = lng + lngStep / 2;
-        var cy = lat + latStep / 2;
+        // Marching squares — 4 corners
+        var e00 = elevGrid[r][c], e01 = elevGrid[r][c+1];
+        var e10 = elevGrid[r+1][c], e11 = elevGrid[r+1][c+1];
 
-        // Check if cell center is inside polygon
-        if (!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(cy, cx), drawnPolygon)) continue;
-        totalCells++;
+        var idx = 0;
+        if (e00 >= level) idx |= 1;
+        if (e01 >= level) idx |= 2;
+        if (e11 >= level) idx |= 4;
+        if (e10 >= level) idx |= 8;
 
-        // Get elevations at 4 corners
-        var e00 = results[gridMap[r][c]].elevation;
-        var e10 = results[gridMap[r+1][c]].elevation;
-        var e01 = results[gridMap[r][c+1]].elevation;
-        var e11 = results[gridMap[r+1][c+1]].elevation;
+        if (idx === 0 || idx === 15) continue; // All above or below
 
-        minElev = Math.min(minElev, e00, e10, e01, e11);
-        maxElev = Math.max(maxElev, e00, e10, e01, e11);
+        var lat0 = sw.lat() + r * latStep;
+        var lng0 = sw.lng() + c * lngStep;
 
-        // Compute slope
-        var dxM = lngStep * mPerDegreeLat * Math.cos(lat * Math.PI / 180);
-        var dyM = latStep * mPerDegreeLat;
-        var dzX = ((e01 - e00) + (e11 - e10)) / 2;
-        var dzY = ((e10 - e00) + (e11 - e01)) / 2;
-        var slopeDeg = Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM) + (dzY/dyM)*(dzY/dyM))) * 180 / Math.PI;
+        // Interpolate edge crossings
+        function lerp(a, b, va, vb) { return a + (level - va) / (vb - va) * (b - a); }
+        var top    = {lat: lat0,           lng: lerp(lng0, lng0+lngStep, e00, e01)};
+        var bottom = {lat: lat0+latStep,   lng: lerp(lng0, lng0+lngStep, e10, e11)};
+        var left   = {lat: lerp(lat0, lat0+latStep, e00, e10), lng: lng0};
+        var right  = {lat: lerp(lat0, lat0+latStep, e01, e11), lng: lng0+lngStep};
 
-        var color, opacity;
-        if (slopeDeg < 22) { color = '#4caf50'; opacity = 0.2; slopeCounts.green++; }
-        else if (slopeDeg < 30) { color = '#ffeb3b'; opacity = 0.35; slopeCounts.yellow++; }
-        else if (slopeDeg < 43) { color = '#ff9800'; opacity = 0.4; slopeCounts.orange++; }
-        else { color = '#f44336'; opacity = 0.5; slopeCounts.red++; }
-
-        // Draw colored cell
-        var cell = new google.maps.Polygon({
-          paths: [
-            {lat: lat, lng: lng},
-            {lat: lat, lng: lng + lngStep},
-            {lat: lat + latStep, lng: lng + lngStep},
-            {lat: lat + latStep, lng: lng}
-          ],
-          fillColor: color,
-          fillOpacity: opacity,
-          strokeWeight: 0,
-          map: map
-        });
-        slopeCells.push(cell);
+        // Generate line segments based on marching squares case
+        var segs = [];
+        switch(idx) {
+          case 1: case 14: segs.push([top, left]); break;
+          case 2: case 13: segs.push([top, right]); break;
+          case 3: case 12: segs.push([left, right]); break;
+          case 4: case 11: segs.push([bottom, right]); break;
+          case 5: segs.push([top, right],[bottom, left]); break;
+          case 6: case 9:  segs.push([top, bottom]); break;
+          case 7: case 8:  segs.push([bottom, left]); break;
+          case 10: segs.push([top, left],[bottom, right]); break;
+        }
+        segments = segments.concat(segs);
       }
     }
 
-    // Update stats
-    if (minElev < 99999) {
-      document.getElementById('statElev').textContent = Math.round(minElev * 3.281) + '–' + Math.round(maxElev * 3.281) + ' ft';
+    // Draw each segment as a polyline
+    var isMajor = (level % 50 === 0);
+    segments.forEach(function(seg) {
+      var line = new google.maps.Polyline({
+        path: seg,
+        strokeColor: isMajor ? '#8B4513' : '#A0522D',
+        strokeOpacity: isMajor ? 0.7 : 0.4,
+        strokeWeight: isMajor ? 2 : 1,
+        map: map
+      });
+      contourLines.push(line);
+    });
+
+    // Add elevation labels on major contours (every 50ft)
+    if (isMajor && segments.length > 0) {
+      var midSeg = segments[Math.floor(segments.length / 2)];
+      var midPt = {lat: (midSeg[0].lat + midSeg[1].lat) / 2, lng: (midSeg[0].lng + midSeg[1].lng) / 2};
+      var marker = new google.maps.Marker({
+        position: midPt,
+        map: map,
+        icon: { path: google.maps.SymbolPath.CIRCLE, scale: 0 },
+        label: { text: level + "'", color: '#5D3A1A', fontSize: '10px', fontWeight: 'bold' }
+      });
+      contourLines.push(marker);
     }
-    if (totalCells > 0) {
-      document.getElementById('slopeGreen').textContent = Math.round(slopeCounts.green / totalCells * 100) + '%';
-      document.getElementById('slopeYellow').textContent = Math.round(slopeCounts.yellow / totalCells * 100) + '%';
-      document.getElementById('slopeOrange').textContent = Math.round(slopeCounts.orange / totalCells * 100) + '%';
-      document.getElementById('slopeRed').textContent = Math.round(slopeCounts.red / totalCells * 100) + '%';
-    }
-  });
+  }
 }
 
 function useManualAcres() {
