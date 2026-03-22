@@ -605,20 +605,20 @@ function addBoundaryAndAnalyze() {
   document.getElementById('statDist').textContent = propertyData.distance.toFixed(1) + ' miles';
 
   // Build slope overlay after terrain loads
-  map.once('idle', function() {
-    function tryBuild(attempts) {
-      var center = bounds.getCenter();
-      var testElev = map.queryTerrainElevation(center);
-      if (testElev !== null && testElev !== 0) {
-        buildSlopeOverlay(bounds);
-      } else if (attempts > 0) {
-        setTimeout(function() { tryBuild(attempts - 1); }, 500);
-      } else {
-        buildSlopeOverlay(bounds);
-      }
+  // DEM tiles can take 5-15s to fully decode — retry with increasing delays
+  function tryBuild(attempts) {
+    var center = bounds.getCenter();
+    var testElev = map.queryTerrainElevation(center);
+    if (testElev !== null && Math.abs(testElev) > 1) {
+      buildSlopeOverlay(bounds);
+    } else if (attempts > 0) {
+      setTimeout(function() { tryBuild(attempts - 1); }, 1000);
+    } else {
+      // Build anyway with whatever elevation data is available
+      buildSlopeOverlay(bounds);
     }
-    setTimeout(function() { tryBuild(10); }, 1000);
-  });
+  }
+  setTimeout(function() { tryBuild(20); }, 2000);
 }
 
 function buildSlopeOverlay(bounds) {
