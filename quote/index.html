@@ -90,6 +90,8 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
   .pkg-grid { grid-template-columns:1fr; }
   #map { height:400px; }
 }
+.slope-label { text-shadow: 0 0 4px rgba(0,0,0,0.8), 0 0 2px rgba(0,0,0,0.9); }
+
 @media print {
   .header,.hero,.quote-actions,.footer,.packages,.analysis-grid { display:none !important; }
   #quote-output { display:block !important; padding:0; }
@@ -300,6 +302,8 @@ function initMap() {
     streetViewControl: false,
     fullscreenControl: true,
     rotateControl: true,
+    zoomControl: true,
+    scaleControl: true,
     gestureHandling: 'greedy'
   });
 
@@ -569,11 +573,11 @@ function runSlopeAnalysis() {
   for (var i = 0; i < path.getLength(); i++) { bounds.extend(path.getAt(i)); }
 
   var sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
-  var gridSize = 22; // 23x23 = 529 points (under 512 limit, split into 2 requests)
+  var gridSize = 30; // 31x31 = 961 points, split into 2 batches
   var latStep = (ne.lat() - sw.lat()) / gridSize;
   var lngStep = (ne.lng() - sw.lng()) / gridSize;
 
-  // Build grid of sample points — split into 2 batches to stay under 512/request
+  // Build grid of sample points
   var allLocations = [];
   var gridMap = [];
   for (var r = 0; r <= gridSize; r++) {
@@ -584,19 +588,16 @@ function runSlopeAnalysis() {
     }
   }
 
-  // Split into 2 batches
+  // Split into 2 batches (max 512 per request)
   var mid = Math.ceil(allLocations.length / 2);
   var batch1 = allLocations.slice(0, mid);
   var batch2 = allLocations.slice(mid);
-  var allResults = [];
 
   elevationService.getElevationForLocations({locations: batch1}, function(res1, s1) {
     if (s1 !== 'OK') { console.log('Elevation batch 1 error:', s1); return; }
-    allResults = res1;
     elevationService.getElevationForLocations({locations: batch2}, function(res2, s2) {
       if (s2 !== 'OK') { console.log('Elevation batch 2 error:', s2); return; }
-      allResults = allResults.concat(res2);
-      processElevationData(allResults, gridMap, gridSize, sw, latStep, lngStep);
+      processElevationData(res1.concat(res2), gridMap, gridSize, sw, latStep, lngStep);
     });
   });
 }
@@ -619,7 +620,7 @@ function processElevationData(results, gridMap, gridSize, sw, latStep, lngStep) 
     }
   }
 
-  // Slope analysis
+  // Slope analysis — matching 543ByramPond style (bold colors, labels, click popups)
   for (var r = 0; r < gridSize; r++) {
     for (var c = 0; c < gridSize; c++) {
       var lat = sw.lat() + r * latStep;
@@ -640,18 +641,43 @@ function processElevationData(results, gridMap, gridSize, sw, latStep, lngStep) 
       var dzX = ((e01 - e00) + (e11 - e10)) / 2;
       var dzY = ((e10 - e00) + (e11 - e01)) / 2;
       var slopeDeg = Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM) + (dzY/dyM)*(dzY/dyM))) * 180 / Math.PI;
+      var slopeRound = Math.round(slopeDeg);
 
-      var color, opacity;
-      if (slopeDeg < 22) { color = '#4caf50'; opacity = 0.15; slopeCounts.green++; }
-      else if (slopeDeg < 30) { color = '#ffeb3b'; opacity = 0.3; slopeCounts.yellow++; }
-      else if (slopeDeg < 43) { color = '#ff9800'; opacity = 0.4; slopeCounts.orange++; }
-      else { color = '#f44336'; opacity = 0.5; slopeCounts.red++; }
+      var color, opacity, mowerLabel;
+      if (slopeDeg < 22) { color='#4caf50'; opacity=0.2; slopeCounts.green++; mowerLabel='All mowers OK'; }
+      else if (slopeDeg < 30) { color='#ffeb3b'; opacity=0.4; slopeCounts.yellow++; mowerLabel='Yarbo limit — use TerraNox'; }
+      else if (slopeDeg < 43) { color='#ff9800'; opacity=0.5; slopeCounts.orange++; mowerLabel='TerraNox only'; }
+      else { color='#f44336'; opacity=0.6; slopeCounts.red++; mowerLabel='Too steep — no mower'; }
 
+      // Colored cell polygon
       var cell = new google.maps.Polygon({
         paths: [{lat:lat,lng:lng},{lat:lat,lng:lng+lngStep},{lat:lat+latStep,lng:lng+lngStep},{lat:lat+latStep,lng:lng}],
-        fillColor: color, fillOpacity: opacity, strokeWeight: 0, map: map
+        fillColor: color, fillOpacity: opacity, strokeColor: color, strokeOpacity: 0.3, strokeWeight: 1, map: map,
+        _slope: slopeRound, _label: mowerLabel
       });
       slopeCells.push(cell);
+
+      // Click popup — like 543ByramPond
+      (function(cellRef, slope, label) {
+        google.maps.event.addListener(cellRef, 'click', function(e) {
+          new google.maps.InfoWindow({
+            content: '<div style="font-family:Inter,sans-serif;font-size:13px;"><strong>' + slope + '° slope</strong><br>' + label + '</div>',
+            position: e.latLng
+          }).open(map);
+        });
+      })(cell, slopeRound, mowerLabel);
+
+      // Degree labels on steep cells (>=22°) — every 3rd cell to avoid clutter
+      if (slopeRound >= 22 && r % 3 === 0 && c % 3 === 0) {
+        var labelMarker = new google.maps.Marker({
+          position: {lat: cy, lng: cx},
+          map: map,
+          icon: { path: google.maps.SymbolPath.CIRCLE, scale: 0 },
+          label: { text: slopeRound + '°', color: '#fff', fontSize: '10px', fontWeight: 'bold',
+                   className: 'slope-label' }
+        });
+        slopeCells.push(labelMarker);
+      }
     }
   }
 
