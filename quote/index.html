@@ -411,38 +411,56 @@ function startAnalysis(lat, lng, displayName) {
 // PARCEL LOOKUP — NYS GIS
 // ═══════════════════════════════════════
 function fetchParcel(lat, lng, callback) {
-  // Try NYS GIS first (supports CORS), then fallback to JSONP-style query
+  // Use JSONP to bypass CORS on NYS GIS ArcGIS REST endpoint
+  var callbackName = '_parcelCb_' + Date.now();
   var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels/FeatureServer/0/query?' +
     'geometry=' + lng + ',' + lat +
     '&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects' +
-    '&outFields=*&returnGeometry=true&f=geojson&inSR=4326&outSR=4326';
+    '&outFields=OBJECTID&returnGeometry=true&f=json&outSR=4326' +
+    '&callback=' + callbackName;
 
-  fetch(url)
-    .then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(data) {
-      if (data.features && data.features.length > 0) {
-        var geom = data.features[0].geometry;
-        if (geom.type === 'Polygon') {
-          callback(geom.coordinates[0]);
-        } else if (geom.type === 'MultiPolygon') {
-          var largest = geom.coordinates.reduce(function(a, b) { return a.length > b.length ? a : b; });
-          callback(largest[0]);
-        } else {
-          console.log('Parcel: unsupported geometry type', geom.type);
-          callback(null);
+  var timeout = setTimeout(function() {
+    delete window[callbackName];
+    if (script.parentNode) script.parentNode.removeChild(script);
+    console.log('Parcel: JSONP timeout');
+    callback(null);
+  }, 8000);
+
+  window[callbackName] = function(data) {
+    clearTimeout(timeout);
+    delete window[callbackName];
+    if (script.parentNode) script.parentNode.removeChild(script);
+
+    if (data.features && data.features.length > 0) {
+      var rings = data.features[0].geometry.rings;
+      if (rings && rings.length > 0) {
+        // ArcGIS returns rings as [[x,y],[x,y]...] — already lng,lat
+        var ring = rings[0];
+        // Close the ring if not closed
+        if (ring[0][0] !== ring[ring.length-1][0] || ring[0][1] !== ring[ring.length-1][1]) {
+          ring.push(ring[0]);
         }
+        console.log('Parcel found:', ring.length, 'vertices');
+        callback(ring);
       } else {
-        console.log('Parcel: no features found');
+        console.log('Parcel: no rings in geometry');
         callback(null);
       }
-    })
-    .catch(function(err) {
-      console.log('Parcel fetch failed:', err.message, '- enabling draw mode');
+    } else {
+      console.log('Parcel: no features found');
       callback(null);
-    });
+    }
+  };
+
+  var script = document.createElement('script');
+  script.src = url;
+  script.onerror = function() {
+    clearTimeout(timeout);
+    delete window[callbackName];
+    console.log('Parcel: script load error');
+    callback(null);
+  };
+  document.head.appendChild(script);
 }
 
 // ═══════════════════════════════════════
