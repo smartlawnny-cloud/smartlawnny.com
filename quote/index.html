@@ -131,7 +131,22 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
       <h3 id="propAddress">Property Analysis</h3>
       <div class="stat-row"><span class="label">Total Lot</span><span class="value" id="statLot">—</span></div>
       <div class="stat-row"><span class="label">Mowable Area</span><span class="value" id="statMowable">—</span></div>
+      <div class="stat-row">
+        <span class="label">Mowable %</span>
+        <span class="value"><input type="number" id="mowablePct" value="85" min="50" max="100" style="width:50px;padding:2px 4px;border:1px solid #ccc;border-radius:4px;font-size:13px;text-align:right;">%</span>
+      </div>
+      <div class="stat-row"><span class="label">Elevation Range</span><span class="value" id="statElev">—</span></div>
       <div class="stat-row"><span class="label">Distance from Base</span><span class="value" id="statDist">—</span></div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eee;">
+        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Map Layers</div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer;">
+          <input type="checkbox" id="togTopo" style="accent-color:#6abb1e;"> Topo Contours
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer;">
+          <input type="checkbox" id="togSlope" checked style="accent-color:#6abb1e;"> Slope Analysis
+        </label>
+      </div>
 
       <div class="draw-instructions" id="drawInstructions">
         <strong>Draw Your Property Boundary</strong>
@@ -147,8 +162,14 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
       </div>
 
       <div id="resultsPanel" style="display:none;margin-top:16px;">
-        <div style="background:#f0f8e8;border-radius:8px;padding:12px;font-size:13px;color:#4a8a10;">
-          <strong>TerraNox CM240M1</strong> handles slopes up to 43° — covering nearly any terrain.
+        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Slope Breakdown</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#4caf50;display:inline-block;"></span><strong id="slopeGreen" style="min-width:32px;">—</strong> Flat (&lt;22°) — All mowers</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#ffeb3b;display:inline-block;"></span><strong id="slopeYellow" style="min-width:32px;">—</strong> Moderate (22–30°) — Yarbo limit</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#ff9800;display:inline-block;"></span><strong id="slopeOrange" style="min-width:32px;">—</strong> Steep (30–43°) — TerraNox only</div>
+        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#f44336;display:inline-block;"></span><strong id="slopeRed" style="min-width:32px;">—</strong> Extreme (&gt;43°) — No mower</div>
+
+        <div style="background:#f0f8e8;border-radius:8px;padding:12px;font-size:13px;color:#4a8a10;margin-top:12px;">
+          <strong>TerraNox CM240M1</strong> handles slopes up to 43° — covering nearly any terrain on this property.
         </div>
       </div>
     </div>
@@ -244,7 +265,8 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
 </div>
 
 <script>
-var map, drawingManager, drawnPolygon, geocoder;
+var map, drawingManager, drawnPolygon, geocoder, elevationService, topoOverlay;
+var slopeCells = [], mowablePolygon;
 var currentAddress = '', propertyData = {};
 var PEEKSKILL = {lat:41.2901, lng:-73.9215};
 var GOOGLE_API_KEY = 'AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk';
@@ -254,6 +276,7 @@ var GOOGLE_API_KEY = 'AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk';
 // ══════════════════════════════════════
 function initMap() {
   geocoder = new google.maps.Geocoder();
+  elevationService = new google.maps.ElevationService();
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat:41.27, lng:-73.92},
@@ -263,10 +286,41 @@ function initMap() {
     mapTypeControl: true,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-      mapTypeIds: ['satellite','hybrid','roadmap']
+      mapTypeIds: ['satellite','hybrid','roadmap','terrain']
     },
     streetViewControl: false,
     fullscreenControl: true
+  });
+
+  // USGS Topo overlay
+  topoOverlay = new google.maps.ImageMapType({
+    getTileUrl: function(coord, zoom) {
+      return 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/' + zoom + '/' + coord.y + '/' + coord.x;
+    },
+    tileSize: new google.maps.Size(256, 256),
+    opacity: 0.4,
+    name: 'Topo'
+  });
+
+  // Topo toggle
+  document.getElementById('togTopo').addEventListener('change', function() {
+    if (this.checked) { map.overlayMapTypes.push(topoOverlay); }
+    else { map.overlayMapTypes.clear(); }
+  });
+
+  // Slope toggle
+  document.getElementById('togSlope').addEventListener('change', function() {
+    var vis = this.checked;
+    slopeCells.forEach(function(cell) { cell.setVisible(vis); });
+  });
+
+  // Mowable % change
+  document.getElementById('mowablePct').addEventListener('change', function() {
+    if (propertyData.totalAcres) {
+      var pct = parseInt(this.value) || 85;
+      propertyData.mowableAcres = propertyData.totalAcres * pct / 100;
+      document.getElementById('statMowable').textContent = propertyData.mowableAcres.toFixed(1) + ' acres';
+    }
   });
 
   // Drawing manager — polygon tool
@@ -397,13 +451,17 @@ function updateAreaFromPolygon() {
   var path = drawnPolygon.getPath();
   var areaM2 = google.maps.geometry.spherical.computeArea(path);
   var acres = areaM2 / 4046.86;
-  var mowable = acres * 0.85;
+  var pct = parseInt(document.getElementById('mowablePct').value) || 85;
+  var mowable = acres * pct / 100;
 
   propertyData.totalAcres = acres;
   propertyData.mowableAcres = mowable;
 
   document.getElementById('statLot').textContent = acres.toFixed(2) + ' acres';
   document.getElementById('statMowable').textContent = mowable.toFixed(1) + ' acres';
+
+  // Show mowable area as inset polygon
+  showMowableArea();
 }
 
 function calculateFromPolygon() {
@@ -411,14 +469,165 @@ function calculateFromPolygon() {
   updateAreaFromPolygon();
   document.getElementById('drawInstructions').style.display = 'none';
   document.getElementById('resultsPanel').style.display = 'block';
+  runSlopeAnalysis();
   calculatePackages();
 }
 
 function clearDrawing() {
   if (drawnPolygon) { drawnPolygon.setMap(null); drawnPolygon = null; }
+  if (mowablePolygon) { mowablePolygon.setMap(null); mowablePolygon = null; }
+  slopeCells.forEach(function(c) { c.setMap(null); });
+  slopeCells = [];
   document.getElementById('statLot').textContent = '—';
   document.getElementById('statMowable').textContent = '—';
+  document.getElementById('statElev').textContent = '—';
   drawingManager.setDrawingMode('polygon');
+}
+
+// ══════════════════════════════════════
+// MOWABLE AREA VISUALIZATION
+// ══════════════════════════════════════
+function showMowableArea() {
+  if (mowablePolygon) { mowablePolygon.setMap(null); }
+  if (!drawnPolygon) return;
+
+  // Create slightly inset polygon for mowable area
+  var path = drawnPolygon.getPath();
+  var center = {lat: 0, lng: 0};
+  var len = path.getLength();
+  for (var i = 0; i < len; i++) {
+    center.lat += path.getAt(i).lat() / len;
+    center.lng += path.getAt(i).lng() / len;
+  }
+
+  var pct = (parseInt(document.getElementById('mowablePct').value) || 85) / 100;
+  var scale = Math.sqrt(pct); // Scale factor for area reduction
+  var insetPath = [];
+  for (var i = 0; i < len; i++) {
+    var pt = path.getAt(i);
+    insetPath.push({
+      lat: center.lat + (pt.lat() - center.lat) * scale,
+      lng: center.lng + (pt.lng() - center.lng) * scale
+    });
+  }
+
+  mowablePolygon = new google.maps.Polygon({
+    paths: insetPath,
+    fillColor: '#4caf50',
+    fillOpacity: 0.12,
+    strokeColor: '#4caf50',
+    strokeWeight: 2,
+    strokeOpacity: 0.6,
+    map: map
+  });
+}
+
+// ══════════════════════════════════════
+// SLOPE ANALYSIS (Google Elevation API)
+// ══════════════════════════════════════
+function runSlopeAnalysis() {
+  if (!drawnPolygon) return;
+
+  // Clear previous slope cells
+  slopeCells.forEach(function(c) { c.setMap(null); });
+  slopeCells = [];
+
+  // Get bounding box of polygon
+  var path = drawnPolygon.getPath();
+  var bounds = new google.maps.LatLngBounds();
+  for (var i = 0; i < path.getLength(); i++) { bounds.extend(path.getAt(i)); }
+
+  var sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
+  var gridSize = 15; // Keep grid small to stay within Elevation API limits (512 pts max per request)
+  var latStep = (ne.lat() - sw.lat()) / gridSize;
+  var lngStep = (ne.lng() - sw.lng()) / gridSize;
+
+  // Build grid of sample points
+  var locations = [];
+  var gridMap = []; // [row][col] index into locations
+  for (var r = 0; r <= gridSize; r++) {
+    gridMap[r] = [];
+    for (var c = 0; c <= gridSize; c++) {
+      var lat = sw.lat() + r * latStep;
+      var lng = sw.lng() + c * lngStep;
+      gridMap[r][c] = locations.length;
+      locations.push(new google.maps.LatLng(lat, lng));
+    }
+  }
+
+  // Query elevation (max 512 locations per request)
+  elevationService.getElevationForLocations({locations: locations}, function(results, status) {
+    if (status !== 'OK' || !results) {
+      console.log('Elevation API error:', status);
+      return;
+    }
+
+    var minElev = 99999, maxElev = -99999;
+    var slopeCounts = {green:0, yellow:0, orange:0, red:0};
+    var totalCells = 0;
+    var mPerDegreeLat = 111320;
+
+    for (var r = 0; r < gridSize; r++) {
+      for (var c = 0; c < gridSize; c++) {
+        var lat = sw.lat() + r * latStep;
+        var lng = sw.lng() + c * lngStep;
+        var cx = lng + lngStep / 2;
+        var cy = lat + latStep / 2;
+
+        // Check if cell center is inside polygon
+        if (!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(cy, cx), drawnPolygon)) continue;
+        totalCells++;
+
+        // Get elevations at 4 corners
+        var e00 = results[gridMap[r][c]].elevation;
+        var e10 = results[gridMap[r+1][c]].elevation;
+        var e01 = results[gridMap[r][c+1]].elevation;
+        var e11 = results[gridMap[r+1][c+1]].elevation;
+
+        minElev = Math.min(minElev, e00, e10, e01, e11);
+        maxElev = Math.max(maxElev, e00, e10, e01, e11);
+
+        // Compute slope
+        var dxM = lngStep * mPerDegreeLat * Math.cos(lat * Math.PI / 180);
+        var dyM = latStep * mPerDegreeLat;
+        var dzX = ((e01 - e00) + (e11 - e10)) / 2;
+        var dzY = ((e10 - e00) + (e11 - e01)) / 2;
+        var slopeDeg = Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM) + (dzY/dyM)*(dzY/dyM))) * 180 / Math.PI;
+
+        var color, opacity;
+        if (slopeDeg < 22) { color = '#4caf50'; opacity = 0.2; slopeCounts.green++; }
+        else if (slopeDeg < 30) { color = '#ffeb3b'; opacity = 0.35; slopeCounts.yellow++; }
+        else if (slopeDeg < 43) { color = '#ff9800'; opacity = 0.4; slopeCounts.orange++; }
+        else { color = '#f44336'; opacity = 0.5; slopeCounts.red++; }
+
+        // Draw colored cell
+        var cell = new google.maps.Polygon({
+          paths: [
+            {lat: lat, lng: lng},
+            {lat: lat, lng: lng + lngStep},
+            {lat: lat + latStep, lng: lng + lngStep},
+            {lat: lat + latStep, lng: lng}
+          ],
+          fillColor: color,
+          fillOpacity: opacity,
+          strokeWeight: 0,
+          map: map
+        });
+        slopeCells.push(cell);
+      }
+    }
+
+    // Update stats
+    if (minElev < 99999) {
+      document.getElementById('statElev').textContent = Math.round(minElev * 3.281) + '–' + Math.round(maxElev * 3.281) + ' ft';
+    }
+    if (totalCells > 0) {
+      document.getElementById('slopeGreen').textContent = Math.round(slopeCounts.green / totalCells * 100) + '%';
+      document.getElementById('slopeYellow').textContent = Math.round(slopeCounts.yellow / totalCells * 100) + '%';
+      document.getElementById('slopeOrange').textContent = Math.round(slopeCounts.orange / totalCells * 100) + '%';
+      document.getElementById('slopeRed').textContent = Math.round(slopeCounts.red / totalCells * 100) + '%';
+    }
+  });
 }
 
 function useManualAcres() {
