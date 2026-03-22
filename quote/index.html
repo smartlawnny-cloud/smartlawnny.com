@@ -160,8 +160,11 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
 
 <!-- ── Draw Mode Banner ── -->
 <div class="draw-banner" id="drawBanner">
-  Parcel boundary not found. Click points on the map to draw your property boundary.
+  <strong>Draw your property boundary</strong> — click corners of your lot on the satellite map, then click Done.
   <button onclick="finishDrawing()">Done Drawing</button>
+  <span style="margin-left:12px;">or enter lot size:</span>
+  <input type="number" id="manualAcres" placeholder="acres" style="width:70px;padding:4px 8px;border:1px solid #856404;border-radius:4px;font-size:12px;background:#fff;">
+  <button onclick="useManualAcres()" style="background:#4a8a10;">Use Acreage</button>
 </div>
 
 <!-- ── Property Analysis ── -->
@@ -392,8 +395,11 @@ function startAnalysis(lat, lng, displayName) {
   propertyData.lat = lat;
   propertyData.lng = lng;
 
-  // Try NYS GIS parcel lookup
-  fetchParcel(lat, lng, function(parcelRing) {
+  // Try both NYS GIS endpoints in parallel
+  var done = false;
+  function onResult(parcelRing) {
+    if (done) return;
+    done = true;
     document.getElementById('loading').style.display = 'none';
     document.getElementById('analysis').style.display = 'block';
 
@@ -404,16 +410,27 @@ function startAnalysis(lat, lng, displayName) {
       boundaryRing = [];
       initMap(lng, lat, true);
     }
+  }
+
+  // Try standard parcels endpoint
+  fetchParcel(lat, lng, 'NYS_Tax_Parcels', function(ring) {
+    if (ring && ring.length > 3) { onResult(ring); }
   });
+  // Try public parcels endpoint
+  fetchParcel(lat, lng, 'NYS_Tax_Parcels_Public', function(ring) {
+    if (ring && ring.length > 3) { onResult(ring); }
+  });
+  // Timeout fallback — if neither returns in 6s, go to draw mode
+  setTimeout(function() { onResult(null); }, 6000);
 }
 
 // ═══════════════════════════════════════
 // PARCEL LOOKUP — NYS GIS
 // ═══════════════════════════════════════
-function fetchParcel(lat, lng, callback) {
+function fetchParcel(lat, lng, serviceName, callback) {
   // Use JSONP to bypass CORS on NYS GIS ArcGIS REST endpoint
-  var callbackName = '_parcelCb_' + Date.now();
-  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels/FeatureServer/0/query?' +
+  var callbackName = '_parcelCb_' + Date.now() + '_' + Math.random().toString(36).substr(2,4);
+  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/' + serviceName + '/FeatureServer/0/query?' +
     'geometry=' + lng + ',' + lat +
     '&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects' +
     '&outFields=OBJECTID&returnGeometry=true&f=json&outSR=4326' +
@@ -569,6 +586,39 @@ function enableDrawMode() {
       }
     }
   });
+}
+
+function useManualAcres() {
+  var acres = parseFloat(document.getElementById('manualAcres').value);
+  if (!acres || acres <= 0) { alert('Please enter a valid acreage.'); return; }
+  drawMode = false;
+  document.getElementById('drawBanner').style.display = 'none';
+  map.getCanvas().style.cursor = '';
+
+  // Create a rough rectangle boundary around the center point
+  var lat = propertyData.lat, lng = propertyData.lng;
+  var sideLat = Math.sqrt(acres * 4046.86) / 111320; // degrees lat
+  var sideLng = sideLat / Math.cos(lat * Math.PI / 180);
+  boundaryRing = [
+    [lng - sideLng/2, lat - sideLat/2],
+    [lng + sideLng/2, lat - sideLat/2],
+    [lng + sideLng/2, lat + sideLat/2],
+    [lng - sideLng/2, lat + sideLat/2],
+    [lng - sideLng/2, lat - sideLat/2]
+  ];
+
+  // Override computed area with manual value
+  propertyData.totalAcres = acres;
+  propertyData.mowableAcres = acres * 0.85;
+  propertyData.manualAcres = true;
+
+  // Clean up draw layers
+  if (map.getLayer('draw-dots')) map.removeLayer('draw-dots');
+  if (map.getSource('draw-points')) map.removeSource('draw-points');
+  if (map.getLayer('draw-line-layer')) map.removeLayer('draw-line-layer');
+  if (map.getSource('draw-line')) map.removeSource('draw-line');
+
+  addBoundaryAndAnalyze();
 }
 
 function finishDrawing() {
