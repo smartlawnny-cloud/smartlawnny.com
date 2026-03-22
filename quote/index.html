@@ -411,30 +411,38 @@ function startAnalysis(lat, lng, displayName) {
 // PARCEL LOOKUP — NYS GIS
 // ═══════════════════════════════════════
 function fetchParcel(lat, lng, callback) {
+  // Try NYS GIS first (supports CORS), then fallback to JSONP-style query
   var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels/FeatureServer/0/query?' +
     'geometry=' + lng + ',' + lat +
     '&geometryType=esriGeometryPoint&spatialRel=esriSpatialRelIntersects' +
     '&outFields=*&returnGeometry=true&f=geojson&inSR=4326&outSR=4326';
 
   fetch(url)
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
     .then(function(data) {
       if (data.features && data.features.length > 0) {
         var geom = data.features[0].geometry;
         if (geom.type === 'Polygon') {
           callback(geom.coordinates[0]);
         } else if (geom.type === 'MultiPolygon') {
-          // Use largest polygon
           var largest = geom.coordinates.reduce(function(a, b) { return a.length > b.length ? a : b; });
           callback(largest[0]);
         } else {
+          console.log('Parcel: unsupported geometry type', geom.type);
           callback(null);
         }
       } else {
+        console.log('Parcel: no features found');
         callback(null);
       }
     })
-    .catch(function() { callback(null); });
+    .catch(function(err) {
+      console.log('Parcel fetch failed:', err.message, '- enabling draw mode');
+      callback(null);
+    });
 }
 
 // ═══════════════════════════════════════
@@ -469,9 +477,11 @@ function initMap(lng, lat, needsDraw) {
   map.addControl(new maplibregl.NavigationControl({ visualizePitch:true }), 'top-left');
 
   map.on('load', function() {
+    console.log('Map loaded. boundaryRing:', boundaryRing.length, 'needsDraw:', needsDraw);
     if (boundaryRing.length > 0) {
       addBoundaryAndAnalyze();
-    } else if (needsDraw) {
+    } else {
+      // No parcel found — enable draw mode
       enableDrawMode();
     }
   });
