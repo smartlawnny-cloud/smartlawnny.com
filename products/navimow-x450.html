@@ -175,13 +175,16 @@
         <h1>Navimow X450</h1>
         <div class="price">$2,999</div>
         <div class="price-note">Professional installation available from $499</div>
+        <div style="font-size:.85rem;color:#6b7280;margin-top:4px;">+ Installation from $299</div>
+        <div style="font-size:.85rem;color:#6b7280;">or as low as <strong>$250/mo</strong> with Affirm</div>
+        <div style="font-size:.8rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock — Ships Free</div>
         <div class="key-specs">
           <div class="spec-pill"><div class="spec-label">Coverage</div><div class="spec-value">Up to 1.5 Acres</div></div>
           <div class="spec-pill"><div class="spec-label">Drivetrain</div><div class="spec-value">4WD</div></div>
           <div class="spec-pill"><div class="spec-label">Max Slope</div><div class="spec-value">45% (24&deg;)</div></div>
           <div class="spec-pill"><div class="spec-label">Navigation</div><div class="spec-value">NRTK</div></div>
         </div>
-        <a href="#" data-product="navimow-x450" class="btn-add">Buy Now &mdash; $2,999</a>
+        <button onclick="addToCart('Navimow X450',2999,'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png')" style="display:block;width:100%;padding:14px;margin-top:12px;background:#6abb1e;color:#fff;border:none;border-radius:980px;font-weight:700;font-size:1rem;cursor:pointer;font-family:'Inter',sans-serif;"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         <a href="../index.html#contact" class="btn-quote">Request a Quote</a>
       </div>
     </div>
@@ -299,5 +302,12 @@
 </script>
 
 <script src="../js/stripe-config.js"></script>
+<script>
+var cart=JSON.parse(localStorage.getItem('slny_cart')||'[]');
+function addToCart(n,p,i){cart.push({name:n,price:p,img:i});localStorage.setItem('slny_cart',JSON.stringify(cart));
+var t=document.createElement('div');t.style.cssText='position:fixed;top:80px;right:24px;background:#6abb1e;color:#fff;padding:12px 24px;border-radius:12px;font-weight:600;z-index:10000;font-family:Inter,sans-serif;';
+t.innerHTML='<i class="fas fa-check"></i> Added to cart';document.body.appendChild(t);setTimeout(function(){t.remove();},2000);
+if(typeof gtag==='function')gtag('event','add_to_cart',{item_name:n,value:p});}
+</script>
 </body>
 </html>
