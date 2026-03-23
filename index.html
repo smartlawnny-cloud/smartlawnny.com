@@ -576,7 +576,7 @@
           <div id="buyTab-finance" style="display:none;">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
               <div>
-                <p style="font-size:.95rem;color:var(--g600);margin-bottom:12px;"><strong>Mowing Service Contract</strong> — $0.80 per sq ft, 1-year contract, due at signing. We handle everything.</p>
+                <p style="font-size:.95rem;color:var(--g600);margin-bottom:12px;"><strong>Mowing Service Contract</strong> — $0.20 per sq ft, 1-year contract, due at signing. We handle everything.</p>
                 <div style="font-size:.85rem;color:var(--g500);line-height:1.7;">
                   <div>&#10003; Professional robotic mowing all season</div>
                   <div>&#10003; Equipment, installation &amp; mapping included</div>
@@ -588,7 +588,7 @@
               <div style="background:#fff;border:2px solid var(--green);border-radius:16px;padding:20px;text-align:center;">
                 <div style="font-size:.75rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;">Your Property</div>
                 <div style="font-size:2rem;font-weight:800;margin:8px 0;" id="financeSqft">— sq ft</div>
-                <div style="font-size:.8rem;color:var(--g500);margin-bottom:12px;">× $0.80 per sq ft</div>
+                <div style="font-size:.8rem;color:var(--g500);margin-bottom:12px;">× $0.20 per sq ft</div>
                 <div style="font-size:2.2rem;font-weight:800;color:var(--teal);" id="financeTotal">$—</div>
                 <div style="font-size:.8rem;color:var(--g500);">1-year contract, due at signing</div>
                 <a href="#contact" class="btn btn-primary" style="margin-top:12px;font-size:.85rem;padding:10px 24px;">Request Contract</a>
@@ -1513,7 +1513,7 @@ function showMapRecommendation(acres, steepPct) {
   cards.insertAdjacentHTML('beforebegin', summary);
 
   // Populate finance calculator
-  var financeAnnual = Math.round(sqft * 0.80);
+  var financeAnnual = Math.round(sqft * 0.20);
   document.getElementById('financeSqft').textContent = sqft.toLocaleString() + ' sq ft';
   document.getElementById('financeTotal').textContent = '$' + financeAnnual.toLocaleString();
 
