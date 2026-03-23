@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GRP8HCBFTL"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GRP8HCBFTL');</script>
+<title>Commercial Lawn Care ROI Calculator — Smart Lawn NY</title>
+<meta name="description" content="See how much your HOA, commercial property, or landscaping business can save with robotic mowers from Smart Lawn NY vs traditional lawn care.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#fff;color:#1d1d1f;line-height:1.6;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+ul{list-style:none;}
+
+/* ── Header ── */
+.site-header{background:rgba(255,255,255,.95);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);position:sticky;top:0;z-index:2000;border-bottom:1px solid rgba(0,0,0,.08);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;max-width:1400px;margin:0 auto;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-img{height:40px;width:auto;}
+.logo-text{display:flex;flex-direction:column;line-height:1.15;}
+.logo-text .name{color:#1d1d1f;font-size:1.15rem;font-weight:800;}
+.logo-text .tagline{font-size:.6rem;color:#86868b;font-weight:600;text-transform:uppercase;letter-spacing:.08em;}
+.logo-text .dealer-tag{font-size:.5rem;color:#6abb1e;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
+.site-nav ul{display:flex;gap:24px;align-items:center;}
+.site-nav a{font-weight:500;font-size:.82rem;color:#1d1d1f;transition:color .2s;}
+.site-nav a:hover{color:#86868b;}
+.site-nav a.active{color:#6abb1e;font-weight:700;}
+.header-right-wrap{display:flex;align-items:center;gap:16px;}
+.header-social{display:flex;gap:12px;}
+.header-social a{color:#86868b;font-size:.95rem;transition:color .2s;}
+.header-social a:hover{color:#1d1d1f;}
+.order-btn{display:inline-flex;align-items:center;padding:8px 20px;background:#1d1d1f;color:#fff;border-radius:980px;font-weight:600;font-size:.8rem;transition:background .3s;}
+.order-btn:hover{background:#000;}
+
+/* ── Hero ── */
+.hero{background:linear-gradient(135deg,#1a1a2e 0%,#2d3a2e 100%);padding:56px 24px 48px;text-align:center;}
+.hero h1{color:#fff;font-size:2rem;font-weight:800;margin-bottom:8px;letter-spacing:-.02em;}
+.hero p{color:#aaa;font-size:15px;max-width:640px;margin:0 auto;}
+
+/* ── Container ── */
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+/* ── Scenario Cards ── */
+.scenarios{padding:40px 24px 0;}
+.scenarios h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:20px;color:#86868b;text-transform:uppercase;letter-spacing:.06em;}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:0 auto;}
+.scenario-card{border:2px solid #e5e7eb;border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;background:#fff;position:relative;}
+.scenario-card:hover{border-color:#6abb1e;box-shadow:0 4px 16px rgba(106,187,30,.12);}
+.scenario-card.active{border-color:#6abb1e;background:#f0f8e8;}
+.scenario-icon{font-size:1.5rem;margin-bottom:8px;}
+.scenario-card h3{font-size:.95rem;font-weight:700;margin-bottom:4px;color:#1d1d1f;}
+.scenario-card .scenario-detail{font-size:.78rem;color:#86868b;margin-bottom:8px;line-height:1.5;}
+.scenario-savings{display:inline-block;background:#6abb1e;color:#fff;font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:980px;}
+
+/* ── Tabs ── */
+.tabs-wrap{padding:40px 24px 0;}
+.tabs{display:flex;gap:0;max-width:500px;margin:0 auto;border-radius:10px;overflow:hidden;border:2px solid #e5e7eb;}
+.tab{flex:1;padding:12px 16px;text-align:center;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;background:#f9fafb;color:#6b7280;}
+.tab:hover{background:#f0f0f0;}
+.tab.active{background:#6abb1e;color:#fff;}
+
+/* ── Calculator ── */
+.calc-section{padding:32px 24px 0;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1100px;margin:0 auto;}
+.calc-inputs{background:#f9fafb;border-radius:16px;padding:32px;border:1px solid #e5e7eb;}
+.calc-inputs h2{font-size:1.15rem;font-weight:800;margin-bottom:24px;color:#1d1d1f;}
+.input-group{margin-bottom:20px;}
+.input-group label{display:block;font-size:.82rem;font-weight:600;color:#374151;margin-bottom:6px;}
+.input-group .hint{font-size:.72rem;color:#9ca3af;margin-top:2px;}
+.slider-wrap{display:flex;align-items:center;gap:12px;}
+.slider-wrap input[type=range]{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;background:#e5e7eb;outline:none;}
+.slider-wrap input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#6abb1e;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+.slider-wrap input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#6abb1e;cursor:pointer;border:none;}
+.slider-val{min-width:70px;text-align:right;font-size:.95rem;font-weight:700;color:#1d1d1f;}
+.input-group select{width:100%;padding:10px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;font-family:inherit;background:#fff;color:#1d1d1f;cursor:pointer;}
+.input-group select:focus{outline:none;border-color:#6abb1e;}
+.input-group input[type=number]{width:100%;padding:10px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;font-family:inherit;color:#1d1d1f;}
+.input-group input[type=number]:focus{outline:none;border-color:#6abb1e;}
+
+/* ── Results ── */
+.calc-results{display:flex;flex-direction:column;gap:20px;}
+.big-savings{background:linear-gradient(135deg,#f0f8e8 0%,#e8f5d8 100%);border-radius:16px;padding:32px;text-align:center;border:2px solid #6abb1e;}
+.big-savings .label{font-size:.82rem;font-weight:600;color:#4a8214;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.big-savings .amount{font-size:3rem;font-weight:900;color:#6abb1e;letter-spacing:-.03em;line-height:1.1;}
+.big-savings .per-year{font-size:.9rem;color:#5a9e18;font-weight:600;margin-top:4px;}
+
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.comp-card{border-radius:12px;padding:20px;text-align:center;}
+.comp-card.current{background:#fef2f2;border:1px solid #fecaca;}
+.comp-card.smart{background:#f0f8e8;border:1px solid #bbf7d0;}
+.comp-card .comp-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.comp-card.current .comp-label{color:#dc2626;}
+.comp-card.smart .comp-label{color:#16a34a;}
+.comp-card .comp-amount{font-size:1.5rem;font-weight:800;}
+.comp-card.current .comp-amount{color:#dc2626;}
+.comp-card.smart .comp-amount{color:#16a34a;}
+.comp-card .comp-sub{font-size:.72rem;color:#6b7280;margin-top:2px;}
+
+.monthly-box{background:#f9fafb;border-radius:12px;padding:16px 20px;border:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;}
+.monthly-box .mlabel{font-size:.85rem;color:#374151;font-weight:500;}
+.monthly-box .mval{font-size:1.25rem;font-weight:800;color:#6abb1e;}
+
+/* ── Bar Chart ── */
+.chart-section{background:#f9fafb;border-radius:16px;padding:24px;border:1px solid #e5e7eb;}
+.chart-section h3{font-size:.9rem;font-weight:700;margin-bottom:16px;color:#1d1d1f;}
+.chart-bars{display:flex;gap:12px;align-items:flex-end;height:180px;padding-bottom:28px;position:relative;border-bottom:1px solid #e5e7eb;}
+.chart-year{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;height:100%;}
+.chart-year .bars{display:flex;gap:3px;align-items:flex-end;flex:1;width:100%;}
+.chart-year .bar{flex:1;border-radius:4px 4px 0 0;transition:height .4s ease;min-height:2px;position:relative;}
+.chart-year .bar.current{background:#fca5a5;}
+.chart-year .bar.smart{background:#6abb1e;}
+.chart-year .bar-label{font-size:.6rem;font-weight:700;position:absolute;top:-16px;left:50%;transform:translateX(-50%);white-space:nowrap;}
+.chart-year .bar.current .bar-label{color:#dc2626;}
+.chart-year .bar.smart .bar-label{color:#16a34a;}
+.chart-year .year-label{font-size:.72rem;font-weight:600;color:#6b7280;position:absolute;bottom:-22px;}
+.chart-legend{display:flex;gap:20px;justify-content:center;margin-top:28px;}
+.chart-legend span{display:flex;align-items:center;gap:6px;font-size:.75rem;color:#6b7280;}
+.chart-legend .dot{width:10px;height:10px;border-radius:3px;}
+.chart-legend .dot.red{background:#fca5a5;}
+.chart-legend .dot.green{background:#6abb1e;}
+.cumulative-note{text-align:center;margin-top:8px;font-size:.8rem;font-weight:700;color:#6abb1e;}
+
+/* ── Summary ── */
+.summary-section{padding:32px 24px 0;max-width:1100px;margin:0 auto;}
+.summary-box{background:#f9fafb;border-radius:12px;padding:24px;border:1px solid #e5e7eb;font-size:.9rem;color:#374151;line-height:1.7;}
+.summary-box strong{color:#1d1d1f;}
+
+/* ── CTA ── */
+.cta-section{padding:48px 24px;margin-top:40px;text-align:center;}
+.cta-section h2{font-size:1.5rem;font-weight:800;margin-bottom:8px;color:#1d1d1f;}
+.cta-section p{font-size:.95rem;color:#6b7280;margin-bottom:24px;}
+.cta-btn{display:inline-flex;align-items:center;gap:8px;padding:16px 36px;background:#6abb1e;color:#fff;border-radius:980px;font-weight:700;font-size:1rem;transition:all .3s;border:none;cursor:pointer;}
+.cta-btn:hover{background:#5a9e18;transform:translateY(-1px);box-shadow:0 8px 20px rgba(106,187,30,.3);}
+
+/* ── Mobile ── */
+.mobile-toggle{display:none;background:none;border:none;font-size:1.4rem;color:#1d1d1f;cursor:pointer;}
+@media(max-width:900px){
+  .site-nav{display:none;}
+  .header-social{display:none!important;}
+  .mobile-toggle{display:block;}
+  .scenario-grid{grid-template-columns:1fr;}
+  .calc-grid{grid-template-columns:1fr;}
+  .hero h1{font-size:1.5rem;}
+  .big-savings .amount{font-size:2.2rem;}
+  .comparison{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .tabs{flex-direction:column;border-radius:12px;}
+  .tab{border-radius:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <img src="/images/logo.png" alt="Smart Lawn NY" class="logo-img">
+      <div class="logo-text">
+        <span class="name">Smart Lawn</span>
+        <span class="tagline">Automation & Robotics</span>
+        <span class="dealer-tag">Authorized Dealer & Service Center</span>
+      </div>
+    </a>
+    <nav class="site-nav">
+      <ul>
+        <li><a href="/#products">Products</a></li>
+        <li><a href="/services.html">Services</a></li>
+        <li><a href="/quote/">Property Quote</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-right-wrap">
+      <div class="header-social">
+        <a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://instagram.com/SmartLawnNY" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/@SmartLawnNY" target="_blank"><i class="fab fa-youtube"></i></a>
+      </div>
+      <a href="tel:9146477276" class="order-btn"><i class="fas fa-phone" style="margin-right:6px;font-size:.75rem;"></i> (914) 647-7276</a>
+      <button class="mobile-toggle" onclick="document.querySelector('.site-nav').style.display=document.querySelector('.site-nav').style.display==='block'?'none':'block'"><i class="fas fa-bars"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <h1>Commercial Lawn Care ROI Calculator</h1>
+  <p>See how much your property can save by switching from traditional lawn care to autonomous robotic mowing.</p>
+</div>
+
+<!-- ── Pre-filled Scenarios ── -->
+<div class="scenarios">
+  <h2>Quick Scenarios</h2>
+  <div class="scenario-grid">
+    <div class="scenario-card" onclick="loadScenario('hoa')">
+      <div class="scenario-icon"><i class="fas fa-building"></i></div>
+      <h3>64-Unit HOA in Cortlandt</h3>
+      <div class="scenario-detail">4 acres &middot; $600/visit &middot; Weekly mowing &middot; 7 months<br>Current: $16,800/yr &rarr; Smart Lawn: $4,188/yr</div>
+      <span class="scenario-savings">Saves $12,612/yr</span>
+    </div>
+    <div class="scenario-card" onclick="loadScenario('corporate')">
+      <div class="scenario-icon"><i class="fas fa-city"></i></div>
+      <h3>Corporate Campus in White Plains</h3>
+      <div class="scenario-detail">8 acres &middot; $1,200/visit &middot; Weekly mowing &middot; 7 months<br>Current: $33,600/yr &rarr; Smart Lawn: $9,588/yr</div>
+      <span class="scenario-savings">Saves $24,012/yr</span>
+    </div>
+    <div class="scenario-card" onclick="loadScenario('landscaper')">
+      <div class="scenario-icon"><i class="fas fa-truck"></i></div>
+      <h3>Landscaper Managing 10 Properties</h3>
+      <div class="scenario-detail">2 acres avg each &middot; $300/visit each &middot; Weekly &middot; 7 months<br>Current: $63,000/yr &rarr; Smart Lawn: $23,880/yr</div>
+      <span class="scenario-savings">Saves $39,120/yr</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Tabs ── -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="hoa" onclick="switchTab('hoa')"><i class="fas fa-building" style="margin-right:6px;"></i>HOA / Condo</div>
+    <div class="tab" data-tab="commercial" onclick="switchTab('commercial')"><i class="fas fa-city" style="margin-right:6px;"></i>Commercial</div>
+    <div class="tab" data-tab="landscaper" onclick="switchTab('landscaper')"><i class="fas fa-truck" style="margin-right:6px;"></i>Landscaper</div>
+  </div>
+</div>
+
+<!-- ── Calculator ── -->
+<div class="calc-section">
+  <div class="calc-grid">
+    <!-- Inputs -->
+    <div class="calc-inputs">
+      <h2 id="inputsTitle">HOA / Condo Property</h2>
+
+      <div class="input-group">
+        <label>Property Size (acres)</label>
+        <div class="slider-wrap">
+          <input type="range" id="acresSlider" min="0.5" max="50" step="0.5" value="3">
+          <span class="slider-val" id="acresVal">3 acres</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Number of Properties</label>
+        <div class="slider-wrap">
+          <input type="range" id="propsSlider" min="1" max="50" step="1" value="1">
+          <span class="slider-val" id="propsVal">1</span>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Current Cost Per Visit</label>
+        <div class="slider-wrap">
+          <input type="range" id="costSlider" min="50" max="5000" step="25" value="450">
+          <span class="slider-val" id="costVal">$450</span>
+        </div>
+        <div class="hint" id="costHint">Per visit, all properties combined</div>
+      </div>
+
+      <div class="input-group">
+        <label>Mowing Frequency</label>
+        <select id="freqSelect">
+          <option value="weekly" selected>Weekly (30 visits/season)</option>
+          <option value="biweekly">Bi-Weekly (15 visits/season)</option>
+          <option value="monthly">Monthly (7 visits/season)</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Active Mowing Months</label>
+        <div class="slider-wrap">
+          <input type="range" id="monthsSlider" min="4" max="10" step="1" value="7">
+          <span class="slider-val" id="monthsVal">7 months</span>
+        </div>
+        <div class="hint">April through October typical in the Hudson Valley</div>
+      </div>
+
+      <div class="input-group">
+        <label>Smart Lawn NY Monthly Rate</label>
+        <div class="slider-wrap">
+          <input type="range" id="rateSlider" min="99" max="2500" step="10" value="349">
+          <span class="slider-val" id="rateVal">$349/mo</span>
+        </div>
+        <div class="hint" id="rateHint">Monthly service plan per property</div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="calc-results">
+      <div class="big-savings">
+        <div class="label">Annual Savings</div>
+        <div class="amount" id="annualSavings">$0</div>
+        <div class="per-year">per year</div>
+      </div>
+
+      <div class="comparison">
+        <div class="comp-card current">
+          <div class="comp-label"><i class="fas fa-times-circle" style="margin-right:4px;"></i>Traditional</div>
+          <div class="comp-amount" id="currentAnnual">$0</div>
+          <div class="comp-sub">per year</div>
+        </div>
+        <div class="comp-card smart">
+          <div class="comp-label"><i class="fas fa-robot" style="margin-right:4px;"></i>Smart Lawn NY</div>
+          <div class="comp-amount" id="smartAnnual">$0</div>
+          <div class="comp-sub">per year</div>
+        </div>
+      </div>
+
+      <div class="monthly-box">
+        <span class="mlabel">Monthly Savings</span>
+        <span class="mval" id="monthlySavings">$0</span>
+      </div>
+
+      <!-- 5-Year Chart -->
+      <div class="chart-section">
+        <h3><i class="fas fa-chart-bar" style="margin-right:6px;color:#6abb1e;"></i>5-Year Cost Comparison</h3>
+        <div class="chart-bars" id="chartBars"></div>
+        <div class="chart-legend">
+          <span><span class="dot red"></span> Traditional</span>
+          <span><span class="dot green"></span> Smart Lawn NY</span>
+        </div>
+        <div class="cumulative-note" id="cumulativeSavings"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Summary ── -->
+<div class="summary-section">
+  <div class="summary-box" id="summaryBox"></div>
+</div>
+
+<!-- ── CTA ── -->
+<div class="cta-section">
+  <h2>Ready to see the savings for your property?</h2>
+  <p>Get a free consultation and custom quote from Smart Lawn NY.</p>
+  <a href="/#contact" class="cta-btn"><i class="fas fa-paper-plane"></i> Get in Touch</a>
+  <div style="margin-top:16px;">
+    <a href="tel:9146477276" style="color:#6abb1e;font-weight:600;font-size:.9rem;"><i class="fas fa-phone" style="margin-right:4px;"></i>(914) 647-7276</a>
+    <span style="color:#d1d5db;margin:0 12px;">|</span>
+    <a href="mailto:smartlawnny@gmail.com" style="color:#6abb1e;font-weight:600;font-size:.9rem;"><i class="fas fa-envelope" style="margin-right:4px;"></i>smartlawnny@gmail.com</a>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer style="background:#1a1a2e;color:#fff;padding:40px 24px;margin-top:40px;">
+  <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;">
+    <div>
+      <img src="/images/logo.png" alt="Smart Lawn NY" style="height:60px;margin-bottom:12px;">
+      <p style="font-size:.85rem;color:#999;">Hudson Valley's first robotic mower showroom. Authorized Navimow & Yarbo dealer.</p>
+      <p style="font-size:.8rem;color:#666;margin-top:8px;">1 Highland Industrial Park, Peekskill, NY 10566</p>
+    </div>
+    <div>
+      <h4 style="font-size:.85rem;font-weight:700;margin-bottom:12px;color:#6abb1e;">Quick Links</h4>
+      <ul style="font-size:.85rem;color:#999;">
+        <li style="padding:4px 0;"><a href="/" style="color:#999;">Home</a></li>
+        <li style="padding:4px 0;"><a href="/#products" style="color:#999;">Products</a></li>
+        <li style="padding:4px 0;"><a href="/services.html" style="color:#999;">Services</a></li>
+        <li style="padding:4px 0;"><a href="/quote/" style="color:#999;">Property Quote Tool</a></li>
+        <li style="padding:4px 0;"><a href="/#contact" style="color:#999;">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="font-size:.85rem;font-weight:700;margin-bottom:12px;color:#6abb1e;">Contact</h4>
+      <p style="font-size:.85rem;color:#999;"><a href="tel:9146477276" style="color:#fff;">(914) 647-7276</a></p>
+      <p style="font-size:.85rem;color:#999;margin-top:4px;">smartlawnny@gmail.com</p>
+      <p style="font-size:.85rem;color:#999;margin-top:4px;">smartlawnny.com</p>
+      <div style="display:flex;gap:16px;margin-top:16px;">
+        <a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank" style="color:#999;font-size:1.1rem;"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://instagram.com/SmartLawnNY" target="_blank" style="color:#999;font-size:1.1rem;"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/@SmartLawnNY" target="_blank" style="color:#999;font-size:1.1rem;"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #333;font-size:.75rem;color:#555;">
+    &copy; 2026 Smart Lawn LLC. All Rights Reserved. | SmartLawnNY.com
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════
+// STATE & DEFAULTS
+// ═══════════════════════════════════
+var currentTab = 'hoa';
+
+var defaults = {
+  hoa:        { acres:3,  props:1,  cost:450,  freq:'weekly', months:7, rate:349,  title:'HOA / Condo Property',        costHint:'Per visit for the property',           rateHint:'Monthly service plan' },
+  commercial: { acres:5,  props:1,  cost:750,  freq:'weekly', months:7, rate:499,  title:'Commercial Property',          costHint:'Per visit for the property',           rateHint:'Monthly service plan' },
+  landscaper: { acres:10, props:5,  cost:300,  freq:'weekly', months:7, rate:199,  title:'Landscaper / Multi-Property',  costHint:'Per visit, per property',              rateHint:'Monthly rate per property' }
+};
+
+// ═══════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelector('.tab[data-tab="'+tab+'"]').classList.add('active');
+  var d = defaults[tab];
+  document.getElementById('acresSlider').value = d.acres;
+  document.getElementById('propsSlider').value = d.props;
+  document.getElementById('costSlider').value = d.cost;
+  document.getElementById('freqSelect').value = d.freq;
+  document.getElementById('monthsSlider').value = d.months;
+  document.getElementById('rateSlider').value = d.rate;
+  document.getElementById('inputsTitle').textContent = d.title;
+  document.getElementById('costHint').textContent = d.costHint;
+  document.getElementById('rateHint').textContent = d.rateHint;
+  updateDisplayValues();
+  calculate();
+}
+
+// ═══════════════════════════════════
+// SCENARIO LOADER
+// ═══════════════════════════════════
+function loadScenario(type) {
+  document.querySelectorAll('.scenario-card').forEach(function(c){ c.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+
+  if(type === 'hoa') {
+    switchTab('hoa');
+    document.getElementById('acresSlider').value = 4;
+    document.getElementById('costSlider').value = 600;
+    document.getElementById('rateSlider').value = 349;
+  } else if(type === 'corporate') {
+    switchTab('commercial');
+    document.getElementById('acresSlider').value = 8;
+    document.getElementById('costSlider').value = 1200;
+    document.getElementById('rateSlider').value = 799;
+  } else if(type === 'landscaper') {
+    switchTab('landscaper');
+    document.getElementById('acresSlider').value = 2;
+    document.getElementById('propsSlider').value = 10;
+    document.getElementById('costSlider').value = 300;
+    document.getElementById('rateSlider').value = 199;
+  }
+  updateDisplayValues();
+  calculate();
+
+  // Scroll to calculator
+  document.querySelector('.calc-section').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ═══════════════════════════════════
+// UPDATE DISPLAY VALUES
+// ═══════════════════════════════════
+function updateDisplayValues() {
+  document.getElementById('acresVal').textContent = document.getElementById('acresSlider').value + ' acres';
+  document.getElementById('propsVal').textContent = document.getElementById('propsSlider').value;
+  document.getElementById('costVal').textContent = '$' + Number(document.getElementById('costSlider').value).toLocaleString();
+  document.getElementById('monthsVal').textContent = document.getElementById('monthsSlider').value + ' months';
+  document.getElementById('rateVal').textContent = '$' + Number(document.getElementById('rateSlider').value).toLocaleString() + '/mo';
+}
+
+// ═══════════════════════════════════
+// CALCULATE
+// ═══════════════════════════════════
+function calculate() {
+  var acres = parseFloat(document.getElementById('acresSlider').value);
+  var props = parseInt(document.getElementById('propsSlider').value);
+  var costPerVisit = parseFloat(document.getElementById('costSlider').value);
+  var freq = document.getElementById('freqSelect').value;
+  var months = parseInt(document.getElementById('monthsSlider').value);
+  var monthlyRate = parseFloat(document.getElementById('rateSlider').value);
+
+  // Visits per season based on frequency and months
+  var visitsPerMonth = freq === 'weekly' ? 4.33 : freq === 'biweekly' ? 2.17 : 1;
+  var totalVisits = Math.round(visitsPerMonth * months);
+
+  // For landscaper: cost is per property per visit
+  var currentAnnual, smartAnnual;
+  if(currentTab === 'landscaper') {
+    currentAnnual = costPerVisit * totalVisits * props;
+    smartAnnual = monthlyRate * 12 * props;
+  } else {
+    currentAnnual = costPerVisit * totalVisits * props;
+    smartAnnual = monthlyRate * 12 * props;
+  }
+
+  var annualSavings = currentAnnual - smartAnnual;
+  var monthlySavings = annualSavings / 12;
+
+  // Update display
+  document.getElementById('annualSavings').textContent = formatMoney(Math.max(0, annualSavings));
+  document.getElementById('currentAnnual').textContent = formatMoney(currentAnnual);
+  document.getElementById('smartAnnual').textContent = formatMoney(smartAnnual);
+  document.getElementById('monthlySavings').textContent = formatMoney(Math.max(0, monthlySavings));
+
+  // Handle negative savings
+  if(annualSavings < 0) {
+    document.getElementById('annualSavings').textContent = '-' + formatMoney(Math.abs(annualSavings));
+    document.getElementById('monthlySavings').textContent = '-' + formatMoney(Math.abs(monthlySavings));
+  }
+
+  // 5-Year bar chart
+  renderChart(currentAnnual, smartAnnual);
+
+  // Summary
+  renderSummary(acres, props, costPerVisit, freq, months, monthlyRate, currentAnnual, smartAnnual, annualSavings, totalVisits);
+
+  // GA4 event
+  if(typeof gtag === 'function') {
+    gtag('event', 'calculator_update', {
+      'event_category': 'Commercial Calculator',
+      'event_label': currentTab,
+      'value': Math.round(annualSavings)
+    });
+  }
+}
+
+// ═══════════════════════════════════
+// FORMAT MONEY
+// ═══════════════════════════════════
+function formatMoney(n) {
+  return '$' + Math.round(n).toLocaleString();
+}
+
+// ═══════════════════════════════════
+// RENDER 5-YEAR BAR CHART
+// ═══════════════════════════════════
+function renderChart(currentAnnual, smartAnnual) {
+  var container = document.getElementById('chartBars');
+  container.innerHTML = '';
+  var maxCumulative = currentAnnual * 5;
+  if(maxCumulative === 0) maxCumulative = 1;
+  var cumulativeSavings = 0;
+
+  for(var y = 1; y <= 5; y++) {
+    var cumCurrent = currentAnnual * y;
+    var cumSmart = smartAnnual * y;
+    cumulativeSavings = cumCurrent - cumSmart;
+
+    var currentHeight = (cumCurrent / maxCumulative) * 100;
+    var smartHeight = (cumSmart / maxCumulative) * 100;
+
+    var yearDiv = document.createElement('div');
+    yearDiv.className = 'chart-year';
+
+    yearDiv.innerHTML =
+      '<div class="bars">' +
+        '<div class="bar current" style="height:'+currentHeight+'%"><span class="bar-label">'+formatMoney(cumCurrent)+'</span></div>' +
+        '<div class="bar smart" style="height:'+smartHeight+'%"><span class="bar-label">'+formatMoney(cumSmart)+'</span></div>' +
+      '</div>' +
+      '<span class="year-label">Year '+y+'</span>';
+
+    container.appendChild(yearDiv);
+  }
+
+  document.getElementById('cumulativeSavings').textContent = '5-Year Cumulative Savings: ' + formatMoney(Math.max(0, cumulativeSavings));
+}
+
+// ═══════════════════════════════════
+// RENDER SUMMARY
+// ═══════════════════════════════════
+function renderSummary(acres, props, costPerVisit, freq, months, monthlyRate, currentAnnual, smartAnnual, annualSavings, totalVisits) {
+  var typeLabel = currentTab === 'hoa' ? 'HOA/condo property' : currentTab === 'commercial' ? 'commercial property' : 'landscaping operation';
+  var freqLabel = freq === 'weekly' ? 'weekly' : freq === 'biweekly' ? 'bi-weekly' : 'monthly';
+  var propDesc = props > 1 ? props + ' properties averaging ' + acres + ' acres each' : 'a ' + acres + '-acre ' + typeLabel;
+  var fiveYear = (currentAnnual - smartAnnual) * 5;
+
+  var html = '<i class="fas fa-calculator" style="color:#6abb1e;margin-right:6px;"></i>';
+  if(props > 1) {
+    html += '<strong>' + propDesc + '</strong> currently spending <strong>' + formatMoney(costPerVisit) + ' per visit per property</strong> for ' + freqLabel + ' mowing (' + totalVisits + ' visits over ' + months + ' months) pays approximately <strong>' + formatMoney(currentAnnual) + ' per year</strong>. ';
+    html += 'With Smart Lawn NY at <strong>' + formatMoney(monthlyRate) + '/month per property</strong>, the total annual cost drops to <strong>' + formatMoney(smartAnnual) + '</strong> — a savings of <strong style="color:#6abb1e;">' + formatMoney(Math.max(0, annualSavings)) + ' annually</strong>';
+  } else {
+    html += '<strong>' + propDesc.charAt(0).toUpperCase() + propDesc.slice(1) + '</strong> currently spending <strong>' + formatMoney(costPerVisit) + ' per visit</strong> for ' + freqLabel + ' mowing (' + totalVisits + ' visits over ' + months + ' months) pays approximately <strong>' + formatMoney(currentAnnual) + ' per year</strong>. ';
+    html += 'With Smart Lawn NY at <strong>' + formatMoney(monthlyRate) + '/month</strong>, the annual cost is just <strong>' + formatMoney(smartAnnual) + '</strong> — saving <strong style="color:#6abb1e;">' + formatMoney(Math.max(0, annualSavings)) + ' annually</strong>';
+  }
+  html += ', or <strong style="color:#6abb1e;">' + formatMoney(Math.max(0, fiveYear)) + ' over 5 years</strong>.';
+
+  document.getElementById('summaryBox').innerHTML = html;
+}
+
+// ═══════════════════════════════════
+// EVENT LISTENERS
+// ═══════════════════════════════════
+document.getElementById('acresSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
+document.getElementById('propsSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
+document.getElementById('costSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
+document.getElementById('freqSelect').addEventListener('change', function(){ calculate(); });
+document.getElementById('monthsSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
+document.getElementById('rateSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+updateDisplayValues();
+calculate();
+</script>
+
+</body>
+</html>
