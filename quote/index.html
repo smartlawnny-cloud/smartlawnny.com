@@ -506,6 +506,14 @@ function startAnalysis(lat, lng, displayName) {
   document.getElementById('propAddress').textContent = displayName.split(',').slice(0,2).join(',');
   document.getElementById('statDist').textContent = propertyData.distance.toFixed(1) + ' miles';
 
+  // Log address to sheet + SMS
+  fetch('https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec',
+    {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({firstName:'Quote Tool Lookup',lastName:'',email:'',phone:'',
+      street:displayName,city:'',state:'',zip:'',county:'',lawnSize:'',
+      interest:'Property Assessment',message:'Address entered in quote tool: '+displayName,
+      date:new Date().toISOString(),source:'Quote Tool'})});
+
   // Clear previous polygon
   if (drawnPolygon) { drawnPolygon.setMap(null); drawnPolygon = null; }
 

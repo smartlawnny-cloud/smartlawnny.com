@@ -496,6 +496,60 @@
   </div>
 </section>
 
+<!-- Find Your Mower — Map-Driven (right below hero) -->
+<section class="quiz-section" id="quiz-section">
+  <div class="container">
+    <div class="section-header fade-in">
+      <h2>Find Your Perfect <span class="underline-accent">Robotic Mower</span></h2>
+      <p>Enter your address — we'll analyze your terrain and recommend the right mower</p>
+    </div>
+    <div class="property-check fade-in">
+      <div class="property-search">
+        <input type="text" id="propAddressInput" placeholder="Enter your property address...">
+        <button onclick="checkProperty()"><i class="fas fa-search"></i> Analyze My Lawn</button>
+      </div>
+      <div class="property-map-wrap" id="propMapWrap" style="display:none;">
+        <div id="propertyMap"></div>
+        <div class="property-stats">
+          <h4 id="propAddrLabel">Property Analysis</h4>
+          <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
+          <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
+          <div class="pstat-row"><span class="label">Elevation</span><span class="val" id="pElev">—</span></div>
+          <div class="slope-legend">
+            <div style="font-size:.75rem;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Slope Breakdown</div>
+            <div class="sl"><span class="dot" style="background:#4caf50;"></span><strong id="pGreen">—</strong> Flat (&lt;22°)</div>
+            <div class="sl"><span class="dot" style="background:#ffeb3b;"></span><strong id="pYellow">—</strong> Moderate (22–30°)</div>
+            <div class="sl"><span class="dot" style="background:#ff9800;"></span><strong id="pOrange">—</strong> Steep (30–43°)</div>
+            <div class="sl"><span class="dot" style="background:#f44336;"></span><strong id="pRed">—</strong> Extreme (&gt;43°)</div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:rgba(106,187,30,.08);border-radius:8px;font-size:.8rem;color:var(--green);">
+            <strong>Draw your boundary</strong> using the polygon tool, then we'll recommend the perfect mower.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="mapRecommendation" style="display:none;margin-top:32px;" class="fade-in">
+      <div style="text-align:center;margin-bottom:24px;">
+        <h3 style="font-size:1.4rem;font-weight:800;color:var(--g900);">Recommended for Your Property</h3>
+        <p style="color:var(--g500);font-size:.95rem;" id="recSubtitle">Based on your lawn size and terrain</p>
+      </div>
+      <div id="recCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;"></div>
+      <div style="margin-top:32px;">
+        <div class="section-tabs" style="margin-bottom:0;">
+          <div class="section-tab active" onclick="switchBuyTab('buy',this)"><i class="fas fa-shopping-cart"></i> Buy</div>
+          <div class="section-tab" onclick="switchBuyTab('finance',this)"><i class="fas fa-calendar-alt"></i> Finance</div>
+          <div class="section-tab" onclick="switchBuyTab('subscribe',this)"><i class="fas fa-sync-alt"></i> Subscribe</div>
+        </div>
+        <div style="background:var(--g50);border:1px solid var(--g200);border-top:none;border-radius:0 0 12px 12px;padding:24px;">
+          <div id="buyTab-buy"><p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Buy outright</strong> — own your mower, we install it. One-time cost + optional service plan.</p><a href="#contact" class="btn btn-primary" style="margin-top:8px;">Get a Quote</a></div>
+          <div id="buyTab-finance" style="display:none;"><p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Monthly financing</strong> — 0% APR available. Spread the cost over 12–36 months.</p><a href="#contact" class="btn btn-primary" style="margin-top:8px;">Ask About Financing</a></div>
+          <div id="buyTab-subscribe" style="display:none;"><p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Mowing as a Service</strong> — from $99/week. We own the robot, install, monitor, and maintain it.</p><a href="services.html#maas" class="btn btn-primary" style="margin-top:8px;">Learn About MaaS</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Services -->
 <section class="services">
   <div class="container">
@@ -527,73 +581,6 @@
         <a href="#quiz-section" class="btn btn-primary" style="margin-top:24px;">Find Your Mower</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- Find Your Mower — Map-Driven -->
-<section class="quiz-section" id="quiz-section">
-  <div class="container">
-    <div class="section-header fade-in">
-      <h2>Find Your Perfect <span class="underline-accent">Robotic Mower</span></h2>
-      <p>Enter your address — we'll analyze your terrain and recommend the right mower</p>
-    </div>
-
-    <div class="property-check fade-in">
-      <div class="property-search">
-        <input type="text" id="propAddressInput" placeholder="Enter your property address...">
-        <button onclick="checkProperty()"><i class="fas fa-search"></i> Analyze My Lawn</button>
-      </div>
-      <div class="property-map-wrap" id="propMapWrap" style="display:none;">
-        <div id="propertyMap"></div>
-        <div class="property-stats">
-          <h4 id="propAddrLabel">Property Analysis</h4>
-          <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
-          <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
-          <div class="pstat-row"><span class="label">Elevation</span><span class="val" id="pElev">—</span></div>
-          <div class="slope-legend">
-            <div style="font-size:.75rem;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Slope Breakdown</div>
-            <div class="sl"><span class="dot" style="background:#4caf50;"></span><strong id="pGreen">—</strong> Flat (&lt;22°)</div>
-            <div class="sl"><span class="dot" style="background:#ffeb3b;"></span><strong id="pYellow">—</strong> Moderate (22–30°)</div>
-            <div class="sl"><span class="dot" style="background:#ff9800;"></span><strong id="pOrange">—</strong> Steep (30–43°)</div>
-            <div class="sl"><span class="dot" style="background:#f44336;"></span><strong id="pRed">—</strong> Extreme (&gt;43°)</div>
-          </div>
-          <div style="margin-top:12px;padding:10px;background:rgba(106,187,30,.08);border-radius:8px;font-size:.8rem;color:var(--green);">
-            <strong>Draw your boundary</strong> using the polygon tool, then we'll recommend the perfect mower.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="mapRecommendation" style="display:none;margin-top:32px;" class="fade-in">
-      <div style="text-align:center;margin-bottom:24px;">
-        <h3 style="font-size:1.4rem;font-weight:800;color:var(--g900);">Recommended for Your Property</h3>
-        <p style="color:var(--g500);font-size:.95rem;" id="recSubtitle">Based on your lawn size and terrain</p>
-      </div>
-      <div id="recCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;"></div>
-
-      <div style="margin-top:32px;">
-        <div class="section-tabs" style="margin-bottom:0;">
-          <div class="section-tab active" onclick="switchBuyTab('buy',this)"><i class="fas fa-shopping-cart"></i> Buy</div>
-          <div class="section-tab" onclick="switchBuyTab('finance',this)"><i class="fas fa-calendar-alt"></i> Finance</div>
-          <div class="section-tab" onclick="switchBuyTab('subscribe',this)"><i class="fas fa-sync-alt"></i> Subscribe</div>
-        </div>
-        <div style="background:var(--g50);border:1px solid var(--g200);border-top:none;border-radius:0 0 12px 12px;padding:24px;">
-          <div id="buyTab-buy">
-            <p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Buy outright</strong> — own your mower, we install it. One-time cost + optional service plan.</p>
-            <a href="#contact" class="btn btn-primary" style="margin-top:8px;">Get a Quote</a>
-          </div>
-          <div id="buyTab-finance" style="display:none;">
-            <p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Monthly financing</strong> — 0% APR available. Same mower, spread the cost over 12–36 months.</p>
-            <a href="#contact" class="btn btn-primary" style="margin-top:8px;">Ask About Financing</a>
-          </div>
-          <div id="buyTab-subscribe" style="display:none;">
-            <p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Mowing as a Service</strong> — from $99/week. We own the robot, install, monitor, and maintain it. Zero hassle.</p>
-            <a href="services.html#maas" class="btn btn-primary" style="margin-top:8px;">Learn About MaaS</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
 
@@ -1310,6 +1297,15 @@ function checkProperty() {
 function _flyToProperty(lat, lng, name) {
   document.getElementById('propMapWrap').style.display = 'grid';
   document.getElementById('propAddrLabel').textContent = name.split(',').slice(0,2).join(',');
+
+  // Log address lookup to sheet + send SMS
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
+  fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({firstName:'Property Lookup', lastName:'', email:'', phone:'',
+      street:name, city:'', state:'', zip:'', county:'', lawnSize:'',
+      interest:'Property Assessment', message:'Address entered in map tool: '+name,
+      date:new Date().toISOString(), source:'Map Tool'})
+  });
   if (_propPolygon) { _propPolygon.setMap(null); _propPolygon = null; }
   _propSlopeCells.forEach(function(c){c.setMap(null);}); _propSlopeCells = [];
   _propMap.setCenter({lat:lat,lng:lng}); _propMap.setZoom(18); _propMap.setTilt(45);
