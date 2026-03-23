@@ -1221,7 +1221,49 @@ function _flyToProperty(lat, lng, name) {
   new google.maps.Marker({position:{lat:lat,lng:lng}, map:_propMap,
     icon:{path:google.maps.SymbolPath.CIRCLE, scale:8, fillColor:'#6abb1e', fillOpacity:1, strokeColor:'#fff', strokeWeight:3}});
   _propDrawMgr.setDrawingMode('polygon');
-  document.getElementById('propCta').style.display = 'block';
+
+  // Auto-fetch parcel boundary from Westchester County GIS
+  _fetchParcel(lat, lng, function(ring) {
+    if (ring && ring.length > 3) {
+      if (_propPolygon) _propPolygon.setMap(null);
+      _propPolygon = new google.maps.Polygon({
+        paths: ring.map(function(p){return{lat:p[1],lng:p[0]};}),
+        fillColor:'#6abb1e', fillOpacity:0.15, strokeColor:'#6abb1e', strokeWeight:3, editable:true, map:_propMap
+      });
+      _propDrawMgr.setDrawingMode(null);
+      _runPropAnalysis();
+      google.maps.event.addListener(_propPolygon.getPath(), 'set_at', _runPropAnalysis);
+      google.maps.event.addListener(_propPolygon.getPath(), 'insert_at', _runPropAnalysis);
+    }
+  });
+}
+
+// Westchester County parcel lookup (JSONP)
+function _fetchParcel(lat, lng, callback) {
+  var x = lng * 20037508.34 / 180;
+  var y = Math.log(Math.tan((90+lat)*Math.PI/360)) / (Math.PI/180) * 20037508.34/180;
+  var cbName = '_wcp_' + Date.now();
+  var url = 'https://giswww.westchestergov.com/arcgis/rest/services/MunicipalTaxParcels_Query/MapServer/identify?' +
+    'geometry='+x+','+y+'&geometryType=esriGeometryPoint&sr=3857&layers=all&tolerance=1' +
+    '&mapExtent='+(x-500)+','+(y-500)+','+(x+500)+','+(y+500)+'&imageDisplay=100,100,96' +
+    '&returnGeometry=true&f=json&callback='+cbName;
+  var timeout = setTimeout(function(){delete window[cbName]; callback(null);}, 8000);
+  window[cbName] = function(data) {
+    clearTimeout(timeout); delete window[cbName];
+    if (data.results && data.results.length > 0) {
+      var parcel = data.results.find(function(r){return r.layerName && r.layerName.indexOf('Parcels')>-1;});
+      if (parcel && parcel.geometry && parcel.geometry.rings) {
+        var ring = parcel.geometry.rings[0].map(function(p){
+          return [p[0]/20037508.34*180, Math.atan(Math.exp(p[1]/20037508.34*Math.PI))*360/Math.PI-90];
+        });
+        callback(ring); return;
+      }
+    }
+    callback(null);
+  };
+  var s = document.createElement('script'); s.src = url;
+  s.onerror = function(){clearTimeout(timeout); delete window[cbName]; callback(null);};
+  document.head.appendChild(s);
 }
 function _runPropAnalysis() {
   if (!_propPolygon) return;
