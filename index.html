@@ -1423,45 +1423,79 @@ function _runPropAnalysis() {
 
 function showMapRecommendation(acres, steepPct) {
   var cards = document.getElementById('recCards');
+  // Clear previous summary + cards
+  var prevSummary = cards.previousElementSibling;
+  if (prevSummary && prevSummary.style && prevSummary.style.display !== 'none' && !prevSummary.id) prevSummary.remove();
   cards.innerHTML = '';
   document.getElementById('mapRecommendation').style.display = 'block';
-  document.getElementById('recSubtitle').textContent = acres.toFixed(2) + ' acres mowable | ' + steepPct + '% steep terrain';
+  document.getElementById('recSubtitle').textContent = sqft.toLocaleString() + ' sq ft (' + acres.toFixed(2) + ' acres) | ' + steepPct + '% steep terrain';
 
+  var sqft = Math.round(acres * 43560);
   var recs = [];
 
   // Logic: recommend based on acreage + slope
   if (acres <= 0.25) {
-    recs.push({name:'Navimow i Series', desc:'Perfect for small, flat yards up to 1/4 acre.', price:'From $999', img:'https://navimow.com/cdn/shop/files/i-series-listing-img.jpg', link:'products/navimow-i105e.html', match:'Best for your lot size'});
-    recs.push({name:'Navimow X3', desc:'RTK navigation, handles slopes up to 45%. Great cut quality.', price:'From $1,499', img:'https://navimow.com/cdn/shop/files/product_card_-X3_series_443e87a1-c71a-4884-97c0-7905f1be88fa.jpg', link:'products/navimow-x3.html', match:'Upgrade pick'});
+    recs.push({name:'Navimow i Series', desc:'Perfect for small, flat yards up to 1/4 acre.', price:'From $999', cost:999, img:'https://navimow.com/cdn/shop/files/i-series-listing-img.jpg', link:'products/navimow-i105e.html', match:'Best for your lot size'});
+    recs.push({name:'Navimow X3', desc:'RTK navigation, handles slopes up to 45%. Great cut quality.', price:'From $1,499', cost:1499, img:'https://navimow.com/cdn/shop/files/product_card_-X3_series_443e87a1-c71a-4884-97c0-7905f1be88fa.jpg', link:'products/navimow-x3.html', match:'Upgrade pick'});
   } else if (acres <= 0.5) {
-    recs.push({name:'Navimow X3', desc:'Wire-free RTK, up to 0.5 acre, 45% slope capability.', price:'From $1,499', img:'https://navimow.com/cdn/shop/files/product_card_-X3_series_443e87a1-c71a-4884-97c0-7905f1be88fa.jpg', link:'products/navimow-x3.html', match:'Best for your lot size'});
+    recs.push({name:'Navimow X3', desc:'Wire-free RTK, up to 0.5 acre, 45% slope capability.', price:'From $1,499', cost:1499, img:'https://navimow.com/cdn/shop/files/product_card_-X3_series_443e87a1-c71a-4884-97c0-7905f1be88fa.jpg', link:'products/navimow-x3.html', match:'Best for your lot size'});
     if (steepPct > 10) {
-      recs.push({name:'Navimow X430 (4WD)', desc:'All-wheel drive tackles steep hills. 84% slope, 0.75 acre.', price:'$2,499', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x430.html', match:'Best for your slopes'});
+      recs.push({name:'Navimow X430 (4WD)', desc:'All-wheel drive tackles steep hills. 84% slope, 0.75 acre.', price:'$2,499', cost:2499, img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x430.html', match:'Best for your slopes'});
     }
   } else if (acres <= 1) {
-    recs.push({name:'Navimow X450', desc:'Covers up to 1.25 acres. RTK + Vision AI, 4WD.', price:'$2,999', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x450.html', match:'Best for your lot size'});
+    recs.push({name:'Navimow X450', desc:'Covers up to 1.25 acres. RTK + Vision AI, 4WD.', price:'$2,999', cost:2999, img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x450.html', match:'Best for your lot size'});
     if (steepPct > 5) {
-      recs.push({name:'Navimow X430 (4WD)', desc:'All-wheel drive for hilly terrain. 84% slope capability.', price:'$2,499', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x430.html', match:'Best for your slopes'});
+      recs.push({name:'Navimow X430 (4WD)', desc:'All-wheel drive for hilly terrain. 84% slope capability.', price:'$2,499', cost:2499, img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x430.html', match:'Best for your slopes'});
     }
   } else {
-    recs.push({name:'TerraNox CM240M1', desc:'Commercial-grade, 1.5 acres per unit, 43° slope. Fleet-ready.', price:'$6,999', img:'https://navimow.com/cdn/shop/files/product_card_-_terranox_series.jpg', link:'products/navimow-x450.html', match:'Best for 1+ acres'});
-    recs.push({name:'Navimow X450', desc:'Up to 1.25 acres. Great for large residential lawns.', price:'$2,999', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x450.html', match:'Residential pick'});
+    recs.push({name:'TerraNox CM240M1', desc:'Commercial-grade, 1.5 acres per unit, 43° slope. Fleet-ready.', price:'$6,999', cost:6999, img:'https://navimow.com/cdn/shop/files/product_card_-_terranox_series.jpg', link:'products/navimow-x450.html', match:'Best for 1+ acres'});
+    recs.push({name:'Navimow X450', desc:'Up to 1.25 acres. Great for large residential lawns.', price:'$2,999', cost:2999, img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x450.html', match:'Residential pick'});
   }
 
   // Always offer Yarbo for multi-season
-  recs.push({name:'Yarbo', desc:'Mow + snow blow + leaf blow. True 4-season robot.', price:'From $5,999', img:'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(3).png', link:'products/yarbo-lawn-mower.html', match:'4-Season option'});
+  recs.push({name:'Yarbo', desc:'Mow + snow blow + leaf blow. True 4-season robot.', price:'From $5,999', cost:5999, img:'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(3).png', link:'products/yarbo-lawn-mower.html', match:'4-Season option'});
 
-  recs.forEach(function(r, i) {
+  // Cost comparison: traditional mowing
+  var tradCutCost = Math.max(50, sqft * 0.006); // ~$0.006/sqft per cut, min $50
+  var tradAnnual = Math.round(tradCutCost * 26); // 26 cuts/season
+
+  // Show property cost summary above cards
+  var summary = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;">' +
+    '<div style="background:var(--g50);border-radius:12px;padding:16px;text-align:center;">' +
+      '<div style="font-size:1.8rem;font-weight:800;color:var(--green);">' + sqft.toLocaleString() + '</div>' +
+      '<div style="font-size:.75rem;color:var(--g500);font-weight:600;">SQ FT</div></div>' +
+    '<div style="background:var(--g50);border-radius:12px;padding:16px;text-align:center;">' +
+      '<div style="font-size:1.8rem;font-weight:800;color:var(--green);">' + acres.toFixed(2) + '</div>' +
+      '<div style="font-size:.75rem;color:var(--g500);font-weight:600;">ACRES</div></div>' +
+    '<div style="background:var(--g50);border-radius:12px;padding:16px;text-align:center;">' +
+      '<div style="font-size:1.8rem;font-weight:800;color:#e53935;">$' + tradAnnual.toLocaleString() + '</div>' +
+      '<div style="font-size:.75rem;color:var(--g500);font-weight:600;">TRAD. MOWING/YR</div></div>' +
+    '<div style="background:var(--g50);border-radius:12px;padding:16px;text-align:center;">' +
+      '<div style="font-size:1.8rem;font-weight:800;color:var(--teal);">$' + Math.round(tradAnnual * 5).toLocaleString() + '</div>' +
+      '<div style="font-size:.75rem;color:var(--g500);font-weight:600;">5-YR MOWING COST</div></div>' +
+    '</div>';
+  cards.insertAdjacentHTML('beforebegin', summary);
+
+  recs.forEach(function(r) {
+    var perSqFt = (r.cost / sqft).toFixed(2);
+    var payback = Math.ceil(r.cost / (tradAnnual / 12));
+    var fiveYrSave = Math.round(tradAnnual * 5 - r.cost - 250 * 5); // minus ~$250/yr maintenance
+
     var card = document.createElement('div');
     card.style.cssText = 'border:2px solid var(--g200);border-radius:16px;overflow:hidden;background:#fff;transition:all .2s;cursor:pointer;';
     card.onmouseover = function(){this.style.borderColor='var(--green)';this.style.boxShadow='0 8px 24px rgba(106,187,30,.15)';};
     card.onmouseout = function(){this.style.borderColor='var(--g200)';this.style.boxShadow='none';};
-    card.innerHTML = '<div style="height:160px;overflow:hidden;background:var(--g100);"><img src="'+r.img+'" alt="'+r.name+'" style="width:100%;height:100%;object-fit:contain;"></div>' +
+    card.innerHTML = '<div style="height:140px;overflow:hidden;background:var(--g100);"><img src="'+r.img+'" alt="'+r.name+'" style="width:100%;height:100%;object-fit:contain;" loading="lazy"></div>' +
       '<div style="padding:16px;">' +
       '<div style="font-size:.7rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;">'+r.match+'</div>' +
       '<div style="font-size:1.1rem;font-weight:700;margin:4px 0;">'+r.name+'</div>' +
-      '<div style="font-size:.85rem;color:var(--g500);margin-bottom:8px;">'+r.desc+'</div>' +
-      '<div style="font-size:1.15rem;font-weight:800;color:var(--teal);">'+r.price+'</div>' +
+      '<div style="font-size:.85rem;color:var(--g500);margin-bottom:10px;">'+r.desc+'</div>' +
+      '<div style="font-size:1.3rem;font-weight:800;color:var(--teal);">'+r.price+'</div>' +
+      '<div style="margin-top:10px;padding:10px;background:var(--g50);border-radius:8px;font-size:.8rem;">' +
+        '<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--g500);">Cost per sq ft</span><strong>$'+perSqFt+'</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--g500);">Pays for itself in</span><strong>'+payback+' months</strong></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--green);">5-year savings</span><strong style="color:var(--green);">$'+fiveYrSave.toLocaleString()+'</strong></div>' +
+      '</div>' +
       '<a href="'+r.link+'" style="display:inline-block;margin-top:10px;padding:8px 20px;background:var(--green);color:#fff;border-radius:980px;font-weight:600;font-size:.82rem;text-decoration:none;">View Details</a>' +
       '</div>';
     cards.appendChild(card);
