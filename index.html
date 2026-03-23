@@ -20,14 +20,12 @@
   <meta name="twitter:title" content="Smart Lawn NY | Robotic Mower Showroom">
   <meta name="twitter:description" content="Robotic mower sales, installation & service. Authorized Navimow & Yarbo dealer. Peekskill, NY.">
   <meta name="twitter:image" content="https://smartlawnny.com/og-share.png">
-  <!-- Google Analytics GA4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GRP8HCBFTL"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GRP8HCBFTL');</script>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -49,7 +47,7 @@
     .top-banner { background: #1d1d1f; color: #f5f5f7; text-align: center; padding: 12px 16px; font-size: .82rem; font-weight: 400; position: relative; }
     .top-banner a { color: var(--green-light); text-decoration: none; font-weight: 600; }
     .top-banner a:hover { text-decoration: underline; }
-    .banner-close { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #86868b; font-size: 1.2rem; cursor: pointer; }
+    .banner-close { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #636366; font-size: 1.2rem; cursor: pointer; }
 
     /* === HEADER === */
     header { background: rgba(255,255,255,.85); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,.08); }
@@ -59,14 +57,14 @@
     .logo-text { display: flex; flex-direction: column; line-height: 1.15; }
     .logo-text .name { color: #1d1d1f; font-size: 1.15rem; font-weight: 800; }
     .logo-text .name span { color: #1d1d1f; }
-    .logo-text .tagline { font-size: .6rem; color: #86868b; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
+    .logo-text .tagline { font-size: .6rem; color: #636366; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
     .logo-text .dealer-tag { font-size: .5rem; color: var(--green); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; margin-top: 1px; }
     nav ul { display: flex; gap: 24px; align-items: center; }
     nav a { font-weight: 500; font-size: .82rem; color: #1d1d1f; transition: color .2s; }
-    nav a:hover { color: #86868b; }
+    nav a:hover { color: #636366; }
     .header-right { display: flex; align-items: center; gap: 16px; }
     .header-social { display: flex; gap: 12px; }
-    .header-social a { color: #86868b; font-size: .95rem; transition: color .2s; }
+    .header-social a { color: #636366; font-size: .95rem; transition: color .2s; }
     .header-social a:hover { color: #1d1d1f; }
 
     /* === BUTTONS === */
@@ -94,7 +92,7 @@
     .hero-content { max-width: 560px; }
     .hero h1 { font-size: 4.5rem; font-weight: 800; line-height: 1.05; margin-bottom: 12px; letter-spacing: -.03em; color: #1d1d1f; }
     .hero h1 .accent { color: var(--green); }
-    .hero .hero-tagline { font-size: 1.25rem; font-weight: 400; color: #86868b; margin-bottom: 32px; line-height: 1.6; }
+    .hero .hero-tagline { font-size: 1.25rem; font-weight: 400; color: #636366; margin-bottom: 32px; line-height: 1.6; }
     .hero p { display: none; }
     .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
     .hero-badge { display: inline-block; background: rgba(106,187,30,.08); border: 1px solid rgba(106,187,30,.2); padding: 8px 20px; border-radius: 50px; font-size: .75rem; font-weight: 600; margin-bottom: 24px; letter-spacing: .04em; color: var(--green-dark); }
@@ -110,12 +108,12 @@
     .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.08); }
     .service-icon { width: 56px; height: 56px; margin: 0 auto 20px; background: #1d1d1f; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.3rem; }
     .service-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; color: #1d1d1f; }
-    .service-card p { font-size: .88rem; color: #86868b; line-height: 1.7; }
+    .service-card p { font-size: .88rem; color: #636366; line-height: 1.7; }
 
     /* === SECTION HEADERS === */
     .section-header { text-align: center; margin-bottom: 40px; }
     .section-header h2 { font-size: 3.2rem; font-weight: 800; color: #1d1d1f; margin-bottom: 16px; letter-spacing: -.02em; line-height: 1.1; }
-    .section-header p { font-size: 1.2rem; color: #86868b; max-width: 600px; margin: 0 auto; font-weight: 400; }
+    .section-header p { font-size: 1.2rem; color: #636366; max-width: 600px; margin: 0 auto; font-weight: 400; }
     .section-header .underline-accent { display: inline-block; position: relative; color: var(--green); }
     .section-header .underline-accent::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 4px; background: var(--green); border-radius: 2px; }
 
@@ -126,7 +124,7 @@
     .about-image img { width: 100%; height: 100%; object-fit: cover; }
     .about-text h2 { font-size: 2.8rem; font-weight: 800; margin-bottom: 24px; color: #1d1d1f; letter-spacing: -.02em; line-height: 1.1; }
     .about-text h2 .accent { color: var(--green); }
-    .about-text p { font-size: 1.05rem; color: #86868b; margin-bottom: 16px; line-height: 1.85; }
+    .about-text p { font-size: 1.05rem; color: #636366; margin-bottom: 16px; line-height: 1.85; }
     .about-badges { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
     .about-badge { display: inline-flex; align-items: center; gap: 8px; background: #f5f5f7; padding: 10px 18px; border-radius: 12px; font-size: .85rem; font-weight: 600; color: #1d1d1f; border: none; }
     .about-badge i { color: var(--green); }
@@ -145,11 +143,11 @@
     .product-badge { position: absolute; top: 16px; left: 16px; background: #1d1d1f; color: #fff; padding: 5px 14px; border-radius: 20px; font-size: .72rem; font-weight: 600; letter-spacing: .03em; }
     .product-badge.teal { background: var(--teal); }
     .product-card-body { padding: 24px 28px 28px; }
-    .product-card-body .brand-label { font-size: .7rem; font-weight: 600; text-transform: uppercase; color: #86868b; letter-spacing: .08em; margin-bottom: 6px; }
+    .product-card-body .brand-label { font-size: .7rem; font-weight: 600; text-transform: uppercase; color: #636366; letter-spacing: .08em; margin-bottom: 6px; }
     .product-card-body h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: #1d1d1f; }
     .product-card-body .price { font-size: 1.4rem; font-weight: 700; color: #1d1d1f; margin-bottom: 8px; }
-    .product-card-body .price .from { font-size: .75rem; font-weight: 500; color: #86868b; }
-    .product-card-body .specs { font-size: .82rem; color: #86868b; margin-bottom: 18px; line-height: 1.6; }
+    .product-card-body .price .from { font-size: .75rem; font-weight: 500; color: #636366; }
+    .product-card-body .specs { font-size: .82rem; color: #636366; margin-bottom: 18px; line-height: 1.6; }
     .product-card-body .btn-details { display: inline-block; background: transparent; color: var(--teal); border: 2px solid var(--teal); padding: 10px 20px; border-radius: 50px; font-weight: 700; font-size: .82rem; cursor: pointer; text-transform: uppercase; transition: all .3s; text-align: center; margin-bottom: 8px; width: 100%; }
     .product-card-body .btn-details:hover { background: var(--teal); color: #fff; }
     .products-cta { text-align: center; margin-top: 48px; }
@@ -229,7 +227,7 @@
     .brand-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.08); background: #fff; }
     .brand-icon { width: 64px; height: 64px; margin: 0 auto 16px; background: #1d1d1f; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff; }
     .brand-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; color: #1d1d1f; }
-    .brand-card .brand-desc { font-size: .82rem; color: #86868b; margin-bottom: 16px; line-height: 1.6; }
+    .brand-card .brand-desc { font-size: .82rem; color: #636366; margin-bottom: 16px; line-height: 1.6; }
     .dealer-badge { display: inline-block; background: var(--green); color: #fff; font-size: .68rem; font-weight: 600; padding: 4px 12px; border-radius: 10px; margin-bottom: 12px; letter-spacing: .03em; }
 
     /* === SOLUTIONS === */
@@ -249,7 +247,7 @@
     .why-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.06); }
     .why-card .icon-circle { width: 56px; height: 56px; margin: 0 auto 20px; background: #1d1d1f; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: var(--green-light); box-shadow: none; border: none; }
     .why-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; color: #1d1d1f; }
-    .why-card p { font-size: .9rem; color: #86868b; line-height: 1.7; }
+    .why-card p { font-size: .9rem; color: #636366; line-height: 1.7; }
 
     /* === HANDS-FREE BANNER === */
     .hands-free-banner { padding: 60px 0; background: linear-gradient(135deg, #1a3a2a 0%, #2d6a4f 100%); }
@@ -276,20 +274,20 @@
     .roi-inputs .input-group { margin-bottom: 20px; }
     .roi-inputs input, .roi-inputs select { width: 100%; padding: 14px 16px; border: 1px solid #d2d2d7; border-radius: 12px; font-size: 1rem; font-family: inherit; transition: all .2s; background: #fff; }
     .roi-inputs input:focus, .roi-inputs select:focus { outline: none; border-color: #1d1d1f; box-shadow: 0 0 0 3px rgba(29,29,31,.1); }
-    .roi-inputs .hint { font-size: .78rem; color: #86868b; margin-top: 4px; }
+    .roi-inputs .hint { font-size: .78rem; color: #636366; margin-top: 4px; }
     .roi-results { background: #f5f5f7; border-radius: 24px; padding: 40px; }
     .roi-results h3 { font-size: 1.3rem; font-weight: 700; color: #1d1d1f; margin-bottom: 24px; }
     .roi-stat { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #e5e7eb; }
     .roi-stat:last-child { border-bottom: none; }
-    .roi-stat .label { font-size: .92rem; color: #86868b; }
+    .roi-stat .label { font-size: .92rem; color: #636366; }
     .roi-stat .value { font-size: 1.15rem; font-weight: 700; color: #1d1d1f; }
     .roi-stat .value.green { color: var(--green-dark); }
     .roi-stat .value.savings { font-size: 1.6rem; color: var(--green); }
     .roi-highlight { margin-top: 24px; background: rgba(106,187,30,.08); border: 1px solid rgba(106,187,30,.2); border-radius: 16px; padding: 24px; text-align: center; }
     .roi-highlight .big-number { font-size: 2.4rem; font-weight: 800; color: var(--green); line-height: 1.1; }
-    .roi-highlight .big-label { font-size: .88rem; color: #86868b; margin-top: 4px; }
+    .roi-highlight .big-label { font-size: .88rem; color: #636366; margin-top: 4px; }
     .roi-toggle { display: flex; background: #f0f0f3; border-radius: 10px; padding: 3px; margin-bottom: 24px; }
-    .roi-toggle button { flex: 1; padding: 10px 8px; border: none; border-radius: 8px; font-size: .78rem; font-weight: 600; font-family: inherit; cursor: pointer; background: transparent; color: #86868b; transition: all .2s; line-height: 1.3; }
+    .roi-toggle button { flex: 1; padding: 10px 8px; border: none; border-radius: 8px; font-size: .78rem; font-weight: 600; font-family: inherit; cursor: pointer; background: transparent; color: #636366; transition: all .2s; line-height: 1.3; }
     .roi-toggle button.active { background: #fff; color: #1d1d1f; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
     .roi-annual-check { display: flex !important; align-items: center; gap: 8px; font-weight: 500 !important; font-size: .88rem; color: #6e6e73 !important; cursor: pointer; margin-bottom: 0 !important; }
     .roi-annual-check input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
@@ -303,7 +301,7 @@
     .roi-benefit-card:nth-child(3) .benefit-icon { background: rgba(139,92,246,.1); color: #8b5cf6; }
     .roi-benefit-card:nth-child(4) .benefit-icon { background: rgba(106,187,30,.1); color: var(--green); }
     .roi-benefit-card .benefit-value { font-size: 1.5rem; font-weight: 800; color: #1d1d1f; line-height: 1.2; }
-    .roi-benefit-card .benefit-label { font-size: .82rem; color: #86868b; margin-top: 6px; line-height: 1.4; }
+    .roi-benefit-card .benefit-label { font-size: .82rem; color: #636366; margin-top: 6px; line-height: 1.4; }
     @media (max-width: 768px) { .roi-benefits { grid-template-columns: 1fr 1fr; gap: 16px; } }
     @media (max-width: 768px) { .roi-grid { grid-template-columns: 1fr; } }
 
@@ -335,7 +333,7 @@
     .testimonial-card .stars { color: #fbbf24; font-size: 1rem; margin-bottom: 16px; }
     .testimonial-card blockquote { font-size: 1rem; color: #1d1d1f; line-height: 1.8; margin-bottom: 20px; font-style: normal; }
     .testimonial-card .author { font-weight: 700; color: #1d1d1f; font-size: .92rem; }
-    .testimonial-card .author span { color: #86868b; font-weight: 400; }
+    .testimonial-card .author span { color: #636366; font-weight: 400; }
 
     /* === CTA === */
     .cta-section { padding: 80px 0; background: #1d1d1f; color: #fff; text-align: center; }
@@ -347,11 +345,11 @@
     .contact { padding: 80px 0; background: #f5f5f7; }
     .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
     .contact-info h2 { font-size: 2.6rem; font-weight: 800; margin-bottom: 20px; color: #1d1d1f; letter-spacing: -.02em; }
-    .contact-info > p { color: #86868b; margin-bottom: 36px; font-size: 1.05rem; line-height: 1.7; }
+    .contact-info > p { color: #636366; margin-bottom: 36px; font-size: 1.05rem; line-height: 1.7; }
     .contact-detail { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
     .contact-detail .icon { width: 48px; height: 48px; background: #1d1d1f; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--green-light); font-size: 1.1rem; flex-shrink: 0; }
     .contact-detail .text h4 { font-weight: 700; color: #1d1d1f; margin-bottom: 2px; }
-    .contact-detail .text p { color: #86868b; margin: 0; font-size: .95rem; }
+    .contact-detail .text p { color: #636366; margin: 0; font-size: .95rem; }
     .contact-form { background: #fff; padding: 48px; border-radius: 24px; box-shadow: 0 4px 24px rgba(0,0,0,.06); }
     .contact-form h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 28px; color: #1d1d1f; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -365,19 +363,19 @@
     /* (Cart sidebar removed — using Stripe Payment Links) */
 
     /* === FOOTER === */
-    footer { background: #1d1d1f; color: #86868b; padding: 80px 0 0; }
+    footer { background: #1d1d1f; color: #636366; padding: 80px 0 0; }
     .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.08); }
     .footer-brand .footer-logo { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 16px; }
     .footer-brand .footer-logo .accent { color: var(--green-light); }
-    .footer-brand p { font-size: .9rem; line-height: 1.8; color: #86868b; margin-bottom: 20px; }
+    .footer-brand p { font-size: .9rem; line-height: 1.8; color: #636366; margin-bottom: 20px; }
     .footer-social { display: flex; gap: 10px; }
-    .footer-social a { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; color: #86868b; transition: all .3s; font-size: .9rem; }
+    .footer-social a { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; color: #636366; transition: all .3s; font-size: .9rem; }
     .footer-social a:hover { background: rgba(255,255,255,.15); color: #fff; }
     .footer-col h4 { color: #f5f5f7; font-weight: 600; margin-bottom: 20px; font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; }
     .footer-col ul li { margin-bottom: 10px; }
-    .footer-col ul a { color: #86868b; transition: color .2s; font-size: .88rem; }
+    .footer-col ul a { color: #636366; transition: color .2s; font-size: .88rem; }
     .footer-col ul a:hover { color: #f5f5f7; }
-    .footer-newsletter p { color: #86868b; font-size: .88rem; margin-bottom: 16px; }
+    .footer-newsletter p { color: #636366; font-size: .88rem; margin-bottom: 16px; }
     .newsletter-form { display: flex; gap: 8px; }
     .newsletter-form input { flex: 1; padding: 14px 16px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.05); color: #fff; font-size: .9rem; }
     .newsletter-form input::placeholder { color: #6e6e73; }
@@ -492,8 +490,8 @@
       </div>
     </div>
     <div class="hero-product">
-      <a href="products/navimow-x450.html" class="hero-product-link active"><img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png" alt="Navimow X450 Robotic Mower"></a>
-      <a href="products/yarbo-lawn-mower.html" class="hero-product-link"><img src="https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(3).png" alt="Yarbo Robotic Lawn Mower"></a>
+      <a href="products/navimow-x450.html" class="hero-product-link active"><img src="https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png" alt="Navimow X450 Robotic Mower" width="500" height="500" loading="eager"></a>
+      <a href="products/yarbo-lawn-mower.html" class="hero-product-link"><img src="https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(3).png" alt="Yarbo Robotic Lawn Mower" width="500" height="500" loading="lazy"></a>
     </div>
   </div>
 </section>
@@ -1064,9 +1062,9 @@
           <div class="form-row"><div class="form-group"><label>Email</label><input type="email" name="email" placeholder="john@example.com" required></div><div class="form-group"><label>Phone</label><input type="tel" name="phone" placeholder="(914) 555-1234"></div></div>
           <div class="form-group"><label>Street Address</label><input type="text" name="street" placeholder="123 Main St" required></div>
           <div class="form-row" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;"><div class="form-group"><label>City</label><input type="text" name="city" placeholder="Peekskill" required></div><div class="form-group"><label>State</label><select name="state"><option value="NY" selected>NY</option><option value="CT">CT</option><option value="NJ">NJ</option><option value="Other">Other</option></select></div><div class="form-group"><label>Zip</label><input type="text" name="zip" placeholder="10566" pattern="[0-9]{5}" required></div></div>
-          <div class="form-group"><label>County</label><select name="county"><option value="">Select...</option><option>Westchester</option><option>Putnam</option><option>Dutchess</option><option>Rockland</option><option>Other</option></select></div>
-          <div class="form-group"><label>Lawn Size</label><select name="lawnSize"><option value="">Select...</option><option>Under 1/4 acre</option><option>1/4-1/2 acre</option><option>1/2-1 acre</option><option>1-2 acres</option><option>2+ acres</option></select></div>
-          <div class="form-group"><label>Interest</label><select name="interest"><option value="">Select...</option><option>Buy a Robotic Mower</option><option>Installation</option><option>Service Plan</option><option>Free Demo</option><option>Subscription (Mowing-as-a-Service)</option><option>General Info</option></select></div>
+          <div class="form-group"><label for="fCounty">County</label><select name="county" id="fCounty"><option value="">Select...</option><option>Westchester</option><option>Putnam</option><option>Dutchess</option><option>Rockland</option><option>Other</option></select></div>
+          <div class="form-group"><label for="fLawnSize">Lawn Size</label><select name="lawnSize" id="fLawnSize"><option value="">Select...</option><option>Under 1/4 acre</option><option>1/4-1/2 acre</option><option>1/2-1 acre</option><option>1-2 acres</option><option>2+ acres</option></select></div>
+          <div class="form-group"><label for="fInterest">Interest</label><select name="interest" id="fInterest"><option value="">Select...</option><option>Buy a Robotic Mower</option><option>Installation</option><option>Service Plan</option><option>Free Demo</option><option>Subscription (Mowing-as-a-Service)</option><option>General Info</option></select></div>
           <div class="form-group"><label>Message</label><textarea name="message" placeholder="Tell us about your property..."></textarea></div>
           <button type="submit" class="btn btn-primary" id="contactBtn">Submit Request</button>
         </form>
@@ -1083,7 +1081,7 @@
         <img src="images/logo.png" alt="Smart Lawn - Automation & Robotics" style="height:100px;width:auto;margin-bottom:12px;">
         <p>Westchester & Putnam County's first robotic mower showroom.</p>
         <p style="font-size:.82rem;color:var(--g500);margin-bottom:16px;">1 Highland Industrial Park, Peekskill, NY 10566</p>
-        <div class="footer-social"><a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank"><i class="fab fa-facebook-f"></i></a><a href="https://instagram.com/SmartLawnNY" target="_blank"><i class="fab fa-instagram"></i></a><a href="https://youtube.com/@SmartLawnNY" target="_blank"><i class="fab fa-youtube"></i></a><a href="https://nextdoor.com/pages/smart-lawn-ny-peekskill-ny/" target="_blank"><i class="fas fa-house-user"></i></a></div>
+        <div class="footer-social"><a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="https://instagram.com/SmartLawnNY" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="https://youtube.com/@SmartLawnNY" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a><a href="https://nextdoor.com/pages/smart-lawn-ny-peekskill-ny/" target="_blank" aria-label="Nextdoor"><i class="fas fa-house-user"></i></a></div>
       </div>
       <div class="footer-col"><h4>Site Links</h4><ul><li><a href="#">Home</a></li><li><a href="#about">About</a></li><li><a href="#products">Products</a></li><li><a href="services.html">Services</a></li><li><a href="#contact">Contact</a></li></ul><h4 style="margin-top:16px;">Also Visit</h4><ul><li><a href="https://peekskilltree.com" target="_blank">Peekskill Tree Service</a></li></ul></div>
       <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Product launches, seasonal tips, and offers.</p><form class="newsletter-form" id="newsletterForm" onsubmit="return submitNewsletter(event)"><input type="email" id="newsletterEmail" placeholder="Email Address" required><button type="submit" class="btn btn-primary btn-sm" id="newsletterBtn">Sign Up</button></form><p id="newsletterMsg" style="display:none;margin-top:10px;font-size:.85rem;"></p></div>
@@ -1167,12 +1165,19 @@ function initPropertyMap() {
   script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk&libraries=drawing,geometry,places&callback=_onPropMapReady';
   document.head.appendChild(script);
 }
-// Auto-init map when address input gets focus
+// Lazy-load map: on input focus OR when section scrolls into view
 document.addEventListener('DOMContentLoaded', function() {
   var input = document.getElementById('propAddressInput');
   if (input) {
     input.addEventListener('focus', initPropertyMap);
     input.addEventListener('click', initPropertyMap);
+  }
+  // Also init when quiz section is near viewport
+  var section = document.getElementById('quiz-section');
+  if (section && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) initPropertyMap();
+    }, {rootMargin: '200px'}).observe(section);
   }
 });
 function _onPropMapReady() {
@@ -1619,5 +1624,8 @@ function submitNewsletter(e) {
   return false;
 }
 </script>
+<!-- GA4 deferred to avoid blocking render -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-GRP8HCBFTL"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GRP8HCBFTL');</script>
 </body>
 </html>
