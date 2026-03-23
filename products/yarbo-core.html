@@ -180,14 +180,16 @@
         <div class="brand">Yarbo</div>
         <h1>Yarbo Core</h1>
         <div class="price">$3,994</div>
-        <div class="price-note">Professional installation available from $499</div>
+        <div style="font-size:.85rem;color:#6b7280;margin-top:4px;">+ Installation from $599</div>
+        <div style="font-size:.85rem;color:#6b7280;">or as low as <strong>$333/mo</strong> with Affirm</div>
+        <div style="font-size:.8rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock — Ships Free</div>
         <div class="key-specs">
           <div class="spec-pill"><div class="spec-label">Coverage</div><div class="spec-value">Up to 31 Acres</div></div>
           <div class="spec-pill"><div class="spec-label">Towing</div><div class="spec-value">500 lbs</div></div>
           <div class="spec-pill"><div class="spec-label">Runtime</div><div class="spec-value">4 Hours</div></div>
           <div class="spec-pill"><div class="spec-label">Waterproof</div><div class="spec-value">IPX5</div></div>
         </div>
-        <a href="#" data-product="yarbo-core" class="btn-add">Buy Now &mdash; $3,994</a>
+        <button onclick="addToCart('Yarbo Core',3994,'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/f157de5637054bc2abc7f663b78c97d9.png')" style="display:block;width:100%;padding:14px;margin-top:12px;background:#6abb1e;color:#fff;border:none;border-radius:980px;font-weight:700;font-size:1rem;cursor:pointer;font-family:'Inter',sans-serif;"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         <a href="../index.html#contact" class="btn-quote">Request a Quote</a>
         <div class="module-note">
           <strong>The Yarbo Core is the base robot platform.</strong> Add modules for mowing, snow blowing, and more. See <a href="yarbo-lawn-mower.html">Yarbo Lawn Mower</a> and <a href="yarbo-snow-blower.html">Yarbo Snow Blower</a>.
@@ -306,6 +308,13 @@
 }
 </script>
 
+<script>
+var cart=JSON.parse(localStorage.getItem('slny_cart')||'[]');
+function addToCart(n,p,i){cart.push({name:n,price:p,img:i});localStorage.setItem('slny_cart',JSON.stringify(cart));
+var t=document.createElement('div');t.style.cssText='position:fixed;top:80px;right:24px;background:#6abb1e;color:#fff;padding:12px 24px;border-radius:12px;font-weight:600;z-index:10000;font-family:Inter,sans-serif;';
+t.innerHTML='<i class="fas fa-check"></i> Added to cart';document.body.appendChild(t);setTimeout(function(){t.remove();},2000);
+if(typeof gtag==='function')gtag('event','add_to_cart',{item_name:n,value:p});}
+</script>
 <script src="../js/stripe-config.js"></script>
 </body>
 </html>
