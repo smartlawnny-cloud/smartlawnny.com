@@ -260,7 +260,7 @@
 
     /* === WHY BUY FROM US === */
     .why-buy { padding: 80px 0; background: #fff; }
-    .why-buy-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; max-width: 1100px; margin: 40px auto 0; }
+    .why-buy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1100px; margin: 40px auto 0; }
     .why-buy-card { text-align: center; padding: 30px 20px; }
     .why-buy-card .trust-icon { width: 72px; height: 72px; background: #f5f5f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
     .why-buy-card .trust-icon i { font-size: 1.6rem; color: #2d6a4f; }
@@ -968,31 +968,109 @@
   <div class="container">
     <div class="section-header fade-in">
       <h2>Why Buy From <span class="underline-accent">Smart Lawn</span></h2>
+      <p>We're not a website with a shipping label. We're your neighbor — and we stand behind every mower we sell.</p>
     </div>
+
+    <!-- Trade-In Highlight -->
+    <div style="background:linear-gradient(135deg,#1a5c5c,#134545);color:#fff;border-radius:20px;padding:40px;margin-bottom:40px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;" class="fade-in">
+      <div style="font-size:3.5rem;"><i class="fas fa-exchange-alt"></i></div>
+      <div>
+        <h3 style="font-size:1.5rem;font-weight:800;margin-bottom:8px;">30-Day Full Trade-In Guarantee</h3>
+        <p style="font-size:1.05rem;opacity:.9;line-height:1.7;">Bought the wrong mower? No problem. Within the first 30 days, trade it in for <strong>full purchase value</strong> toward any other model we carry. No restocking fees. No hassle. Try it risk-free on your actual lawn — if it's not the right fit, we'll swap it. <em>No online retailer offers this.</em></p>
+      </div>
+    </div>
+
     <div class="why-buy-grid">
       <div class="why-buy-card fade-in">
-        <div class="trust-icon"><i class="fas fa-certificate"></i></div>
-        <h3>Authorized Dealer</h3>
-        <p>Factory-authorized for Segway Navimow &amp; Yarbo. Full warranty coverage on every mower.</p>
+        <div class="trust-icon"><i class="fas fa-map-marked-alt"></i></div>
+        <h3>Free Property Assessment</h3>
+        <p>Our satellite mapping tool analyzes your terrain, slopes, and lot size — then recommends the exact mower for your property. No guessing.</p>
       </div>
       <div class="why-buy-card fade-in">
-        <div class="trust-icon"><i class="fas fa-store"></i></div>
-        <h3>Local Showroom</h3>
-        <p>See and test mowers in person at our Peekskill location. No pressure — just hands-on experience.</p>
+        <div class="trust-icon"><i class="fas fa-home"></i></div>
+        <h3>We Demo on YOUR Lawn</h3>
+        <p>Not sure which mower to pick? We'll bring one to your property and run it. See it work on your actual grass, hills, and obstacles.</p>
       </div>
       <div class="why-buy-card fade-in">
         <div class="trust-icon"><i class="fas fa-tools"></i></div>
-        <h3>Expert Installation</h3>
-        <p>Professional setup, boundary mapping, and training included with every mower purchase.</p>
+        <h3>Professional Installation</h3>
+        <p>RTK mapping, boundary setup, charging station placement, zone optimization, and full training — all included with every purchase.</p>
       </div>
       <div class="why-buy-card fade-in">
-        <div class="trust-icon"><i class="fas fa-headset"></i></div>
-        <h3>Ongoing Support</h3>
-        <p>Annual service plans, seasonal care, and priority repairs. We're with you long after the sale.</p>
+        <div class="trust-icon"><i class="fas fa-certificate"></i></div>
+        <h3>Authorized Dealer</h3>
+        <p>Factory-authorized for Segway Navimow &amp; Yarbo. Full manufacturer warranty. Genuine parts. Firmware updates.</p>
+      </div>
+      <div class="why-buy-card fade-in">
+        <div class="trust-icon"><i class="fas fa-truck"></i></div>
+        <h3>Local Service & Repair</h3>
+        <p>We're 20 minutes away — not a 1-800 number. Same-week service calls. Loaner mower available while yours is in the shop.</p>
+      </div>
+      <div class="why-buy-card fade-in">
+        <div class="trust-icon"><i class="fas fa-snowflake"></i></div>
+        <h3>Seasonal Care Included</h3>
+        <p>Spring startup, fall winterization, blade replacements, and software updates. We keep your mower running year after year.</p>
       </div>
     </div>
+
+    <!-- Service Plans -->
+    <div style="margin-top:48px;" class="fade-in">
+      <div style="text-align:center;margin-bottom:28px;">
+        <h3 style="font-size:1.4rem;font-weight:800;">Annual Service Plans</h3>
+        <p style="color:var(--g500);font-size:.95rem;">Choose the level of support that fits your needs</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div style="border:2px solid var(--g200);border-radius:16px;padding:24px;text-align:center;background:#fff;">
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--g500);">Essentials</div>
+          <div style="font-size:2rem;font-weight:800;margin:8px 0;">$149<span style="font-size:.85rem;font-weight:400;color:var(--g500);">/yr</span></div>
+          <div style="font-size:.8rem;color:var(--g500);margin-bottom:12px;">~$12/month</div>
+          <ul style="text-align:left;font-size:.85rem;color:var(--g600);list-style:none;">
+            <li style="padding:4px 0;">&#10003; Spring startup</li>
+            <li style="padding:4px 0;">&#10003; Fall winterization</li>
+            <li style="padding:4px 0;">&#10003; Blade replacement kit</li>
+            <li style="padding:4px 0;">&#10003; Phone support</li>
+          </ul>
+        </div>
+        <div style="border:2px solid var(--green);border-radius:16px;padding:24px;text-align:center;background:#fff;position:relative;">
+          <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:3px 16px;border-radius:20px;font-size:.7rem;font-weight:700;">MOST POPULAR</div>
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--green);">Pro</div>
+          <div style="font-size:2rem;font-weight:800;margin:8px 0;">$249<span style="font-size:.85rem;font-weight:400;color:var(--g500);">/yr</span></div>
+          <div style="font-size:.8rem;color:var(--g500);margin-bottom:12px;">~$21/month</div>
+          <ul style="text-align:left;font-size:.85rem;color:var(--g600);list-style:none;">
+            <li style="padding:4px 0;">&#10003; Everything in Essentials</li>
+            <li style="padding:4px 0;">&#10003; 2 on-site service visits</li>
+            <li style="padding:4px 0;">&#10003; Firmware updates</li>
+            <li style="padding:4px 0;">&#10003; Zone re-optimization</li>
+          </ul>
+        </div>
+        <div style="border:2px solid var(--g200);border-radius:16px;padding:24px;text-align:center;background:#fff;">
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--teal);">All-In</div>
+          <div style="font-size:2rem;font-weight:800;margin:8px 0;">$399<span style="font-size:.85rem;font-weight:400;color:var(--g500);">/yr</span></div>
+          <div style="font-size:.8rem;color:var(--g500);margin-bottom:12px;">~$33/month</div>
+          <ul style="text-align:left;font-size:.85rem;color:var(--g600);list-style:none;">
+            <li style="padding:4px 0;">&#10003; Everything in Pro</li>
+            <li style="padding:4px 0;">&#10003; Unlimited service calls</li>
+            <li style="padding:4px 0;">&#10003; Loaner mower</li>
+            <li style="padding:4px 0;">&#10003; Priority scheduling</li>
+          </ul>
+        </div>
+        <div style="border:2px solid var(--g200);border-radius:16px;padding:24px;text-align:center;background:linear-gradient(135deg,#1a5c5c,#134545);color:#fff;">
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.6);">MaaS</div>
+          <div style="font-size:2rem;font-weight:800;margin:8px 0;">$99<span style="font-size:.85rem;font-weight:400;color:rgba(255,255,255,.6);">/wk</span></div>
+          <div style="font-size:.8rem;color:rgba(255,255,255,.6);margin-bottom:12px;">Mowing as a Service</div>
+          <ul style="text-align:left;font-size:.85rem;color:rgba(255,255,255,.8);list-style:none;">
+            <li style="padding:4px 0;">&#10003; We own the robot</li>
+            <li style="padding:4px 0;">&#10003; Install + monitor + maintain</li>
+            <li style="padding:4px 0;">&#10003; All parts & labor</li>
+            <li style="padding:4px 0;">&#10003; Zero hassle. Just a lawn.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div style="text-align:center;margin-top:40px;" class="fade-in">
-      <a href="services.html" class="btn btn-primary">Explore Our Services</a>
+      <a href="services.html" class="btn btn-primary">Explore All Services</a>
+      <a href="#contact" class="btn btn-outline" style="margin-left:12px;">Get a Quote</a>
     </div>
   </div>
 </section>
