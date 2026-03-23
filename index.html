@@ -1385,6 +1385,15 @@ function showMapRecommendation(acres, steepPct) {
   });
 
   document.getElementById('mapRecommendation').scrollIntoView({behavior:'smooth', block:'start'});
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'property_analyzed', {
+      acres: acres.toFixed(2),
+      steep_pct: steepPct,
+      recommended_mower: recs[0].name
+    });
+  }
 }
 
 // === QUIZ (legacy — kept for backward compat) ===
@@ -1558,6 +1567,7 @@ function submitContactForm(e) {
   .then(function() {
     btn.textContent = 'Sent!';
     btn.style.background = '#4caf50';
+    if (typeof gtag === 'function') gtag('event', 'contact_form_submitted', {interest: data.interest || 'general', county: data.county || 'unknown'});
     form.reset();
     setTimeout(function() { btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = ''; }, 3000);
   })

@@ -1008,6 +1008,10 @@ function calculatePackages() {
 
   document.getElementById('packages').style.display = 'block';
   document.getElementById('packages').scrollIntoView({behavior:'smooth'});
+
+  if (typeof gtag === 'function') {
+    gtag('event', 'quote_calculated', {acres: acres.toFixed(2), terranox_units: terraUnits, equipment_cost: terraTotal});
+  }
 }
 
 // ══════════════════════════════════════
@@ -1065,6 +1069,10 @@ function selectPackage(pkg, el) {
 
   document.getElementById('quote-output').style.display = 'block';
   document.getElementById('quote-output').scrollIntoView({behavior:'smooth'});
+
+  if (typeof gtag === 'function') {
+    gtag('event', 'quote_package_selected', {package: pkg === 'c' ? 'done_for_you' : pkg === 'b' ? 'terranox_yarbo' : 'terranox_fleet'});
+  }
 }
 
 function addRow(container, label, value, isNote) {
