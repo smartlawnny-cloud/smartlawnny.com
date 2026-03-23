@@ -157,6 +157,38 @@
     .area-tag:hover { border-color: var(--green); color: var(--green); }
     .area-tag i { color: var(--green); margin-right: 6px; font-size: .8rem; }
 
+    /* === TAB SWITCHER === */
+    .section-tabs { display:flex; justify-content:center; gap:0; margin-bottom:32px; }
+    .section-tab { padding:14px 32px; font-size:.95rem; font-weight:600; color:var(--g500); background:var(--g100); border:2px solid var(--g200); cursor:pointer; transition:all .2s; text-decoration:none; display:flex; align-items:center; gap:8px; }
+    .section-tab:first-child { border-radius:12px 0 0 12px; }
+    .section-tab:last-child { border-radius:0 12px 12px 0; }
+    .section-tab:hover { color:var(--green); }
+    .section-tab.active { background:#fff; color:var(--green); border-color:var(--green); font-weight:700; }
+    .section-tab i { font-size:1rem; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    /* === Property Check Tab === */
+    .property-check { max-width:960px; margin:0 auto; }
+    .property-search { display:flex; gap:8px; margin-bottom:20px; }
+    .property-search input { flex:1; padding:14px 20px; font-size:1rem; border:2px solid var(--g200); border-radius:12px; font-family:'Inter',sans-serif; outline:none; transition:border .2s; }
+    .property-search input:focus { border-color:var(--green); }
+    .property-search button { padding:14px 28px; background:var(--green); color:#fff; font-weight:700; font-size:.95rem; border:none; border-radius:12px; cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap; }
+    .property-search button:hover { background:var(--green-dark); }
+    .property-map-wrap { display:grid; grid-template-columns:1fr 320px; gap:0; border-radius:16px; overflow:hidden; border:1px solid var(--g200); box-shadow:var(--sh-lg); min-height:450px; }
+    .property-map-wrap #propertyMap { width:100%; height:450px; }
+    .property-stats { padding:20px; background:var(--g50); font-size:.9rem; overflow-y:auto; }
+    .property-stats h4 { font-size:.95rem; font-weight:700; margin-bottom:12px; color:var(--g900); }
+    .pstat-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--g200); font-size:.85rem; }
+    .pstat-row .label { color:var(--g500); }
+    .pstat-row .val { font-weight:600; color:var(--g900); }
+    .slope-legend { margin-top:12px; }
+    .slope-legend .sl { display:flex; align-items:center; gap:6px; padding:3px 0; font-size:.8rem; }
+    .slope-legend .dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+    .property-cta { text-align:center; margin-top:20px; padding:16px; background:rgba(106,187,30,.08); border-radius:12px; }
+    .property-cta a { display:inline-block; padding:12px 28px; background:var(--green); color:#fff; border-radius:980px; font-weight:600; font-size:.9rem; text-decoration:none; }
+    @media (max-width:768px) { .property-map-wrap { grid-template-columns:1fr; } .section-tab { padding:10px 16px; font-size:.82rem; } }
+
     /* === QUIZ === */
     .quiz-section { padding: 72px 0; background: #fff; }
     .quiz-container { max-width: 720px; margin: 0 auto; background: var(--g50); border-radius: 24px; padding: 48px; box-shadow: var(--sh-lg); border: 1px solid var(--g200); }
@@ -671,8 +703,15 @@
   <div class="container">
     <div class="section-header fade-in">
       <h2>Find Your Perfect <span class="underline-accent">Robotic Mower</span></h2>
-      <p>Answer a few quick questions and we'll recommend the best mower for your yard</p>
+      <p>Take the quiz or check your property's terrain with our satellite mapping tool</p>
     </div>
+
+    <div class="section-tabs fade-in">
+      <div class="section-tab active" onclick="switchTab('quiz')"><i class="fas fa-clipboard-list"></i> Mower Quiz</div>
+      <div class="section-tab" onclick="switchTab('property')"><i class="fas fa-map-marked-alt"></i> Check Your Property</div>
+    </div>
+
+    <div class="tab-content active" id="tab-quiz">
     <div class="quiz-container fade-in" id="quizContainer">
       <div class="quiz-progress" id="quizProgress">
         <div class="quiz-dot active"></div>
@@ -750,6 +789,40 @@
         <div style="margin-top:12px;"><a href="#products" style="color:var(--green);font-weight:600;">Or browse all mowers &rarr;</a></div>
       </div>
     </div>
+    </div><!-- end tab-quiz -->
+
+    <div class="tab-content" id="tab-property">
+      <div class="property-check">
+        <div class="property-search">
+          <input type="text" id="propAddressInput" placeholder="Enter your property address...">
+          <button onclick="checkProperty()"><i class="fas fa-search"></i> Analyze Property</button>
+        </div>
+        <div class="property-map-wrap" id="propMapWrap" style="display:none;">
+          <div id="propertyMap"></div>
+          <div class="property-stats">
+            <h4 id="propAddrLabel">Property Analysis</h4>
+            <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
+            <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
+            <div class="pstat-row"><span class="label">Elevation</span><span class="val" id="pElev">—</span></div>
+            <div class="slope-legend">
+              <div style="font-size:.75rem;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Slope Breakdown</div>
+              <div class="sl"><span class="dot" style="background:#4caf50;"></span><strong id="pGreen">—</strong> Flat (&lt;22°)</div>
+              <div class="sl"><span class="dot" style="background:#ffeb3b;"></span><strong id="pYellow">—</strong> Moderate (22–30°)</div>
+              <div class="sl"><span class="dot" style="background:#ff9800;"></span><strong id="pOrange">—</strong> Steep (30–43°)</div>
+              <div class="sl"><span class="dot" style="background:#f44336;"></span><strong id="pRed">—</strong> Extreme (&gt;43°)</div>
+            </div>
+            <div style="margin-top:12px;padding:10px;background:rgba(106,187,30,.08);border-radius:8px;font-size:.8rem;color:var(--green);">
+              <strong>Draw your boundary</strong> using the polygon tool on the map, then results will calculate automatically.
+            </div>
+          </div>
+        </div>
+        <div class="property-cta" id="propCta" style="display:none;">
+          <p style="font-size:.95rem;color:var(--g600);margin-bottom:12px;">Want a detailed quote with pricing and packages?</p>
+          <a href="/quote/">Get Full Property Quote →</a>
+        </div>
+      </div>
+    </div><!-- end tab-property -->
+
   </div>
 </section>
 
@@ -1129,6 +1202,121 @@ function filterProducts(brand) {
   event.target.classList.add('active');
   document.querySelectorAll('.product-card').forEach(card => {
     card.style.display = (brand === 'all' || card.dataset.brand === brand) ? '' : 'none';
+  });
+}
+
+// === TAB SWITCHER ===
+function switchTab(tab) {
+  document.querySelectorAll('.section-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.closest('.section-tab').classList.add('active');
+  if (tab === 'property' && !window._propMapInit) initPropertyMap();
+}
+
+// === PROPERTY CHECK MAP ===
+var _propMap, _propDrawMgr, _propPolygon, _propElevSvc, _propSlopeCells = [];
+function initPropertyMap() {
+  window._propMapInit = true;
+  var script = document.createElement('script');
+  script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk&libraries=drawing,geometry,places&callback=_onPropMapReady';
+  document.head.appendChild(script);
+}
+function _onPropMapReady() {
+  _propElevSvc = new google.maps.ElevationService();
+  _propMap = new google.maps.Map(document.getElementById('propertyMap'), {
+    center:{lat:41.27,lng:-73.92}, zoom:10, mapTypeId:'satellite', tilt:45,
+    mapTypeControl:true, streetViewControl:false, fullscreenControl:true,
+    rotateControl:true, zoomControl:true, gestureHandling:'greedy'
+  });
+  _propDrawMgr = new google.maps.drawing.DrawingManager({
+    drawingMode:null, drawingControl:true,
+    drawingControlOptions:{position:google.maps.ControlPosition.TOP_CENTER, drawingModes:['polygon']},
+    polygonOptions:{fillColor:'#6abb1e',fillOpacity:0.15,strokeColor:'#6abb1e',strokeWeight:3,editable:true}
+  });
+  _propDrawMgr.setMap(_propMap);
+  google.maps.event.addListener(_propDrawMgr, 'polygoncomplete', function(poly) {
+    if (_propPolygon) _propPolygon.setMap(null);
+    _propPolygon = poly;
+    _propDrawMgr.setDrawingMode(null);
+    _runPropAnalysis();
+    google.maps.event.addListener(poly.getPath(), 'set_at', _runPropAnalysis);
+    google.maps.event.addListener(poly.getPath(), 'insert_at', _runPropAnalysis);
+  });
+  // Places autocomplete
+  var input = document.getElementById('propAddressInput');
+  var ac = new google.maps.places.Autocomplete(input, {types:['address'],componentRestrictions:{country:'us'}});
+  ac.addListener('place_changed', function() {
+    var place = ac.getPlace();
+    if (place.geometry) _flyToProperty(place.geometry.location.lat(), place.geometry.location.lng(), place.formatted_address);
+  });
+  input.addEventListener('keydown', function(e) { if(e.key==='Enter') { e.preventDefault(); checkProperty(); } });
+}
+function checkProperty() {
+  var q = document.getElementById('propAddressInput').value.trim();
+  if (!q || !window._propMapInit) return;
+  new google.maps.Geocoder().geocode({address:q}, function(results, status) {
+    if (status==='OK' && results[0]) {
+      document.getElementById('propAddressInput').value = results[0].formatted_address;
+      _flyToProperty(results[0].geometry.location.lat(), results[0].geometry.location.lng(), results[0].formatted_address);
+    }
+  });
+}
+function _flyToProperty(lat, lng, name) {
+  document.getElementById('propMapWrap').style.display = 'grid';
+  document.getElementById('propAddrLabel').textContent = name.split(',').slice(0,2).join(',');
+  if (_propPolygon) { _propPolygon.setMap(null); _propPolygon = null; }
+  _propSlopeCells.forEach(function(c){c.setMap(null);}); _propSlopeCells = [];
+  _propMap.setCenter({lat:lat,lng:lng}); _propMap.setZoom(18); _propMap.setTilt(45);
+  new google.maps.Marker({position:{lat:lat,lng:lng}, map:_propMap,
+    icon:{path:google.maps.SymbolPath.CIRCLE, scale:8, fillColor:'#6abb1e', fillOpacity:1, strokeColor:'#fff', strokeWeight:3}});
+  _propDrawMgr.setDrawingMode('polygon');
+  document.getElementById('propCta').style.display = 'block';
+}
+function _runPropAnalysis() {
+  if (!_propPolygon) return;
+  var path = _propPolygon.getPath();
+  var area = google.maps.geometry.spherical.computeArea(path) / 4046.86;
+  document.getElementById('pLot').textContent = area.toFixed(2) + ' ac';
+  document.getElementById('pMow').textContent = (area * 0.85).toFixed(1) + ' ac';
+  // Slope analysis
+  var bounds = new google.maps.LatLngBounds();
+  for (var i=0;i<path.getLength();i++) bounds.extend(path.getAt(i));
+  var sw=bounds.getSouthWest(), ne=bounds.getNorthEast(), gs=20;
+  var latS=(ne.lat()-sw.lat())/gs, lngS=(ne.lng()-sw.lng())/gs;
+  var locs=[], gm=[];
+  for(var r=0;r<=gs;r++){gm[r]=[];for(var c=0;c<=gs;c++){gm[r][c]=locs.length;locs.push(new google.maps.LatLng(sw.lat()+r*latS,sw.lng()+c*lngS));}}
+  var mid=Math.ceil(locs.length/2);
+  _propElevSvc.getElevationForLocations({locations:locs.slice(0,mid)}, function(r1,s1) {
+    if(s1!=='OK')return;
+    _propElevSvc.getElevationForLocations({locations:locs.slice(mid)}, function(r2,s2) {
+      if(s2!=='OK')return;
+      var res=r1.concat(r2), minE=99999,maxE=-99999, cnt={g:0,y:0,o:0,r:0}, tot=0;
+      _propSlopeCells.forEach(function(c){c.setMap(null);}); _propSlopeCells=[];
+      for(var r=0;r<gs;r++){for(var c=0;c<gs;c++){
+        var lat=sw.lat()+r*latS, lng=sw.lng()+c*lngS;
+        if(!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(lat+latS/2,lng+lngS/2),_propPolygon))continue;
+        tot++;
+        var e00=res[gm[r][c]].elevation,e10=res[gm[r+1][c]].elevation,e01=res[gm[r][c+1]].elevation,e11=res[gm[r+1][c+1]].elevation;
+        minE=Math.min(minE,e00,e10,e01,e11); maxE=Math.max(maxE,e00,e10,e01,e11);
+        var dxM=lngS*111320*Math.cos(lat*Math.PI/180), dyM=latS*111320;
+        var dzX=((e01-e00)+(e11-e10))/2, dzY=((e10-e00)+(e11-e01))/2;
+        var sd=Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM)+(dzY/dyM)*(dzY/dyM)))*180/Math.PI;
+        var col,op;
+        if(sd<22){col='#4caf50';op=0.2;cnt.g++;}else if(sd<30){col='#ffeb3b';op=0.4;cnt.y++;}
+        else if(sd<43){col='#ff9800';op=0.5;cnt.o++;}else{col='#f44336';op=0.6;cnt.r++;}
+        var cell=new google.maps.Polygon({paths:[{lat:lat,lng:lng},{lat:lat,lng:lng+lngS},{lat:lat+latS,lng:lng+lngS},{lat:lat+latS,lng:lng}],
+          fillColor:col,fillOpacity:op,strokeColor:col,strokeOpacity:0.3,strokeWeight:1,map:_propMap});
+        _propSlopeCells.push(cell);
+      }}
+      if(minE<99999) document.getElementById('pElev').textContent=Math.round(minE*3.281)+'–'+Math.round(maxE*3.281)+' ft';
+      if(tot>0){
+        document.getElementById('pGreen').textContent=Math.round(cnt.g/tot*100)+'%';
+        document.getElementById('pYellow').textContent=Math.round(cnt.y/tot*100)+'%';
+        document.getElementById('pOrange').textContent=Math.round(cnt.o/tot*100)+'%';
+        document.getElementById('pRed').textContent=Math.round(cnt.r/tot*100)+'%';
+      }
+    });
   });
 }
 
