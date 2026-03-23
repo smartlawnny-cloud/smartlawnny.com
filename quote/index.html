@@ -527,12 +527,100 @@ function startAnalysis(lat, lng, displayName) {
     }
   });
 
-  // Show draw instructions
+  // Try to auto-fetch parcel boundary from Westchester County GIS
   document.getElementById('drawInstructions').style.display = 'block';
   document.getElementById('resultsPanel').style.display = 'none';
-
-  // Enable polygon drawing mode
   drawingManager.setDrawingMode('polygon');
+
+  fetchWestchesterParcel(lat, lng, function(ring) {
+    if (ring && ring.length > 3) {
+      // Auto-draw the parcel boundary
+      if (drawnPolygon) drawnPolygon.setMap(null);
+      drawnPolygon = new google.maps.Polygon({
+        paths: ring.map(function(p) { return {lat:p[1], lng:p[0]}; }),
+        fillColor: '#6abb1e', fillOpacity: 0.15,
+        strokeColor: '#6abb1e', strokeWeight: 3,
+        editable: true, map: map
+      });
+      drawingManager.setDrawingMode(null);
+      updateAreaFromPolygon();
+      // Auto-run analysis
+      document.getElementById('drawInstructions').style.display = 'none';
+      document.getElementById('resultsPanel').style.display = 'block';
+      runSlopeAnalysis();
+      calculatePackages();
+      // Listen for edits
+      google.maps.event.addListener(drawnPolygon.getPath(), 'set_at', updateAreaFromPolygon);
+      google.maps.event.addListener(drawnPolygon.getPath(), 'insert_at', updateAreaFromPolygon);
+    }
+  });
+
+  // Enable topo overlay by default
+  if (!document.getElementById('togTopo').checked) {
+    document.getElementById('togTopo').checked = true;
+    map.overlayMapTypes.push(topoOverlay);
+  }
+}
+
+// ══════════════════════════════════════
+// WESTCHESTER COUNTY PARCEL LOOKUP
+// ══════════════════════════════════════
+function fetchWestchesterParcel(lat, lng, callback) {
+  // Convert to Web Mercator (EPSG:3857)
+  var x = lng * 20037508.34 / 180;
+  var y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180) * 20037508.34 / 180;
+
+  // Use identify endpoint to search all municipality layers at once
+  var url = 'https://giswww.westchestergov.com/arcgis/rest/services/MunicipalTaxParcels_Query/MapServer/identify?' +
+    'geometry=' + x + ',' + y +
+    '&geometryType=esriGeometryPoint&sr=3857' +
+    '&layers=all' +
+    '&tolerance=1' +
+    '&mapExtent=' + (x-500) + ',' + (y-500) + ',' + (x+500) + ',' + (y+500) +
+    '&imageDisplay=100,100,96' +
+    '&returnGeometry=true&f=json';
+
+  // Use JSONP to bypass CORS
+  var cbName = '_wc_parcel_' + Date.now();
+  var timeout = setTimeout(function() { delete window[cbName]; callback(null); }, 8000);
+
+  window[cbName] = function(data) {
+    clearTimeout(timeout);
+    delete window[cbName];
+    if (data.results && data.results.length > 0) {
+      // Find the parcel result (skip Municipal Boundaries, contours, etc.)
+      var parcel = data.results.find(function(r) { return r.layerName && r.layerName.indexOf('Parcels') > -1; });
+      if (parcel && parcel.geometry && parcel.geometry.rings) {
+        var ring = parcel.geometry.rings[0];
+        console.log('Parcel found:', parcel.layerName, ring.length, 'vertices');
+        callback(ring);
+        return;
+      }
+    }
+    console.log('No parcel found in Westchester GIS');
+    callback(null);
+  };
+
+  // Try JSONP first
+  var script = document.createElement('script');
+  script.src = url + '&callback=' + cbName;
+  script.onerror = function() {
+    clearTimeout(timeout);
+    delete window[cbName];
+    // Fallback: try fetch (may work if CORS is enabled)
+    fetch(url).then(function(r){return r.json();}).then(function(data) {
+      window[cbName] = null;
+      if (data.results && data.results.length > 0) {
+        var parcel = data.results.find(function(r) { return r.layerName && r.layerName.indexOf('Parcels') > -1; });
+        if (parcel && parcel.geometry && parcel.geometry.rings) {
+          callback(parcel.geometry.rings[0]);
+          return;
+        }
+      }
+      callback(null);
+    }).catch(function() { callback(null); });
+  };
+  document.head.appendChild(script);
 }
 
 // ══════════════════════════════════════
