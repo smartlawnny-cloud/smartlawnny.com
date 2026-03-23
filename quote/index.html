@@ -591,7 +591,12 @@ function fetchWestchesterParcel(lat, lng, callback) {
       // Find the parcel result (skip Municipal Boundaries, contours, etc.)
       var parcel = data.results.find(function(r) { return r.layerName && r.layerName.indexOf('Parcels') > -1; });
       if (parcel && parcel.geometry && parcel.geometry.rings) {
-        var ring = parcel.geometry.rings[0];
+        // Convert from Web Mercator (3857) to WGS84 (lng,lat)
+        var ring = parcel.geometry.rings[0].map(function(p) {
+          var lng = p[0] / 20037508.34 * 180;
+          var lat = Math.atan(Math.exp(p[1] / 20037508.34 * Math.PI)) * 360 / Math.PI - 90;
+          return [lng, lat];
+        });
         console.log('Parcel found:', parcel.layerName, ring.length, 'vertices');
         callback(ring);
         return;
@@ -613,7 +618,12 @@ function fetchWestchesterParcel(lat, lng, callback) {
       if (data.results && data.results.length > 0) {
         var parcel = data.results.find(function(r) { return r.layerName && r.layerName.indexOf('Parcels') > -1; });
         if (parcel && parcel.geometry && parcel.geometry.rings) {
-          callback(parcel.geometry.rings[0]);
+          var ring = parcel.geometry.rings[0].map(function(p) {
+            var lng2 = p[0] / 20037508.34 * 180;
+            var lat2 = Math.atan(Math.exp(p[1] / 20037508.34 * Math.PI)) * 360 / Math.PI - 90;
+            return [lng2, lat2];
+          });
+          callback(ring);
           return;
         }
       }
