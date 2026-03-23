@@ -1424,7 +1424,7 @@ function _flyToProperty(lat, lng, name) {
   // Log address lookup to sheet + send SMS
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
   fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({firstName:'Property Lookup', lastName:'', email:'', phone:'',
+    body:JSON.stringify({type:'ADDRESS_LOOKUP', firstName:'Property Lookup', lastName:'', email:'', phone:'',
       street:name, city:'', state:'', zip:'', county:'', lawnSize:'',
       interest:'Property Assessment', message:'Address entered in map tool: '+name,
       date:new Date().toISOString(), source:'Map Tool'})
@@ -1853,7 +1853,7 @@ function submitContactForm(e) {
   e.preventDefault();
   var form = document.getElementById('contactForm');
   var btn = document.getElementById('contactBtn');
-  var data = {};
+  var data = {type: 'CONTACT'};
   new FormData(form).forEach(function(v, k) { data[k] = v; });
   data.date = new Date().toISOString();
   btn.textContent = 'Sending...';
@@ -1910,22 +1910,12 @@ function submitNewsletter(e) {
   var msg = document.getElementById('newsletterMsg');
   btn.textContent = '...';
   btn.disabled = true;
-  var SHEET_URL = 'GOOGLE_APPS_SCRIPT_URL';
-  if (SHEET_URL === 'GOOGLE_APPS_SCRIPT_URL') {
-    /* Placeholder until Apps Script is deployed — store locally */
-    msg.style.display = 'block';
-    msg.style.color = '#4caf50';
-    msg.textContent = 'Thanks! You\'re on the list.';
-    btn.textContent = 'Sign Up';
-    btn.disabled = false;
-    document.getElementById('newsletterEmail').value = '';
-    return false;
-  }
+  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
   fetch(SHEET_URL, {
     method: 'POST',
     mode: 'no-cors',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({email: email, date: new Date().toISOString()})
+    body: JSON.stringify({type: 'NEWSLETTER', email: email, date: new Date().toISOString()})
   }).then(function() {
     msg.style.display = 'block';
     msg.style.color = '#4caf50';

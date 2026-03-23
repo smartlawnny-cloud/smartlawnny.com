@@ -623,6 +623,7 @@ function submitHoaForm(e) {
   btn.textContent = 'Sending...';
 
   var data = {
+    type: 'HOA_LEAD',
     firstName: form.contactName.value,
     lastName: '',
     email: form.email.value,
