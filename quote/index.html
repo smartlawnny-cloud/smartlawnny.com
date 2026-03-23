@@ -543,7 +543,7 @@ function startAnalysis(lat, lng, displayName) {
   document.getElementById('resultsPanel').style.display = 'none';
   drawingManager.setDrawingMode('polygon');
 
-  fetchWestchesterParcel(lat, lng, function(ring) {
+  fetchParcel(lat, lng, function(ring) {
     if (ring && ring.length > 3) {
       // Auto-draw the parcel boundary
       if (drawnPolygon) drawnPolygon.setMap(null);
@@ -574,74 +574,83 @@ function startAnalysis(lat, lng, displayName) {
 }
 
 // ══════════════════════════════════════
-// WESTCHESTER COUNTY PARCEL LOOKUP
+// MULTI-COUNTY PARCEL LOOKUP
+// Westchester, Putnam, Rockland, Orange (NY), Fairfield (CT), Bergen (NJ)
 // ══════════════════════════════════════
-function fetchWestchesterParcel(lat, lng, callback) {
-  // Convert to Web Mercator (EPSG:3857)
-  var x = lng * 20037508.34 / 180;
-  var y = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180) * 20037508.34 / 180;
-
-  // Use identify endpoint to search all municipality layers at once
-  var url = 'https://giswww.westchestergov.com/arcgis/rest/services/MunicipalTaxParcels_Query/MapServer/identify?' +
-    'geometry=' + x + ',' + y +
-    '&geometryType=esriGeometryPoint&sr=3857' +
-    '&layers=all' +
-    '&tolerance=1' +
-    '&mapExtent=' + (x-500) + ',' + (y-500) + ',' + (x+500) + ',' + (y+500) +
-    '&imageDisplay=100,100,96' +
-    '&returnGeometry=true&f=json';
-
-  // Use JSONP to bypass CORS
-  var cbName = '_wc_parcel_' + Date.now();
-  var timeout = setTimeout(function() { delete window[cbName]; callback(null); }, 8000);
-
-  window[cbName] = function(data) {
-    clearTimeout(timeout);
-    delete window[cbName];
-    if (data.results && data.results.length > 0) {
-      // Find the parcel result (skip Municipal Boundaries, contours, etc.)
-      var parcel = data.results.find(function(r) { return r.layerName && r.layerName.indexOf('Parcels') > -1; });
-      if (parcel && parcel.geometry && parcel.geometry.rings) {
-        // Convert from Web Mercator (3857) to WGS84 (lng,lat)
-        var ring = parcel.geometry.rings[0].map(function(p) {
-          var lng = p[0] / 20037508.34 * 180;
-          var lat = Math.atan(Math.exp(p[1] / 20037508.34 * Math.PI)) * 360 / Math.PI - 90;
-          return [lng, lat];
-        });
-        console.log('Parcel found:', parcel.layerName, ring.length, 'vertices');
-        callback(ring);
-        return;
-      }
-    }
-    console.log('No parcel found in Westchester GIS');
-    callback(null);
-  };
-
-  // Try JSONP first
-  var script = document.createElement('script');
-  script.src = url + '&callback=' + cbName;
-  script.onerror = function() {
-    clearTimeout(timeout);
-    delete window[cbName];
-    // Fallback: try fetch (may work if CORS is enabled)
-    fetch(url).then(function(r){return r.json();}).then(function(data) {
-      window[cbName] = null;
-      if (data.results && data.results.length > 0) {
-        var parcel = data.results.find(function(r) { return r.layerName && r.layerName.indexOf('Parcels') > -1; });
-        if (parcel && parcel.geometry && parcel.geometry.rings) {
-          var ring = parcel.geometry.rings[0].map(function(p) {
-            var lng2 = p[0] / 20037508.34 * 180;
-            var lat2 = Math.atan(Math.exp(p[1] / 20037508.34 * Math.PI)) * 360 / Math.PI - 90;
-            return [lng2, lat2];
-          });
+function fetchParcel(lat, lng, callback) {
+  _tryWestchesterQ(lat, lng, function(ring) {
+    if (ring) { callback(ring); return; }
+    _tryNYSQ(lat, lng, function(ring) {
+      if (ring) { callback(ring); return; }
+      _tryCTQ(lat, lng, function(ring) {
+        if (ring) { callback(ring); return; }
+        _tryNJQ(lat, lng, function(ring) {
           callback(ring);
-          return;
-        }
-      }
-      callback(null);
-    }).catch(function() { callback(null); });
+        });
+      });
+    });
+  });
+}
+function _toWM(lat, lng) {
+  var x = lng * 20037508.34 / 180;
+  var y = Math.log(Math.tan((90+lat)*Math.PI/360)) / (Math.PI/180) * 20037508.34/180;
+  return {x:x, y:y};
+}
+function _fromWM(x, y) {
+  return [x/20037508.34*180, Math.atan(Math.exp(y/20037508.34*Math.PI))*360/Math.PI-90];
+}
+function _tryWestchesterQ(lat, lng, cb) {
+  var m = _toWM(lat, lng), cbName = '_wcp_' + Date.now();
+  var url = 'https://giswww.westchestergov.com/arcgis/rest/services/MunicipalTaxParcels_Query/MapServer/identify?' +
+    'geometry='+m.x+','+m.y+'&geometryType=esriGeometryPoint&sr=3857&layers=all&tolerance=1' +
+    '&mapExtent='+(m.x-500)+','+(m.y-500)+','+(m.x+500)+','+(m.y+500)+'&imageDisplay=100,100,96' +
+    '&returnGeometry=true&f=json&callback='+cbName;
+  var timeout = setTimeout(function(){delete window[cbName]; cb(null);}, 6000);
+  window[cbName] = function(data) {
+    clearTimeout(timeout); delete window[cbName];
+    if (data.results && data.results.length > 0) {
+      var parcel = data.results.find(function(r){return r.geometry && r.geometry.rings;});
+      if (parcel) { cb(parcel.geometry.rings[0].map(function(p){return _fromWM(p[0],p[1]);})); return; }
+    }
+    cb(null);
   };
-  document.head.appendChild(script);
+  var s = document.createElement('script'); s.src = url;
+  s.onerror = function(){clearTimeout(timeout); delete window[cbName]; cb(null);};
+  document.head.appendChild(s);
+}
+function _tryNYSQ(lat, lng, cb) {
+  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/1/query?' +
+    'geometry='+lng+','+lat+'&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=PARCEL_ADDR,COUNTY_NAME&returnGeometry=true&outSR=4326&f=json';
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    if (data.features && data.features.length > 0 && data.features[0].geometry) {
+      cb(data.features[0].geometry.rings[0]); return;
+    }
+    cb(null);
+  }).catch(function(){cb(null);});
+}
+function _tryCTQ(lat, lng, cb) {
+  var url = 'https://services3.arcgis.com/3FL1kr7L4LvwA2Kb/ArcGIS/rest/services/Connecticut_State_Parcel_Layer_2023/FeatureServer/0/query?' +
+    'geometry='+lng+','+lat+'&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=Town_Name&returnGeometry=true&outSR=4326&f=json';
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    if (data.features && data.features.length > 0 && data.features[0].geometry) {
+      cb(data.features[0].geometry.rings[0]); return;
+    }
+    cb(null);
+  }).catch(function(){cb(null);});
+}
+function _tryNJQ(lat, lng, cb) {
+  var m = _toWM(lat, lng);
+  var url = 'https://maps.nj.gov/arcgis/rest/services/Framework/Cadastral/MapServer/0/query?' +
+    'geometry='+m.x+','+m.y+'&geometryType=esriGeometryPoint&inSR=3857&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=PROP_LOC,MUN_NAME&returnGeometry=true&outSR=4326&f=json';
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    if (data.features && data.features.length > 0 && data.features[0].geometry) {
+      cb(data.features[0].geometry.rings[0]); return;
+    }
+    cb(null);
+  }).catch(function(){cb(null);});
 }
 
 // ══════════════════════════════════════

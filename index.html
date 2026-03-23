@@ -1423,32 +1423,87 @@ function _flyToProperty(lat, lng, name) {
   });
 }
 
-// Westchester County parcel lookup (JSONP)
+// Multi-county parcel lookup — Westchester, Putnam, Rockland, Orange (NY), Fairfield (CT), Bergen (NJ)
 function _fetchParcel(lat, lng, callback) {
+  // Try Westchester first (JSONP), then NYS statewide, then CT, then NJ
+  _tryWestchester(lat, lng, function(ring) {
+    if (ring) { callback(ring); return; }
+    _tryNYS(lat, lng, function(ring) {
+      if (ring) { callback(ring); return; }
+      _tryCT(lat, lng, function(ring) {
+        if (ring) { callback(ring); return; }
+        _tryNJ(lat, lng, function(ring) {
+          callback(ring); // null if all fail
+        });
+      });
+    });
+  });
+}
+function _toWebMerc(lat, lng) {
   var x = lng * 20037508.34 / 180;
   var y = Math.log(Math.tan((90+lat)*Math.PI/360)) / (Math.PI/180) * 20037508.34/180;
-  var cbName = '_wcp_' + Date.now();
+  return {x:x, y:y};
+}
+function _fromWebMerc(x, y) {
+  return [x/20037508.34*180, Math.atan(Math.exp(y/20037508.34*Math.PI))*360/Math.PI-90];
+}
+// Westchester County (JSONP — their server)
+function _tryWestchester(lat, lng, cb) {
+  var m = _toWebMerc(lat, lng), cbName = '_wcp_' + Date.now();
   var url = 'https://giswww.westchestergov.com/arcgis/rest/services/MunicipalTaxParcels_Query/MapServer/identify?' +
-    'geometry='+x+','+y+'&geometryType=esriGeometryPoint&sr=3857&layers=all&tolerance=1' +
-    '&mapExtent='+(x-500)+','+(y-500)+','+(x+500)+','+(y+500)+'&imageDisplay=100,100,96' +
+    'geometry='+m.x+','+m.y+'&geometryType=esriGeometryPoint&sr=3857&layers=all&tolerance=1' +
+    '&mapExtent='+(m.x-500)+','+(m.y-500)+','+(m.x+500)+','+(m.y+500)+'&imageDisplay=100,100,96' +
     '&returnGeometry=true&f=json&callback='+cbName;
-  var timeout = setTimeout(function(){delete window[cbName]; callback(null);}, 8000);
+  var timeout = setTimeout(function(){delete window[cbName]; cb(null);}, 6000);
   window[cbName] = function(data) {
     clearTimeout(timeout); delete window[cbName];
     if (data.results && data.results.length > 0) {
-      var parcel = data.results.find(function(r){return r.layerName && r.layerName.indexOf('Parcels')>-1;});
-      if (parcel && parcel.geometry && parcel.geometry.rings) {
-        var ring = parcel.geometry.rings[0].map(function(p){
-          return [p[0]/20037508.34*180, Math.atan(Math.exp(p[1]/20037508.34*Math.PI))*360/Math.PI-90];
-        });
-        callback(ring); return;
-      }
+      var parcel = data.results.find(function(r){return r.geometry && r.geometry.rings;});
+      if (parcel) { cb(parcel.geometry.rings[0].map(function(p){return _fromWebMerc(p[0],p[1]);})); return; }
     }
-    callback(null);
+    cb(null);
   };
   var s = document.createElement('script'); s.src = url;
-  s.onerror = function(){clearTimeout(timeout); delete window[cbName]; callback(null);};
+  s.onerror = function(){clearTimeout(timeout); delete window[cbName]; cb(null);};
   document.head.appendChild(s);
+}
+// NYS Statewide (Putnam, Rockland, Orange — CORS fetch)
+function _tryNYS(lat, lng, cb) {
+  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/1/query?' +
+    'geometry='+lng+','+lat+'&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=PARCEL_ADDR,COUNTY_NAME&returnGeometry=true&outSR=4326&f=json';
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    if (data.features && data.features.length > 0 && data.features[0].geometry) {
+      var ring = data.features[0].geometry.rings[0];
+      cb(ring); return;
+    }
+    cb(null);
+  }).catch(function(){cb(null);});
+}
+// Connecticut Statewide (Fairfield County towns — CORS fetch)
+function _tryCT(lat, lng, cb) {
+  var url = 'https://services3.arcgis.com/3FL1kr7L4LvwA2Kb/ArcGIS/rest/services/Connecticut_State_Parcel_Layer_2023/FeatureServer/0/query?' +
+    'geometry='+lng+','+lat+'&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=Town_Name&returnGeometry=true&outSR=4326&f=json';
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    if (data.features && data.features.length > 0 && data.features[0].geometry) {
+      cb(data.features[0].geometry.rings[0]); return;
+    }
+    cb(null);
+  }).catch(function(){cb(null);});
+}
+// New Jersey Statewide (Bergen County — CORS fetch)
+function _tryNJ(lat, lng, cb) {
+  var m = _toWebMerc(lat, lng);
+  var url = 'https://maps.nj.gov/arcgis/rest/services/Framework/Cadastral/MapServer/0/query?' +
+    'geometry='+m.x+','+m.y+'&geometryType=esriGeometryPoint&inSR=3857&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=PROP_LOC,MUN_NAME&returnGeometry=true&outSR=4326&f=json';
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    if (data.features && data.features.length > 0 && data.features[0].geometry) {
+      cb(data.features[0].geometry.rings[0]); return;
+    }
+    cb(null);
+  }).catch(function(){cb(null);});
 }
 function _runPropAnalysis() {
   if (!_propPolygon) return;
