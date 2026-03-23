@@ -1185,6 +1185,16 @@ function _onPropMapReady() {
     polygonOptions:{fillColor:'#6abb1e',fillOpacity:0.15,strokeColor:'#6abb1e',strokeWeight:3,editable:true}
   });
   _propDrawMgr.setMap(_propMap);
+
+  // Add USGS Topo overlay
+  var topoLayer = new google.maps.ImageMapType({
+    getTileUrl: function(coord, zoom) {
+      return 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/'+zoom+'/'+coord.y+'/'+coord.x;
+    },
+    tileSize: new google.maps.Size(256,256), opacity:0.35, name:'Topo'
+  });
+  _propMap.overlayMapTypes.push(topoLayer);
+
   google.maps.event.addListener(_propDrawMgr, 'polygoncomplete', function(poly) {
     if (_propPolygon) _propPolygon.setMap(null);
     _propPolygon = poly;
@@ -1294,12 +1304,22 @@ function _runPropAnalysis() {
         var dxM=lngS*111320*Math.cos(lat*Math.PI/180), dyM=latS*111320;
         var dzX=((e01-e00)+(e11-e10))/2, dzY=((e10-e00)+(e11-e01))/2;
         var sd=Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM)+(dzY/dyM)*(dzY/dyM)))*180/Math.PI;
-        var col,op;
+        var col,op,sd_r=Math.round(sd);
         if(sd<22){col='#4caf50';op=0.2;cnt.g++;}else if(sd<30){col='#ffeb3b';op=0.4;cnt.y++;}
         else if(sd<43){col='#ff9800';op=0.5;cnt.o++;}else{col='#f44336';op=0.6;cnt.r++;}
         var cell=new google.maps.Polygon({paths:[{lat:lat,lng:lng},{lat:lat,lng:lng+lngS},{lat:lat+latS,lng:lng+lngS},{lat:lat+latS,lng:lng}],
           fillColor:col,fillOpacity:op,strokeColor:col,strokeOpacity:0.3,strokeWeight:1,map:_propMap});
         _propSlopeCells.push(cell);
+        // Click popup
+        (function(s,l){google.maps.event.addListener(cell,'click',function(e){
+          new google.maps.InfoWindow({content:'<b>'+s+'° slope</b><br>'+l,position:e.latLng}).open(_propMap);
+        });})(sd_r, sd_r<22?'All mowers OK':sd_r<30?'Yarbo limit':sd_r<43?'TerraNox only':'Too steep');
+        // Degree label on steep cells
+        if(sd_r>=22 && r%3===0 && c%3===0){
+          _propSlopeCells.push(new google.maps.Marker({position:{lat:lat+latS/2,lng:lng+lngS/2},map:_propMap,
+            icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
+            label:{text:sd_r+'°',color:'#fff',fontSize:'9px',fontWeight:'bold'}}));
+        }
       }}
       if(minE<99999) document.getElementById('pElev').textContent=Math.round(minE*3.281)+'–'+Math.round(maxE*3.281)+' ft';
       if(tot>0){
