@@ -594,13 +594,18 @@
                 <a href="#contact" class="btn btn-primary" style="margin-top:12px;font-size:.85rem;padding:10px 24px;">Request Contract</a>
               </div>
             </div>
-            <div style="margin-top:20px;padding:16px;background:#fff;border:1px solid var(--g200);border-radius:12px;display:flex;align-items:center;gap:16px;">
-              <div style="font-size:2rem;color:var(--g400);"><i class="fas fa-university"></i></div>
-              <div>
-                <div style="font-size:.9rem;font-weight:700;color:var(--g700);">Equipment Financing Available</div>
-                <p style="font-size:.82rem;color:var(--g500);margin:4px 0;">Want to own the mower? Ask about 0% APR financing through our lending partners. 12–36 month terms, low monthly payments.</p>
-                <a href="#contact" style="font-size:.82rem;color:var(--green);font-weight:600;text-decoration:none;">Ask About Financing →</a>
+            <div style="margin-top:20px;padding:16px;background:#fff;border:1px solid var(--g200);border-radius:12px;">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                <img src="https://cdn-assets.affirm.com/images/black_logo-transparent_bg.png" alt="Affirm" style="height:24px;" loading="lazy">
+                <span style="font-size:.9rem;font-weight:700;color:var(--g700);">Buy now, pay over time</span>
               </div>
+              <p style="font-size:.85rem;color:var(--g500);margin-bottom:8px;">Want to own the mower? Finance any purchase with <strong>Affirm</strong> — split into easy monthly payments. Apply in seconds, no impact to your credit to check eligibility.</p>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;text-align:center;font-size:.8rem;">
+                <div style="padding:8px;background:var(--g50);border-radius:8px;"><div style="font-weight:700;">3 months</div><div style="color:var(--g500);">0% APR</div></div>
+                <div style="padding:8px;background:var(--g50);border-radius:8px;"><div style="font-weight:700;">6 months</div><div style="color:var(--g500);">0% APR</div></div>
+                <div style="padding:8px;background:var(--g50);border-radius:8px;"><div style="font-weight:700;">12 months</div><div style="color:var(--g500);">as low as 10% APR</div></div>
+              </div>
+              <p style="font-size:.75rem;color:var(--g400);">Affirm handles everything — you apply directly with them at checkout. Rates from 0–36% APR. Subject to eligibility.</p>
             </div>
           </div>
           <div id="buyTab-subscribe" style="display:none;"><p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Mowing as a Service</strong> — from $99/week. We own the robot, install, monitor, and maintain it.</p><a href="services.html#maas" class="btn btn-primary" style="margin-top:8px;">Learn About MaaS</a></div>
@@ -1527,6 +1532,7 @@ function showMapRecommendation(acres, steepPct) {
       '<div style="font-size:1.1rem;font-weight:700;margin:4px 0;">'+r.name+'</div>' +
       '<div style="font-size:.85rem;color:var(--g500);margin-bottom:10px;">'+r.desc+'</div>' +
       '<div style="font-size:1.3rem;font-weight:800;color:var(--teal);">'+r.price+'</div>' +
+      '<div style="font-size:.75rem;color:var(--g500);">or as low as <strong>$'+Math.round(r.cost/12)+'/mo</strong> with Affirm</div>' +
       '<div style="margin-top:10px;padding:10px;background:var(--g50);border-radius:8px;font-size:.8rem;">' +
         '<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--g500);">Cost per sq ft</span><strong>$'+perSqFt+'</strong></div>' +
         '<div style="display:flex;justify-content:space-between;padding:2px 0;"><span style="color:var(--g500);">Pays for itself in</span><strong>'+payback+' months</strong></div>' +
