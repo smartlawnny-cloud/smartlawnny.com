@@ -698,130 +698,72 @@
   </div>
 </section>
 
-<!-- Find-a-Mower Quiz -->
+<!-- Find Your Mower — Map-Driven -->
 <section class="quiz-section" id="quiz-section">
   <div class="container">
     <div class="section-header fade-in">
       <h2>Find Your Perfect <span class="underline-accent">Robotic Mower</span></h2>
-      <p>Take the quiz or check your property's terrain with our satellite mapping tool</p>
+      <p>Enter your address — we'll analyze your terrain and recommend the right mower</p>
     </div>
 
-    <div class="section-tabs fade-in">
-      <div class="section-tab active" onclick="switchTab('quiz')"><i class="fas fa-clipboard-list"></i> Mower Quiz</div>
-      <div class="section-tab" onclick="switchTab('property')"><i class="fas fa-map-marked-alt"></i> Check Your Property</div>
-    </div>
-
-    <div class="tab-content active" id="tab-quiz">
-    <div class="quiz-container fade-in" id="quizContainer">
-      <div class="quiz-progress" id="quizProgress">
-        <div class="quiz-dot active"></div>
-        <div class="quiz-dot"></div>
-        <div class="quiz-dot"></div>
-        <div class="quiz-dot"></div>
-        <div class="quiz-dot"></div>
+    <!-- MAP: Address + Satellite + Slope -->
+    <div class="property-check fade-in">
+      <div class="property-search">
+        <input type="text" id="propAddressInput" placeholder="Enter your property address...">
+        <button onclick="checkProperty()"><i class="fas fa-search"></i> Analyze My Lawn</button>
       </div>
-
-      <!-- Step 1: Lawn Size -->
-      <div class="quiz-step active" data-step="1">
-        <h3>How big is your lawn?</h3>
-        <p class="subtitle">Select the area that needs mowing (not your total property)</p>
-        <div class="quiz-options">
-          <div class="quiz-option" onclick="selectQuiz(this, 'size', 'small')"><i class="fas fa-home"></i>Under 1/4 acre</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'size', 'medium')"><i class="fas fa-tree"></i>1/4 - 1/2 acre</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'size', 'large')"><i class="fas fa-mountain"></i>1/2 - 1 acre</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'size', 'xlarge')"><i class="fas fa-tractor"></i>1+ acres</div>
-        </div>
-      </div>
-
-      <!-- Step 2: Terrain -->
-      <div class="quiz-step" data-step="2">
-        <h3>What's your terrain like?</h3>
-        <p class="subtitle">Select the best description of your yard</p>
-        <div class="quiz-options">
-          <div class="quiz-option" onclick="selectQuiz(this, 'terrain', 'flat')"><i class="fas fa-minus"></i>Mostly Flat</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'terrain', 'some-slopes')"><i class="fas fa-wave-square"></i>Some Slopes</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'terrain', 'hilly')"><i class="fas fa-mountain"></i>Hilly / Steep</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'terrain', 'complex')"><i class="fas fa-puzzle-piece"></i>Complex Layout</div>
-        </div>
-      </div>
-
-      <!-- Step 3: Budget -->
-      <div class="quiz-step" data-step="3">
-        <h3>What's your budget range?</h3>
-        <p class="subtitle">Including installation and first-year service</p>
-        <div class="quiz-options">
-          <div class="quiz-option" onclick="selectQuiz(this, 'budget', 'economy')"><i class="fas fa-dollar-sign"></i>Under $1,500</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'budget', 'mid')"><i class="fas fa-dollar-sign"></i>$1,500 - $2,500</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'budget', 'premium')"><i class="fas fa-dollar-sign"></i>$2,500 - $4,000</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'budget', 'pro')"><i class="fas fa-dollar-sign"></i>$4,000+</div>
-        </div>
-      </div>
-
-      <!-- Step 4: Features -->
-      <div class="quiz-step" data-step="4">
-        <h3>What features matter most?</h3>
-        <p class="subtitle">Pick the most important to you</p>
-        <div class="quiz-options">
-          <div class="quiz-option" onclick="selectQuiz(this, 'feature', 'no-wire')"><i class="fas fa-wifi"></i>No Perimeter Wires</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'feature', 'awd')"><i class="fas fa-cog"></i>All-Wheel Drive</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'feature', 'multi-season')"><i class="fas fa-snowflake"></i>Multi-Season Use</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'feature', 'app')"><i class="fas fa-mobile-alt"></i>Smart App Control</div>
-        </div>
-      </div>
-
-      <!-- Step 5: Usage -->
-      <div class="quiz-step" data-step="5">
-        <h3>How do you want to buy?</h3>
-        <p class="subtitle">Choose what works best for you</p>
-        <div class="quiz-options">
-          <div class="quiz-option" onclick="selectQuiz(this, 'purchase', 'buy')"><i class="fas fa-shopping-cart"></i>Buy Outright</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'purchase', 'finance')"><i class="fas fa-calendar-alt"></i>Monthly Financing</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'purchase', 'subscribe')"><i class="fas fa-sync-alt"></i>Subscription Service</div>
-          <div class="quiz-option" onclick="selectQuiz(this, 'purchase', 'unsure')"><i class="fas fa-question-circle"></i>Not Sure Yet</div>
-        </div>
-      </div>
-
-      <!-- Result -->
-      <div class="quiz-result" id="quizResult">
-        <h3>We Found Your Match!</h3>
-        <div class="recommendation" id="quizRecommendation"></div>
-        <a href="#contact" class="btn btn-primary">Schedule Free Demo</a>
-        <div style="margin-top:12px;"><a href="#products" style="color:var(--green);font-weight:600;">Or browse all mowers &rarr;</a></div>
-      </div>
-    </div>
-    </div><!-- end tab-quiz -->
-
-    <div class="tab-content" id="tab-property">
-      <div class="property-check">
-        <div class="property-search">
-          <input type="text" id="propAddressInput" placeholder="Enter your property address...">
-          <button onclick="checkProperty()"><i class="fas fa-search"></i> Analyze Property</button>
-        </div>
-        <div class="property-map-wrap" id="propMapWrap" style="display:none;">
-          <div id="propertyMap"></div>
-          <div class="property-stats">
-            <h4 id="propAddrLabel">Property Analysis</h4>
-            <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
-            <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
-            <div class="pstat-row"><span class="label">Elevation</span><span class="val" id="pElev">—</span></div>
-            <div class="slope-legend">
-              <div style="font-size:.75rem;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Slope Breakdown</div>
-              <div class="sl"><span class="dot" style="background:#4caf50;"></span><strong id="pGreen">—</strong> Flat (&lt;22°)</div>
-              <div class="sl"><span class="dot" style="background:#ffeb3b;"></span><strong id="pYellow">—</strong> Moderate (22–30°)</div>
-              <div class="sl"><span class="dot" style="background:#ff9800;"></span><strong id="pOrange">—</strong> Steep (30–43°)</div>
-              <div class="sl"><span class="dot" style="background:#f44336;"></span><strong id="pRed">—</strong> Extreme (&gt;43°)</div>
-            </div>
-            <div style="margin-top:12px;padding:10px;background:rgba(106,187,30,.08);border-radius:8px;font-size:.8rem;color:var(--green);">
-              <strong>Draw your boundary</strong> using the polygon tool on the map, then results will calculate automatically.
-            </div>
+      <div class="property-map-wrap" id="propMapWrap" style="display:none;">
+        <div id="propertyMap"></div>
+        <div class="property-stats">
+          <h4 id="propAddrLabel">Property Analysis</h4>
+          <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
+          <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
+          <div class="pstat-row"><span class="label">Elevation</span><span class="val" id="pElev">—</span></div>
+          <div class="slope-legend">
+            <div style="font-size:.75rem;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Slope Breakdown</div>
+            <div class="sl"><span class="dot" style="background:#4caf50;"></span><strong id="pGreen">—</strong> Flat (&lt;22°)</div>
+            <div class="sl"><span class="dot" style="background:#ffeb3b;"></span><strong id="pYellow">—</strong> Moderate (22–30°)</div>
+            <div class="sl"><span class="dot" style="background:#ff9800;"></span><strong id="pOrange">—</strong> Steep (30–43°)</div>
+            <div class="sl"><span class="dot" style="background:#f44336;"></span><strong id="pRed">—</strong> Extreme (&gt;43°)</div>
+          </div>
+          <div style="margin-top:12px;padding:10px;background:rgba(106,187,30,.08);border-radius:8px;font-size:.8rem;color:var(--green);">
+            <strong>Draw your boundary</strong> using the polygon tool, then we'll recommend the perfect mower.
           </div>
         </div>
-        <div class="property-cta" id="propCta" style="display:none;">
-          <p style="font-size:.95rem;color:var(--g600);margin-bottom:12px;">Want a detailed quote with pricing and packages?</p>
-          <a href="/quote/">Get Full Property Quote →</a>
+      </div>
+    </div>
+
+    <!-- AUTO-RECOMMENDATION based on map data -->
+    <div id="mapRecommendation" style="display:none;margin-top:32px;" class="fade-in">
+      <div style="text-align:center;margin-bottom:24px;">
+        <h3 style="font-size:1.4rem;font-weight:800;color:var(--g900);">Recommended for Your Property</h3>
+        <p style="color:var(--g500);font-size:.95rem;" id="recSubtitle">Based on your lawn size and terrain</p>
+      </div>
+      <div id="recCards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;"></div>
+
+      <!-- Buying Options Tabs -->
+      <div style="margin-top:32px;">
+        <div class="section-tabs" style="margin-bottom:0;">
+          <div class="section-tab active" onclick="switchBuyTab('buy',this)"><i class="fas fa-shopping-cart"></i> Buy</div>
+          <div class="section-tab" onclick="switchBuyTab('finance',this)"><i class="fas fa-calendar-alt"></i> Finance</div>
+          <div class="section-tab" onclick="switchBuyTab('subscribe',this)"><i class="fas fa-sync-alt"></i> Subscribe</div>
+        </div>
+        <div style="background:var(--g50);border:1px solid var(--g200);border-top:none;border-radius:0 0 12px 12px;padding:24px;">
+          <div id="buyTab-buy">
+            <p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Buy outright</strong> — own your mower, we install it. One-time cost + optional service plan.</p>
+            <a href="#contact" class="btn btn-primary" style="margin-top:8px;">Get a Quote</a>
+          </div>
+          <div id="buyTab-finance" style="display:none;">
+            <p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Monthly financing</strong> — 0% APR available. Same mower, spread the cost over 12–36 months.</p>
+            <a href="#contact" class="btn btn-primary" style="margin-top:8px;">Ask About Financing</a>
+          </div>
+          <div id="buyTab-subscribe" style="display:none;">
+            <p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Mowing as a Service</strong> — from $99/week. We own the robot, install, monitor, and maintain it. Zero hassle.</p>
+            <a href="services.html#maas" class="btn btn-primary" style="margin-top:8px;">Learn About MaaS</a>
+          </div>
         </div>
       </div>
-    </div><!-- end tab-property -->
+    </div>
 
   </div>
 </section>
@@ -1205,23 +1147,31 @@ function filterProducts(brand) {
   });
 }
 
-// === TAB SWITCHER ===
-function switchTab(tab) {
-  document.querySelectorAll('.section-tab').forEach(function(t) { t.classList.remove('active'); });
-  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
-  document.getElementById('tab-' + tab).classList.add('active');
-  event.target.closest('.section-tab').classList.add('active');
-  if (tab === 'property' && !window._propMapInit) initPropertyMap();
+// === BUY TAB SWITCHER ===
+function switchBuyTab(tab, el) {
+  document.querySelectorAll('#buyTab-buy,#buyTab-finance,#buyTab-subscribe').forEach(function(t){t.style.display='none';});
+  document.getElementById('buyTab-' + tab).style.display = 'block';
+  el.closest('.section-tabs').querySelectorAll('.section-tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
 }
 
 // === PROPERTY CHECK MAP ===
 var _propMap, _propDrawMgr, _propPolygon, _propElevSvc, _propSlopeCells = [];
 function initPropertyMap() {
+  if (window._propMapInit) return;
   window._propMapInit = true;
   var script = document.createElement('script');
   script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk&libraries=drawing,geometry,places&callback=_onPropMapReady';
   document.head.appendChild(script);
 }
+// Auto-init map when address input gets focus
+document.addEventListener('DOMContentLoaded', function() {
+  var input = document.getElementById('propAddressInput');
+  if (input) {
+    input.addEventListener('focus', initPropertyMap);
+    input.addEventListener('click', initPropertyMap);
+  }
+});
 function _onPropMapReady() {
   _propElevSvc = new google.maps.ElevationService();
   _propMap = new google.maps.Map(document.getElementById('propertyMap'), {
@@ -1315,12 +1265,64 @@ function _runPropAnalysis() {
         document.getElementById('pYellow').textContent=Math.round(cnt.y/tot*100)+'%';
         document.getElementById('pOrange').textContent=Math.round(cnt.o/tot*100)+'%';
         document.getElementById('pRed').textContent=Math.round(cnt.r/tot*100)+'%';
+        // Auto-recommend mowers based on map data
+        var steepPct = Math.round((cnt.o+cnt.r)/tot*100);
+        showMapRecommendation(area, steepPct);
       }
     });
   });
 }
 
-// === QUIZ ===
+function showMapRecommendation(acres, steepPct) {
+  var cards = document.getElementById('recCards');
+  cards.innerHTML = '';
+  document.getElementById('mapRecommendation').style.display = 'block';
+  document.getElementById('recSubtitle').textContent = acres.toFixed(2) + ' acres mowable | ' + steepPct + '% steep terrain';
+
+  var recs = [];
+
+  // Logic: recommend based on acreage + slope
+  if (acres <= 0.25) {
+    recs.push({name:'Navimow i Series', desc:'Perfect for small, flat yards up to 1/4 acre.', price:'From $999', img:'https://navimow.com/cdn/shop/files/i-series-listing-img.jpg', link:'products/navimow-i105e.html', match:'Best for your lot size'});
+    recs.push({name:'Navimow X3', desc:'RTK navigation, handles slopes up to 45%. Great cut quality.', price:'From $1,499', img:'https://navimow.com/cdn/shop/files/product_card_-X3_series_443e87a1-c71a-4884-97c0-7905f1be88fa.jpg', link:'products/navimow-x3.html', match:'Upgrade pick'});
+  } else if (acres <= 0.5) {
+    recs.push({name:'Navimow X3', desc:'Wire-free RTK, up to 0.5 acre, 45% slope capability.', price:'From $1,499', img:'https://navimow.com/cdn/shop/files/product_card_-X3_series_443e87a1-c71a-4884-97c0-7905f1be88fa.jpg', link:'products/navimow-x3.html', match:'Best for your lot size'});
+    if (steepPct > 10) {
+      recs.push({name:'Navimow X430 (4WD)', desc:'All-wheel drive tackles steep hills. 84% slope, 0.75 acre.', price:'$2,499', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x430.html', match:'Best for your slopes'});
+    }
+  } else if (acres <= 1) {
+    recs.push({name:'Navimow X450', desc:'Covers up to 1.25 acres. RTK + Vision AI, 4WD.', price:'$2,999', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x450.html', match:'Best for your lot size'});
+    if (steepPct > 5) {
+      recs.push({name:'Navimow X430 (4WD)', desc:'All-wheel drive for hilly terrain. 84% slope capability.', price:'$2,499', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x430.html', match:'Best for your slopes'});
+    }
+  } else {
+    recs.push({name:'TerraNox CM240M1', desc:'Commercial-grade, 1.5 acres per unit, 43° slope. Fleet-ready.', price:'$6,999', img:'https://navimow.com/cdn/shop/files/product_card_-_terranox_series.jpg', link:'products/navimow-x450.html', match:'Best for 1+ acres'});
+    recs.push({name:'Navimow X450', desc:'Up to 1.25 acres. Great for large residential lawns.', price:'$2,999', img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x450.html', match:'Residential pick'});
+  }
+
+  // Always offer Yarbo for multi-season
+  recs.push({name:'Yarbo', desc:'Mow + snow blow + leaf blow. True 4-season robot.', price:'From $5,999', img:'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(3).png', link:'products/yarbo-lawn-mower.html', match:'4-Season option'});
+
+  recs.forEach(function(r, i) {
+    var card = document.createElement('div');
+    card.style.cssText = 'border:2px solid var(--g200);border-radius:16px;overflow:hidden;background:#fff;transition:all .2s;cursor:pointer;';
+    card.onmouseover = function(){this.style.borderColor='var(--green)';this.style.boxShadow='0 8px 24px rgba(106,187,30,.15)';};
+    card.onmouseout = function(){this.style.borderColor='var(--g200)';this.style.boxShadow='none';};
+    card.innerHTML = '<div style="height:160px;overflow:hidden;background:var(--g100);"><img src="'+r.img+'" alt="'+r.name+'" style="width:100%;height:100%;object-fit:contain;"></div>' +
+      '<div style="padding:16px;">' +
+      '<div style="font-size:.7rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;">'+r.match+'</div>' +
+      '<div style="font-size:1.1rem;font-weight:700;margin:4px 0;">'+r.name+'</div>' +
+      '<div style="font-size:.85rem;color:var(--g500);margin-bottom:8px;">'+r.desc+'</div>' +
+      '<div style="font-size:1.15rem;font-weight:800;color:var(--teal);">'+r.price+'</div>' +
+      '<a href="'+r.link+'" style="display:inline-block;margin-top:10px;padding:8px 20px;background:var(--green);color:#fff;border-radius:980px;font-weight:600;font-size:.82rem;text-decoration:none;">View Details</a>' +
+      '</div>';
+    cards.appendChild(card);
+  });
+
+  document.getElementById('mapRecommendation').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// === QUIZ (legacy — kept for backward compat) ===
 let quizStep = 1;
 let quizAnswers = {};
 function selectQuiz(el, key, value) {
