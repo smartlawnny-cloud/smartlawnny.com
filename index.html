@@ -534,7 +534,7 @@
         <input type="text" id="propAddressInput" placeholder="Enter your property address...">
         <button onclick="checkProperty()"><i class="fas fa-search"></i> Analyze My Lawn</button>
       </div>
-      <div class="property-map-wrap" id="propMapWrap" style="display:none;">
+      <div class="property-map-wrap" id="propMapWrap">
         <div id="propertyMap"></div>
         <div class="property-stats">
           <h4 id="propAddrLabel">Property Analysis</h4>
@@ -547,6 +547,11 @@
             <div class="sl"><span class="dot" style="background:#ffeb3b;"></span><strong id="pYellow">—</strong> Moderate (22–30°)</div>
             <div class="sl"><span class="dot" style="background:#ff9800;"></span><strong id="pOrange">—</strong> Steep (30–43°)</div>
             <div class="sl"><span class="dot" style="background:#f44336;"></span><strong id="pRed">—</strong> Extreme (&gt;43°)</div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:4px;">
+            <button onclick="_propMap&&_propMap.setTilt(45)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--green);border-radius:4px;background:var(--green);color:#fff;cursor:pointer;">3D</button>
+            <button onclick="_propMap&&_propMap.setTilt(0)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--g300);border-radius:4px;background:#fff;color:var(--g600);cursor:pointer;">2D</button>
+            <button onclick="_propMap&&_propMap.setHeading((_propMap.getHeading()||0)+90)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--g300);border-radius:4px;background:#fff;color:var(--g600);cursor:pointer;"><i class="fas fa-sync-alt"></i></button>
           </div>
           <div style="margin-top:12px;padding:10px;background:rgba(106,187,30,.08);border-radius:8px;font-size:.8rem;color:var(--green);">
             <strong>Draw your boundary</strong> using the polygon tool, then we'll recommend the perfect mower.
@@ -568,7 +573,36 @@
         </div>
         <div style="background:var(--g50);border:1px solid var(--g200);border-top:none;border-radius:0 0 12px 12px;padding:24px;">
           <div id="buyTab-buy"><p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Buy outright</strong> — own your mower, we install it. One-time cost + optional service plan.</p><a href="#contact" class="btn btn-primary" style="margin-top:8px;">Get a Quote</a></div>
-          <div id="buyTab-finance" style="display:none;"><p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Monthly financing</strong> — 0% APR available. Spread the cost over 12–36 months.</p><a href="#contact" class="btn btn-primary" style="margin-top:8px;">Ask About Financing</a></div>
+          <div id="buyTab-finance" style="display:none;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+              <div>
+                <p style="font-size:.95rem;color:var(--g600);margin-bottom:12px;"><strong>Mowing Service Contract</strong> — $0.80 per sq ft, 1-year contract, due at signing. We handle everything.</p>
+                <div style="font-size:.85rem;color:var(--g500);line-height:1.7;">
+                  <div>&#10003; Professional robotic mowing all season</div>
+                  <div>&#10003; Equipment, installation &amp; mapping included</div>
+                  <div>&#10003; All maintenance, blade changes &amp; repairs</div>
+                  <div>&#10003; Seasonal startup &amp; winterization</div>
+                  <div>&#10003; 1-year contract, paid at signing</div>
+                </div>
+              </div>
+              <div style="background:#fff;border:2px solid var(--green);border-radius:16px;padding:20px;text-align:center;">
+                <div style="font-size:.75rem;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;">Your Property</div>
+                <div style="font-size:2rem;font-weight:800;margin:8px 0;" id="financeSqft">— sq ft</div>
+                <div style="font-size:.8rem;color:var(--g500);margin-bottom:12px;">× $0.80 per sq ft</div>
+                <div style="font-size:2.2rem;font-weight:800;color:var(--teal);" id="financeTotal">$—</div>
+                <div style="font-size:.8rem;color:var(--g500);">1-year contract, due at signing</div>
+                <a href="#contact" class="btn btn-primary" style="margin-top:12px;font-size:.85rem;padding:10px 24px;">Request Contract</a>
+              </div>
+            </div>
+            <div style="margin-top:20px;padding:16px;background:#fff;border:1px solid var(--g200);border-radius:12px;display:flex;align-items:center;gap:16px;">
+              <div style="font-size:2rem;color:var(--g400);"><i class="fas fa-university"></i></div>
+              <div>
+                <div style="font-size:.9rem;font-weight:700;color:var(--g700);">Equipment Financing Available</div>
+                <p style="font-size:.82rem;color:var(--g500);margin:4px 0;">Want to own the mower? Ask about 0% APR financing through our lending partners. 12–36 month terms, low monthly payments.</p>
+                <a href="#contact" style="font-size:.82rem;color:var(--green);font-weight:600;text-decoration:none;">Ask About Financing →</a>
+              </div>
+            </div>
+          </div>
           <div id="buyTab-subscribe" style="display:none;"><p style="font-size:.95rem;color:var(--g600);margin-bottom:8px;"><strong>Mowing as a Service</strong> — from $99/week. We own the robot, install, monitor, and maintain it.</p><a href="services.html#maas" class="btn btn-primary" style="margin-top:8px;">Learn About MaaS</a></div>
         </div>
       </div>
@@ -1241,20 +1275,10 @@ function initPropertyMap() {
   script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk&libraries=drawing,geometry,places&callback=_onPropMapReady';
   document.head.appendChild(script);
 }
-// Lazy-load map: on input focus OR when section scrolls into view
+// Init map on page load (map is always visible now)
 document.addEventListener('DOMContentLoaded', function() {
-  var input = document.getElementById('propAddressInput');
-  if (input) {
-    input.addEventListener('focus', initPropertyMap);
-    input.addEventListener('click', initPropertyMap);
-  }
-  // Also init when quiz section is near viewport
-  var section = document.getElementById('quiz-section');
-  if (section && 'IntersectionObserver' in window) {
-    new IntersectionObserver(function(entries) {
-      if (entries[0].isIntersecting) initPropertyMap();
-    }, {rootMargin: '200px'}).observe(section);
-  }
+  // Small delay so page renders first
+  setTimeout(initPropertyMap, 500);
 });
 function _onPropMapReady() {
   _propElevSvc = new google.maps.ElevationService();
@@ -1482,6 +1506,11 @@ function showMapRecommendation(acres, steepPct) {
       '<div style="font-size:.75rem;color:var(--g500);font-weight:600;">5-YR MOWING COST</div></div>' +
     '</div>';
   cards.insertAdjacentHTML('beforebegin', summary);
+
+  // Populate finance calculator
+  var financeAnnual = Math.round(sqft * 0.80);
+  document.getElementById('financeSqft').textContent = sqft.toLocaleString() + ' sq ft';
+  document.getElementById('financeTotal').textContent = '$' + financeAnnual.toLocaleString();
 
   recs.forEach(function(r) {
     var perSqFt = (r.cost / sqft).toFixed(2);
