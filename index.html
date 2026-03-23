@@ -419,7 +419,7 @@
       .area-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 768px) {
-      nav { display: none; } .mobile-toggle { display: none; }
+      nav { display: none; } .mobile-toggle { display: block; }
       .order-btn { display: none !important; }
       .header-social { display: none !important; }
       .header-right { display: none !important; }
@@ -462,7 +462,7 @@
 <!-- Header -->
 <header>
   <div class="header-inner">
-    <a href="#" class="logo">
+    <a href="/" class="logo">
       <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:44px;width:44px;">
         <circle cx="30" cy="30" r="29" fill="#f5f7f0" stroke="#e0e8d0" stroke-width="1"/>
         <rect x="15" y="30" width="30" height="13" rx="4" fill="#1a5c5c"/>
@@ -498,7 +498,7 @@
       <button class="cart-btn" onclick="toggleCart()" aria-label="Shopping cart"><i class="fas fa-shopping-cart"></i><span class="cart-badge" id="cartBadge">0</span></button>
       <a href="#contact" class="order-btn">Get a Quote</a>
     </div>
-    <button class="mobile-toggle" onclick="document.querySelector('nav').style.display=document.querySelector('nav').style.display==='block'?'none':'block'"><i class="fas fa-bars"></i></button>
+    <button class="mobile-toggle" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
   </div>
 </header>
 
@@ -676,7 +676,7 @@
       <button class="product-tab" onclick="filterProducts('navimow')">Segway Navimow</button>
       <button class="product-tab" onclick="filterProducts('yarbo')">Yarbo</button>
     </div>
-    <div class="product-grid" id="productGrid" style="display:none;">
+    <div class="product-grid" id="productGrid">
       <!-- Navimow Terranox CM240M1 -->
       <div class="product-card fade-in" data-brand="navimow">
         <div class="product-card-image">
@@ -808,7 +808,7 @@
           <div class="price"><span class="from">Bundle </span>$4,994</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
           <div class="specs">Core + Snow Blower | 2-Stage | 24&quot; Width | Throws 6-40ft</div>
           <a href="products/yarbo-snow-blower.html" class="btn-details">View Details</a>
-          <button class="btn-cart" onclick="addToCart('Yarbo Snow Blower Bundle',5494,'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Snow-Blower-(15).png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+          <button class="btn-cart" onclick="addToCart('Yarbo Snow Blower Bundle',4994,'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Snow-Blower-(15).png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
       <!-- Yarbo Complete Bundle -->
@@ -835,10 +835,10 @@
         <div class="product-card-body">
           <div class="brand-label">Yarbo</div>
           <h3>Mower Module</h3>
-          <div class="price"><span class="from">Add-on </span>$1,000</div>
+          <div class="price"><span class="from">Add-on </span>$1,294</div>
           <div class="specs">Mower attachment only | Requires Yarbo Core | 20" Cut</div>
           <a href="products/yarbo-lawn-mower.html" class="btn-details">View Details</a>
-          <button class="btn-cart" onclick="addToCart('Yarbo Mower Module',1000,'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(4).png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+          <button class="btn-cart" onclick="addToCart('Yarbo Mower Module',1294,'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Lawn-Mower-(4).png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
       <!-- Yarbo Snow Blower Module Only -->
@@ -850,10 +850,10 @@
         <div class="product-card-body">
           <div class="brand-label">Yarbo</div>
           <h3>Snow Blower Module</h3>
-          <div class="price"><span class="from">Add-on </span>$1,000</div>
+          <div class="price"><span class="from">Add-on </span>$1,294</div>
           <div class="specs">Snow blower attachment only | Requires Yarbo Core | 24" 2-Stage</div>
           <a href="products/yarbo-snow-blower.html" class="btn-details">View Details</a>
-          <button class="btn-cart" onclick="addToCart('Yarbo Snow Blower Module',1000,'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Snow-Blower-(15).png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+          <button class="btn-cart" onclick="addToCart('Yarbo Snow Blower Module',1294,'https://www.yarbo.com/cdn-resource-files-s/img3/155a4ab54952e24f/image/store/1737714205978/Yarbo-Snow-Blower-(15).png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
     </div>
@@ -999,9 +999,9 @@
           <label for="roiPlan">Annual service plan</label>
           <select id="roiPlan" onchange="calcROI()">
             <option value="0">No service plan — $0/yr</option>
-            <option value="199">Essential — $199/yr</option>
+            <option value="149">Essentials — $149/yr</option>
             <option value="249" selected>Pro (Recommended) — $249/yr</option>
-            <option value="299">Elite — $299/yr</option>
+            <option value="399">All-In — $399/yr</option>
           </select>
           <div class="hint"><a href="services.html#plans" style="color:var(--green);text-decoration:underline;">Compare plans →</a></div>
         </div>
@@ -1278,7 +1278,7 @@
         <p style="font-size:.82rem;color:var(--g500);margin-bottom:16px;">1 Highland Industrial Park, Peekskill, NY 10566</p>
         <div class="footer-social"><a href="https://www.facebook.com/profile.php?id=61588462546665" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="https://instagram.com/SmartLawnNY" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="https://youtube.com/@SmartLawnNY" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a><a href="https://nextdoor.com/pages/smart-lawn-ny-peekskill-ny/" target="_blank" aria-label="Nextdoor"><i class="fas fa-house-user"></i></a></div>
       </div>
-      <div class="footer-col"><h4>Site Links</h4><ul><li><a href="#">Home</a></li><li><a href="#products">Products</a></li><li><a href="services.html">Services</a></li><li><a href="#contact">Contact</a></li></ul><h4 style="margin-top:16px;">Also Visit</h4><ul><li><a href="https://peekskilltree.com" target="_blank">Peekskill Tree Service</a></li></ul></div>
+      <div class="footer-col"><h4>Site Links</h4><ul><li><a href="/">Home</a></li><li><a href="#products">Products</a></li><li><a href="services.html">Services</a></li><li><a href="#contact">Contact</a></li></ul><h4 style="margin-top:16px;">Also Visit</h4><ul><li><a href="https://peekskilltree.com" target="_blank">Peekskill Tree Service</a></li></ul></div>
       <div class="footer-col footer-newsletter"><h4>Stay Updated</h4><p>Product launches, seasonal tips, and offers.</p><form class="newsletter-form" id="newsletterForm" onsubmit="return submitNewsletter(event)"><input type="email" id="newsletterEmail" placeholder="Email Address" required><button type="submit" class="btn btn-primary btn-sm" id="newsletterBtn">Sign Up</button></form><p id="newsletterMsg" style="display:none;margin-top:10px;font-size:.85rem;"></p></div>
     </div>
     <div class="footer-bottom">&copy; 2026 Smart Lawn LLC. All Rights Reserved. | SmartLawnNY.com</div>
@@ -1316,7 +1316,7 @@
     {"@type": "Question", "name": "Do you deliver robotic mowers to Scarsdale?", "acceptedAnswer": {"@type": "Answer", "text": "Yes! Smart Lawn NY delivers and installs robotic mowers throughout Westchester, Putnam, and Dutchess County including Scarsdale, Bedford, Chappaqua, Rye, Bronxville, Katonah, Carmel, Mahopac, Cold Spring, Beacon, Fishkill, and all surrounding areas."}},
     {"@type": "Question", "name": "What robotic mower brands do you carry?", "acceptedAnswer": {"@type": "Answer", "text": "We are an authorized dealer for Segway Navimow and Yarbo. Our Navimow lineup includes the Terranox commercial series, X450, X430, H220, and i215 LiDAR. Yarbo offers a modular platform with lawn mower and snow blower attachments."}},
     {"@type": "Question", "name": "Do robotic mowers work on hills?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The Navimow Terranox handles slopes up to 40 degrees with 4WD. The X450 and X430 handle 45% grades. The Yarbo Lawn Mower handles 70% slopes. We'll assess your property to recommend the right model."}},
-    {"@type": "Question", "name": "How much does a robotic mower cost?", "acceptedAnswer": {"@type": "Answer", "text": "Our robotic mowers range from $1,599 (Navimow i215 LiDAR) to $6,999 (Navimow Terranox CM240M1). Professional installation starts at $299. We also offer Mowing-as-a-Service from $99/week with no hardware purchase required."}}
+    {"@type": "Question", "name": "How much does a robotic mower cost?", "acceptedAnswer": {"@type": "Answer", "text": "Our robotic mowers range from $1,599 (Navimow i215 LiDAR) to $6,999 (Navimow Terranox CM240M1). Professional installation starts at $199. We also offer Mowing-as-a-Service from $99/week with no hardware purchase required."}}
   ]
 }
 </script>
@@ -1335,14 +1335,21 @@
 })();
 
 // === PRODUCT TABS ===
+function toggleMobileNav() {
+  var nav = document.querySelector('nav');
+  nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
+}
+
 function filterProducts(brand) {
   document.querySelectorAll('.product-tab').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('productGrid').style.display = 'grid';
+  if (typeof event !== 'undefined' && event && event.target && event.target.classList) {
+    event.target.classList.add('active');
+  } else {
+    document.querySelector('.product-tab')?.classList.add('active');
+  }
   document.querySelectorAll('.product-card').forEach(card => {
     card.style.display = (brand === 'all' || card.dataset.brand === brand) ? '' : 'none';
   });
-  document.getElementById('productGrid').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 // === BUY TAB SWITCHER ===
@@ -1364,6 +1371,8 @@ function initPropertyMap() {
 }
 // Init map on page load (map is always visible now)
 document.addEventListener('DOMContentLoaded', function() {
+  // Show all products on load
+  filterProducts('all');
   // Small delay so page renders first
   setTimeout(initPropertyMap, 500);
 });
@@ -1621,7 +1630,7 @@ function showMapRecommendation(acres, steepPct) {
       recs.push({name:'Navimow X430 (4WD)', desc:'All-wheel drive for hilly terrain. 84% slope capability.', price:'$2,499', cost:2499, img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x430.html', match:'Best for your slopes'});
     }
   } else {
-    recs.push({name:'TerraNox CM240M1', desc:'Commercial-grade, 1.5 acres per unit, 43° slope. Fleet-ready.', price:'$6,999', cost:6999, img:'https://navimow.com/cdn/shop/files/product_card_-_terranox_series.jpg', link:'products/navimow-x450.html', match:'Best for 1+ acres'});
+    recs.push({name:'TerraNox CM240M1', desc:'Commercial-grade, 1.5 acres per unit, 43° slope. Fleet-ready.', price:'$6,999', cost:6999, img:'https://navimow.com/cdn/shop/files/product_card_-_terranox_series.jpg', link:'products/navimow-terranox-cm240m1.html', match:'Best for 1+ acres'});
     recs.push({name:'Navimow X450', desc:'Up to 1.25 acres. Great for large residential lawns.', price:'$2,999', cost:2999, img:'https://cdn.shopify.com/s/files/1/0676/6896/7561/files/X4BLK-1.1-PDP-NA.png', link:'products/navimow-x450.html', match:'Residential pick'});
   }
 
