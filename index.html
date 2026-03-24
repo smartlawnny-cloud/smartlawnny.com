@@ -553,8 +553,13 @@
             <button onclick="_propMap&&_propMap.setTilt(0)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--g300);border-radius:4px;background:#fff;color:var(--g600);cursor:pointer;">2D</button>
             <button onclick="_propMap&&_propMap.setHeading((_propMap.getHeading()||0)+90)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--g300);border-radius:4px;background:#fff;color:var(--g600);cursor:pointer;"><i class="fas fa-sync-alt"></i></button>
           </div>
-          <div style="margin-top:12px;padding:10px;background:rgba(106,187,30,.08);border-radius:8px;font-size:.8rem;color:var(--green);">
-            <strong>Draw your boundary</strong> using the polygon tool, then we'll recommend the perfect mower.
+          <div style="margin-top:12px;padding:10px;background:#fff8e1;border-radius:8px;border-left:3px solid #ff9800;font-size:.8rem;">
+            <strong>Click "Start Drawing"</strong> then click corners on the map. After 3+ points, click <strong>"Close Shape"</strong>.
+          </div>
+          <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">
+            <button onclick="_propDrawMgr.setDrawingMode('polygon')" style="padding:8px 16px;font-size:.85rem;font-weight:700;border:none;border-radius:6px;background:#ff9800;color:#fff;cursor:pointer;">&#9998; Start Drawing</button>
+            <button id="propCloseShapeBtn" onclick="_closePropShape()" style="display:none;padding:8px 16px;font-size:.85rem;font-weight:700;border:none;border-radius:6px;background:#4a8a10;color:#fff;cursor:pointer;animation:pulse 1s infinite;">Close Shape</button>
+            <button onclick="if(_propPolygon){_propPolygon.setMap(null);_propPolygon=null;}_propSlopeCells.forEach(function(c){c.setMap(null);});_propSlopeCells=[];_propDrawMgr.setDrawingMode('polygon');document.getElementById('mapRecommendation').style.display='none';" style="padding:8px 12px;font-size:.8rem;font-weight:600;border:1px solid #ccc;border-radius:6px;background:#fff;color:#666;cursor:pointer;">Clear</button>
           </div>
         </div>
       </div>
@@ -1383,12 +1388,56 @@ function _onPropMapReady() {
     mapTypeControl:true, streetViewControl:false, fullscreenControl:true,
     rotateControl:true, zoomControl:true, gestureHandling:'greedy'
   });
-  _propDrawMgr = new google.maps.drawing.DrawingManager({
-    drawingMode:null, drawingControl:true,
-    drawingControlOptions:{position:google.maps.ControlPosition.TOP_CENTER, drawingModes:['polygon']},
-    polygonOptions:{fillColor:'#6abb1e',fillOpacity:0.15,strokeColor:'#6abb1e',strokeWeight:3,editable:true}
+  // Custom click-to-draw (replaces broken Google Drawing Manager)
+  var _drawPts = [], _drawMkrs = [], _drawLine = null, _isDrawing = false;
+  _propDrawMgr = {
+    setDrawingMode: function(mode) {
+      if (mode === 'polygon') { _startDraw(); } else { _stopDraw(); }
+    }
+  };
+  function _startDraw() {
+    _isDrawing = true; _drawPts = [];
+    _drawMkrs.forEach(function(m){m.setMap(null);}); _drawMkrs = [];
+    if (_drawLine) _drawLine.setMap(null);
+    _propMap.setOptions({draggableCursor:'crosshair'});
+    var btn = document.getElementById('propCloseShapeBtn');
+    if (btn) btn.style.display = 'none';
+  }
+  function _stopDraw() {
+    _isDrawing = false;
+    _propMap.setOptions({draggableCursor:null});
+  }
+  _propMap.addListener('click', function(e) {
+    if (!_isDrawing) return;
+    _drawPts.push(e.latLng);
+    _drawMkrs.push(new google.maps.Marker({
+      position:e.latLng, map:_propMap,
+      icon:{path:google.maps.SymbolPath.CIRCLE, scale:7, fillColor:'#6abb1e', fillOpacity:1, strokeColor:'#fff', strokeWeight:2},
+      label:{text:String(_drawPts.length), color:'#fff', fontSize:'10px', fontWeight:'bold'}
+    }));
+    if (_drawLine) _drawLine.setMap(null);
+    _drawLine = new google.maps.Polyline({path:_drawPts, map:_propMap, strokeColor:'#6abb1e', strokeWeight:3});
+    if (_drawPts.length >= 3) {
+      var btn = document.getElementById('propCloseShapeBtn');
+      if (btn) btn.style.display = 'inline-block';
+    }
   });
-  _propDrawMgr.setMap(_propMap);
+  window._closePropShape = function() {
+    if (_drawPts.length < 3) return;
+    _stopDraw();
+    if (_drawLine) _drawLine.setMap(null);
+    _drawMkrs.forEach(function(m){m.setMap(null);}); _drawMkrs = [];
+    if (_propPolygon) _propPolygon.setMap(null);
+    _propPolygon = new google.maps.Polygon({
+      paths:_drawPts, map:_propMap, fillColor:'#6abb1e', fillOpacity:0.15,
+      strokeColor:'#6abb1e', strokeWeight:3, editable:true
+    });
+    var btn = document.getElementById('propCloseShapeBtn');
+    if (btn) btn.style.display = 'none';
+    _runPropAnalysis();
+    google.maps.event.addListener(_propPolygon.getPath(), 'set_at', _runPropAnalysis);
+    google.maps.event.addListener(_propPolygon.getPath(), 'insert_at', _runPropAnalysis);
+  };
 
   // Add USGS Topo overlay
   var topoLayer = new google.maps.ImageMapType({
@@ -1398,15 +1447,6 @@ function _onPropMapReady() {
     tileSize: new google.maps.Size(256,256), opacity:0.35, name:'Topo'
   });
   _propMap.overlayMapTypes.push(topoLayer);
-
-  google.maps.event.addListener(_propDrawMgr, 'polygoncomplete', function(poly) {
-    if (_propPolygon) _propPolygon.setMap(null);
-    _propPolygon = poly;
-    _propDrawMgr.setDrawingMode(null);
-    _runPropAnalysis();
-    google.maps.event.addListener(poly.getPath(), 'set_at', _runPropAnalysis);
-    google.maps.event.addListener(poly.getPath(), 'insert_at', _runPropAnalysis);
-  });
   // Places autocomplete
   var input = document.getElementById('propAddressInput');
   var ac = new google.maps.places.Autocomplete(input, {types:['address'],componentRestrictions:{country:'us'}});
@@ -1443,11 +1483,19 @@ function _flyToProperty(lat, lng, name) {
   _propMap.setCenter({lat:lat,lng:lng}); _propMap.setZoom(18); _propMap.setTilt(45);
   new google.maps.Marker({position:{lat:lat,lng:lng}, map:_propMap,
     icon:{path:google.maps.SymbolPath.CIRCLE, scale:8, fillColor:'#6abb1e', fillOpacity:1, strokeColor:'#fff', strokeWeight:3}});
-  _propDrawMgr.setDrawingMode('polygon');
 
-  // Auto-fetch parcel boundary from Westchester County GIS
+  // Auto-fetch parcel boundary
   _fetchParcel(lat, lng, function(ring) {
     if (ring && ring.length > 3) {
+      // Sanity check — skip if > 300 acres (probably town boundary)
+      var area = 0;
+      for (var i=0; i<ring.length-1; i++) {
+        area += (ring[i+1][0]-ring[i][0])*(ring[i+1][1]+ring[i][1]);
+      }
+      var sqDeg = Math.abs(area/2);
+      var roughAcres = sqDeg * 4046856.4224 * 111319 * 111319 * Math.cos(ring[0][1]*Math.PI/180) / 4046.86;
+      if (roughAcres > 300) return; // too big, skip
+
       if (_propPolygon) _propPolygon.setMap(null);
       _propPolygon = new google.maps.Polygon({
         paths: ring.map(function(p){return{lat:p[1],lng:p[0]};}),
@@ -1463,16 +1511,13 @@ function _flyToProperty(lat, lng, name) {
 
 // Multi-county parcel lookup — Westchester, Putnam, Rockland, Orange (NY), Fairfield (CT), Bergen (NJ)
 function _fetchParcel(lat, lng, callback) {
-  // Try Westchester first (JSONP), then NYS statewide, then CT, then NJ
-  _tryWestchester(lat, lng, function(ring) {
+  // Skip Westchester identify (returns whole county) — use NYS statewide
+  _tryNYS(lat, lng, function(ring) {
     if (ring) { callback(ring); return; }
-    _tryNYS(lat, lng, function(ring) {
+    _tryCT(lat, lng, function(ring) {
       if (ring) { callback(ring); return; }
-      _tryCT(lat, lng, function(ring) {
-        if (ring) { callback(ring); return; }
-        _tryNJ(lat, lng, function(ring) {
-          callback(ring); // null if all fail
-        });
+      _tryNJ(lat, lng, function(ring) {
+        callback(ring);
       });
     });
   });
@@ -1507,13 +1552,19 @@ function _tryWestchester(lat, lng, cb) {
 }
 // NYS Statewide (Putnam, Rockland, Orange — CORS fetch)
 function _tryNYS(lat, lng, cb) {
-  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/1/query?' +
+  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/0/query?' +
     'geometry='+lng+','+lat+'&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects' +
-    '&outFields=PARCEL_ADDR,COUNTY_NAME&returnGeometry=true&outSR=4326&f=json';
+    '&outFields=PARCEL_ADDR,COUNTY_NAME,CALC_ACRES&returnGeometry=true&outSR=4326&f=json';
   fetch(url).then(function(r){return r.json();}).then(function(data){
-    if (data.features && data.features.length > 0 && data.features[0].geometry) {
-      var ring = data.features[0].geometry.rings[0];
-      cb(ring); return;
+    if (data.features && data.features.length > 0) {
+      var best = null, bestAcres = Infinity;
+      data.features.forEach(function(f) {
+        if (f.geometry && f.geometry.rings) {
+          var acres = f.attributes && f.attributes.CALC_ACRES ? f.attributes.CALC_ACRES : 99999;
+          if (acres < 500 && acres < bestAcres) { bestAcres = acres; best = f.geometry.rings[0]; }
+        }
+      });
+      if (best) { cb(best); return; }
     }
     cb(null);
   }).catch(function(){cb(null);});
