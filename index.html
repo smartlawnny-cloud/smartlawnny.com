@@ -1485,22 +1485,20 @@ function _flyToProperty(lat, lng, name) {
     icon:{path:google.maps.SymbolPath.CIRCLE, scale:8, fillColor:'#6abb1e', fillOpacity:1, strokeColor:'#fff', strokeWeight:3}});
 
   // Auto-fetch parcel boundary
-  _fetchParcel(lat, lng, function(ring) {
+  _fetchParcel(lat, lng, function(ring, calcAcres) {
     if (ring && ring.length > 3) {
-      // Sanity check — skip if > 300 acres (probably town boundary)
-      var area = 0;
-      for (var i=0; i<ring.length-1; i++) {
-        area += (ring[i+1][0]-ring[i][0])*(ring[i+1][1]+ring[i][1]);
-      }
-      var sqDeg = Math.abs(area/2);
-      var roughAcres = sqDeg * 4046856.4224 * 111319 * 111319 * Math.cos(ring[0][1]*Math.PI/180) / 4046.86;
-      if (roughAcres > 300) return; // too big, skip
+      // Use CALC_ACRES from API — skip if > 500 acres (probably town boundary)
+      if (calcAcres && calcAcres > 500) return;
 
       if (_propPolygon) _propPolygon.setMap(null);
       _propPolygon = new google.maps.Polygon({
         paths: ring.map(function(p){return{lat:p[1],lng:p[0]};}),
         fillColor:'#6abb1e', fillOpacity:0.15, strokeColor:'#6abb1e', strokeWeight:3, editable:true, map:_propMap
       });
+      // Fit map to boundary
+      var bounds = new google.maps.LatLngBounds();
+      _propPolygon.getPath().forEach(function(p){ bounds.extend(p); });
+      _propMap.fitBounds(bounds, {top:10,right:10,bottom:10,left:10});
       _propDrawMgr.setDrawingMode(null);
       _runPropAnalysis();
       google.maps.event.addListener(_propPolygon.getPath(), 'set_at', _runPropAnalysis);
@@ -1512,17 +1510,17 @@ function _flyToProperty(lat, lng, name) {
 // Multi-county parcel lookup — Westchester, Putnam, Rockland, Orange (NY), Fairfield (CT), Bergen (NJ)
 function _fetchParcel(lat, lng, callback) {
   // Try NYS ArcGIS Online first (Westchester, Putnam, Rockland, Orange, Suffolk, Ulster + more)
-  _tryNYSOnline(lat, lng, function(ring) {
-    if (ring) { callback(ring); return; }
+  _tryNYSOnline(lat, lng, function(ring, acres) {
+    if (ring) { callback(ring, acres); return; }
     // Fallback: Westchester direct layers
     _tryWestchesterDirect(lat, lng, function(ring) {
-      if (ring) { callback(ring); return; }
+      if (ring) { callback(ring, null); return; }
       // CT statewide
       _tryCT(lat, lng, function(ring) {
-        if (ring) { callback(ring); return; }
+        if (ring) { callback(ring, null); return; }
         // NJ statewide
         _tryNJ(lat, lng, function(ring) {
-          callback(ring);
+          callback(ring, null);
         });
       });
     });
@@ -1534,17 +1532,17 @@ function _tryNYSOnline(lat, lng, cb) {
     '&outFields=PARCEL_ADDR,COUNTY_NAME,CALC_ACRES&returnGeometry=true&outSR=4326&f=json')
   .then(function(r){return r.json();}).then(function(data){
     if (data.features && data.features.length > 0) {
-      var best = null, bestAcres = Infinity;
+      var best = null, bestAcres = Infinity, calcAcres = null;
       data.features.forEach(function(f) {
         if (f.geometry && f.geometry.rings) {
           var acres = f.attributes && f.attributes.CALC_ACRES ? f.attributes.CALC_ACRES : 99999;
-          if (acres < 500 && acres < bestAcres) { bestAcres = acres; best = f.geometry.rings[0]; }
+          if (acres < 500 && acres < bestAcres) { bestAcres = acres; best = f.geometry.rings[0]; calcAcres = acres; }
         }
       });
-      if (best) { cb(best); return; }
+      if (best) { cb(best, calcAcres); return; }
     }
-    cb(null);
-  }).catch(function(){cb(null);});
+    cb(null, null);
+  }).catch(function(){cb(null, null);});
 }
 function _tryWestchesterDirect(lat, lng, cb) {
   var m = _toWebMerc(lat, lng);
