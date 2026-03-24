@@ -1940,8 +1940,10 @@ calcROI();
 // === SCROLL ANIMATIONS ===
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
-}, {threshold: 0.1});
+}, {threshold: 0.05, rootMargin: '0px 0px 100px 0px'});
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+// Fallback: make all visible after 2s in case observer fails
+setTimeout(function(){ document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible')); }, 2000);
 
 // === SMOOTH SCROLL ===
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
