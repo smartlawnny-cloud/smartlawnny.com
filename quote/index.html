@@ -591,18 +591,11 @@ function startAnalysis(lat, lng, displayName) {
   document.getElementById('parcelStatus').style.display = 'none';
 
   // Try to auto-fetch parcel boundary
-  fetchParcel(lat, lng, function(ring) {
+  fetchParcel(lat, lng, function(ring, parcelAcres) {
     if (ring && ring.length > 3) {
-      // Sanity check: compute rough area, skip if > 200 acres (probably town boundary)
-      var area = 0;
-      for (var i=0; i<ring.length-1; i++) {
-        area += (ring[i+1][0]-ring[i][0])*(ring[i+1][1]+ring[i][1]);
-      }
-      var sqDeg = Math.abs(area/2);
-      var roughAcres = sqDeg * 4046856.4224 * 111319 * 111319 * Math.cos(ring[0][1]*Math.PI/180) / 4046.86;
-      if (roughAcres > 300) {
-        // Too big — probably a municipal boundary, skip it
-        document.getElementById('parcelStatus').textContent = 'Auto-boundary too large (' + Math.round(roughAcres) + ' acres). Draw your property manually.';
+      // Use CALC_ACRES from API if available, otherwise skip size check
+      if (parcelAcres && parcelAcres > 500) {
+        document.getElementById('parcelStatus').textContent = 'Auto-boundary too large (' + Math.round(parcelAcres) + ' acres). Draw your property manually.';
         document.getElementById('parcelStatus').style.display = 'block';
         return;
       }
@@ -642,17 +635,17 @@ function startAnalysis(lat, lng, displayName) {
 // ══════════════════════════════════════
 function fetchParcel(lat, lng, callback) {
   // Try NYS ArcGIS Online (covers Westchester, Putnam, Rockland, Orange, Suffolk, Ulster + more)
-  _tryNYSOnline(lat, lng, function(ring) {
-    if (ring) { callback(ring); return; }
+  _tryNYSOnline(lat, lng, function(ring, acres) {
+    if (ring) { callback(ring, acres); return; }
     // Fallback: Westchester direct layer query
     _tryWestchesterDirect(lat, lng, function(ring) {
-      if (ring) { callback(ring); return; }
+      if (ring) { callback(ring, null); return; }
       // CT statewide
       _tryCTQ(lat, lng, function(ring) {
-        if (ring) { callback(ring); return; }
+        if (ring) { callback(ring, null); return; }
         // NJ statewide
         _tryNJQ(lat, lng, function(ring) {
-          callback(ring);
+          callback(ring, null);
         });
       });
     });
@@ -664,16 +657,16 @@ function _tryNYSOnline(lat, lng, cb) {
     '&outFields=PARCEL_ADDR,COUNTY_NAME,MUNI_NAME,CALC_ACRES&returnGeometry=true&outSR=4326&f=json';
   fetch(url).then(function(r){return r.json();}).then(function(data){
     if (data.features && data.features.length > 0) {
-      var best = null, bestAcres = Infinity;
+      var best = null, bestAcres = Infinity, calcAcres = null;
       data.features.forEach(function(f) {
         if (f.geometry && f.geometry.rings) {
           var acres = f.attributes && f.attributes.CALC_ACRES ? f.attributes.CALC_ACRES : 99999;
-          if (acres < 500 && acres < bestAcres) { bestAcres = acres; best = f.geometry.rings[0]; }
+          if (acres < 500 && acres < bestAcres) { bestAcres = acres; best = f.geometry.rings[0]; calcAcres = acres; }
         }
       });
-      if (best) { cb(best); return; }
+      if (best) { cb(best, calcAcres); return; }
     }
-    cb(null);
+    cb(null, null);
   }).catch(function(){cb(null);});
 }
 // Westchester — query all municipality parcel layers with point geometry
