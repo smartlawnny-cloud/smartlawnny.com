@@ -34,16 +34,18 @@
 <div style="position:relative;">
   <div id="map"></div>
   <div class="panel">
-    <h3>Mowing Zone — 10 Acres</h3>
+    <h3>Mowing Zone — ~10 Acres</h3>
     <div class="stat-row"><span>Total Property</span><strong>92.75 acres</strong></div>
-    <div class="stat-row"><span>Mowing Zone</span><strong>10 acres</strong></div>
+    <div class="stat-row"><span>Mowing Zone</span><strong>~10 acres</strong></div>
     <div class="stat-row"><span>Mowers</span><strong>4 × TerraNox</strong></div>
-    <div class="stat-row"><span>Coverage per Unit</span><strong>2.5 acres</strong></div>
+    <div class="stat-row"><span>Rated Coverage</span><strong>1.5 ac/unit (6 ac total)</strong></div>
+    <div class="stat-row"><span>Actual Coverage</span><strong>Oversized for overlap</strong></div>
     <h4>Mowing Zones (1 TerraNox each)</h4>
-    <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> <strong>Zone A</strong> — North Meadow (~2.5 ac)</div>
-    <div class="legend-row"><span class="legend-dot" style="background:#2196f3;"></span> <strong>Zone B</strong> — East Lawn (~2.5 ac)</div>
-    <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> <strong>Zone C</strong> — West Field (~2.5 ac)</div>
-    <div class="legend-row"><span class="legend-dot" style="background:#9c27b0;"></span> <strong>Zone D</strong> — South Slope (~2.5 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> <strong>Zone A</strong> — North Meadow</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#2196f3;"></span> <strong>Zone B</strong> — East Lawn</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> <strong>Zone C</strong> — West Field</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#9c27b0;"></span> <strong>Zone D</strong> — South Slope</div>
+    <div style="font-size:10px;color:#888;margin-top:4px;">Zones are approximate. Exact RTK mapping done on-site.</div>
     <h4>⚡ Charging Hub — South of Building</h4>
     <div class="legend-row" style="font-size:11px;color:#666;">All 4 docks in one location — single power source<br>4 × 15A GFCI outdoor outlets needed</div>
     <h4>Map Layers</h4>
@@ -105,58 +107,55 @@ var fullBoundary = [
   [-73.694587732838,41.182066503773]
 ];
 
-// 10-acre mowing zone — traced from actual property drawing
+// Mowing zone — traced from user's satellite drawing
 var mowingZone = [
-  [-73.6983, 41.1793],  // NW corner
-  [-73.6978, 41.1795],  // N edge
-  [-73.6972, 41.1796],  // N edge
-  [-73.6966, 41.1796],  // NE approach
-  [-73.6960, 41.1795],  // NE
-  [-73.6955, 41.1794],  // NE
-  [-73.6950, 41.1793],  // NE
-  [-73.6946, 41.1791],  // E upper
-  [-73.6943, 41.1788],  // E notch top (buildings)
-  [-73.6945, 41.1784],  // E notch inner
-  [-73.6948, 41.1782],  // E notch bottom
-  [-73.6944, 41.1778],  // E middle
-  [-73.6942, 41.1774],  // E lower
-  [-73.6942, 41.1770],  // SE approach
-  [-73.6943, 41.1766],  // SE
-  [-73.6945, 41.1762],  // S approach
-  [-73.6948, 41.1758],  // S tip east
-  [-73.6953, 41.1755],  // S tip
-  [-73.6958, 41.1754],  // S tip center
-  [-73.6963, 41.1755],  // S tip west
-  [-73.6968, 41.1757],  // SW approach
-  [-73.6973, 41.1760],  // SW
-  [-73.6978, 41.1764],  // W lower
-  [-73.6982, 41.1768],  // W middle
-  [-73.6985, 41.1773],  // W upper
-  [-73.6986, 41.1778],  // W upper
-  [-73.6987, 41.1783],  // NW approach
-  [-73.6986, 41.1788],  // NW
-  [-73.6983, 41.1793]   // close
+  [-73.6985, 41.1805],
+  [-73.6978, 41.1807],
+  [-73.6970, 41.1808],
+  [-73.6963, 41.1807],
+  [-73.6958, 41.1805],
+  [-73.6955, 41.1801],
+  [-73.6953, 41.1797],
+  [-73.6955, 41.1793],
+  [-73.6953, 41.1789],
+  [-73.6952, 41.1785],
+  [-73.6953, 41.1780],
+  [-73.6955, 41.1775],
+  [-73.6958, 41.1770],
+  [-73.6962, 41.1766],
+  [-73.6968, 41.1764],
+  [-73.6974, 41.1766],
+  [-73.6978, 41.1770],
+  [-73.6982, 41.1775],
+  [-73.6984, 41.1780],
+  [-73.6986, 41.1785],
+  [-73.6987, 41.1790],
+  [-73.6988, 41.1795],
+  [-73.6987, 41.1800],
+  [-73.6985, 41.1805]
 ];
 
-// 4 mowing zones — split into quadrants
+// 4 mowing zones — split into quadrants around center line
+// Horizontal split at 41.1788, vertical split at -73.6970
 var zoneA = [ // NW — North Meadow
-  [-73.6983, 41.1793], [-73.6978, 41.1795], [-73.6972, 41.1796], [-73.6966, 41.1796],
-  [-73.6966, 41.1778], [-73.6986, 41.1778], [-73.6987, 41.1783], [-73.6986, 41.1788], [-73.6983, 41.1793]
+  [-73.6985, 41.1805], [-73.6978, 41.1807], [-73.6970, 41.1808],
+  [-73.6970, 41.1788], [-73.6988, 41.1788], [-73.6988, 41.1795],
+  [-73.6987, 41.1800], [-73.6985, 41.1805]
 ];
 var zoneB = [ // NE — East Lawn
-  [-73.6966, 41.1796], [-73.6960, 41.1795], [-73.6955, 41.1794], [-73.6950, 41.1793],
-  [-73.6946, 41.1791], [-73.6943, 41.1788], [-73.6945, 41.1784], [-73.6948, 41.1782],
-  [-73.6944, 41.1778], [-73.6966, 41.1778], [-73.6966, 41.1796]
+  [-73.6970, 41.1808], [-73.6963, 41.1807], [-73.6958, 41.1805],
+  [-73.6955, 41.1801], [-73.6953, 41.1797], [-73.6955, 41.1793],
+  [-73.6953, 41.1789], [-73.6953, 41.1788], [-73.6970, 41.1788], [-73.6970, 41.1808]
 ];
 var zoneC = [ // SW — West Field
-  [-73.6986, 41.1778], [-73.6966, 41.1778], [-73.6966, 41.1762],
-  [-73.6963, 41.1755], [-73.6968, 41.1757], [-73.6973, 41.1760],
-  [-73.6978, 41.1764], [-73.6982, 41.1768], [-73.6985, 41.1773], [-73.6986, 41.1778]
+  [-73.6988, 41.1788], [-73.6970, 41.1788],
+  [-73.6970, 41.1766], [-73.6974, 41.1766], [-73.6978, 41.1770],
+  [-73.6982, 41.1775], [-73.6984, 41.1780], [-73.6986, 41.1785], [-73.6988, 41.1788]
 ];
 var zoneD = [ // SE — South Slope
-  [-73.6966, 41.1778], [-73.6944, 41.1778], [-73.6942, 41.1774], [-73.6942, 41.1770],
-  [-73.6943, 41.1766], [-73.6945, 41.1762], [-73.6948, 41.1758], [-73.6953, 41.1755],
-  [-73.6958, 41.1754], [-73.6963, 41.1755], [-73.6966, 41.1762], [-73.6966, 41.1778]
+  [-73.6970, 41.1788], [-73.6953, 41.1788], [-73.6952, 41.1785],
+  [-73.6953, 41.1780], [-73.6955, 41.1775], [-73.6958, 41.1770],
+  [-73.6962, 41.1766], [-73.6968, 41.1764], [-73.6970, 41.1766], [-73.6970, 41.1788]
 ];
 
 var zones = [
@@ -167,12 +166,11 @@ var zones = [
 ];
 
 // All 4 charging stations — single location, south side of main building
-var chargerHub = [-73.6962, 41.1780]; // south side of residence
 var chargers = [
-  { pos: [-73.69635, 41.17805], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
-  { pos: [-73.69605, 41.17805], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
-  { pos: [-73.69635, 41.17790], label: 'C', name: 'TerraNox #3', color: '#ff9800' },
-  { pos: [-73.69605, 41.17790], label: 'D', name: 'TerraNox #4', color: '#9c27b0' }
+  { pos: [-73.69720, 41.17905], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
+  { pos: [-73.69690, 41.17905], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
+  { pos: [-73.69720, 41.17890], label: 'C', name: 'TerraNox #3', color: '#ff9800' },
+  { pos: [-73.69690, 41.17890], label: 'D', name: 'TerraNox #4', color: '#9c27b0' }
 ];
 
 var map = new maplibregl.Map({
@@ -202,7 +200,7 @@ var map = new maplibregl.Map({
     ],
     terrain: { source: 'terrain-dem', exaggeration: 1.5 }
   },
-  center: [-73.6968, 41.1772],
+  center: [-73.6970, 41.1788],
   zoom: 15.5,
   pitch: 55,
   bearing: 20,
@@ -271,9 +269,9 @@ map.on('load', function() {
   // Mowing zone label
   var labelEl = document.createElement('div');
   labelEl.style.cssText = 'background:rgba(106,187,30,.9);color:#fff;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;pointer-events:none;';
-  labelEl.textContent = '10 Acres — Mowing Zone';
+  labelEl.textContent = 'Mowing Zone';
   new maplibregl.Marker({ element: labelEl, anchor: 'center' })
-    .setLngLat([-73.6965, 41.1773])
+    .setLngLat([-73.6970, 41.1788])
     .addTo(map);
 });
 
