@@ -204,8 +204,9 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
         <strong style="font-size:15px;">Draw Your Property Boundary</strong><br>
         <span id="parcelStatus" style="color:#e65100;font-weight:600;display:none;">Parcel boundary not found for this address.</span>
         <div style="margin:8px 0;padding:10px;background:#fff8e1;border-radius:6px;border-left:3px solid #ff9800;">
-          <strong>Click directly on the map</strong> to place corner points around your property. Click each corner of your lot, then <strong>click the first point again</strong> to close the shape.
+          Click <strong>Start Drawing</strong> below, then click each corner of your property on the map. Click the first point again to close the shape.
         </div>
+        <button class="btn-small" onclick="drawingManager.setDrawingMode('polygon')" style="background:#ff9800;margin-bottom:6px;">&#9998; Start Drawing on Map</button><br>
         <button class="btn-small" onclick="calculateFromPolygon()">Calculate Quote →</button>
         <button class="btn-small secondary" onclick="clearDrawing()">Clear &amp; Redraw</button>
         <div style="margin-top:10px;border-top:1px solid #c5e1a5;padding-top:8px;">
@@ -605,17 +606,36 @@ function _fromWM(x, y) {
   return [x/20037508.34*180, Math.atan(Math.exp(y/20037508.34*Math.PI))*360/Math.PI-90];
 }
 function _tryWestchesterQ(lat, lng, cb) {
-  var m = _toWM(lat, lng), cbName = '_wcp_' + Date.now();
+  // Try each municipality layer (0-42) via query endpoint with point geometry
+  var m = _toWM(lat, lng);
+  var tried = 0, found = false;
+  // Query ALL layers at once using identify but with tight tolerance
+  var cbName = '_wcp_' + Date.now();
+  var buf = 50; // 50m buffer
   var url = 'https://giswww.westchestergov.com/arcgis/rest/services/MunicipalTaxParcels_Query/MapServer/identify?' +
-    'geometry='+m.x+','+m.y+'&geometryType=esriGeometryPoint&sr=3857&layers=all&tolerance=1' +
-    '&mapExtent='+(m.x-500)+','+(m.y-500)+','+(m.x+500)+','+(m.y+500)+'&imageDisplay=100,100,96' +
+    'geometry='+m.x+','+m.y+'&geometryType=esriGeometryPoint&sr=3857' +
+    '&layers=all&tolerance=0' +
+    '&mapExtent='+(m.x-buf)+','+(m.y-buf)+','+(m.x+buf)+','+(m.y+buf) +
+    '&imageDisplay=1000,1000,96' +
     '&returnGeometry=true&f=json&callback='+cbName;
-  var timeout = setTimeout(function(){delete window[cbName]; cb(null);}, 6000);
+  var timeout = setTimeout(function(){delete window[cbName]; cb(null);}, 8000);
   window[cbName] = function(data) {
     clearTimeout(timeout); delete window[cbName];
     if (data.results && data.results.length > 0) {
-      var parcel = data.results.find(function(r){return r.geometry && r.geometry.rings;});
-      if (parcel) { cb(parcel.geometry.rings[0].map(function(p){return _fromWM(p[0],p[1]);})); return; }
+      // Find the smallest parcel (most specific match)
+      var best = null, bestArea = Infinity;
+      data.results.forEach(function(r) {
+        if (r.geometry && r.geometry.rings && r.geometry.rings.length > 0) {
+          var ring = r.geometry.rings[0];
+          // Rough area calc
+          var area = 0;
+          for (var i=0; i<ring.length-1; i++) {
+            area += Math.abs((ring[i+1][0]-ring[i][0])*(ring[i+1][1]+ring[i][1]));
+          }
+          if (area < bestArea && area > 0) { bestArea = area; best = ring; }
+        }
+      });
+      if (best) { cb(best.map(function(p){return _fromWM(p[0],p[1]);})); return; }
     }
     cb(null);
   };
