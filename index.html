@@ -128,7 +128,7 @@
     .hero-product-link img { max-width: 100%; max-height: 400px; object-fit: contain; }
 
     /* === SERVICES === */
-    .services { padding: 72px 0; background: #f5f5f7; }
+    .services { padding: 40px 0; background: #f5f5f7; }
     .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .service-card { display: block; background: #fff; padding: 40px 28px; border-radius: 20px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,.04); transition: all .4s cubic-bezier(.25,.1,.25,1); border: 1px solid rgba(0,0,0,.04); cursor: pointer; }
     .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.08); }
@@ -144,8 +144,8 @@
     .section-header .underline-accent::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 4px; background: var(--green); border-radius: 2px; }
 
     /* === ABOUT === */
-    .about { padding: 80px 0; background: #fff; }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about { padding: 48px 0; background: #fff; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
     .about-image { border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.1); aspect-ratio: 4/3; background: #f5f5f7; }
     .about-image img { width: 100%; height: 100%; object-fit: cover; }
     .about-text h2 { font-size: 2.8rem; font-weight: 800; margin-bottom: 24px; color: #1d1d1f; letter-spacing: -.02em; line-height: 1.1; }
@@ -267,7 +267,7 @@
     .solution-overlay p { font-size: .88rem; opacity: .8; line-height: 1.6; }
 
     /* === WHY ROBOTIC === */
-    .why-robotic { padding: 80px 0; background: #f5f5f7; }
+    .why-robotic { padding: 48px 0; background: #f5f5f7; }
     .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
     .why-card { text-align: center; padding: 40px 28px; background: #fff; border-radius: 24px; transition: all .4s cubic-bezier(.25,.1,.25,1); }
     .why-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.06); }
@@ -1942,8 +1942,13 @@ const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, {threshold: 0.05, rootMargin: '0px 0px 100px 0px'});
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-// Fallback: make all visible after 2s in case observer fails
-setTimeout(function(){ document.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible')); }, 2000);
+// Fallback: force all visible after 2s via inline styles
+setTimeout(function(){
+  document.querySelectorAll('.fade-in').forEach(function(el){
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  });
+}, 2000);
 
 // === SMOOTH SCROLL ===
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
