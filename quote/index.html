@@ -35,9 +35,9 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
 .order-btn { display:inline-flex; align-items:center; padding:8px 20px; background:#1d1d1f; color:#fff; border-radius:980px; font-weight:600; font-size:.8rem; transition:background .3s; text-decoration:none; }
 .order-btn:hover { background:#000; }
 
-.hero { background:linear-gradient(135deg,#1a1a2e 0%,#2d3a2e 100%); padding:60px 24px; text-align:center; }
-.hero h2 { color:#fff; font-size:28px; font-weight:800; margin-bottom:8px; }
-.hero p { color:#aaa; font-size:15px; margin-bottom:28px; }
+.hero { background:linear-gradient(135deg,#1a1a2e 0%,#2d3a2e 100%); padding:24px 24px; text-align:center; }
+.hero h2 { color:#fff; font-size:24px; font-weight:800; margin-bottom:4px; }
+.hero p { color:#aaa; font-size:14px; margin-bottom:16px; }
 .search-box { max-width:600px; margin:0 auto; position:relative; }
 .search-box input { width:100%; padding:16px 140px 16px 20px; font-size:16px; border:2px solid #444; border-radius:12px; background:#2a2a3e; color:#fff; font-family:'Inter',sans-serif; outline:none; }
 .search-box input:focus { border-color:#6abb1e; }
@@ -49,9 +49,9 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
 #analysis { display:none; }
 .analysis-grid { display:grid; grid-template-columns:1fr 360px; gap:0; min-height:550px; }
 #map { width:100%; height:550px; }
-.stats-panel { padding:24px; background:#f9fafb; border-left:1px solid #e0e0e0; overflow-y:auto; }
-.stats-panel h3 { font-size:16px; font-weight:700; margin-bottom:16px; color:#1d1d1f; }
-.stat-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee; font-size:14px; }
+.stats-panel { padding:16px; background:#f9fafb; border-left:1px solid #e0e0e0; overflow-y:auto; }
+.stats-panel h3 { font-size:14px; font-weight:700; margin-bottom:10px; color:#1d1d1f; }
+.stat-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #eee; font-size:13px; }
 .stat-row .label { color:#666; }
 .stat-row .value { font-weight:600; color:#1d1d1f; }
 
@@ -183,47 +183,55 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
       <div class="stat-row"><span class="label">Elevation Range</span><span class="value" id="statElev">—</span></div>
       <div class="stat-row"><span class="label">Distance from Base</span><span class="value" id="statDist">—</span></div>
 
-      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #eee;">
-        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Map Layers</div>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer;">
-          <input type="checkbox" id="togTopo" style="accent-color:#6abb1e;"> Topo Contours
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer;">
-          <input type="checkbox" id="togSlope" checked style="accent-color:#6abb1e;"> Slope Analysis
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;padding:3px 0;cursor:pointer;">
-          <input type="checkbox" id="togContours" checked style="accent-color:#6abb1e;"> 10' Contour Lines
-        </label>
-        <div style="margin-top:6px;display:flex;gap:4px;">
-          <button onclick="set2D()" class="btn-small secondary" style="font-size:11px;padding:4px 12px;margin:0;">2D</button>
-          <button onclick="set3D()" class="btn-small" style="font-size:11px;padding:4px 12px;margin:0;">3D</button>
-          <button onclick="rotateMap()" class="btn-small secondary" style="font-size:11px;padding:4px 12px;margin:0;">Rotate</button>
+      <!-- Map Controls -->
+      <div style="margin-top:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:11px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Map View</span>
+          <div style="display:flex;gap:2px;background:#f0f0f0;border-radius:6px;padding:2px;">
+            <button onclick="set2D()" style="padding:4px 12px;font-size:11px;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:transparent;color:#666;font-family:'Inter',sans-serif;" id="btn2D">2D</button>
+            <button onclick="set3D()" style="padding:4px 12px;font-size:11px;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:#1d1d1f;color:#fff;font-family:'Inter',sans-serif;" id="btn3D">3D</button>
+            <button onclick="rotateMap()" style="padding:4px 12px;font-size:11px;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:transparent;color:#666;font-family:'Inter',sans-serif;">↻</button>
+          </div>
+        </div>
+
+        <span style="font-size:11px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Layers</span>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#f5f5f7'" onmouseout="this.style.background='transparent'">
+            <input type="checkbox" id="togTopo" style="accent-color:#6abb1e;width:14px;height:14px;"> Topo Contours
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#f5f5f7'" onmouseout="this.style.background='transparent'">
+            <input type="checkbox" id="togSlope" checked style="accent-color:#6abb1e;width:14px;height:14px;"> Slope Analysis
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='#f5f5f7'" onmouseout="this.style.background='transparent'">
+            <input type="checkbox" id="togContours" checked style="accent-color:#6abb1e;width:14px;height:14px;"> 10' Contour Lines
+          </label>
         </div>
       </div>
 
-      <div class="draw-instructions" id="drawInstructions">
-        <strong style="font-size:15px;">Draw Your Property Boundary</strong><br>
-        <span id="parcelStatus" style="color:#e65100;font-weight:600;display:none;">Parcel boundary not found for this address.</span>
-        <div style="margin:8px 0;padding:10px;background:#fff8e1;border-radius:6px;border-left:3px solid #ff9800;">
-          Click <strong>Start Drawing</strong> below, then click each corner of your property on the map. Click the first point again to close the shape.
+      <!-- Draw Tool -->
+      <div id="drawInstructions" style="margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px;">
+        <div style="font-size:13px;font-weight:700;color:#1d1d1f;margin-bottom:6px;">✏️ Draw Mowing Area</div>
+        <span id="parcelStatus" style="color:#e65100;font-size:12px;font-weight:600;display:none;margin-bottom:6px;">Parcel boundary not found.</span>
+        <p style="font-size:11px;color:#666;line-height:1.5;margin-bottom:10px;">Click corners on the map to outline your mowing zone. Click the first point to close.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="btn-small" onclick="drawingManager.setDrawingMode('polygon')" style="background:#ff9800;font-size:12px;padding:8px 16px;margin:0;">✏️ Start Drawing</button>
+          <button class="btn-small" id="closeShapeBtn" onclick="closeShape()" style="display:none;background:#4a8a10;font-size:12px;padding:8px 16px;margin:0;animation:pulse 1s infinite;">Close Shape ✓</button>
+          <button class="btn-small" onclick="calculateFromPolygon()" style="font-size:12px;padding:8px 16px;margin:0;">Get Quote →</button>
+          <button class="btn-small secondary" onclick="clearDrawing()" style="font-size:12px;padding:8px 16px;margin:0;">Clear</button>
         </div>
-        <button class="btn-small" onclick="drawingManager.setDrawingMode('polygon')" style="background:#ff9800;margin-bottom:6px;font-size:14px;padding:10px 20px;">&#9998; Start Drawing on Map</button><br>
-        <button class="btn-small" id="closeShapeBtn" onclick="closeShape()" style="display:none;background:#4a8a10;margin-bottom:6px;font-size:14px;padding:10px 20px;animation:pulse 1s infinite;">Close Shape ✓</button>
-        <button class="btn-small" onclick="calculateFromPolygon()">Calculate Quote →</button>
-        <button class="btn-small secondary" onclick="clearDrawing()">Clear &amp; Redraw</button>
-        <div style="margin-top:10px;border-top:1px solid #c5e1a5;padding-top:8px;">
-          <span style="color:#666;">Or enter lot size manually:</span><br>
-          <input type="number" id="manualAcres" placeholder="acres" style="width:80px;padding:5px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px;margin-top:4px;">
-          <button class="btn-small" onclick="useManualAcres()" style="margin-top:0;">Use Acreage</button>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid #e5e7eb;display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;color:#888;">Manual:</span>
+          <input type="number" id="manualAcres" placeholder="acres" style="width:60px;padding:4px 6px;border:1px solid #ddd;border-radius:4px;font-size:12px;">
+          <button class="btn-small" onclick="useManualAcres()" style="margin:0;font-size:11px;padding:5px 10px;">Apply</button>
         </div>
       </div>
 
-      <div id="resultsPanel" style="display:none;margin-top:16px;">
-        <div style="font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Slope Breakdown</div>
-        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#4caf50;display:inline-block;"></span><strong id="slopeGreen" style="min-width:32px;">—</strong> Flat (&lt;22°) — All mowers</div>
-        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#ffeb3b;display:inline-block;"></span><strong id="slopeYellow" style="min-width:32px;">—</strong> Moderate (22–30°) — Yarbo limit</div>
-        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#ff9800;display:inline-block;"></span><strong id="slopeOrange" style="min-width:32px;">—</strong> Steep (30–43°) — TerraNox only</div>
-        <div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:13px;"><span style="width:12px;height:12px;border-radius:3px;background:#f44336;display:inline-block;"></span><strong id="slopeRed" style="min-width:32px;">—</strong> Extreme (&gt;43°) — No mower</div>
+      <div id="resultsPanel" style="display:none;margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px;">
+        <div style="font-size:11px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Slope Breakdown</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#4caf50;display:inline-block;flex-shrink:0;"></span><strong id="slopeGreen" style="min-width:28px;">—</strong><span style="color:#666;">Flat (&lt;22°) — All mowers</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#ffeb3b;display:inline-block;flex-shrink:0;"></span><strong id="slopeYellow" style="min-width:28px;">—</strong><span style="color:#666;">Moderate (22–30°) — Yarbo limit</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#ff9800;display:inline-block;flex-shrink:0;"></span><strong id="slopeOrange" style="min-width:28px;">—</strong><span style="color:#666;">Steep (30–43°) — TerraNox only</span></div>
+        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#f44336;display:inline-block;flex-shrink:0;"></span><strong id="slopeRed" style="min-width:28px;">—</strong><span style="color:#666;">Extreme (&gt;43°) — No mower</span></div>
 
         <div style="background:#f0f8e8;border-radius:8px;padding:12px;font-size:13px;color:#4a8a10;margin-top:12px;">
           <strong>TerraNox CM240M1</strong> handles slopes up to 43° — covering nearly any terrain on this property.
