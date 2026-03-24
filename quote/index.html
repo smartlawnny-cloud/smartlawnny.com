@@ -609,6 +609,10 @@ function startAnalysis(lat, lng, displayName) {
         editable: true, map: map
       });
       updateAreaFromPolygon();
+      // Fit map to show the full parcel boundary
+      var bounds = new google.maps.LatLngBounds();
+      drawnPolygon.getPath().forEach(function(p) { bounds.extend(p); });
+      map.fitBounds(bounds, {top:10,right:10,bottom:10,left:10});
       // Auto-run analysis — keep draw instructions visible so user can clear & redraw
       document.getElementById('resultsPanel').style.display = 'block';
       runSlopeAnalysis();
