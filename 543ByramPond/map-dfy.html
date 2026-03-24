@@ -28,7 +28,7 @@
 <body>
 <div class="header">
   <h1>Smart Lawn NY <span>Done-For-You Mowing Zone — 543 Byram Lake Rd</span></h1>
-  <div class="header-right">Prepared for <strong>Shea Summo</strong><br>10 Acres &bull; 4 TerraNox CM240M1</div>
+  <div class="header-right">Prepared for <strong>Shea Summo</strong><br>24 Acres &bull; 6 TerraNox CM240M1</div>
 </div>
 
 <div style="position:relative;">
@@ -52,7 +52,7 @@
     <div class="legend-row" style="font-size:11px;color:#666;">All 6 docks in one location — single power source<br>6 × 15A GFCI outdoor outlets needed</div>
     <h4>Map Layers</h4>
     <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togBoundary" checked> Full Property Boundary</label>
-    <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togMowZone" checked> 10-Acre Mowing Zone</label>
+    <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togMowZone" checked> 24-Acre Mowing Zone</label>
     <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togTopo" checked> Topo Contours</label>
     <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togTerrain" checked> 3D Terrain</label>
     <h4>View</h4>
@@ -137,8 +137,8 @@ var mowingZone = [
   [-73.6985, 41.1805]
 ];
 
-// 4 mowing zones — split into quadrants around center line
-// Horizontal split at 41.1788, vertical split at -73.6970
+// 6 mowing zones — split across the 24-acre lawn
+// Horizontal split at 41.1795 and 41.1778, vertical split at -73.6970
 var zoneA = [ // NW — North Meadow
   [-73.6985, 41.1805], [-73.6978, 41.1807], [-73.6970, 41.1808],
   [-73.6970, 41.1788], [-73.6988, 41.1788], [-73.6988, 41.1795],
@@ -160,11 +160,26 @@ var zoneD = [ // SE — South Slope
   [-73.6962, 41.1766], [-73.6968, 41.1764], [-73.6970, 41.1766], [-73.6970, 41.1788]
 ];
 
+var zoneE = [ // Central — around buildings
+  [-73.6970, 41.1800], [-73.6958, 41.1800], [-73.6955, 41.1795],
+  [-73.6958, 41.1790], [-73.6970, 41.1790], [-73.6970, 41.1800]
+];
+var zoneF = [ // Perimeter — outer ring south
+  [-73.6974, 41.1770], [-73.6968, 41.1764], [-73.6962, 41.1766],
+  [-73.6958, 41.1770], [-73.6955, 41.1775], [-73.6953, 41.1780],
+  [-73.6953, 41.1785], [-73.6953, 41.1788],
+  [-73.6970, 41.1788], [-73.6988, 41.1788],
+  [-73.6986, 41.1785], [-73.6984, 41.1780], [-73.6982, 41.1775],
+  [-73.6978, 41.1770], [-73.6974, 41.1770]
+];
+
 var zones = [
-  { ring: zoneA, color: '#4caf50', label: 'Zone A', name: 'North Meadow', acres: '~2.5' },
-  { ring: zoneB, color: '#2196f3', label: 'Zone B', name: 'East Lawn', acres: '~2.5' },
-  { ring: zoneC, color: '#ff9800', label: 'Zone C', name: 'West Field', acres: '~2.5' },
-  { ring: zoneD, color: '#9c27b0', label: 'Zone D', name: 'South Slope', acres: '~2.5' }
+  { ring: zoneA, color: '#4caf50', label: 'Zone A', name: 'North Meadow', acres: '~4' },
+  { ring: zoneB, color: '#2196f3', label: 'Zone B', name: 'East Lawn', acres: '~4' },
+  { ring: zoneC, color: '#ff9800', label: 'Zone C', name: 'West Field', acres: '~4' },
+  { ring: zoneD, color: '#9c27b0', label: 'Zone D', name: 'South Slope', acres: '~4' },
+  { ring: zoneE, color: '#e91e63', label: 'Zone E', name: 'Central', acres: '~4' },
+  { ring: zoneF, color: '#00bcd4', label: 'Zone F', name: 'Perimeter', acres: '~4' }
 ];
 
 // All 6 charging stations — single location, south side of main building
@@ -235,7 +250,7 @@ map.on('load', function() {
     paint: { 'line-color': '#ffffff', 'line-width': 2, 'line-dasharray': [6, 3] }
   });
 
-  // 4 colored mowing zones
+  // 6 colored mowing zones
   zones.forEach(function(z, i) {
     map.addSource('zone-' + i, {
       type: 'geojson',
@@ -287,7 +302,7 @@ document.getElementById('togBoundary').onchange = function() {
 document.getElementById('togMowZone').onchange = function() {
   var vis = this.checked ? 'visible' : 'none';
   if (map.getLayer('mow-zone-line')) map.setLayoutProperty('mow-zone-line', 'visibility', vis);
-  for (var i=0; i<4; i++) {
+  for (var i=0; i<6; i++) {
     if (map.getLayer('zone-fill-'+i)) map.setLayoutProperty('zone-fill-'+i, 'visibility', vis);
     if (map.getLayer('zone-line-'+i)) map.setLayoutProperty('zone-line-'+i, 'visibility', vis);
   }
