@@ -109,87 +109,67 @@ var fullBoundary = [
   [-73.694587732838,41.182066503773]
 ];
 
-// Mowing zone — traced from user's satellite drawing
+// Mowing zone — uses actual parcel boundary from Westchester GIS
+// The open lawn is roughly the northern 2/3 of the parcel
+// East edge follows the parcel boundary, west edge follows parcel,
+// south cutoff where trees begin (~41.177)
 var mowingZone = [
-  [-73.6985, 41.1805],
-  [-73.6978, 41.1807],
-  [-73.6970, 41.1808],
-  [-73.6963, 41.1807],
-  [-73.6958, 41.1805],
-  [-73.6955, 41.1801],
-  [-73.6953, 41.1797],
-  [-73.6955, 41.1793],
-  [-73.6953, 41.1789],
-  [-73.6952, 41.1785],
-  [-73.6953, 41.1780],
-  [-73.6955, 41.1775],
-  [-73.6958, 41.1770],
-  [-73.6962, 41.1766],
-  [-73.6968, 41.1764],
-  [-73.6974, 41.1766],
-  [-73.6978, 41.1770],
-  [-73.6982, 41.1775],
-  [-73.6984, 41.1780],
-  [-73.6986, 41.1785],
-  [-73.6987, 41.1790],
-  [-73.6988, 41.1795],
-  [-73.6987, 41.1800],
-  [-73.6985, 41.1805]
+  // North edge (from parcel boundary)
+  [-73.694586, 41.182058],
+  [-73.694502, 41.181679],
+  [-73.694515, 41.181476],
+  [-73.694395, 41.181261],
+  [-73.694026, 41.180548],
+  [-73.693802, 41.180423],
+  [-73.693154, 41.179873],
+  [-73.693130, 41.179706],
+  [-73.693047, 41.179135],
+  [-73.692964, 41.178985],
+  [-73.693016, 41.178841],
+  [-73.692839, 41.178285],
+  // South cutoff — straight across at treeline
+  [-73.695244, 41.178125],
+  [-73.697000, 41.177500],
+  [-73.699000, 41.177050],
+  // West edge back north (from parcel boundary)
+  [-73.699642, 41.177049],
+  [-73.700771, 41.179079],
+  [-73.701704, 41.181240],
+  [-73.700711, 41.181457],
+  [-73.699884, 41.181571],
+  [-73.699656, 41.180935],
+  [-73.695751, 41.182102],
+  [-73.694555, 41.182359],
+  [-73.694586, 41.182058],
 ];
 
-// 6 mowing zones — split across the 24-acre lawn
-// Horizontal split at 41.1795 and 41.1778, vertical split at -73.6970
-var zoneA = [ // NW — North Meadow
-  [-73.6985, 41.1805], [-73.6978, 41.1807], [-73.6970, 41.1808],
-  [-73.6970, 41.1788], [-73.6988, 41.1788], [-73.6988, 41.1795],
-  [-73.6987, 41.1800], [-73.6985, 41.1805]
-];
-var zoneB = [ // NE — East Lawn
-  [-73.6970, 41.1808], [-73.6963, 41.1807], [-73.6958, 41.1805],
-  [-73.6955, 41.1801], [-73.6953, 41.1797], [-73.6955, 41.1793],
-  [-73.6953, 41.1789], [-73.6953, 41.1788], [-73.6970, 41.1788], [-73.6970, 41.1808]
-];
-var zoneC = [ // SW — West Field
-  [-73.6988, 41.1788], [-73.6970, 41.1788],
-  [-73.6970, 41.1766], [-73.6974, 41.1766], [-73.6978, 41.1770],
-  [-73.6982, 41.1775], [-73.6984, 41.1780], [-73.6986, 41.1785], [-73.6988, 41.1788]
-];
-var zoneD = [ // SE — South Slope
-  [-73.6970, 41.1788], [-73.6953, 41.1788], [-73.6952, 41.1785],
-  [-73.6953, 41.1780], [-73.6955, 41.1775], [-73.6958, 41.1770],
-  [-73.6962, 41.1766], [-73.6968, 41.1764], [-73.6970, 41.1766], [-73.6970, 41.1788]
-];
-
-var zoneE = [ // Central — around buildings
-  [-73.6970, 41.1800], [-73.6958, 41.1800], [-73.6955, 41.1795],
-  [-73.6958, 41.1790], [-73.6970, 41.1790], [-73.6970, 41.1800]
-];
-var zoneF = [ // Perimeter — outer ring south
-  [-73.6974, 41.1770], [-73.6968, 41.1764], [-73.6962, 41.1766],
-  [-73.6958, 41.1770], [-73.6955, 41.1775], [-73.6953, 41.1780],
-  [-73.6953, 41.1785], [-73.6953, 41.1788],
-  [-73.6970, 41.1788], [-73.6988, 41.1788],
-  [-73.6986, 41.1785], [-73.6984, 41.1780], [-73.6982, 41.1775],
-  [-73.6978, 41.1770], [-73.6974, 41.1770]
-];
-
+// 6 general zone blocks — approximate coverage areas for illustration
+// Actual zones will be precisely defined during on-site RTK mapping
+// Grid: 3 columns (W/C/E) × 2 rows (N/S), split at -73.697 and -73.694, lat 41.1795
 var zones = [
-  { ring: zoneA, color: '#4caf50', label: 'Zone A', name: 'North Meadow', acres: '~4' },
-  { ring: zoneB, color: '#2196f3', label: 'Zone B', name: 'East Lawn', acres: '~4' },
-  { ring: zoneC, color: '#ff9800', label: 'Zone C', name: 'West Field', acres: '~4' },
-  { ring: zoneD, color: '#9c27b0', label: 'Zone D', name: 'South Slope', acres: '~4' },
-  { ring: zoneE, color: '#e91e63', label: 'Zone E', name: 'Central', acres: '~4' },
-  { ring: zoneF, color: '#00bcd4', label: 'Zone F', name: 'Perimeter', acres: '~4' }
+  { ring: [[-73.7010,41.1812],[-73.6975,41.1812],[-73.6975,41.1795],[-73.7010,41.1795],[-73.7010,41.1812]],
+    color:'#4caf50', label:'Zone A', name:'NW Meadow', acres:'~4' },
+  { ring: [[-73.6975,41.1812],[-73.6940,41.1812],[-73.6940,41.1795],[-73.6975,41.1795],[-73.6975,41.1812]],
+    color:'#2196f3', label:'Zone B', name:'NE Lawn', acres:'~4' },
+  { ring: [[-73.6940,41.1812],[-73.6930,41.1812],[-73.6930,41.1795],[-73.6940,41.1795],[-73.6940,41.1812]],
+    color:'#e91e63', label:'Zone C', name:'East Edge', acres:'~4' },
+  { ring: [[-73.7010,41.1795],[-73.6975,41.1795],[-73.6975,41.1775],[-73.7010,41.1775],[-73.7010,41.1795]],
+    color:'#ff9800', label:'Zone D', name:'W Central', acres:'~4' },
+  { ring: [[-73.6975,41.1795],[-73.6940,41.1795],[-73.6940,41.1775],[-73.6975,41.1775],[-73.6975,41.1795]],
+    color:'#9c27b0', label:'Zone E', name:'E Central', acres:'~4' },
+  { ring: [[-73.6975,41.1775],[-73.6940,41.1775],[-73.6940,41.1758],[-73.6975,41.1758],[-73.6975,41.1775]],
+    color:'#00bcd4', label:'Zone F', name:'South Field', acres:'~4' }
 ];
 
 // All 6 charging stations — single location, south side of main building
+// Buildings are approximately at 41.1800, -73.6960
 var chargers = [
-  { pos: [-73.69730, 41.17910], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
-  { pos: [-73.69700, 41.17910], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
-  { pos: [-73.69670, 41.17910], label: 'C', name: 'TerraNox #3', color: '#ff9800' },
-  { pos: [-73.69730, 41.17893], label: 'D', name: 'TerraNox #4', color: '#9c27b0' },
-  { pos: [-73.69700, 41.17893], label: 'E', name: 'TerraNox #5', color: '#e91e63' },
-  { pos: [-73.69670, 41.17893], label: 'F', name: 'TerraNox #6', color: '#00bcd4' }
+  { pos: [-73.69630, 41.17980], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
+  { pos: [-73.69600, 41.17980], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
+  { pos: [-73.69570, 41.17980], label: 'C', name: 'TerraNox #3', color: '#e91e63' },
+  { pos: [-73.69630, 41.17963], label: 'D', name: 'TerraNox #4', color: '#ff9800' },
+  { pos: [-73.69600, 41.17963], label: 'E', name: 'TerraNox #5', color: '#9c27b0' },
+  { pos: [-73.69570, 41.17963], label: 'F', name: 'TerraNox #6', color: '#00bcd4' }
 ];
 
 var map = new maplibregl.Map({
@@ -219,7 +199,7 @@ var map = new maplibregl.Map({
     ],
     terrain: { source: 'terrain-dem', exaggeration: 1.5 }
   },
-  center: [-73.6970, 41.1788],
+  center: [-73.6970, 41.1795],
   zoom: 15.5,
   pitch: 55,
   bearing: 20,
