@@ -1511,16 +1511,40 @@ function _flyToProperty(lat, lng, name) {
 
 // Multi-county parcel lookup — Westchester, Putnam, Rockland, Orange (NY), Fairfield (CT), Bergen (NJ)
 function _fetchParcel(lat, lng, callback) {
-  // Try Westchester direct layer query first, then CT, then NJ
-  _tryWestchesterDirect(lat, lng, function(ring) {
+  // Try NYS ArcGIS Online first (Westchester, Putnam, Rockland, Orange, Suffolk, Ulster + more)
+  _tryNYSOnline(lat, lng, function(ring) {
     if (ring) { callback(ring); return; }
-    _tryCT(lat, lng, function(ring) {
+    // Fallback: Westchester direct layers
+    _tryWestchesterDirect(lat, lng, function(ring) {
       if (ring) { callback(ring); return; }
-      _tryNJ(lat, lng, function(ring) {
-        callback(ring);
+      // CT statewide
+      _tryCT(lat, lng, function(ring) {
+        if (ring) { callback(ring); return; }
+        // NJ statewide
+        _tryNJ(lat, lng, function(ring) {
+          callback(ring);
+        });
       });
     });
   });
+}
+function _tryNYSOnline(lat, lng, cb) {
+  fetch('https://services6.arcgis.com/EbVsqZ18sv1kVJ3k/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/1/query?' +
+    'geometry='+lng+','+lat+'&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects' +
+    '&outFields=PARCEL_ADDR,COUNTY_NAME,CALC_ACRES&returnGeometry=true&outSR=4326&f=json')
+  .then(function(r){return r.json();}).then(function(data){
+    if (data.features && data.features.length > 0) {
+      var best = null, bestAcres = Infinity;
+      data.features.forEach(function(f) {
+        if (f.geometry && f.geometry.rings) {
+          var acres = f.attributes && f.attributes.CALC_ACRES ? f.attributes.CALC_ACRES : 99999;
+          if (acres < 500 && acres < bestAcres) { bestAcres = acres; best = f.geometry.rings[0]; }
+        }
+      });
+      if (best) { cb(best); return; }
+    }
+    cb(null);
+  }).catch(function(){cb(null);});
 }
 function _tryWestchesterDirect(lat, lng, cb) {
   var m = _toWebMerc(lat, lng);
