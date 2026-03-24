@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Done-For-You Mowing Map — 543 Byram Lake Rd | Smart Lawn NY</title>
+<link href="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.css" rel="stylesheet"/>
+<script src="https://unpkg.com/maplibre-gl@4.1.2/dist/maplibre-gl.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  .header { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; background:#fff; border-bottom:3px solid #6abb1e; }
+  .header h1 { font-size:14px; line-height:1.2; }
+  .header h1 span { color:#6abb1e; font-weight:400; font-size:11px; display:block; }
+  .header-right { text-align:right; font-size:11px; color:#555; }
+  #map { width:100%; height:calc(100vh - 55px); }
+  .panel { position:absolute; top:70px; right:12px; background:rgba(255,255,255,.95); backdrop-filter:blur(8px); border-radius:12px; padding:16px; width:260px; box-shadow:0 4px 20px rgba(0,0,0,.15); z-index:10; font-size:13px; }
+  .panel h3 { font-size:14px; margin-bottom:8px; border-bottom:2px solid #6abb1e; padding-bottom:6px; }
+  .panel h4 { font-size:11px; text-transform:uppercase; letter-spacing:0.5px; color:#888; margin:10px 0 4px; }
+  .legend-row { display:flex; align-items:center; gap:6px; padding:2px 0; font-size:12px; }
+  .legend-dot { width:10px; height:10px; border-radius:3px; }
+  .stat-row { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+  .stat-row strong { color:#4a8a10; }
+  .charger-icon { font-size:16px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Smart Lawn NY <span>Done-For-You Mowing Zone — 543 Byram Lake Rd</span></h1>
+  <div class="header-right">Prepared for <strong>Shea Summo</strong><br>10 Acres &bull; 4 TerraNox CM240M1</div>
+</div>
+
+<div style="position:relative;">
+  <div id="map"></div>
+  <div class="panel">
+    <h3>Mowing Zone — 10 Acres</h3>
+    <div class="stat-row"><span>Total Property</span><strong>92.75 acres</strong></div>
+    <div class="stat-row"><span>Mowing Zone</span><strong>10 acres</strong></div>
+    <div class="stat-row"><span>Mowers</span><strong>4 × TerraNox</strong></div>
+    <div class="stat-row"><span>Coverage per Unit</span><strong>2.5 acres</strong></div>
+    <h4>Charging Stations</h4>
+    <div class="legend-row"><span class="charger-icon">⚡</span> Station A — North meadow</div>
+    <div class="legend-row"><span class="charger-icon">⚡</span> Station B — East lawn</div>
+    <div class="legend-row"><span class="charger-icon">⚡</span> Station C — South slope</div>
+    <div class="legend-row"><span class="charger-icon">⚡</span> Station D — West field</div>
+    <h4>Map Layers</h4>
+    <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togBoundary" checked> Full Property Boundary</label>
+    <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togMowZone" checked> 10-Acre Mowing Zone</label>
+    <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togTopo" checked> Topo Contours</label>
+    <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togTerrain" checked> 3D Terrain</label>
+    <h4>View</h4>
+    <div style="display:flex;gap:6px;">
+      <button onclick="setView2D()" style="flex:1;padding:4px;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;font-size:11px;">2D</button>
+      <button onclick="setView3D()" style="flex:1;padding:4px;border:1px solid #ccc;border-radius:4px;background:#6abb1e;color:#fff;cursor:pointer;font-size:11px;font-weight:600;">3D</button>
+    </div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e0e0e0;font-size:11px;color:#888;">
+      <strong style="color:#4a8a10;">$1,500/week</strong> &bull; $150/acre &bull; 30-week season<br>
+      <strong style="color:#1d1d1f;">$45,000/season</strong> all-inclusive
+    </div>
+  </div>
+</div>
+
+<script>
+// Full property boundary (92.75 acres)
+var fullBoundary = [
+  [-73.694587732838,41.182066503773],[-73.694503796950,41.181687554743],
+  [-73.694516508771,41.181484306328],[-73.694396488618,41.181269833884],
+  [-73.694027069023,41.180556853508],[-73.693803753581,41.180431743848],
+  [-73.693155478458,41.179881035299],[-73.693131199215,41.179714282322],
+  [-73.693048037564,41.179143137618],[-73.692965338499,41.178993530571],
+  [-73.693017832478,41.178849129415],[-73.692840011905,41.178293757128],
+  [-73.695245313392,41.178133028538],[-73.694730678470,41.176380592189],
+  [-73.694319413282,41.176238487722],[-73.695675374876,41.174821970458],
+  [-73.695793505893,41.174457574289],[-73.695876108598,41.174404321506],
+  [-73.695953002933,41.174346393006],[-73.696023723023,41.174284136626],
+  [-73.696087847789,41.174217925930],[-73.696144987838,41.174148160064],
+  [-73.696194801046,41.174075259425],[-73.696279754242,41.174195973430],
+  [-73.696278130261,41.174328912497],[-73.696463153916,41.174365145070],
+  [-73.696485344117,41.174397994936],[-73.696499867774,41.174415264861],
+  [-73.696517935400,41.174430504938],[-73.696539061573,41.174443305229],
+  [-73.696562676156,41.174453319690],[-73.696588140727,41.174460278971],
+  [-73.696614769965,41.174463994262],[-73.696655702663,41.174470171081],
+  [-73.696694844192,41.174481127792],[-73.696731222357,41.174496593974],
+  [-73.696763934011,41.174516183792],[-73.696792168570,41.174539412469],
+  [-73.696815224068,41.174565710834],[-73.696832518498,41.174594440506],
+  [-73.696843598039,41.174624905073],[-73.696848153478,41.174656360445],
+  [-73.696846013543,41.174688030265],[-73.696910369503,41.174849283327],
+  [-73.697055044398,41.175127478949],[-73.697128992613,41.175379459289],
+  [-73.697247948610,41.175484474379],[-73.697369218700,41.175609416900],
+  [-73.698216744975,41.175741723100],[-73.698722982783,41.175929754270],
+  [-73.699349775483,41.176043547729],[-73.699841193485,41.176303199369],
+  [-73.700299393498,41.176626037950],[-73.700628233989,41.177122103789],
+  [-73.700894564024,41.177652825850],[-73.701161803527,41.178104102618],
+  [-73.701234078791,41.178497534300],[-73.701058927627,41.178931759660],
+  [-73.700945018997,41.179298805959],[-73.700687069831,41.179736775889],
+  [-73.700490549494,41.179919553729],[-73.700218539775,41.180177660120],
+  [-73.699756679474,41.180569553439],[-73.699315488597,41.180887627589],
+  [-73.698884523478,41.181099283250],[-73.698494218779,41.181245764900],
+  [-73.697828064363,41.181530816590],[-73.697293408850,41.181809010039],
+  [-73.696789283496,41.181950665650],[-73.696275143883,41.182102755759],
+  [-73.695761003272,41.182039503670],[-73.695236849174,41.182148296870],
+  [-73.694587732838,41.182066503773]
+];
+
+// 10-acre mowing zone (centered around the main residence area)
+var mowingZone = [
+  [-73.6980, 41.1790],
+  [-73.6960, 41.1790],
+  [-73.6945, 41.1785],
+  [-73.6940, 41.1775],
+  [-73.6942, 41.1765],
+  [-73.6950, 41.1758],
+  [-73.6965, 41.1755],
+  [-73.6980, 41.1758],
+  [-73.6990, 41.1765],
+  [-73.6995, 41.1775],
+  [-73.6993, 41.1785],
+  [-73.6980, 41.1790]
+];
+
+// Charging station locations
+var chargers = [
+  { pos: [-73.6975, 41.1787], label: 'A', name: 'North Meadow' },
+  { pos: [-73.6945, 41.1775], label: 'B', name: 'East Lawn' },
+  { pos: [-73.6960, 41.1758], label: 'C', name: 'South Slope' },
+  { pos: [-73.6988, 41.1770], label: 'D', name: 'West Field' }
+];
+
+var map = new maplibregl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    sources: {
+      'satellite': {
+        type: 'raster',
+        tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256, maxzoom: 19
+      },
+      'terrain-dem': {
+        type: 'raster-dem',
+        tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'],
+        encoding: 'terrarium', tileSize: 256, maxzoom: 15
+      },
+      'topo': {
+        type: 'raster',
+        tiles: ['https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}'],
+        tileSize: 256, maxzoom: 16
+      }
+    },
+    layers: [
+      { id: 'satellite-layer', type: 'raster', source: 'satellite' },
+      { id: 'topo-layer', type: 'raster', source: 'topo', paint: { 'raster-opacity': 0.4 } }
+    ],
+    terrain: { source: 'terrain-dem', exaggeration: 1.5 }
+  },
+  center: [-73.6968, 41.1772],
+  zoom: 15.5,
+  pitch: 55,
+  bearing: 20,
+  maxPitch: 85,
+  antialias: true
+});
+
+map.addControl(new maplibregl.NavigationControl(), 'top-left');
+
+map.on('load', function() {
+  // Full property boundary (dashed white)
+  map.addSource('full-boundary', {
+    type: 'geojson',
+    data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [fullBoundary] } }
+  });
+  map.addLayer({
+    id: 'full-boundary-line', type: 'line', source: 'full-boundary',
+    paint: { 'line-color': '#ffffff', 'line-width': 2, 'line-dasharray': [4, 3], 'line-opacity': 0.7 }
+  });
+
+  // 10-acre mowing zone (solid green fill)
+  map.addSource('mow-zone', {
+    type: 'geojson',
+    data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [mowingZone] } }
+  });
+  map.addLayer({
+    id: 'mow-zone-fill', type: 'fill', source: 'mow-zone',
+    paint: { 'fill-color': '#6abb1e', 'fill-opacity': 0.25 }
+  });
+  map.addLayer({
+    id: 'mow-zone-line', type: 'line', source: 'mow-zone',
+    paint: { 'line-color': '#6abb1e', 'line-width': 3 }
+  });
+
+  // Charging station markers
+  chargers.forEach(function(ch) {
+    var el = document.createElement('div');
+    el.style.cssText = 'width:32px;height:32px;background:#ff9800;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;';
+    el.textContent = ch.label;
+    el.title = 'Station ' + ch.label + ' — ' + ch.name;
+
+    new maplibregl.Marker({ element: el })
+      .setLngLat(ch.pos)
+      .setPopup(new maplibregl.Popup({ offset: 20 }).setHTML(
+        '<div style="font-family:-apple-system,sans-serif;padding:4px;">' +
+        '<strong style="color:#ff9800;">Charging Station ' + ch.label + '</strong><br>' +
+        '<span style="font-size:12px;color:#555;">' + ch.name + '</span><br>' +
+        '<span style="font-size:11px;color:#888;">TerraNox CM240M1 dock<br>15A / 110V GFCI outdoor outlet</span>' +
+        '</div>'
+      ))
+      .addTo(map);
+  });
+
+  // Mowing zone label
+  var labelEl = document.createElement('div');
+  labelEl.style.cssText = 'background:rgba(106,187,30,.9);color:#fff;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;pointer-events:none;';
+  labelEl.textContent = '10 Acres — Mowing Zone';
+  new maplibregl.Marker({ element: labelEl, anchor: 'center' })
+    .setLngLat([-73.6965, 41.1773])
+    .addTo(map);
+});
+
+// Toggle controls
+document.getElementById('togBoundary').onchange = function() {
+  var vis = this.checked ? 'visible' : 'none';
+  if (map.getLayer('full-boundary-line')) map.setLayoutProperty('full-boundary-line', 'visibility', vis);
+};
+document.getElementById('togMowZone').onchange = function() {
+  var vis = this.checked ? 'visible' : 'none';
+  ['mow-zone-fill','mow-zone-line'].forEach(function(id) {
+    if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', vis);
+  });
+};
+document.getElementById('togTopo').onchange = function() {
+  var vis = this.checked ? 'visible' : 'none';
+  if (map.getLayer('topo-layer')) map.setLayoutProperty('topo-layer', 'visibility', vis);
+};
+document.getElementById('togTerrain').onchange = function() {
+  if (this.checked) {
+    map.setTerrain({ source: 'terrain-dem', exaggeration: 1.5 });
+  } else {
+    map.setTerrain(null);
+  }
+};
+
+function setView2D() { map.easeTo({ pitch: 0, bearing: 0, duration: 800 }); }
+function setView3D() { map.easeTo({ pitch: 55, bearing: 20, duration: 800 }); }
+</script>
+</body>
+</html>
