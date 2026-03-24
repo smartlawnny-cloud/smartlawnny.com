@@ -39,11 +39,13 @@
     <div class="stat-row"><span>Mowing Zone</span><strong>10 acres</strong></div>
     <div class="stat-row"><span>Mowers</span><strong>4 × TerraNox</strong></div>
     <div class="stat-row"><span>Coverage per Unit</span><strong>2.5 acres</strong></div>
-    <h4>Charging Stations</h4>
-    <div class="legend-row"><span class="charger-icon">⚡</span> Station A — North meadow</div>
-    <div class="legend-row"><span class="charger-icon">⚡</span> Station B — East lawn</div>
-    <div class="legend-row"><span class="charger-icon">⚡</span> Station C — South slope</div>
-    <div class="legend-row"><span class="charger-icon">⚡</span> Station D — West field</div>
+    <h4>Mowing Zones (1 TerraNox each)</h4>
+    <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> <strong>Zone A</strong> — North Meadow (~2.5 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#2196f3;"></span> <strong>Zone B</strong> — East Lawn (~2.5 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> <strong>Zone C</strong> — West Field (~2.5 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#9c27b0;"></span> <strong>Zone D</strong> — South Slope (~2.5 ac)</div>
+    <h4>⚡ Charging Hub — South of Building</h4>
+    <div class="legend-row" style="font-size:11px;color:#666;">All 4 docks in one location — single power source<br>4 × 15A GFCI outdoor outlets needed</div>
     <h4>Map Layers</h4>
     <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togBoundary" checked> Full Property Boundary</label>
     <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togMowZone" checked> 10-Acre Mowing Zone</label>
@@ -103,28 +105,74 @@ var fullBoundary = [
   [-73.694587732838,41.182066503773]
 ];
 
-// 10-acre mowing zone (centered around the main residence area)
+// 10-acre mowing zone — traced from actual property drawing
 var mowingZone = [
-  [-73.6980, 41.1790],
-  [-73.6960, 41.1790],
-  [-73.6945, 41.1785],
-  [-73.6940, 41.1775],
-  [-73.6942, 41.1765],
-  [-73.6950, 41.1758],
-  [-73.6965, 41.1755],
-  [-73.6980, 41.1758],
-  [-73.6990, 41.1765],
-  [-73.6995, 41.1775],
-  [-73.6993, 41.1785],
-  [-73.6980, 41.1790]
+  [-73.6983, 41.1793],  // NW corner
+  [-73.6978, 41.1795],  // N edge
+  [-73.6972, 41.1796],  // N edge
+  [-73.6966, 41.1796],  // NE approach
+  [-73.6960, 41.1795],  // NE
+  [-73.6955, 41.1794],  // NE
+  [-73.6950, 41.1793],  // NE
+  [-73.6946, 41.1791],  // E upper
+  [-73.6943, 41.1788],  // E notch top (buildings)
+  [-73.6945, 41.1784],  // E notch inner
+  [-73.6948, 41.1782],  // E notch bottom
+  [-73.6944, 41.1778],  // E middle
+  [-73.6942, 41.1774],  // E lower
+  [-73.6942, 41.1770],  // SE approach
+  [-73.6943, 41.1766],  // SE
+  [-73.6945, 41.1762],  // S approach
+  [-73.6948, 41.1758],  // S tip east
+  [-73.6953, 41.1755],  // S tip
+  [-73.6958, 41.1754],  // S tip center
+  [-73.6963, 41.1755],  // S tip west
+  [-73.6968, 41.1757],  // SW approach
+  [-73.6973, 41.1760],  // SW
+  [-73.6978, 41.1764],  // W lower
+  [-73.6982, 41.1768],  // W middle
+  [-73.6985, 41.1773],  // W upper
+  [-73.6986, 41.1778],  // W upper
+  [-73.6987, 41.1783],  // NW approach
+  [-73.6986, 41.1788],  // NW
+  [-73.6983, 41.1793]   // close
 ];
 
-// Charging station locations
+// 4 mowing zones — split into quadrants
+var zoneA = [ // NW — North Meadow
+  [-73.6983, 41.1793], [-73.6978, 41.1795], [-73.6972, 41.1796], [-73.6966, 41.1796],
+  [-73.6966, 41.1778], [-73.6986, 41.1778], [-73.6987, 41.1783], [-73.6986, 41.1788], [-73.6983, 41.1793]
+];
+var zoneB = [ // NE — East Lawn
+  [-73.6966, 41.1796], [-73.6960, 41.1795], [-73.6955, 41.1794], [-73.6950, 41.1793],
+  [-73.6946, 41.1791], [-73.6943, 41.1788], [-73.6945, 41.1784], [-73.6948, 41.1782],
+  [-73.6944, 41.1778], [-73.6966, 41.1778], [-73.6966, 41.1796]
+];
+var zoneC = [ // SW — West Field
+  [-73.6986, 41.1778], [-73.6966, 41.1778], [-73.6966, 41.1762],
+  [-73.6963, 41.1755], [-73.6968, 41.1757], [-73.6973, 41.1760],
+  [-73.6978, 41.1764], [-73.6982, 41.1768], [-73.6985, 41.1773], [-73.6986, 41.1778]
+];
+var zoneD = [ // SE — South Slope
+  [-73.6966, 41.1778], [-73.6944, 41.1778], [-73.6942, 41.1774], [-73.6942, 41.1770],
+  [-73.6943, 41.1766], [-73.6945, 41.1762], [-73.6948, 41.1758], [-73.6953, 41.1755],
+  [-73.6958, 41.1754], [-73.6963, 41.1755], [-73.6966, 41.1762], [-73.6966, 41.1778]
+];
+
+var zones = [
+  { ring: zoneA, color: '#4caf50', label: 'Zone A', name: 'North Meadow', acres: '~2.5' },
+  { ring: zoneB, color: '#2196f3', label: 'Zone B', name: 'East Lawn', acres: '~2.5' },
+  { ring: zoneC, color: '#ff9800', label: 'Zone C', name: 'West Field', acres: '~2.5' },
+  { ring: zoneD, color: '#9c27b0', label: 'Zone D', name: 'South Slope', acres: '~2.5' }
+];
+
+// All 4 charging stations — single location, south side of main building
+var chargerHub = [-73.6962, 41.1780]; // south side of residence
 var chargers = [
-  { pos: [-73.6975, 41.1787], label: 'A', name: 'North Meadow' },
-  { pos: [-73.6945, 41.1775], label: 'B', name: 'East Lawn' },
-  { pos: [-73.6960, 41.1758], label: 'C', name: 'South Slope' },
-  { pos: [-73.6988, 41.1770], label: 'D', name: 'West Field' }
+  { pos: [-73.69635, 41.17805], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
+  { pos: [-73.69605, 41.17805], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
+  { pos: [-73.69635, 41.17790], label: 'C', name: 'TerraNox #3', color: '#ff9800' },
+  { pos: [-73.69605, 41.17790], label: 'D', name: 'TerraNox #4', color: '#9c27b0' }
 ];
 
 var map = new maplibregl.Map({
@@ -175,24 +223,36 @@ map.on('load', function() {
     paint: { 'line-color': '#ffffff', 'line-width': 2, 'line-dasharray': [4, 3], 'line-opacity': 0.7 }
   });
 
-  // 10-acre mowing zone (solid green fill)
+  // Full mowing zone outline
   map.addSource('mow-zone', {
     type: 'geojson',
     data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [mowingZone] } }
   });
   map.addLayer({
-    id: 'mow-zone-fill', type: 'fill', source: 'mow-zone',
-    paint: { 'fill-color': '#6abb1e', 'fill-opacity': 0.25 }
-  });
-  map.addLayer({
     id: 'mow-zone-line', type: 'line', source: 'mow-zone',
-    paint: { 'line-color': '#6abb1e', 'line-width': 3 }
+    paint: { 'line-color': '#ffffff', 'line-width': 2, 'line-dasharray': [6, 3] }
+  });
+
+  // 4 colored mowing zones
+  zones.forEach(function(z, i) {
+    map.addSource('zone-' + i, {
+      type: 'geojson',
+      data: { type: 'Feature', geometry: { type: 'Polygon', coordinates: [z.ring] } }
+    });
+    map.addLayer({
+      id: 'zone-fill-' + i, type: 'fill', source: 'zone-' + i,
+      paint: { 'fill-color': z.color, 'fill-opacity': 0.25 }
+    });
+    map.addLayer({
+      id: 'zone-line-' + i, type: 'line', source: 'zone-' + i,
+      paint: { 'line-color': z.color, 'line-width': 2.5 }
+    });
   });
 
   // Charging station markers
   chargers.forEach(function(ch) {
     var el = document.createElement('div');
-    el.style.cssText = 'width:32px;height:32px;background:#ff9800;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;';
+    el.style.cssText = 'width:32px;height:32px;background:'+ch.color+';border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;';
     el.textContent = ch.label;
     el.title = 'Station ' + ch.label + ' — ' + ch.name;
 
@@ -224,9 +284,11 @@ document.getElementById('togBoundary').onchange = function() {
 };
 document.getElementById('togMowZone').onchange = function() {
   var vis = this.checked ? 'visible' : 'none';
-  ['mow-zone-fill','mow-zone-line'].forEach(function(id) {
-    if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', vis);
-  });
+  if (map.getLayer('mow-zone-line')) map.setLayoutProperty('mow-zone-line', 'visibility', vis);
+  for (var i=0; i<4; i++) {
+    if (map.getLayer('zone-fill-'+i)) map.setLayoutProperty('zone-fill-'+i, 'visibility', vis);
+    if (map.getLayer('zone-line-'+i)) map.setLayoutProperty('zone-line-'+i, 'visibility', vis);
+  }
 };
 document.getElementById('togTopo').onchange = function() {
   var vis = this.checked ? 'visible' : 'none';
