@@ -201,11 +201,13 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
       </div>
 
       <div class="draw-instructions" id="drawInstructions">
-        <strong>Draw Your Property Boundary</strong>
-        Use the polygon tool (top-center of map) to trace your property lines on the satellite image. Click each corner, then close the shape.
-        <br><br>
+        <strong style="font-size:15px;">Draw Your Property Boundary</strong><br>
+        <span id="parcelStatus" style="color:#e65100;font-weight:600;display:none;">Parcel boundary not found for this address.</span>
+        <div style="margin:8px 0;padding:10px;background:#fff8e1;border-radius:6px;border-left:3px solid #ff9800;">
+          <strong>Click directly on the map</strong> to place corner points around your property. Click each corner of your lot, then <strong>click the first point again</strong> to close the shape.
+        </div>
         <button class="btn-small" onclick="calculateFromPolygon()">Calculate Quote →</button>
-        <button class="btn-small secondary" onclick="clearDrawing()">Clear Drawing</button>
+        <button class="btn-small secondary" onclick="clearDrawing()">Clear &amp; Redraw</button>
         <div style="margin-top:10px;border-top:1px solid #c5e1a5;padding-top:8px;">
           <span style="color:#666;">Or enter lot size manually:</span><br>
           <input type="number" id="manualAcres" placeholder="acres" style="width:80px;padding:5px 8px;border:1px solid #ccc;border-radius:4px;font-size:13px;margin-top:4px;">
@@ -563,6 +565,9 @@ function startAnalysis(lat, lng, displayName) {
       // Listen for edits
       google.maps.event.addListener(drawnPolygon.getPath(), 'set_at', updateAreaFromPolygon);
       google.maps.event.addListener(drawnPolygon.getPath(), 'insert_at', updateAreaFromPolygon);
+    } else {
+      // Parcel not found — show manual draw instructions prominently
+      document.getElementById('parcelStatus').style.display = 'block';
     }
   });
 
