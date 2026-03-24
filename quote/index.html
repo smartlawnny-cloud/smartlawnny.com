@@ -585,13 +585,28 @@ function startAnalysis(lat, lng, displayName) {
     }
   });
 
-  // Try to auto-fetch parcel boundary from Westchester County GIS
+  // Always show draw instructions so user can always draw manually
   document.getElementById('drawInstructions').style.display = 'block';
   document.getElementById('resultsPanel').style.display = 'none';
-  drawingManager.setDrawingMode('polygon');
+  document.getElementById('parcelStatus').style.display = 'none';
 
+  // Try to auto-fetch parcel boundary
   fetchParcel(lat, lng, function(ring) {
     if (ring && ring.length > 3) {
+      // Sanity check: compute rough area, skip if > 200 acres (probably town boundary)
+      var area = 0;
+      for (var i=0; i<ring.length-1; i++) {
+        area += (ring[i+1][0]-ring[i][0])*(ring[i+1][1]+ring[i][1]);
+      }
+      var sqDeg = Math.abs(area/2);
+      var roughAcres = sqDeg * 4046856.4224 * 111319 * 111319 * Math.cos(ring[0][1]*Math.PI/180) / 4046.86;
+      if (roughAcres > 300) {
+        // Too big — probably a municipal boundary, skip it
+        document.getElementById('parcelStatus').textContent = 'Auto-boundary too large (' + Math.round(roughAcres) + ' acres). Draw your property manually.';
+        document.getElementById('parcelStatus').style.display = 'block';
+        return;
+      }
+
       // Auto-draw the parcel boundary
       if (drawnPolygon) drawnPolygon.setMap(null);
       drawnPolygon = new google.maps.Polygon({
@@ -600,10 +615,8 @@ function startAnalysis(lat, lng, displayName) {
         strokeColor: '#6abb1e', strokeWeight: 3,
         editable: true, map: map
       });
-      drawingManager.setDrawingMode(null);
       updateAreaFromPolygon();
-      // Auto-run analysis
-      document.getElementById('drawInstructions').style.display = 'none';
+      // Auto-run analysis — keep draw instructions visible so user can clear & redraw
       document.getElementById('resultsPanel').style.display = 'block';
       runSlopeAnalysis();
       calculatePackages();
@@ -686,12 +699,25 @@ function _tryWestchesterQ(lat, lng, cb) {
   document.head.appendChild(s);
 }
 function _tryNYSQ(lat, lng, cb) {
-  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/1/query?' +
+  // Layer 0 = tax parcels (not layer 1 which may be municipal boundaries)
+  var url = 'https://gisservices.its.ny.gov/arcgis/rest/services/NYS_Tax_Parcels_Public/FeatureServer/0/query?' +
     'geometry='+lng+','+lat+'&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects' +
-    '&outFields=PARCEL_ADDR,COUNTY_NAME&returnGeometry=true&outSR=4326&f=json';
+    '&outFields=PARCEL_ADDR,COUNTY_NAME,MUNI_NAME,CALC_ACRES&returnGeometry=true&outSR=4326&f=json';
   fetch(url).then(function(r){return r.json();}).then(function(data){
-    if (data.features && data.features.length > 0 && data.features[0].geometry) {
-      cb(data.features[0].geometry.rings[0]); return;
+    if (data.features && data.features.length > 0) {
+      // Find the smallest parcel (avoid municipal boundaries)
+      var best = null, bestAcres = Infinity;
+      data.features.forEach(function(f) {
+        if (f.geometry && f.geometry.rings) {
+          var acres = f.attributes && f.attributes.CALC_ACRES ? f.attributes.CALC_ACRES : 99999;
+          // Skip anything over 500 acres (likely a municipal boundary)
+          if (acres < 500 && acres < bestAcres) {
+            bestAcres = acres;
+            best = f.geometry.rings[0];
+          }
+        }
+      });
+      if (best) { cb(best); return; }
     }
     cb(null);
   }).catch(function(){cb(null);});
