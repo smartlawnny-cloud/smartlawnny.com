@@ -34,20 +34,22 @@
 <div style="position:relative;">
   <div id="map"></div>
   <div class="panel">
-    <h3>Mowing Zone — ~10 Acres</h3>
+    <h3>Mowing Zone — 24 Acres</h3>
     <div class="stat-row"><span>Total Property</span><strong>92.75 acres</strong></div>
-    <div class="stat-row"><span>Mowing Zone</span><strong>~10 acres</strong></div>
-    <div class="stat-row"><span>Mowers</span><strong>4 × TerraNox</strong></div>
-    <div class="stat-row"><span>Rated Coverage</span><strong>1.5 ac/unit (6 ac total)</strong></div>
-    <div class="stat-row"><span>Actual Coverage</span><strong>Oversized for overlap</strong></div>
+    <div class="stat-row"><span>Mowing Zone</span><strong>24 acres</strong></div>
+    <div class="stat-row"><span>Mowers</span><strong>6 × TerraNox CM240M1</strong></div>
+    <div class="stat-row"><span>Rated Coverage</span><strong>1.5 ac/unit (9 ac total)</strong></div>
+    <div class="stat-row"><span>Actual Coverage</span><strong>24 ac with extended runtime</strong></div>
     <h4>Mowing Zones (1 TerraNox each)</h4>
-    <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> <strong>Zone A</strong> — North Meadow</div>
-    <div class="legend-row"><span class="legend-dot" style="background:#2196f3;"></span> <strong>Zone B</strong> — East Lawn</div>
-    <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> <strong>Zone C</strong> — West Field</div>
-    <div class="legend-row"><span class="legend-dot" style="background:#9c27b0;"></span> <strong>Zone D</strong> — South Slope</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#4caf50;"></span> <strong>Zone A</strong> — North Meadow (~4 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#2196f3;"></span> <strong>Zone B</strong> — East Lawn (~4 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#ff9800;"></span> <strong>Zone C</strong> — West Field (~4 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#9c27b0;"></span> <strong>Zone D</strong> — South Slope (~4 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#e91e63;"></span> <strong>Zone E</strong> — Central (~4 ac)</div>
+    <div class="legend-row"><span class="legend-dot" style="background:#00bcd4;"></span> <strong>Zone F</strong> — Perimeter (~4 ac)</div>
     <div style="font-size:10px;color:#888;margin-top:4px;">Zones are approximate. Exact RTK mapping done on-site.</div>
     <h4>⚡ Charging Hub — South of Building</h4>
-    <div class="legend-row" style="font-size:11px;color:#666;">All 4 docks in one location — single power source<br>4 × 15A GFCI outdoor outlets needed</div>
+    <div class="legend-row" style="font-size:11px;color:#666;">All 6 docks in one location — single power source<br>6 × 15A GFCI outdoor outlets needed</div>
     <h4>Map Layers</h4>
     <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togBoundary" checked> Full Property Boundary</label>
     <label style="display:block;padding:2px 0;font-size:12px;cursor:pointer;"><input type="checkbox" id="togMowZone" checked> 10-Acre Mowing Zone</label>
@@ -59,8 +61,8 @@
       <button onclick="setView3D()" style="flex:1;padding:4px;border:1px solid #ccc;border-radius:4px;background:#6abb1e;color:#fff;cursor:pointer;font-size:11px;font-weight:600;">3D</button>
     </div>
     <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e0e0e0;font-size:11px;color:#888;">
-      <strong style="color:#4a8a10;">$1,500/week</strong> &bull; $150/acre &bull; 30-week season<br>
-      <strong style="color:#1d1d1f;">$45,000/season</strong> all-inclusive
+      <strong style="color:#4a8a10;">$3,600/week</strong> &bull; $150/acre &bull; 24 acres<br>
+      <strong style="color:#1d1d1f;">$108,000/season</strong> (30 weeks) all-inclusive
     </div>
   </div>
 </div>
@@ -165,12 +167,14 @@ var zones = [
   { ring: zoneD, color: '#9c27b0', label: 'Zone D', name: 'South Slope', acres: '~2.5' }
 ];
 
-// All 4 charging stations — single location, south side of main building
+// All 6 charging stations — single location, south side of main building
 var chargers = [
-  { pos: [-73.69720, 41.17905], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
-  { pos: [-73.69690, 41.17905], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
-  { pos: [-73.69720, 41.17890], label: 'C', name: 'TerraNox #3', color: '#ff9800' },
-  { pos: [-73.69690, 41.17890], label: 'D', name: 'TerraNox #4', color: '#9c27b0' }
+  { pos: [-73.69730, 41.17910], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
+  { pos: [-73.69700, 41.17910], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
+  { pos: [-73.69670, 41.17910], label: 'C', name: 'TerraNox #3', color: '#ff9800' },
+  { pos: [-73.69730, 41.17893], label: 'D', name: 'TerraNox #4', color: '#9c27b0' },
+  { pos: [-73.69700, 41.17893], label: 'E', name: 'TerraNox #5', color: '#e91e63' },
+  { pos: [-73.69670, 41.17893], label: 'F', name: 'TerraNox #6', color: '#00bcd4' }
 ];
 
 var map = new maplibregl.Map({
