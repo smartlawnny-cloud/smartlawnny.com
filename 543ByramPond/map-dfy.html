@@ -143,34 +143,34 @@ var mowingZone = [
   [-73.694586, 41.182058],
 ];
 
-// 6 general zone blocks — approximate coverage areas for illustration
-// Lawn is WEST of the driveway/pin, between -73.701 (west) and -73.696 (east)
-// North edge ~41.182, south tip ~41.177
-// Grid: 2 columns (W/E) × 3 rows (N/M/S)
+// 6 general zone blocks — approximate coverage areas
+// Lawn runs from -73.7017 (west) to -73.6965 (east), narrowing south
+// North ~41.1823, buildings ~41.1805, south tip ~41.1770
+// Layout: 3 rows, wider at top, narrowing toward south
 var zones = [
-  { ring: [[-73.7015,41.1820],[-73.6985,41.1820],[-73.6985,41.1800],[-73.7015,41.1800],[-73.7015,41.1820]],
+  { ring: [[-73.7017,41.1823],[-73.6990,41.1823],[-73.6990,41.1805],[-73.7017,41.1805],[-73.7017,41.1823]],
     color:'#4caf50', label:'Zone A', name:'NW Meadow', acres:'~4' },
-  { ring: [[-73.6985,41.1820],[-73.6960,41.1820],[-73.6960,41.1800],[-73.6985,41.1800],[-73.6985,41.1820]],
+  { ring: [[-73.6990,41.1823],[-73.6965,41.1823],[-73.6965,41.1805],[-73.6990,41.1805],[-73.6990,41.1823]],
     color:'#2196f3', label:'Zone B', name:'NE Lawn', acres:'~4' },
-  { ring: [[-73.7015,41.1800],[-73.6985,41.1800],[-73.6985,41.1785],[-73.7015,41.1785],[-73.7015,41.1800]],
+  { ring: [[-73.7017,41.1805],[-73.6990,41.1805],[-73.6990,41.1790],[-73.7017,41.1790],[-73.7017,41.1805]],
     color:'#ff9800', label:'Zone C', name:'W Central', acres:'~4' },
-  { ring: [[-73.6985,41.1800],[-73.6960,41.1800],[-73.6960,41.1785],[-73.6985,41.1785],[-73.6985,41.1800]],
+  { ring: [[-73.6990,41.1805],[-73.6968,41.1805],[-73.6968,41.1790],[-73.6990,41.1790],[-73.6990,41.1805]],
     color:'#9c27b0', label:'Zone D', name:'E Central', acres:'~4' },
-  { ring: [[-73.7010,41.1785],[-73.6980,41.1785],[-73.6980,41.1770],[-73.7010,41.1770],[-73.7010,41.1785]],
+  { ring: [[-73.7010,41.1790],[-73.6985,41.1790],[-73.6985,41.1775],[-73.7010,41.1775],[-73.7010,41.1790]],
     color:'#e91e63', label:'Zone E', name:'SW Field', acres:'~4' },
-  { ring: [[-73.6980,41.1785],[-73.6955,41.1785],[-73.6955,41.1770],[-73.6980,41.1770],[-73.6980,41.1785]],
-    color:'#00bcd4', label:'Zone F', name:'South Slope', acres:'~4' }
+  { ring: [[-73.6995,41.1775],[-73.6975,41.1775],[-73.6980,41.1760],[-73.7000,41.1760],[-73.6995,41.1775]],
+    color:'#00bcd4', label:'Zone F', name:'South Tip', acres:'~4' }
 ];
 
-// All 6 charging stations — single location, south side of main building
-// Buildings are approximately at 41.1800, -73.6960
+// All 6 charging stations — near buildings, east side of main lawn
+// Buildings are approximately at 41.1810, -73.6970
 var chargers = [
-  { pos: [-73.69630, 41.17980], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
-  { pos: [-73.69600, 41.17980], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
-  { pos: [-73.69570, 41.17980], label: 'C', name: 'TerraNox #3', color: '#e91e63' },
-  { pos: [-73.69630, 41.17963], label: 'D', name: 'TerraNox #4', color: '#ff9800' },
-  { pos: [-73.69600, 41.17963], label: 'E', name: 'TerraNox #5', color: '#9c27b0' },
-  { pos: [-73.69570, 41.17963], label: 'F', name: 'TerraNox #6', color: '#00bcd4' }
+  { pos: [-73.69720, 41.18080], label: 'A', name: 'TerraNox #1', color: '#4caf50' },
+  { pos: [-73.69690, 41.18080], label: 'B', name: 'TerraNox #2', color: '#2196f3' },
+  { pos: [-73.69660, 41.18080], label: 'C', name: 'TerraNox #3', color: '#e91e63' },
+  { pos: [-73.69720, 41.18063], label: 'D', name: 'TerraNox #4', color: '#ff9800' },
+  { pos: [-73.69690, 41.18063], label: 'E', name: 'TerraNox #5', color: '#9c27b0' },
+  { pos: [-73.69660, 41.18063], label: 'F', name: 'TerraNox #6', color: '#00bcd4' }
 ];
 
 var map = new maplibregl.Map({
