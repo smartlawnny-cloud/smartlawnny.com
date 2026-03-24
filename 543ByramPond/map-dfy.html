@@ -144,21 +144,22 @@ var mowingZone = [
 ];
 
 // 6 general zone blocks — approximate coverage areas for illustration
-// Actual zones will be precisely defined during on-site RTK mapping
-// Grid: 3 columns (W/C/E) × 2 rows (N/S), split at -73.697 and -73.694, lat 41.1795
+// Lawn is WEST of the driveway/pin, between -73.701 (west) and -73.696 (east)
+// North edge ~41.182, south tip ~41.177
+// Grid: 2 columns (W/E) × 3 rows (N/M/S)
 var zones = [
-  { ring: [[-73.7010,41.1812],[-73.6975,41.1812],[-73.6975,41.1795],[-73.7010,41.1795],[-73.7010,41.1812]],
+  { ring: [[-73.7015,41.1820],[-73.6985,41.1820],[-73.6985,41.1800],[-73.7015,41.1800],[-73.7015,41.1820]],
     color:'#4caf50', label:'Zone A', name:'NW Meadow', acres:'~4' },
-  { ring: [[-73.6975,41.1812],[-73.6940,41.1812],[-73.6940,41.1795],[-73.6975,41.1795],[-73.6975,41.1812]],
+  { ring: [[-73.6985,41.1820],[-73.6960,41.1820],[-73.6960,41.1800],[-73.6985,41.1800],[-73.6985,41.1820]],
     color:'#2196f3', label:'Zone B', name:'NE Lawn', acres:'~4' },
-  { ring: [[-73.6940,41.1812],[-73.6930,41.1812],[-73.6930,41.1795],[-73.6940,41.1795],[-73.6940,41.1812]],
-    color:'#e91e63', label:'Zone C', name:'East Edge', acres:'~4' },
-  { ring: [[-73.7010,41.1795],[-73.6975,41.1795],[-73.6975,41.1775],[-73.7010,41.1775],[-73.7010,41.1795]],
-    color:'#ff9800', label:'Zone D', name:'W Central', acres:'~4' },
-  { ring: [[-73.6975,41.1795],[-73.6940,41.1795],[-73.6940,41.1775],[-73.6975,41.1775],[-73.6975,41.1795]],
-    color:'#9c27b0', label:'Zone E', name:'E Central', acres:'~4' },
-  { ring: [[-73.6975,41.1775],[-73.6940,41.1775],[-73.6940,41.1758],[-73.6975,41.1758],[-73.6975,41.1775]],
-    color:'#00bcd4', label:'Zone F', name:'South Field', acres:'~4' }
+  { ring: [[-73.7015,41.1800],[-73.6985,41.1800],[-73.6985,41.1785],[-73.7015,41.1785],[-73.7015,41.1800]],
+    color:'#ff9800', label:'Zone C', name:'W Central', acres:'~4' },
+  { ring: [[-73.6985,41.1800],[-73.6960,41.1800],[-73.6960,41.1785],[-73.6985,41.1785],[-73.6985,41.1800]],
+    color:'#9c27b0', label:'Zone D', name:'E Central', acres:'~4' },
+  { ring: [[-73.7010,41.1785],[-73.6980,41.1785],[-73.6980,41.1770],[-73.7010,41.1770],[-73.7010,41.1785]],
+    color:'#e91e63', label:'Zone E', name:'SW Field', acres:'~4' },
+  { ring: [[-73.6980,41.1785],[-73.6955,41.1785],[-73.6955,41.1770],[-73.6980,41.1770],[-73.6980,41.1785]],
+    color:'#00bcd4', label:'Zone F', name:'South Slope', acres:'~4' }
 ];
 
 // All 6 charging stations — single location, south side of main building
@@ -197,12 +198,12 @@ var map = new maplibregl.Map({
       { id: 'satellite-layer', type: 'raster', source: 'satellite' },
       { id: 'topo-layer', type: 'raster', source: 'topo', paint: { 'raster-opacity': 0.4 } }
     ],
-    terrain: { source: 'terrain-dem', exaggeration: 1.5 }
+    // terrain: { source: 'terrain-dem', exaggeration: 1.5 }
   },
-  center: [-73.6970, 41.1795],
+  center: [-73.6975, 41.1795],
   zoom: 15.5,
-  pitch: 55,
-  bearing: 20,
+  pitch: 0,
+  bearing: 0,
   maxPitch: 85,
   antialias: true
 });
