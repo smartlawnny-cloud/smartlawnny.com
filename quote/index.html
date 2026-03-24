@@ -227,14 +227,21 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
       </div>
 
       <div id="resultsPanel" style="display:none;margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px;">
-        <div style="font-size:11px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Slope Breakdown</div>
-        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#4caf50;display:inline-block;flex-shrink:0;"></span><strong id="slopeGreen" style="min-width:28px;">—</strong><span style="color:#666;">Flat (&lt;22°) — All mowers</span></div>
-        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#ffeb3b;display:inline-block;flex-shrink:0;"></span><strong id="slopeYellow" style="min-width:28px;">—</strong><span style="color:#666;">Moderate (22–30°) — Yarbo limit</span></div>
-        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#ff9800;display:inline-block;flex-shrink:0;"></span><strong id="slopeOrange" style="min-width:28px;">—</strong><span style="color:#666;">Steep (30–43°) — TerraNox only</span></div>
-        <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;"><span style="width:10px;height:10px;border-radius:2px;background:#f44336;display:inline-block;flex-shrink:0;"></span><strong id="slopeRed" style="min-width:28px;">—</strong><span style="color:#666;">Extreme (&gt;43°) — No mower</span></div>
-
-        <div style="background:#f0f8e8;border-radius:8px;padding:12px;font-size:13px;color:#4a8a10;margin-top:12px;">
-          <strong>TerraNox CM240M1</strong> handles slopes up to 43° — covering nearly any terrain on this property.
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:11px;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Mowing Zones</span>
+          <button onclick="addMowZone()" style="padding:4px 12px;font-size:11px;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:#6abb1e;color:#fff;font-family:'Inter',sans-serif;">+ Add Zone</button>
+        </div>
+        <p style="font-size:11px;color:#888;margin-bottom:8px;">Draw separate mowing zones to plan fleet coverage. Each zone shows its acreage.</p>
+        <div id="zonesList"></div>
+        <div id="zoneTotals" style="display:none;margin-top:8px;padding-top:8px;border-top:1px solid #e5e7eb;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;">
+            <span>Total Mowing Area</span>
+            <span id="zoneTotalAcres" style="color:#6abb1e;">0 acres</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-top:2px;">
+            <span>Mowers Needed</span>
+            <span id="zoneTotalMowers">0</span>
+          </div>
         </div>
       </div>
     </div>
@@ -456,6 +463,8 @@ function initMap() {
   }
 
   map.addListener('click', function(e) {
+    // Zone drawing takes priority
+    if (activeZoneDraw !== null) { handleZoneClick(e); return; }
     if (!isDrawing) return;
     var pos = e.latLng;
     drawPoints.push(pos);
@@ -621,9 +630,8 @@ function startAnalysis(lat, lng, displayName) {
       var bounds = new google.maps.LatLngBounds();
       drawnPolygon.getPath().forEach(function(p) { bounds.extend(p); });
       map.fitBounds(bounds, {top:10,right:10,bottom:10,left:10});
-      // Auto-run analysis — keep draw instructions visible so user can clear & redraw
+      // Show results panel with zone tools
       document.getElementById('resultsPanel').style.display = 'block';
-      runSlopeAnalysis();
       calculatePackages();
       // Listen for edits
       google.maps.event.addListener(drawnPolygon.getPath(), 'set_at', updateAreaFromPolygon);
@@ -824,9 +832,7 @@ function updateAreaFromPolygon() {
 function calculateFromPolygon() {
   if (!drawnPolygon) { alert('Please draw your property boundary on the map first.'); return; }
   updateAreaFromPolygon();
-  document.getElementById('drawInstructions').style.display = 'none';
   document.getElementById('resultsPanel').style.display = 'block';
-  runSlopeAnalysis();
   calculatePackages();
 }
 
@@ -837,13 +843,24 @@ function clearDrawing() {
   slopeCells = [];
   contourLines.forEach(function(l) { l.setMap(null); });
   contourLines = [];
+  // Clear all mowing zones
+  mowZones.forEach(function(z) {
+    if (z.polygon) z.polygon.setMap(null);
+    if (z.polyline) z.polyline.setMap(null);
+    if (z.labelMarker) z.labelMarker.setMap(null);
+    z.markers.forEach(function(m){m.setMap(null);});
+  });
+  mowZones = [];
+  activeZoneDraw = null;
+  document.getElementById('zonesList').innerHTML = '';
+  document.getElementById('zoneTotals').style.display = 'none';
+
   document.getElementById('statLot').textContent = '—';
   document.getElementById('statMowable').textContent = '—';
   document.getElementById('statElev').textContent = '—';
   document.getElementById('closeShapeBtn').style.display = 'none';
   document.getElementById('drawInstructions').style.display = 'block';
   document.getElementById('resultsPanel').style.display = 'none';
-  drawingManager.setDrawingMode('polygon');
 }
 
 // ══════════════════════════════════════
@@ -854,6 +871,123 @@ function set3D() { map.setTilt(45); }
 function rotateMap() {
   var h = map.getHeading() || 0;
   map.setHeading(h + 90);
+}
+
+// ══════════════════════════════════════
+// MOWING ZONES — draw multiple zones, each tracked with acreage
+// ══════════════════════════════════════
+var mowZones = []; // {polygon, points, markers, polyline, color, name}
+var mowZoneColors = ['#4caf50','#2196f3','#ff9800','#9c27b0','#e91e63','#00bcd4','#ff5722','#607d8b'];
+var activeZoneDraw = null; // currently drawing zone index
+
+function addMowZone() {
+  var idx = mowZones.length;
+  var color = mowZoneColors[idx % mowZoneColors.length];
+  var name = 'Zone ' + String.fromCharCode(65 + idx);
+  var zone = { polygon: null, points: [], markers: [], polyline: null, color: color, name: name };
+  mowZones.push(zone);
+  activeZoneDraw = idx;
+  map.setOptions({draggableCursor:'crosshair'});
+  updateZonesList();
+}
+
+function finishZoneDraw(idx) {
+  var zone = mowZones[idx];
+  if (zone.points.length < 3) return;
+  activeZoneDraw = null;
+  map.setOptions({draggableCursor:null});
+  if (zone.polyline) zone.polyline.setMap(null);
+  zone.markers.forEach(function(m){m.setMap(null);});
+  zone.markers = [];
+  zone.polygon = new google.maps.Polygon({
+    paths: zone.points, map: map,
+    fillColor: zone.color, fillOpacity: 0.25,
+    strokeColor: zone.color, strokeWeight: 2,
+    editable: true, draggable: false
+  });
+  // Add label marker at center
+  var center = {lat:0, lng:0};
+  zone.points.forEach(function(p){ center.lat += p.lat()/zone.points.length; center.lng += p.lng()/zone.points.length; });
+  var areaM2 = google.maps.geometry.spherical.computeArea(zone.polygon.getPath());
+  var acres = (areaM2 / 4046.86).toFixed(1);
+  zone.labelMarker = new google.maps.Marker({
+    position: center, map: map,
+    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 0 },
+    label: { text: zone.name + '\n' + acres + ' ac', color: '#fff', fontSize: '11px', fontWeight: 'bold',
+      className: 'zone-label' }
+  });
+  // Listen for edits
+  google.maps.event.addListener(zone.polygon.getPath(), 'set_at', function(){ updateZonesList(); });
+  google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', function(){ updateZonesList(); });
+  updateZonesList();
+}
+
+function removeZone(idx) {
+  var zone = mowZones[idx];
+  if (zone.polygon) zone.polygon.setMap(null);
+  if (zone.polyline) zone.polyline.setMap(null);
+  if (zone.labelMarker) zone.labelMarker.setMap(null);
+  zone.markers.forEach(function(m){m.setMap(null);});
+  mowZones.splice(idx, 1);
+  if (activeZoneDraw === idx) { activeZoneDraw = null; map.setOptions({draggableCursor:null}); }
+  updateZonesList();
+}
+
+function updateZonesList() {
+  var html = '';
+  var totalAcres = 0;
+  mowZones.forEach(function(zone, i) {
+    var acres = 0;
+    if (zone.polygon) {
+      var areaM2 = google.maps.geometry.spherical.computeArea(zone.polygon.getPath());
+      acres = areaM2 / 4046.86;
+      // Update label
+      if (zone.labelMarker) {
+        zone.labelMarker.setLabel({ text: zone.name + ' — ' + acres.toFixed(1) + ' ac', color: '#fff',
+          fontSize: '11px', fontWeight: 'bold' });
+      }
+    }
+    totalAcres += acres;
+    var isDrawing = (activeZoneDraw === i && !zone.polygon);
+    html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #eee;font-size:12px;">' +
+      '<span style="width:12px;height:12px;border-radius:3px;background:'+zone.color+';display:inline-block;flex-shrink:0;"></span>' +
+      '<strong style="flex:1;">'+zone.name+'</strong>' +
+      (zone.polygon ? '<span style="color:#1d1d1f;font-weight:600;">'+acres.toFixed(1)+' ac</span>' :
+        (isDrawing ? '<span style="color:#ff9800;font-size:11px;">Drawing... ('+zone.points.length+' pts)</span>' : '')) +
+      (isDrawing && zone.points.length >= 3 ? '<button onclick="finishZoneDraw('+i+')" style="padding:2px 8px;font-size:10px;background:#4a8a10;color:#fff;border:none;border-radius:3px;cursor:pointer;">Close</button>' : '') +
+      '<button onclick="removeZone('+i+')" style="padding:2px 6px;font-size:10px;background:#eee;color:#999;border:none;border-radius:3px;cursor:pointer;" title="Remove">✕</button>' +
+      '</div>';
+  });
+  document.getElementById('zonesList').innerHTML = html;
+
+  var mowersNeeded = Math.ceil(totalAcres / 1.5);
+  document.getElementById('zoneTotalAcres').textContent = totalAcres.toFixed(1) + ' acres';
+  document.getElementById('zoneTotalMowers').textContent = mowersNeeded + ' TerraNox (' + totalAcres.toFixed(1) + ' ac ÷ 1.5 ac/unit)';
+  document.getElementById('zoneTotals').style.display = mowZones.length > 0 ? 'block' : 'none';
+}
+
+// Hook into map click for zone drawing
+function handleZoneClick(e) {
+  if (activeZoneDraw === null) return;
+  var zone = mowZones[activeZoneDraw];
+  if (zone.polygon) return; // already closed
+
+  var pos = e.latLng;
+  zone.points.push(pos);
+
+  var marker = new google.maps.Marker({
+    position: pos, map: map,
+    icon: { path: google.maps.SymbolPath.CIRCLE, scale:6, fillColor:zone.color, fillOpacity:1, strokeColor:'#fff', strokeWeight:2 },
+    label: { text: String(zone.points.length), color:'#fff', fontSize:'9px', fontWeight:'bold' }
+  });
+  zone.markers.push(marker);
+
+  if (zone.polyline) zone.polyline.setMap(null);
+  zone.polyline = new google.maps.Polyline({
+    path: zone.points, map: map,
+    strokeColor: zone.color, strokeWeight: 2, strokeOpacity: 0.8
+  });
+  updateZonesList();
 }
 
 // ══════════════════════════════════════
