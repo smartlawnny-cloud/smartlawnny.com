@@ -503,34 +503,57 @@
 </header>
 
 
-<!-- Hero -->
-<section class="hero">
-  <div class="hero-split">
-    <div class="hero-content fade-in">
-      <div class="hero-badge">Westchester & Putnam County's Only Robotic Mower Dealer</div>
-      <h1>Your lawn.<br>Mowed every day.<br><span class="accent">By a robot.</span></h1>
-      <div class="hero-tagline">We sell, install, and service Segway Navimow & Yarbo mowers. Satellite property analysis. 30-day Perfect Mower Guarantee. Professional installation from $199.</div>
-      <div class="hero-buttons">
-        <a href="#quiz-section" class="btn btn-primary">Analyze My Lawn</a>
-        <a href="#products" class="btn btn-outline">Shop Mowers</a>
+<!-- Hero — C1 "Sunroof" style: address bar morphs into satellite map -->
+<section class="hero" id="quiz-section" style="padding:0;">
+  <!-- Initial state: clean address hero -->
+  <div id="heroInitial" style="text-align:center;padding:60px 24px 48px;max-width:720px;margin:0 auto;">
+    <div style="font-size:.8rem;font-weight:600;color:#6abb1e;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;">Westchester & Putnam County's Only Robotic Mower Dealer</div>
+    <h1 style="font-size:2.8rem;font-weight:800;line-height:1.15;color:#1d1d1f;margin-bottom:12px;">Your lawn, analyzed<br><span class="accent">from space.</span></h1>
+    <p style="font-size:1.05rem;color:#86868b;margin-bottom:28px;line-height:1.6;">Enter your address and we'll map your property, measure your lawn, analyze your terrain, and recommend the perfect robotic mower — in seconds.</p>
+    <div style="display:flex;gap:8px;max-width:560px;margin:0 auto;">
+      <input type="text" id="heroAddrInput" placeholder="Enter your property address..." style="flex:1;padding:16px 20px;font-size:1rem;border:2px solid #e0e0e0;border-radius:14px;outline:none;font-family:inherit;transition:border-color .2s;" onfocus="this.style.borderColor='#6abb1e'" onblur="this.style.borderColor='#e0e0e0'">
+      <button onclick="_heroAnalyze()" style="padding:16px 28px;background:#6abb1e;color:#fff;border:none;border-radius:14px;font-size:1rem;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:background .2s;" onmouseover="this.style.background='#5a9e18'" onmouseout="this.style.background='#6abb1e'"><i class="fas fa-satellite" style="margin-right:6px;"></i>Analyze</button>
+    </div>
+    <div style="display:flex;justify-content:center;gap:24px;margin-top:20px;font-size:.78rem;color:#86868b;">
+      <span><i class="fas fa-satellite-dish" style="color:#6abb1e;margin-right:4px;"></i>Satellite mapping</span>
+      <span><i class="fas fa-draw-polygon" style="color:#6abb1e;margin-right:4px;"></i>Zone drawing</span>
+      <span><i class="fas fa-robot" style="color:#6abb1e;margin-right:4px;"></i>Mower matching</span>
+    </div>
+    <!-- How it works steps -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;text-align:center;">
+      <div style="padding:16px;">
+        <div style="width:48px;height:48px;background:#f0f8e8;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><i class="fas fa-map-marker-alt" style="color:#6abb1e;font-size:20px;"></i></div>
+        <div style="font-size:.85rem;font-weight:700;color:#1d1d1f;">1. Enter Address</div>
+        <div style="font-size:.75rem;color:#86868b;margin-top:4px;">We pull satellite imagery and property boundaries</div>
       </div>
-      <div style="display:flex;gap:16px;margin-top:12px;font-size:.75rem;color:#86868b;">
-        <span><i class="fas fa-check-circle" style="color:#6abb1e;margin-right:4px;"></i>Wire-free install</span>
-        <span><i class="fas fa-check-circle" style="color:#6abb1e;margin-right:4px;"></i>Under 60 dB</span>
-        <span><i class="fas fa-check-circle" style="color:#6abb1e;margin-right:4px;"></i>From $1,599</span>
+      <div style="padding:16px;">
+        <div style="width:48px;height:48px;background:#f0f8e8;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><i class="fas fa-ruler-combined" style="color:#6abb1e;font-size:20px;"></i></div>
+        <div style="font-size:.85rem;font-weight:700;color:#1d1d1f;">2. We Measure</div>
+        <div style="font-size:.75rem;color:#86868b;margin-top:4px;">Lot size, lawn area, terrain analysis</div>
+      </div>
+      <div style="padding:16px;">
+        <div style="width:48px;height:48px;background:#f0f8e8;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><i class="fas fa-check-circle" style="color:#6abb1e;font-size:20px;"></i></div>
+        <div style="font-size:.85rem;font-weight:700;color:#1d1d1f;">3. Get Matched</div>
+        <div style="font-size:.75rem;color:#86868b;margin-top:4px;">See exactly which mower fits your property</div>
       </div>
     </div>
-    <div class="hero-product">
-      <a href="products/navimow-x450.html" class="hero-product-link active"><img src="images/products/x4-black-pdp.png" alt="Navimow X450 Robotic Mower" width="500" height="500" loading="eager"></a>
-      <a href="products/yarbo-lawn-mower.html" class="hero-product-link"><img src="images/products/yarbo-lawn-mower-alt.webp" alt="Yarbo Robotic Lawn Mower" width="500" height="500" loading="lazy"></a>
+  </div>
+
+  <!-- Morphed state: satellite map (hidden until address entered) -->
+  <div id="heroMap" style="display:none;">
+    <!-- Compact address bar at top -->
+    <div id="heroMapBar" style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:#fff;border-bottom:1px solid #e5e7eb;">
+      <i class="fas fa-map-marker-alt" style="color:#6abb1e;"></i>
+      <span id="heroMapAddr" style="font-size:.85rem;font-weight:600;color:#1d1d1f;flex:1;"></span>
+      <button onclick="_heroReset()" style="padding:4px 12px;font-size:.75rem;border:1px solid #ddd;border-radius:6px;background:#fff;color:#666;cursor:pointer;">✕ New Address</button>
     </div>
   </div>
 </section>
 
-<!-- Find Your Mower — Map-Driven (right below hero) -->
-<section class="quiz-section" id="quiz-section">
+<!-- Map Tool Section (existing, now revealed by hero morph) -->
+<section class="quiz-section" id="quiz-map-section" style="display:none;">
   <div class="container">
-    <div class="section-header fade-in">
+    <div class="section-header fade-in" style="display:none;">
       <h2>Find Your Perfect <span class="underline-accent">Robotic Mower</span></h2>
       <p>Enter your address — we'll analyze your terrain, recommend the right mower, and quote your MaaS contract</p>
     </div>
@@ -1960,6 +1983,19 @@ function _onPropMapReady() {
   });
   input.addEventListener('keydown', function(e) { if(e.key==='Enter') { e.preventDefault(); checkProperty(); } });
 
+  // Hero address autocomplete
+  var heroInput = document.getElementById('heroAddrInput');
+  if (heroInput) {
+    var heroAc = new google.maps.places.Autocomplete(heroInput, {types:['address'],componentRestrictions:{country:'us'}});
+    heroAc.addListener('place_changed', function() {
+      var place = heroAc.getPlace();
+      if (place.geometry) {
+        heroInput.value = place.formatted_address;
+        _heroAnalyze();
+      }
+    });
+  }
+
   // ── LOAD SHARED QUOTE FROM URL HASH ──
   if (window.location.hash.indexOf('#quote=') === 0) {
     try {
@@ -2023,6 +2059,40 @@ function _onPropMapReady() {
     } catch(e) { console.log('Failed to load shared quote:', e); }
   }
 }
+// Hero C1 morph functions
+function _heroAnalyze() {
+  var addr = document.getElementById('heroAddrInput').value.trim();
+  if (!addr) return;
+  // Copy address to the existing map tool input
+  document.getElementById('propAddressInput').value = addr;
+  // Morph: hide initial hero, show map section
+  document.getElementById('heroInitial').style.display = 'none';
+  document.getElementById('heroMap').style.display = 'block';
+  document.getElementById('heroMapAddr').textContent = addr;
+  document.getElementById('quiz-map-section').style.display = 'block';
+  // Scroll to map
+  document.getElementById('quiz-map-section').scrollIntoView({behavior:'smooth', block:'start'});
+  // Trigger the existing property check
+  setTimeout(function(){ checkProperty(); }, 300);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var heroInput = document.getElementById('heroAddrInput');
+  if (heroInput) {
+    heroInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') _heroAnalyze(); });
+    // Set up Google Places autocomplete on hero input
+    if (window.google && google.maps && google.maps.places) {
+      new google.maps.places.Autocomplete(heroInput, {types:['address'], componentRestrictions:{country:'us'}});
+    }
+  }
+});
+function _heroReset() {
+  document.getElementById('heroInitial').style.display = 'block';
+  document.getElementById('heroMap').style.display = 'none';
+  document.getElementById('quiz-map-section').style.display = 'none';
+  document.getElementById('heroAddrInput').value = '';
+  document.getElementById('heroAddrInput').focus();
+}
+
 function checkProperty() {
   var q = document.getElementById('propAddressInput').value.trim();
   if (!q || !window._propMapInit) return;
