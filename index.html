@@ -586,7 +586,7 @@
 
           <!-- Charger Placement -->
           <div style="margin-top:8px;">
-            <button onclick="_toggleChargerMode()" id="chargerModeBtn" style="padding:5px 12px;font-size:.7rem;font-weight:600;border:1px solid #ff9800;border-radius:4px;background:#fff;color:#ff9800;cursor:pointer;">⚡ Place Charger</button>
+            <button onclick="_placeOneCharger()" id="chargerModeBtn" style="padding:5px 12px;font-size:.7rem;font-weight:600;border:1px solid #ff9800;border-radius:4px;background:#fff;color:#ff9800;cursor:pointer;">⚡ Place Charger</button>
             <span id="chargerCount" style="font-size:.7rem;color:#888;margin-left:6px;"></span>
           </div>
 
@@ -604,7 +604,7 @@
 
           <!-- Manual Draw (if no auto-boundary) -->
           <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">
-            <button onclick="_propDrawMgr.setDrawingMode('polygon')" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-radius:6px;background:#ff9800;color:#fff;cursor:pointer;">✏️ Draw Boundary</button>
+            <button onclick="_propDrawMgr.setDrawingMode('polygon')" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-radius:6px;background:#ff9800;color:#fff;cursor:pointer;">✏️ Draw Mowing Zone</button>
             <button id="propCloseShapeBtn" onclick="_closePropShape()" style="display:none;padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-radius:6px;background:#4a8a10;color:#fff;cursor:pointer;animation:pulse 1s infinite;">Close Shape</button>
             <button onclick="_clearAllHome()" style="padding:6px 12px;font-size:.75rem;font-weight:600;border:1px solid #ccc;border-radius:6px;background:#fff;color:#666;cursor:pointer;">Clear All</button>
           </div>
@@ -1663,20 +1663,13 @@ function _onPropMapReady() {
   window._chargerMarkers = [];
   window._chargerMode = false;
 
-  window._toggleChargerMode = function() {
-    window._chargerMode = !window._chargerMode;
+  window._placeOneCharger = function() {
+    window._chargerMode = true;
+    _propMap.setOptions({draggableCursor:'crosshair'});
     var btn = document.getElementById('chargerModeBtn');
-    if (window._chargerMode) {
-      btn.style.background = '#ff9800';
-      btn.style.color = '#fff';
-      btn.textContent = '⚡ Click Map to Place — Done';
-      _propMap.setOptions({draggableCursor:'crosshair'});
-    } else {
-      btn.style.background = '#fff';
-      btn.style.color = '#ff9800';
-      btn.textContent = '⚡ Place Charger';
-      _propMap.setOptions({draggableCursor:null});
-    }
+    btn.style.background = '#ff9800';
+    btn.style.color = '#fff';
+    btn.textContent = '⚡ Click map to place...';
   };
 
   // Hook charger click into existing map listener — add before zone/draw check
@@ -1710,6 +1703,13 @@ function _onPropMapReady() {
     });
     _chargerMarkers.push(marker);
     _updateChargerCount();
+    // Auto-exit charger mode after placing one
+    window._chargerMode = false;
+    _propMap.setOptions({draggableCursor:null});
+    var btn = document.getElementById('chargerModeBtn');
+    btn.style.background = '#fff';
+    btn.style.color = '#ff9800';
+    btn.textContent = '⚡ Place Charger';
   });
 
   function _updateChargerCount() {
