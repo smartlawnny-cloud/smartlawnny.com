@@ -598,6 +598,7 @@
               <button onclick="_textQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#2196f3;color:#fff;cursor:pointer;">💬 Text</button>
               <button onclick="_emailQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">📧 Email</button>
               <button onclick="_printQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#fff;color:#666;border:1px solid #ccc;cursor:pointer;">🖨️ Print</button>
+              <button onclick="_sendToRep()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#ff9800;color:#fff;cursor:pointer;">📲 Send to Rep</button>
             </div>
             <div id="shareLinkCopied" style="display:none;font-size:.7rem;color:#4a8a10;margin-top:4px;font-weight:600;">✓ Link copied to clipboard!</div>
           </div>
@@ -729,6 +730,7 @@
       <button class="product-tab" onclick="filterProducts('all')">All Mowers</button>
       <button class="product-tab" onclick="filterProducts('navimow')">Segway Navimow</button>
       <button class="product-tab" onclick="filterProducts('yarbo')">Yarbo</button>
+      <button id="shopToggleBtn" onclick="toggleShop()" style="margin-left:auto;padding:8px 16px;font-size:.8rem;font-weight:600;border:1px solid #e0e0e0;border-radius:8px;background:#fff;color:#666;cursor:pointer;">▼ Collapse</button>
     </div>
     <div class="product-grid" id="productGrid">
       <!-- Navimow Terranox CM240M1 -->
@@ -938,35 +940,10 @@
       <div class="why-card fade-in"><div class="icon-circle"><i class="fas fa-clock"></i></div><h3>Get Your Time Back</h3><p>No more weekends lost to mowing.</p></div>
     </div>
 
-    <!-- Before/After Comparison -->
-    <div class="fade-in" style="margin-top:40px;max-width:700px;margin-left:auto;margin-right:auto;">
-      <h3 style="text-align:center;font-size:1.2rem;font-weight:700;margin-bottom:16px;">Weekly Mowing vs. Daily Robotic</h3>
-      <div id="baCompare" style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;cursor:col-resize;box-shadow:0 8px 30px rgba(0,0,0,.12);">
-        <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80" alt="Overgrown lawn" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
-        <div id="baAfter" style="position:absolute;top:0;right:0;width:50%;height:100%;overflow:hidden;">
-          <img src="https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=800&q=80" alt="Perfectly maintained lawn" style="position:absolute;top:0;right:0;width:200%;max-width:none;height:100%;object-fit:cover;transform:translateX(50%);">
-        </div>
-        <div id="baSlider" style="position:absolute;top:0;left:50%;width:4px;height:100%;background:#fff;cursor:col-resize;z-index:10;box-shadow:0 0 8px rgba(0,0,0,.3);">
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2);"><span style="font-size:14px;color:#666;">⟷</span></div>
-        </div>
-        <div style="position:absolute;bottom:12px;left:16px;background:rgba(0,0,0,.6);color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Weekly crew cut</div>
-        <div style="position:absolute;bottom:12px;right:16px;background:rgba(106,187,30,.9);color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Daily robotic mow</div>
-      </div>
-    </div>
+    <!-- Before/After removed for now -->
   </div>
 </section>
-<script>
-(function(){
-  var c=document.getElementById('baCompare'),a=document.getElementById('baAfter'),s=document.getElementById('baSlider'),d=false;
-  function m(x){var r=c.getBoundingClientRect();var p=Math.max(5,Math.min(95,((x-r.left)/r.width)*100));a.style.width=(100-p)+'%';s.style.left=p+'%';a.querySelector('img').style.transform='translateX('+p+'%)';}
-  c.addEventListener('mousedown',function(e){d=true;m(e.clientX);});
-  window.addEventListener('mousemove',function(e){if(d)m(e.clientX);});
-  window.addEventListener('mouseup',function(){d=false;});
-  c.addEventListener('touchstart',function(e){d=true;m(e.touches[0].clientX);},{passive:true});
-  window.addEventListener('touchmove',function(e){if(d)m(e.touches[0].clientX);},{passive:true});
-  window.addEventListener('touchend',function(){d=false;});
-})();
-</script>
+<!-- before/after slider JS removed -->
 
 <!-- Hands-Free Lawn Care Banner -->
 <section class="hands-free-banner">
@@ -1293,33 +1270,7 @@
 </section>
 
 <!-- Contact -->
-<!-- Schedule a Demo -->
-<section id="demo" style="padding:60px 0;background:linear-gradient(135deg,#f0f8e8,#e8f5d8);">
-  <div class="container" style="max-width:700px;">
-    <div class="fade-in" style="text-align:center;margin-bottom:32px;">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:#6abb1e;color:#fff;padding:6px 16px;border-radius:980px;font-size:.8rem;font-weight:700;margin-bottom:12px;"><i class="fas fa-calendar-check"></i> FREE</div>
-      <h2 style="font-size:2rem;font-weight:800;color:#1d1d1f;margin-bottom:8px;">Schedule a Free Demo</h2>
-      <p style="color:#636366;font-size:1rem;">See a robotic mower run on your actual lawn. We bring the mower, set it up, and let you watch it work. No obligation, no pressure.</p>
-    </div>
-    <form id="demoForm" onsubmit="return submitDemoForm(event)" style="background:#fff;border-radius:16px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.06);">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div class="form-group"><label>Name *</label><input type="text" name="demoName" placeholder="Your name" required style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:.95rem;"></div>
-        <div class="form-group"><label>Phone *</label><input type="tel" name="demoPhone" placeholder="(914) 555-1234" required style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:.95rem;"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div class="form-group"><label>Email *</label><input type="email" name="demoEmail" placeholder="you@email.com" required style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:.95rem;"></div>
-        <div class="form-group"><label>Property Address *</label><input type="text" name="demoAddress" placeholder="123 Main St, Peekskill NY" required style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:.95rem;"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-        <div class="form-group"><label>Preferred Date *</label><input type="date" name="demoDate" required min="2026-04-01" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:.95rem;"></div>
-        <div class="form-group"><label>Preferred Time</label><select name="demoTime" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:.95rem;background:#fff;"><option>Morning (9am-12pm)</option><option>Afternoon (12pm-3pm)</option><option selected>Flexible</option></select></div>
-      </div>
-      <div class="form-group" style="margin-bottom:16px;"><label>Lawn Size (approx)</label><select name="demoLawnSize" style="width:100%;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:.95rem;background:#fff;"><option>Under 1/4 acre</option><option selected>1/4 - 1/2 acre</option><option>1/2 - 1 acre</option><option>1 - 2 acres</option><option>2+ acres</option><option>HOA / Commercial</option></select></div>
-      <button type="submit" id="demoBtn" style="width:100%;padding:14px;background:#6abb1e;color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;">Book My Free Demo</button>
-      <p style="text-align:center;font-size:.8rem;color:#999;margin-top:10px;">We'll confirm your demo within 24 hours. Demos available May 1st onward.</p>
-    </form>
-  </div>
-</section>
+<!-- Demo section removed — no free demos, use tools or contact form -->
 
 <section class="contact" id="contact">
   <div class="container">
@@ -1420,6 +1371,18 @@
 function toggleMobileNav() {
   var nav = document.querySelector('nav');
   nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
+}
+
+function toggleShop() {
+  var grid = document.getElementById('productGrid');
+  var btn = document.getElementById('shopToggleBtn');
+  if (grid.style.display === 'none') {
+    grid.style.display = '';
+    btn.textContent = '▼ Collapse';
+  } else {
+    grid.style.display = 'none';
+    btn.textContent = '▶ Show Mowers';
+  }
 }
 
 function filterProducts(brand) {
@@ -1844,6 +1807,25 @@ function _onPropMapReady() {
       '</body></html>');
     win.document.close();
     setTimeout(function() { win.print(); }, 500);
+  };
+
+  window._sendToRep = function() {
+    var d = _buildQuoteData();
+    var body = 'New property assessment from smartlawnny.com:\n\n' +
+      'Address: ' + d.addr + '\n' +
+      'Total Area: ' + d.totalAc + ' acres\n' +
+      'Zones: ' + d.zones.map(function(z){return z.name+' ('+z.acres+' ac)';}).join(', ') + '\n' +
+      'Recommended: ' + d.mowerName + ' x' + d.unitsNeeded + '\n' +
+      'Fleet Cost: $' + d.fleetCost.toLocaleString() + '\n' +
+      'DFY: $' + Number(d.weeklyDFY).toLocaleString() + '/week\n\n' +
+      'Map link: ' + window.location.href;
+    // Send via Apps Script to text Doug
+    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
+    fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'MAP QUOTE', address:d.addr, totalAcres:d.totalAc, zones:d.zones.length, mower:d.mowerName, units:d.unitsNeeded, fleetCost:d.fleetCost, weeklyDFY:d.weeklyDFY, date:new Date().toISOString()}) });
+    // Also open SMS to Doug
+    var sms = 'sms:9146477276&body=' + encodeURIComponent('New quote request: ' + d.addr + ' - ' + d.totalAc + ' acres, ' + d.zones.length + ' zones, ' + d.mowerName + ' x' + d.unitsNeeded + '. $' + Number(d.weeklyDFY).toLocaleString() + '/wk DFY');
+    window.open(sms, '_self');
+    if (typeof gtag === 'function') gtag('event', 'send_to_rep', {address: d.addr, acres: d.totalAc});
   };
 
   // Include chargers in clear all
@@ -2471,31 +2453,7 @@ function submitContactForm(e) {
   return false;
 }
 
-/* Demo Form → Apps Script (email + text) */
-function submitDemoForm(e) {
-  e.preventDefault();
-  var form = document.getElementById('demoForm');
-  var btn = document.getElementById('demoBtn');
-  var data = {type: 'DEMO REQUEST'};
-  new FormData(form).forEach(function(v, k) { data[k] = v; });
-  data.date = new Date().toISOString();
-  btn.textContent = 'Booking...';
-  btn.disabled = true;
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
-  fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
-  .then(function() {
-    btn.textContent = 'Demo Requested!';
-    btn.style.background = '#4caf50';
-    if (typeof gtag === 'function') gtag('event', 'demo_requested', {lawn_size: data.demoLawnSize || 'unknown', date: data.demoDate || ''});
-    form.reset();
-    setTimeout(function() { btn.textContent = 'Book My Free Demo'; btn.disabled = false; btn.style.background = ''; }, 4000);
-  })
-  .catch(function() {
-    btn.textContent = 'Error — try again';
-    btn.style.background = '#ff3b30';
-    setTimeout(function() { btn.textContent = 'Book My Free Demo'; btn.disabled = false; btn.style.background = ''; }, 3000);
-  });
-  return false;
+/* Demo form removed */
 }
 
 /* Newsletter → Google Sheets */
