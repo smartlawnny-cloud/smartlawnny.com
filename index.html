@@ -590,6 +590,18 @@
             <span id="chargerCount" style="font-size:.7rem;color:#888;margin-left:6px;"></span>
           </div>
 
+          <!-- Generate Quote / Share -->
+          <div id="quoteActions" style="display:none;margin-top:10px;background:#f0f8e8;border:1px solid #6abb1e;border-radius:8px;padding:10px;">
+            <div style="font-size:.7rem;font-weight:700;color:#4a8a10;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Share This Quote</div>
+            <div style="display:flex;flex-wrap:wrap;gap:4px;">
+              <button onclick="_generateShareLink()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#6abb1e;color:#fff;cursor:pointer;">🔗 Copy Link</button>
+              <button onclick="_textQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#2196f3;color:#fff;cursor:pointer;">💬 Text</button>
+              <button onclick="_emailQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">📧 Email</button>
+              <button onclick="_printQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#fff;color:#666;border:1px solid #ccc;cursor:pointer;">🖨️ Print</button>
+            </div>
+            <div id="shareLinkCopied" style="display:none;font-size:.7rem;color:#4a8a10;margin-top:4px;font-weight:600;">✓ Link copied to clipboard!</div>
+          </div>
+
           <!-- Manual Draw (if no auto-boundary) -->
           <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">
             <button onclick="_propDrawMgr.setDrawingMode('polygon')" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-radius:6px;background:#ff9800;color:#fff;cursor:pointer;">✏️ Draw Boundary</button>
@@ -1608,6 +1620,7 @@ function _onPropMapReady() {
     document.getElementById('homeZoneTotalMowers').textContent=mowers+'× '+mowerName;
     document.getElementById('homeZoneFleetCost').textContent='$'+fleetCost.toLocaleString();
     document.getElementById('homeZoneTotals').style.display=_homeZones.length>0?'block':'none';
+    _checkShowQuoteActions();
     // Update recommendations based on zones
     if(total>0){
       propertyData={totalAcres:total,mowableAcres:total};
@@ -1677,6 +1690,126 @@ function _onPropMapReady() {
     }
   }
 
+  // ── QUOTE GENERATION & SHARING ──
+  // Show share buttons when zones exist
+  function _checkShowQuoteActions() {
+    var el = document.getElementById('quoteActions');
+    el.style.display = _homeZones.some(function(z){return z.polygon;}) ? 'block' : 'none';
+  }
+
+  function _buildQuoteData() {
+    var sel = document.getElementById('homeMowerSelect');
+    var opt = sel.options[sel.selectedIndex];
+    var zones = [];
+    var totalAcres = 0;
+    _homeZones.forEach(function(z) {
+      if (!z.polygon) return;
+      var pts = [];
+      z.polygon.getPath().forEach(function(p) { pts.push([p.lng().toFixed(5), p.lat().toFixed(5)]); });
+      var acres = google.maps.geometry.spherical.computeArea(z.polygon.getPath()) / 4046.86;
+      totalAcres += acres;
+      zones.push({ name: z.name, color: z.color, pts: pts, acres: acres.toFixed(1) });
+    });
+    var chargers = [];
+    _chargerMarkers.forEach(function(m) {
+      chargers.push([m.getPosition().lng().toFixed(5), m.getPosition().lat().toFixed(5)]);
+    });
+    var acPerUnit = parseFloat(sel.value) || 1.5;
+    var mowerName = opt.getAttribute('data-name') || 'TerraNox CM240M1';
+    var mowerPrice = parseInt(opt.getAttribute('data-price')) || 6999;
+    var units = Math.ceil(totalAcres / acPerUnit);
+    return {
+      addr: document.getElementById('propAddrLabel').textContent || '',
+      zones: zones,
+      chargers: chargers,
+      mower: mowerName,
+      mowerPrice: mowerPrice,
+      acPerUnit: acPerUnit,
+      units: units,
+      fleetCost: units * mowerPrice,
+      totalAcres: totalAcres.toFixed(1),
+      weeklyDFY: (totalAcres * 150).toFixed(0),
+      seasonDFY: (totalAcres * 150 * 30).toFixed(0)
+    };
+  }
+
+  function _buildShareURL() {
+    var d = _buildQuoteData();
+    var compressed = btoa(JSON.stringify(d));
+    return window.location.origin + '/#quote=' + compressed;
+  }
+
+  window._generateShareLink = function() {
+    var url = _buildShareURL();
+    navigator.clipboard.writeText(url).then(function() {
+      document.getElementById('shareLinkCopied').style.display = 'block';
+      setTimeout(function() { document.getElementById('shareLinkCopied').style.display = 'none'; }, 3000);
+    });
+  };
+
+  window._textQuote = function() {
+    var d = _buildQuoteData();
+    var msg = 'Smart Lawn NY - Property Quote\n' +
+      d.addr + '\n\n' +
+      d.totalAcres + ' acres | ' + d.units + '× ' + d.mower + '\n' +
+      'Fleet: $' + d.fleetCost.toLocaleString() + '\n' +
+      'Done-For-You: $' + Number(d.weeklyDFY).toLocaleString() + '/week\n\n' +
+      'View map: ' + _buildShareURL() + '\n\n' +
+      'Smart Lawn NY | (914) 647-7276';
+    window.open('sms:?body=' + encodeURIComponent(msg));
+  };
+
+  window._emailQuote = function() {
+    var d = _buildQuoteData();
+    var subject = 'Robotic Mower Quote — ' + d.addr;
+    var body = 'Hi,\n\n' +
+      'Here is your robotic mower property assessment for ' + d.addr + ':\n\n' +
+      'Total Mowing Area: ' + d.totalAcres + ' acres\n' +
+      'Mower: ' + d.mower + ' (' + d.acPerUnit + ' ac/unit)\n' +
+      'Units Needed: ' + d.units + '\n' +
+      'Fleet Cost: $' + d.fleetCost.toLocaleString() + '\n\n' +
+      'Done-For-You Service: $' + Number(d.weeklyDFY).toLocaleString() + '/week ($' + Number(d.seasonDFY).toLocaleString() + '/season)\n\n' +
+      'View interactive map with zones: ' + _buildShareURL() + '\n\n' +
+      'Questions? Call (914) 647-7276\n\n' +
+      'Smart Lawn NY\nsmartlawnny.com';
+    window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+  };
+
+  window._printQuote = function() {
+    var d = _buildQuoteData();
+    var win = window.open('', '_blank');
+    win.document.write('<html><head><title>Quote — ' + d.addr + '</title>' +
+      '<style>body{font-family:-apple-system,sans-serif;padding:40px;color:#1d1d1f;}' +
+      'h1{font-size:24px;color:#6abb1e;margin-bottom:4px;}' +
+      'h2{font-size:16px;font-weight:400;color:#666;margin-bottom:24px;}' +
+      '.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px;}' +
+      '.row strong{color:#1d1d1f;}.row .val{font-weight:600;}' +
+      '.total{font-size:18px;font-weight:700;color:#6abb1e;margin-top:16px;text-align:right;}' +
+      '.zones{margin:16px 0;}.zone{display:inline-block;padding:4px 12px;border-radius:4px;color:#fff;font-size:12px;font-weight:600;margin:2px;}' +
+      '.footer{margin-top:32px;padding-top:16px;border-top:2px solid #6abb1e;font-size:12px;color:#888;}' +
+      '</style></head><body>' +
+      '<h1>Smart Lawn NY</h1><h2>Robotic Mower Property Assessment</h2>' +
+      '<div class="row"><strong>Property</strong><span class="val">' + d.addr + '</span></div>' +
+      '<div class="row"><strong>Total Mowing Area</strong><span class="val">' + d.totalAcres + ' acres</span></div>' +
+      '<div class="row"><strong>Mower Model</strong><span class="val">' + d.mower + ' (' + d.acPerUnit + ' ac/unit)</span></div>' +
+      '<div class="row"><strong>Units Required</strong><span class="val">' + d.units + '</span></div>' +
+      '<div class="row"><strong>Charging Stations</strong><span class="val">' + d.chargers.length + '</span></div>' +
+      '<div class="row"><strong>Fleet Purchase Price</strong><span class="val">$' + d.fleetCost.toLocaleString() + '</span></div>' +
+      '<div class="row"><strong>Done-For-You Weekly</strong><span class="val">$' + Number(d.weeklyDFY).toLocaleString() + '/week</span></div>' +
+      '<div class="row"><strong>Done-For-You Season (30 wks)</strong><span class="val">$' + Number(d.seasonDFY).toLocaleString() + '</span></div>' +
+      '<div class="zones">');
+    d.zones.forEach(function(z) {
+      win.document.write('<span class="zone" style="background:' + z.color + ';">' + z.name + ': ' + z.acres + ' ac</span>');
+    });
+    win.document.write('</div>' +
+      '<div class="total">Fleet: $' + d.fleetCost.toLocaleString() + ' | DFY: $' + Number(d.weeklyDFY).toLocaleString() + '/wk</div>' +
+      '<div class="footer">Smart Lawn NY | (914) 647-7276 | smartlawnny@gmail.com | smartlawnny.com<br>' +
+      'Prices subject to change. Installation and RTK mapping not included in fleet price.</div>' +
+      '</body></html>');
+    win.document.close();
+    setTimeout(function() { win.print(); }, 500);
+  };
+
   // Include chargers in clear all
   var origClear = window._clearAllHome;
   window._clearAllHome = function() {
@@ -1699,6 +1832,69 @@ function _onPropMapReady() {
     if (place.geometry) _flyToProperty(place.geometry.location.lat(), place.geometry.location.lng(), place.formatted_address);
   });
   input.addEventListener('keydown', function(e) { if(e.key==='Enter') { e.preventDefault(); checkProperty(); } });
+
+  // ── LOAD SHARED QUOTE FROM URL HASH ──
+  if (window.location.hash.indexOf('#quote=') === 0) {
+    try {
+      var encoded = window.location.hash.substring(7);
+      var d = JSON.parse(atob(encoded));
+      // Scroll to map
+      document.getElementById('quiz-section').scrollIntoView({behavior:'smooth'});
+      document.getElementById('propAddressInput').value = d.addr;
+      document.getElementById('propMapWrap').style.display = 'grid';
+      document.getElementById('propAddrLabel').textContent = d.addr;
+      // Set mower dropdown
+      var sel = document.getElementById('homeMowerSelect');
+      for (var i=0; i<sel.options.length; i++) {
+        if (sel.options[i].getAttribute('data-name') === d.mower) { sel.selectedIndex = i; break; }
+      }
+      // Geocode address to center map
+      new google.maps.Geocoder().geocode({address:d.addr}, function(results, status) {
+        if (status === 'OK' && results[0]) {
+          var loc = results[0].geometry.location;
+          _propMap.setCenter(loc); _propMap.setZoom(17); _propMap.setTilt(45);
+        }
+        // Draw zones
+        d.zones.forEach(function(z) {
+          var idx = _homeZones.length;
+          _homeZones.push({polygon:null, points:[], markers:[], polyline:null, color:z.color, name:z.name, labelMarker:null});
+          var pts = z.pts.map(function(p){return{lat:parseFloat(p[1]),lng:parseFloat(p[0])};});
+          var poly = new google.maps.Polygon({
+            paths:pts, map:_propMap, fillColor:z.color, fillOpacity:0.25,
+            strokeColor:z.color, strokeWeight:2, editable:false, clickable:false
+          });
+          _homeZones[idx].polygon = poly;
+          _homeZones[idx].points = pts.map(function(p){return new google.maps.LatLng(p.lat,p.lng);});
+          var center = {lat:0,lng:0};
+          pts.forEach(function(p){center.lat+=p.lat/pts.length;center.lng+=p.lng/pts.length;});
+          _homeZones[idx].labelMarker = new google.maps.Marker({
+            position:center, map:_propMap,
+            icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
+            label:{text:z.name+' — '+z.acres+' ac', color:'#fff', fontSize:'11px', fontWeight:'bold'}
+          });
+        });
+        // Place chargers
+        if (d.chargers) {
+          d.chargers.forEach(function(c) {
+            var num = _chargerMarkers.length + 1;
+            var marker = new google.maps.Marker({
+              position:{lat:parseFloat(c[1]),lng:parseFloat(c[0])}, map:_propMap,
+              icon:{url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40"><path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 24 16 24s16-12 16-24C32 7.2 24.8 0 16 0z" fill="#ff9800"/><text x="16" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="white">⚡</text></svg>'),
+                scaledSize:new google.maps.Size(32,40), anchor:new google.maps.Point(16,40)},
+              title:'Charging Station #'+num, draggable:false
+            });
+            _chargerMarkers.push(marker);
+          });
+          _updateChargerCount();
+        }
+        _updateHomeZones();
+        // Fit bounds to all zones
+        var bounds = new google.maps.LatLngBounds();
+        _homeZones.forEach(function(z){if(z.polygon)z.polygon.getPath().forEach(function(p){bounds.extend(p);});});
+        if(!bounds.isEmpty()) _propMap.fitBounds(bounds,{top:20,right:20,bottom:20,left:20});
+      });
+    } catch(e) { console.log('Failed to load shared quote:', e); }
+  }
 }
 function checkProperty() {
   var q = document.getElementById('propAddressInput').value.trim();
