@@ -238,9 +238,23 @@ body { font-family:'Inter',sans-serif; background:#fff; color:#1d1d1f; }
             <span>Total Mowing Area</span>
             <span id="zoneTotalAcres" style="color:#6abb1e;">0 acres</span>
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-top:2px;">
-            <span>Mowers Needed</span>
-            <span id="zoneTotalMowers">0</span>
+          <div style="margin-top:4px;">
+            <select id="quoteMowerSelect" onchange="updateZonesList()" style="width:100%;padding:5px 8px;font-size:12px;border:1px solid #ddd;border-radius:4px;font-family:'Inter',sans-serif;">
+              <option value="1.5" data-name="TerraNox CM240M1" data-price="6999">TerraNox CM240M1 — 1.5 ac ($6,999)</option>
+              <option value="1.0" data-name="TerraNox CM120M1" data-price="5499">TerraNox CM120M1 — 1.0 ac ($5,499)</option>
+              <option value="0.5" data-name="Navimow X450" data-price="2999">Navimow X450 — 0.5 ac ($2,999)</option>
+              <option value="0.25" data-name="Navimow X430" data-price="2499">Navimow X430 — 0.25 ac ($2,499)</option>
+              <option value="0.18" data-name="Navimow H220" data-price="2199">Navimow H220 — 0.18 ac ($2,199)</option>
+              <option value="0.12" data-name="Navimow i215" data-price="1599">Navimow i215 — 0.12 ac ($1,599)</option>
+            </select>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-top:4px;">
+            <span>Units Needed</span>
+            <span id="zoneTotalMowers" style="font-weight:600;color:#1d1d1f;">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#6abb1e;margin-top:2px;">
+            <span>Fleet Cost</span>
+            <span id="zoneFleetCost">$0</span>
           </div>
         </div>
       </div>
@@ -966,9 +980,16 @@ function updateZonesList() {
   });
   document.getElementById('zonesList').innerHTML = html;
 
-  var mowersNeeded = Math.ceil(totalAcres / 1.5);
+  var sel = document.getElementById('quoteMowerSelect');
+  var acPerUnit = parseFloat(sel.value) || 1.5;
+  var opt = sel.options[sel.selectedIndex];
+  var mowerName = opt.getAttribute('data-name') || 'TerraNox CM240M1';
+  var mowerPrice = parseInt(opt.getAttribute('data-price')) || 6999;
+  var mowersNeeded = Math.ceil(totalAcres / acPerUnit);
+  var fleetCost = mowersNeeded * mowerPrice;
   document.getElementById('zoneTotalAcres').textContent = totalAcres.toFixed(1) + ' acres';
-  document.getElementById('zoneTotalMowers').textContent = mowersNeeded + ' TerraNox (' + totalAcres.toFixed(1) + ' ac ÷ 1.5 ac/unit)';
+  document.getElementById('zoneTotalMowers').textContent = mowersNeeded + '× ' + mowerName;
+  document.getElementById('zoneFleetCost').textContent = '$' + fleetCost.toLocaleString();
   document.getElementById('zoneTotals').style.display = mowZones.length > 0 ? 'block' : 'none';
 }
 
