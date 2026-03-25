@@ -621,9 +621,9 @@ function startAnalysis(lat, lng, displayName) {
       if (drawnPolygon) drawnPolygon.setMap(null);
       drawnPolygon = new google.maps.Polygon({
         paths: ring.map(function(p) { return {lat:p[1], lng:p[0]}; }),
-        fillColor: '#6abb1e', fillOpacity: 0.15,
-        strokeColor: '#6abb1e', strokeWeight: 3,
-        editable: true, map: map
+        fillColor: '#6abb1e', fillOpacity: 0.10,
+        strokeColor: '#6abb1e', strokeWeight: 2, strokeOpacity: 0.6,
+        editable: false, clickable: false, map: map
       });
       updateAreaFromPolygon();
       // Fit map to show the full parcel boundary
@@ -920,6 +920,12 @@ function finishZoneDraw(idx) {
   google.maps.event.addListener(zone.polygon.getPath(), 'set_at', function(){ updateZonesList(); });
   google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', function(){ updateZonesList(); });
   updateZonesList();
+  // Auto-prompt for next zone
+  setTimeout(function(){
+    if (confirm('Zone ' + zone.name + ' = ' + acres + ' acres. Draw another mowing zone?')) {
+      addMowZone();
+    }
+  }, 300);
 }
 
 function removeZone(idx) {

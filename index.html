@@ -542,24 +542,39 @@
           <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
           <div class="pstat-row"><span class="label">Elevation</span><span class="val" id="pElev">—</span></div>
           <div class="slope-legend">
-            <div style="font-size:.75rem;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Slope Breakdown</div>
-            <div class="sl"><span class="dot" style="background:#4caf50;"></span><strong id="pGreen">—</strong> Flat (&lt;22°)</div>
-            <div class="sl"><span class="dot" style="background:#ffeb3b;"></span><strong id="pYellow">—</strong> Moderate (22–30°)</div>
-            <div class="sl"><span class="dot" style="background:#ff9800;"></span><strong id="pOrange">—</strong> Steep (30–43°)</div>
-            <div class="sl"><span class="dot" style="background:#f44336;"></span><strong id="pRed">—</strong> Extreme (&gt;43°)</div>
           </div>
-          <div style="margin-top:8px;display:flex;gap:4px;">
-            <button onclick="_propMap&&_propMap.setTilt(45)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--green);border-radius:4px;background:var(--green);color:#fff;cursor:pointer;">3D</button>
-            <button onclick="_propMap&&_propMap.setTilt(0)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--g300);border-radius:4px;background:#fff;color:var(--g600);cursor:pointer;">2D</button>
-            <button onclick="_propMap&&_propMap.setHeading((_propMap.getHeading()||0)+90)" style="padding:4px 12px;font-size:.75rem;font-weight:600;border:1px solid var(--g300);border-radius:4px;background:#fff;color:var(--g600);cursor:pointer;"><i class="fas fa-sync-alt"></i></button>
+          <!-- Map View Controls -->
+          <div style="margin-top:8px;display:flex;gap:2px;background:#f0f0f0;border-radius:6px;padding:2px;width:fit-content;">
+            <button onclick="_propMap&&_propMap.setTilt(0);_propMap&&_propMap.setHeading(0)" style="padding:4px 12px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:transparent;color:#666;cursor:pointer;">2D</button>
+            <button onclick="_propMap&&_propMap.setTilt(45)" style="padding:4px 12px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">3D</button>
+            <button onclick="_propMap&&_propMap.setHeading((_propMap.getHeading()||0)+90)" style="padding:4px 12px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:transparent;color:#666;cursor:pointer;">↻</button>
           </div>
-          <div style="margin-top:12px;padding:10px;background:#fff8e1;border-radius:8px;border-left:3px solid #ff9800;font-size:.8rem;">
-            <strong>Click "Start Drawing"</strong> then click corners on the map. After 3+ points, click <strong>"Close Shape"</strong>.
+
+          <!-- Mowing Zones Tool -->
+          <div style="margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:.7rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Mowing Zones</span>
+              <button onclick="_addHomeZone()" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:#6abb1e;color:#fff;">+ Add Zone</button>
+            </div>
+            <p style="font-size:.7rem;color:#888;margin-bottom:6px;">Draw mowing zones to plan fleet coverage.</p>
+            <div id="homeZonesList"></div>
+            <div id="homeZoneTotals" style="display:none;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;">
+              <div style="display:flex;justify-content:space-between;font-size:.8rem;font-weight:700;">
+                <span>Total</span>
+                <span id="homeZoneTotalAcres" style="color:#6abb1e;">0 acres</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#666;">
+                <span>Mowers</span>
+                <span id="homeZoneTotalMowers">0</span>
+              </div>
+            </div>
           </div>
+
+          <!-- Manual Draw (if no auto-boundary) -->
           <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">
-            <button onclick="_propDrawMgr.setDrawingMode('polygon')" style="padding:8px 16px;font-size:.85rem;font-weight:700;border:none;border-radius:6px;background:#ff9800;color:#fff;cursor:pointer;">&#9998; Start Drawing</button>
-            <button id="propCloseShapeBtn" onclick="_closePropShape()" style="display:none;padding:8px 16px;font-size:.85rem;font-weight:700;border:none;border-radius:6px;background:#4a8a10;color:#fff;cursor:pointer;animation:pulse 1s infinite;">Close Shape</button>
-            <button onclick="if(_propPolygon){_propPolygon.setMap(null);_propPolygon=null;}_propSlopeCells.forEach(function(c){c.setMap(null);});_propSlopeCells=[];_propDrawMgr.setDrawingMode('polygon');document.getElementById('mapRecommendation').style.display='none';" style="padding:8px 12px;font-size:.8rem;font-weight:600;border:1px solid #ccc;border-radius:6px;background:#fff;color:#666;cursor:pointer;">Clear</button>
+            <button onclick="_propDrawMgr.setDrawingMode('polygon')" style="padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-radius:6px;background:#ff9800;color:#fff;cursor:pointer;">✏️ Draw Boundary</button>
+            <button id="propCloseShapeBtn" onclick="_closePropShape()" style="display:none;padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-radius:6px;background:#4a8a10;color:#fff;cursor:pointer;animation:pulse 1s infinite;">Close Shape</button>
+            <button onclick="_clearAllHome()" style="padding:6px 12px;font-size:.75rem;font-weight:600;border:1px solid #ccc;border-radius:6px;background:#fff;color:#666;cursor:pointer;">Clear All</button>
           </div>
         </div>
       </div>
@@ -1408,6 +1423,8 @@ function _onPropMapReady() {
     _propMap.setOptions({draggableCursor:null});
   }
   _propMap.addListener('click', function(e) {
+    // Zone drawing takes priority
+    if (window._homeActiveZone !== null && window._homeActiveZone !== undefined) { _handleHomeZoneClick(e); return; }
     if (!_isDrawing) return;
     _drawPts.push(e.latLng);
     _drawMkrs.push(new google.maps.Marker({
@@ -1447,6 +1464,122 @@ function _onPropMapReady() {
     tileSize: new google.maps.Size(256,256), opacity:0.35, name:'Topo'
   });
   _propMap.overlayMapTypes.push(topoLayer);
+
+  // ── MOWING ZONES for homepage ──
+  window._homeZones = [];
+  window._homeActiveZone = null;
+  var _hzColors = ['#4caf50','#2196f3','#ff9800','#9c27b0','#e91e63','#00bcd4','#ff5722','#607d8b'];
+
+  window._addHomeZone = function() {
+    var idx = _homeZones.length;
+    var color = _hzColors[idx % _hzColors.length];
+    var name = 'Zone ' + String.fromCharCode(65 + idx);
+    _homeZones.push({ polygon:null, points:[], markers:[], polyline:null, color:color, name:name, labelMarker:null });
+    window._homeActiveZone = idx;
+    _propMap.setOptions({draggableCursor:'crosshair'});
+    _updateHomeZones();
+  };
+
+  window._handleHomeZoneClick = function(e) {
+    var idx = window._homeActiveZone;
+    if (idx === null || idx === undefined) return;
+    var zone = _homeZones[idx];
+    if (zone.polygon) return;
+    zone.points.push(e.latLng);
+    zone.markers.push(new google.maps.Marker({
+      position:e.latLng, map:_propMap,
+      icon:{path:google.maps.SymbolPath.CIRCLE, scale:6, fillColor:zone.color, fillOpacity:1, strokeColor:'#fff', strokeWeight:2},
+      label:{text:String(zone.points.length), color:'#fff', fontSize:'9px', fontWeight:'bold'}
+    }));
+    if (zone.polyline) zone.polyline.setMap(null);
+    zone.polyline = new google.maps.Polyline({path:zone.points, map:_propMap, strokeColor:zone.color, strokeWeight:2});
+    _updateHomeZones();
+  };
+
+  window._closeHomeZone = function(idx) {
+    var zone = _homeZones[idx];
+    if (zone.points.length < 3) return;
+    window._homeActiveZone = null;
+    _propMap.setOptions({draggableCursor:null});
+    if (zone.polyline) zone.polyline.setMap(null);
+    zone.markers.forEach(function(m){m.setMap(null);}); zone.markers = [];
+    zone.polygon = new google.maps.Polygon({
+      paths:zone.points, map:_propMap,
+      fillColor:zone.color, fillOpacity:0.25, strokeColor:zone.color, strokeWeight:2,
+      editable:true, draggable:false
+    });
+    var center = {lat:0,lng:0};
+    zone.points.forEach(function(p){center.lat+=p.lat()/zone.points.length;center.lng+=p.lng()/zone.points.length;});
+    var areaM2 = google.maps.geometry.spherical.computeArea(zone.polygon.getPath());
+    var acres = (areaM2/4046.86).toFixed(1);
+    zone.labelMarker = new google.maps.Marker({
+      position:center, map:_propMap,
+      icon:{path:google.maps.SymbolPath.CIRCLE, scale:0},
+      label:{text:zone.name+' — '+acres+' ac', color:'#fff', fontSize:'11px', fontWeight:'bold'}
+    });
+    google.maps.event.addListener(zone.polygon.getPath(), 'set_at', _updateHomeZones);
+    google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', _updateHomeZones);
+    _updateHomeZones();
+    setTimeout(function(){
+      if(confirm('Zone '+zone.name+' = '+acres+' acres. Draw another zone?')) _addHomeZone();
+    }, 300);
+  };
+
+  window._removeHomeZone = function(idx) {
+    var z = _homeZones[idx];
+    if (z.polygon) z.polygon.setMap(null);
+    if (z.polyline) z.polyline.setMap(null);
+    if (z.labelMarker) z.labelMarker.setMap(null);
+    z.markers.forEach(function(m){m.setMap(null);});
+    _homeZones.splice(idx,1);
+    if (window._homeActiveZone===idx) {window._homeActiveZone=null;_propMap.setOptions({draggableCursor:null});}
+    _updateHomeZones();
+  };
+
+  window._clearAllHome = function() {
+    _homeZones.forEach(function(z){
+      if(z.polygon)z.polygon.setMap(null);if(z.polyline)z.polyline.setMap(null);
+      if(z.labelMarker)z.labelMarker.setMap(null);z.markers.forEach(function(m){m.setMap(null);});
+    });
+    _homeZones=[];window._homeActiveZone=null;
+    if(_propPolygon){_propPolygon.setMap(null);_propPolygon=null;}
+    _propSlopeCells.forEach(function(c){c.setMap(null);});_propSlopeCells=[];
+    document.getElementById('homeZonesList').innerHTML='';
+    document.getElementById('homeZoneTotals').style.display='none';
+    document.getElementById('mapRecommendation').style.display='none';
+  };
+
+  function _updateHomeZones() {
+    var html='', total=0;
+    _homeZones.forEach(function(z,i){
+      var acres=0;
+      if(z.polygon){
+        acres=google.maps.geometry.spherical.computeArea(z.polygon.getPath())/4046.86;
+        if(z.labelMarker) z.labelMarker.setLabel({text:z.name+' — '+acres.toFixed(1)+' ac',color:'#fff',fontSize:'11px',fontWeight:'bold'});
+      }
+      total+=acres;
+      var drawing=(window._homeActiveZone===i&&!z.polygon);
+      html+='<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #eee;font-size:.75rem;">'+
+        '<span style="width:10px;height:10px;border-radius:2px;background:'+z.color+';flex-shrink:0;"></span>'+
+        '<strong style="flex:1;">'+z.name+'</strong>'+
+        (z.polygon?'<span style="font-weight:600;">'+acres.toFixed(1)+' ac</span>':
+          (drawing?'<span style="color:#ff9800;">Drawing ('+z.points.length+')</span>':''))+
+        (drawing&&z.points.length>=3?'<button onclick="_closeHomeZone('+i+')" style="padding:1px 6px;font-size:.65rem;background:#4a8a10;color:#fff;border:none;border-radius:3px;cursor:pointer;">Close</button>':'')+
+        '<button onclick="_removeHomeZone('+i+')" style="padding:1px 4px;font-size:.65rem;background:#eee;color:#999;border:none;border-radius:3px;cursor:pointer;">✕</button>'+
+        '</div>';
+    });
+    document.getElementById('homeZonesList').innerHTML=html;
+    var mowers=Math.ceil(total/1.5);
+    document.getElementById('homeZoneTotalAcres').textContent=total.toFixed(1)+' acres';
+    document.getElementById('homeZoneTotalMowers').textContent=mowers+' TerraNox';
+    document.getElementById('homeZoneTotals').style.display=_homeZones.length>0?'block':'none';
+    // Update recommendations based on zones
+    if(total>0){
+      propertyData={totalAcres:total,mowableAcres:total};
+      _showRecommendation(total);
+    }
+  }
+
   // Places autocomplete
   var input = document.getElementById('propAddressInput');
   var ac = new google.maps.places.Autocomplete(input, {types:['address'],componentRestrictions:{country:'us'}});
@@ -1493,7 +1626,7 @@ function _flyToProperty(lat, lng, name) {
       if (_propPolygon) _propPolygon.setMap(null);
       _propPolygon = new google.maps.Polygon({
         paths: ring.map(function(p){return{lat:p[1],lng:p[0]};}),
-        fillColor:'#6abb1e', fillOpacity:0.15, strokeColor:'#6abb1e', strokeWeight:3, editable:true, map:_propMap
+        fillColor:'#6abb1e', fillOpacity:0.10, strokeColor:'#6abb1e', strokeWeight:2, strokeOpacity:0.6, editable:false, clickable:false, map:_propMap
       });
       // Fit map to boundary
       var bounds = new google.maps.LatLngBounds();
