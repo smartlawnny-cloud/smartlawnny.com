@@ -571,12 +571,7 @@
           <div class="pstat-row"><span class="label">Elevation</span><span class="val" id="pElev">—</span></div>
           <div class="slope-legend">
           </div>
-          <!-- Map View Controls -->
-          <div style="margin-top:8px;display:flex;gap:2px;background:#f0f0f0;border-radius:6px;padding:2px;width:fit-content;">
-            <button onclick="if(window._propMap){_propMap.setTilt(0);_propMap.setHeading(0);_propMap.setMapTypeId('satellite');}" style="padding:4px 12px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:transparent;color:#666;cursor:pointer;">2D</button>
-            <button onclick="if(window._propMap){_propMap.setMapTypeId('hybrid');if(_propMap.getZoom()<15)_propMap.setZoom(15);setTimeout(function(){_propMap.setTilt(45);},200);}" style="padding:4px 12px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">3D</button>
-            <button onclick="if(window._propMap){_propMap.setHeading((_propMap.getHeading()||0)+90);}" style="padding:4px 12px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:transparent;color:#666;cursor:pointer;">↻</button>
-          </div>
+          <!-- Map View Controls removed — Google Maps tilt requires paid Map ID -->
 
           <!-- Mowing Zones Tool -->
           <div style="margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
@@ -1578,8 +1573,18 @@ function _onPropMapReady() {
     // Snap-to-close: if 3+ points and click near first point, auto-close
     if (zone.points.length >= 3) {
       var first = zone.points[0];
-      var dist = google.maps.geometry.spherical.computeDistanceBetween(e.latLng, first);
-      if (dist < 40) { _closeHomeZone(idx); return; } // within 40 meters = close
+      // Use pixel distance for reliable snap at any zoom level
+      var proj = _propMap.getProjection();
+      var z = Math.pow(2, _propMap.getZoom());
+      if (proj) {
+        var p1 = proj.fromLatLngToPoint(e.latLng);
+        var p2 = proj.fromLatLngToPoint(first);
+        var px = Math.sqrt(Math.pow((p1.x-p2.x)*z,2) + Math.pow((p1.y-p2.y)*z,2));
+        if (px < 30) { _closeHomeZone(idx); return; } // within 30 pixels = close
+      } else {
+        var dist = google.maps.geometry.spherical.computeDistanceBetween(e.latLng, first);
+        if (dist < 50) { _closeHomeZone(idx); return; }
+      }
     }
     zone.points.push(e.latLng);
     var isFirst = zone.points.length === 1;
