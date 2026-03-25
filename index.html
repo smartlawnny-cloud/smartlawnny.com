@@ -2609,6 +2609,95 @@ document.addEventListener('DOMContentLoaded', updateCartUI);
   </div>
 </div>
 
+<!-- ═══ LIVE CHAT WIDGET ═══ -->
+<style>
+#chatWidget{position:fixed;bottom:20px;right:20px;z-index:9999;font-family:'Inter',-apple-system,sans-serif;}
+#chatBubble{width:56px;height:56px;background:#6abb1e;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:transform .2s;}
+#chatBubble:hover{transform:scale(1.1);}
+#chatBubble svg{width:28px;height:28px;fill:#fff;}
+#chatBubble .close-x{display:none;font-size:24px;color:#fff;font-weight:700;}
+#chatBubble.open svg{display:none;}
+#chatBubble.open .close-x{display:block;}
+#chatBox{display:none;position:absolute;bottom:68px;right:0;width:320px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.15);overflow:hidden;}
+#chatBox.open{display:flex;flex-direction:column;}
+#chatHeader{background:#6abb1e;color:#fff;padding:14px 16px;font-size:14px;font-weight:700;}
+#chatHeader span{font-size:11px;font-weight:400;opacity:.8;display:block;margin-top:2px;}
+#chatMessages{flex:1;padding:12px;min-height:200px;max-height:300px;overflow-y:auto;background:#f9fafb;}
+.chat-msg{margin-bottom:8px;max-width:85%;}
+.chat-msg.bot{background:#e8f5e0;padding:8px 12px;border-radius:12px 12px 12px 4px;font-size:13px;color:#333;line-height:1.4;}
+.chat-msg.user{background:#1d1d1f;color:#fff;padding:8px 12px;border-radius:12px 12px 4px 12px;font-size:13px;margin-left:auto;line-height:1.4;}
+#chatInputWrap{display:flex;border-top:1px solid #eee;padding:8px;}
+#chatInput{flex:1;border:1px solid #ddd;border-radius:8px;padding:8px 12px;font-size:13px;outline:none;font-family:inherit;}
+#chatInput:focus{border-color:#6abb1e;}
+#chatSend{background:#6abb1e;color:#fff;border:none;border-radius:8px;padding:8px 14px;margin-left:6px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;}
+#chatSend:hover{background:#5a9e18;}
+.chat-quick{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.chat-quick button{background:#fff;border:1px solid #6abb1e;color:#6abb1e;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;}
+.chat-quick button:hover{background:#6abb1e;color:#fff;}
+</style>
+
+<div id="chatWidget">
+  <div id="chatBox">
+    <div id="chatHeader">Smart Lawn NY<span>Usually replies in minutes</span></div>
+    <div id="chatMessages">
+      <div class="chat-msg bot">Hey! 👋 How can we help you today?</div>
+      <div class="chat-quick">
+        <button onclick="_chatQuick('I need a quote for my property')">Get a Quote</button>
+        <button onclick="_chatQuick('What mower is right for my lawn?')">Find My Mower</button>
+        <button onclick="_chatQuick('I have a question about service plans')">Service Plans</button>
+      </div>
+    </div>
+    <div id="chatInputWrap">
+      <input type="text" id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter')_chatSend()">
+      <button id="chatSend" onclick="_chatSend()">Send</button>
+    </div>
+  </div>
+  <div id="chatBubble" onclick="_toggleChat()">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+    <span class="close-x">✕</span>
+  </div>
+</div>
+
+<script>
+function _toggleChat(){
+  var box=document.getElementById('chatBox');
+  var bubble=document.getElementById('chatBubble');
+  box.classList.toggle('open');
+  bubble.classList.toggle('open');
+}
+function _chatQuick(msg){
+  document.querySelectorAll('.chat-quick').forEach(function(el){el.remove();});
+  _addMsg(msg,'user');
+  _sendToDoug(msg);
+  setTimeout(function(){_addMsg('Thanks! Doug will text you back shortly. In the meantime, feel free to check out our <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">property assessment tool</a>.','bot');},800);
+}
+function _chatSend(){
+  var input=document.getElementById('chatInput');
+  var msg=input.value.trim();
+  if(!msg)return;
+  input.value='';
+  _addMsg(msg,'user');
+  _sendToDoug(msg);
+  setTimeout(function(){_addMsg('Got it! Doug will text you back shortly. You can also call us at <a href="tel:9146477276" style="color:#6abb1e;font-weight:600;">(914) 647-7276</a>.','bot');},800);
+}
+function _addMsg(text,type){
+  var msgs=document.getElementById('chatMessages');
+  var div=document.createElement('div');
+  div.className='chat-msg '+type;
+  div.innerHTML=text;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+function _sendToDoug(msg){
+  var SCRIPT_URL='https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:'LIVE_CHAT',firstName:'Website Chat',message:msg,
+      date:new Date().toISOString(),source:'Live Chat Widget',
+      page:window.location.pathname})});
+  if(typeof gtag==='function')gtag('event','live_chat_message',{message_preview:msg.substring(0,50)});
+}
+</script>
+
 <!-- GA4 deferred to avoid blocking render -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GRP8HCBFTL"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-GRP8HCBFTL');</script>
