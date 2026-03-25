@@ -2308,10 +2308,8 @@ function _runPropAnalysis() {
         var cell=new google.maps.Polygon({paths:[{lat:lat,lng:lng},{lat:lat,lng:lng+lngS},{lat:lat+latS,lng:lng+lngS},{lat:lat+latS,lng:lng}],
           fillColor:col,fillOpacity:op,strokeColor:col,strokeOpacity:0.3,strokeWeight:1,map:_propMap});
         _propSlopeCells.push(cell);
-        // Click popup
-        (function(s,l){google.maps.event.addListener(cell,'click',function(e){
-          new google.maps.InfoWindow({content:'<b>'+s+'° slope</b><br>'+l,position:e.latLng}).open(_propMap);
-        });})(sd_r, sd_r<22?'All mowers OK':sd_r<30?'Yarbo limit':sd_r<43?'TerraNox only':'Too steep');
+        // Click popup (disabled during zone drawing or charger placement)
+        cell.setClickable(false);
         // Degree label on steep cells
         if(sd_r>=22 && r%3===0 && c%3===0){
           _propSlopeCells.push(new google.maps.Marker({position:{lat:lat+latS/2,lng:lng+lngS/2},map:_propMap,
