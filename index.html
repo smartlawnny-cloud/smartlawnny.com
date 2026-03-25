@@ -601,6 +601,26 @@
             <span id="chargerCount" style="font-size:.65rem;color:#aaa;"></span>
           </div>
 
+          <!-- Inline ROI Comparison (auto-fills from zones) -->
+          <div id="inlineROI" style="display:none;margin-top:8px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:8px;">
+            <div style="font-size:.65rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Savings Comparison</div>
+            <div style="display:flex;justify-content:space-between;font-size:.7rem;padding:3px 0;border-bottom:1px solid #f0f0f0;">
+              <span style="color:#888;">Current lawn service (est.)</span>
+              <span style="font-weight:600;color:#cc0000;" id="roiCurrentCost">$0/yr</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.7rem;padding:3px 0;border-bottom:1px solid #f0f0f0;">
+              <span style="color:#888;">Robotic mower (5yr avg)</span>
+              <span style="font-weight:600;color:#6abb1e;" id="roiRobotCost">$0/yr</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:.75rem;padding:4px 0;font-weight:700;">
+              <span style="color:#1d1d1f;">Annual Savings</span>
+              <span style="color:#6abb1e;" id="roiAnnualSave">$0</span>
+            </div>
+            <div style="text-align:center;margin-top:4px;padding:4px;background:#f0f8e8;border-radius:4px;">
+              <span style="font-size:.7rem;color:#4a8a10;font-weight:700;" id="roi5yrSave">5-Year Savings: $0</span>
+            </div>
+          </div>
+
           <!-- Generate Quote / Share -->
           <div id="quoteActions" style="display:none;margin-top:10px;background:#f0f8e8;border:1px solid #6abb1e;border-radius:8px;padding:10px;">
             <div style="font-size:.7rem;font-weight:700;color:#4a8a10;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Share This Quote</div>
@@ -969,8 +989,8 @@
   </div>
 </section>
 
-<!-- ROI Calculator -->
-<section class="roi-calc" id="roi-calculator">
+<!-- ROI Calculator (hidden — now integrated into map tool) -->
+<section class="roi-calc" id="roi-calculator" style="display:none;">
   <div class="container">
     <div class="section-header fade-in">
       <h2>Calculate Your <span class="underline-accent">Savings</span></h2>
@@ -1637,6 +1657,27 @@ function _onPropMapReady() {
     document.getElementById('homeZoneTotals').style.display=_homeZones.length>0?'block':'none';
     // Render mower cards (only models that fit the acreage)
     _renderMowerCards(total);
+    // Inline ROI calculation
+    var roiDiv=document.getElementById('inlineROI');
+    if(roiDiv&&total>0){
+      roiDiv.style.display='block';
+      // Estimate current lawn cost: ~$75/visit × 4/mo × 7 months for residential, $150/acre/visit × 28 for commercial
+      var sqft=Math.round(total*43560);
+      var isCommercial=total>2;
+      var currentAnnual=isCommercial?Math.round(total*150*28):Math.round(75*4*7);
+      var robotYear1=fleetCost+199+249; // mower+install+pro plan
+      var robotOngoing=50+249; // electric+plan
+      var robot5yr=robotYear1+(robotOngoing*4);
+      var robotAvgYr=Math.round(robot5yr/5);
+      var annualSave=currentAnnual-robotAvgYr;
+      var save5yr=currentAnnual*5-robot5yr;
+      document.getElementById('roiCurrentCost').textContent='$'+currentAnnual.toLocaleString()+'/yr';
+      document.getElementById('roiRobotCost').textContent='$'+robotAvgYr.toLocaleString()+'/yr';
+      document.getElementById('roiAnnualSave').textContent=(annualSave>0?'':'')+'$'+Math.abs(annualSave).toLocaleString();
+      document.getElementById('roiAnnualSave').style.color=annualSave>0?'#6abb1e':'#cc0000';
+      document.getElementById('roi5yrSave').textContent='5-Year Savings: '+(save5yr>0?'':'−')+'$'+Math.abs(save5yr).toLocaleString();
+      document.getElementById('roi5yrSave').style.color=save5yr>0?'#4a8a10':'#cc0000';
+    } else if(roiDiv){roiDiv.style.display='none';}
     _checkShowQuoteActions();
     // Update recommendations based on zones
     if(total>0){
@@ -1859,9 +1900,14 @@ function _onPropMapReady() {
       win.document.write('<span class="zone" style="background:' + z.color + ';">' + z.name + ': ' + z.acres + ' ac</span>');
     });
     win.document.write('</div>' +
-      '<div class="total">Fleet: $' + d.fleetCost.toLocaleString() + ' | DFY: $' + Number(d.weeklyDFY).toLocaleString() + '/wk</div>' +
+      '<div class="total">Fleet: $' + d.fleetCost.toLocaleString() + ' | DFY: $' + Number(d.weeklyDFY).toLocaleString() + '/wk | Season: $' + Number(d.seasonDFY).toLocaleString() + '</div>' +
+      '<div style="margin-top:12px;padding:12px;background:#f0f8e8;border-radius:8px;font-size:13px;">' +
+      '<strong style="color:#4a8a10;">Savings vs. Traditional:</strong><br>' +
+      'Traditional crew: ~$' + Math.round(parseFloat(d.totalAcres)*150*28).toLocaleString() + '/yr<br>' +
+      'Smart Lawn robotic: ~$' + Math.round((d.fleetCost+199+249+(50+249)*4)/5).toLocaleString() + '/yr (5yr avg)<br>' +
+      '<strong>5-Year Savings: $' + Math.round(parseFloat(d.totalAcres)*150*28*5-(d.fleetCost+199+249+(50+249)*4)).toLocaleString() + '</strong></div>' +
       '<div class="footer">Smart Lawn NY | (914) 647-7276 | smartlawnny@gmail.com | smartlawnny.com<br>' +
-      'Prices subject to change. Installation and RTK mapping not included in fleet price.</div>' +
+      'Prices subject to change. Installation and RTK mapping not included in fleet price. 15% pre-order discount available.</div>' +
       '</body></html>');
     win.document.close();
     setTimeout(function() { win.print(); }, 500);
