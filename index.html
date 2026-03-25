@@ -1517,6 +1517,7 @@ function _onPropMapReady() {
     var btn = document.getElementById('propCloseShapeBtn');
     if (btn) btn.style.display = 'none';
     _runPropAnalysis();
+    _checkShowQuoteActions();
     google.maps.event.addListener(_propPolygon.getPath(), 'set_at', _runPropAnalysis);
     google.maps.event.addListener(_propPolygon.getPath(), 'insert_at', _runPropAnalysis);
   };
@@ -1726,7 +1727,9 @@ function _onPropMapReady() {
   // Show share buttons when zones exist
   function _checkShowQuoteActions() {
     var el = document.getElementById('quoteActions');
-    el.style.display = _homeZones.some(function(z){return z.polygon;}) ? 'block' : 'none';
+    var hasZones = _homeZones.some(function(z){return z.polygon;});
+    var hasBoundary = !!_propPolygon;
+    el.style.display = (hasZones || hasBoundary) ? 'block' : 'none';
   }
 
   function _buildQuoteData() {
@@ -1973,6 +1976,7 @@ function _flyToProperty(lat, lng, name) {
       _propMap.fitBounds(bounds, {top:10,right:10,bottom:10,left:10});
       _propDrawMgr.setDrawingMode(null);
       _runPropAnalysis();
+      _checkShowQuoteActions();
       google.maps.event.addListener(_propPolygon.getPath(), 'set_at', _runPropAnalysis);
       google.maps.event.addListener(_propPolygon.getPath(), 'insert_at', _runPropAnalysis);
     }
