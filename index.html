@@ -1536,6 +1536,7 @@ function _onPropMapReady() {
   var _hzColors = ['#4caf50','#2196f3','#ff9800','#9c27b0','#e91e63','#00bcd4','#ff5722','#607d8b'];
 
   window._addHomeZone = function() {
+    if (_homeZones.length >= 10) { alert('Maximum 10 mowing zones. Remove one to add another.'); return; }
     var idx = _homeZones.length;
     var color = _hzColors[idx % _hzColors.length];
     var name = 'Zone ' + String.fromCharCode(65 + idx);
