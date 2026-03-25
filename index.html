@@ -563,31 +563,42 @@
                 <span>Total</span>
                 <span id="homeZoneTotalAcres" style="color:#6abb1e;">0 acres</span>
               </div>
-              <div style="margin-top:4px;">
-                <select id="homeMowerSelect" onchange="_updateHomeZones()" style="width:100%;padding:5px 8px;font-size:.75rem;border:1px solid #ddd;border-radius:4px;font-family:'Inter',sans-serif;">
-                  <option value="6.0" data-name="TerraNox CM240M1" data-price="6999">TerraNox CM240M1 — 6 ac ($6,999)</option>
-                  <option value="3.0" data-name="TerraNox CM120M1" data-price="5499">TerraNox CM120M1 — 3 ac ($5,499)</option>
-                  <option value="0.75" data-name="Navimow X450" data-price="2999">Navimow X450 — 0.75 ac ($2,999)</option>
-                  <option value="0.5" data-name="Navimow X430" data-price="2499">Navimow X430 — 0.5 ac ($2,499)</option>
-                  <option value="0.25" data-name="Navimow H220" data-price="2199">Navimow H220 — 0.25 ac ($2,199)</option>
-                  <option value="0.15" data-name="Navimow i215" data-price="1599">Navimow i215 — 0.15 ac ($1,599)</option>
-                </select>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#666;margin-top:4px;">
-                <span>Units Needed</span>
-                <span id="homeZoneTotalMowers" style="font-weight:600;color:#1d1d1f;">0</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-size:.75rem;font-weight:700;color:#6abb1e;margin-top:2px;">
-                <span>Fleet Cost</span>
-                <span id="homeZoneFleetCost">$0</span>
+              <!-- Mower picker cards -->
+              <div id="homeMowerCards" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;"></div>
+              <select id="homeMowerSelect" onchange="_updateHomeZones()" style="display:none;">
+                <option value="6.0" data-name="TerraNox CM240M1" data-price="6999">TerraNox CM240M1</option>
+                <option value="3.0" data-name="TerraNox CM120M1" data-price="5499">TerraNox CM120M1</option>
+                <option value="0.75" data-name="Navimow X450" data-price="2999">Navimow X450</option>
+                <option value="0.5" data-name="Navimow X430" data-price="2499">Navimow X430</option>
+                <option value="0.25" data-name="Navimow H220" data-price="2199">Navimow H220</option>
+                <option value="0.15" data-name="Navimow i215" data-price="1599">Navimow i215</option>
+              </select>
+              <!-- Live pricing -->
+              <div style="margin-top:6px;padding:6px 0;border-top:1px solid #e5e7eb;">
+                <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#666;">
+                  <span>Units Needed</span>
+                  <span id="homeZoneTotalMowers" style="font-weight:600;color:#1d1d1f;">0</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:.75rem;font-weight:700;color:#6abb1e;margin-top:2px;">
+                  <span>Buy Fleet</span>
+                  <span id="homeZoneFleetCost">$0</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:.75rem;font-weight:600;color:#1a5c5c;margin-top:2px;">
+                  <span>Done-For-You</span>
+                  <span id="homeZoneDFYCost">$0/wk</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:.7rem;color:#888;margin-top:2px;">
+                  <span>Season (30 wks)</span>
+                  <span id="homeZoneSeasonCost">$0</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Charger Placement -->
-          <div style="margin-top:8px;">
-            <button onclick="_placeOneCharger()" id="chargerModeBtn" style="padding:5px 12px;font-size:.7rem;font-weight:600;border:1px solid #ff9800;border-radius:4px;background:#fff;color:#ff9800;cursor:pointer;">⚡ Place Charger</button>
-            <span id="chargerCount" style="font-size:.7rem;color:#888;margin-left:6px;"></span>
+          <!-- Charger Placement (subtle) -->
+          <div style="margin-top:4px;display:flex;align-items:center;gap:4px;">
+            <button onclick="_placeOneCharger()" id="chargerModeBtn" style="padding:2px 8px;font-size:.65rem;font-weight:500;border:1px solid #ddd;border-radius:3px;background:#fafafa;color:#888;cursor:pointer;">⚡ Charger</button>
+            <span id="chargerCount" style="font-size:.65rem;color:#aaa;"></span>
           </div>
 
           <!-- Generate Quote / Share -->
@@ -1616,13 +1627,60 @@ function _onPropMapReady() {
     document.getElementById('homeZoneTotalAcres').textContent=total.toFixed(1)+' acres';
     document.getElementById('homeZoneTotalMowers').textContent=mowers+'× '+mowerName;
     document.getElementById('homeZoneFleetCost').textContent='$'+fleetCost.toLocaleString();
+    // DFY pricing
+    var dfyWeek=Math.round(total*150);
+    var dfySeason=dfyWeek*30;
+    var dfyEl=document.getElementById('homeZoneDFYCost');
+    var seasonEl=document.getElementById('homeZoneSeasonCost');
+    if(dfyEl)dfyEl.textContent='$'+dfyWeek.toLocaleString()+'/wk';
+    if(seasonEl)seasonEl.textContent='$'+dfySeason.toLocaleString();
     document.getElementById('homeZoneTotals').style.display=_homeZones.length>0?'block':'none';
+    // Render mower cards (only models that fit the acreage)
+    _renderMowerCards(total);
     _checkShowQuoteActions();
     // Update recommendations based on zones
     if(total>0){
       propertyData={totalAcres:total,mowableAcres:total};
       _showRecommendation(total);
+      // Auto-fill Finance tab sq ft
+      var sqft=Math.round(total*43560);
+      var sqftEl=document.getElementById('financeSqft');
+      var ftotEl=document.getElementById('financeTotal');
+      if(sqftEl)sqftEl.textContent=sqft.toLocaleString()+' sq ft';
+      if(ftotEl)ftotEl.textContent='$'+(sqft*0.20).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
     }
+  }
+
+  var _mowerData=[
+    {val:'0.15',name:'i215 LiDAR',price:1599,acres:0.15,img:'images/products/i215-lidar-pdp.png'},
+    {val:'0.25',name:'H220',price:2199,acres:0.25,img:'images/products/h220-pdp.png'},
+    {val:'0.5',name:'X430',price:2499,acres:0.5,img:'images/products/x4-black-pdp.png'},
+    {val:'0.75',name:'X450',price:2999,acres:0.75,img:'images/products/x4-black-pdp.png'},
+    {val:'3.0',name:'CM120M1',price:5499,acres:3.0,img:'images/products/terranox-robotic-mower.png'},
+    {val:'6.0',name:'CM240M1',price:6999,acres:6.0,img:'images/products/terranox-robotic-mower.png'}
+  ];
+
+  function _renderMowerCards(totalAc){
+    var container=document.getElementById('homeMowerCards');
+    if(!container)return;
+    var sel=document.getElementById('homeMowerSelect');
+    var currentVal=sel.value;
+    // Filter to mowers where you'd need ≤20 units (practical limit)
+    var fits=_mowerData.filter(function(m){return Math.ceil(totalAc/m.acres)<=20||totalAc<=m.acres;});
+    if(fits.length===0)fits=_mowerData;
+    var html='';
+    fits.forEach(function(m){
+      var units=Math.ceil(totalAc/m.acres);
+      var isActive=m.val===currentVal;
+      html+='<div onclick="document.getElementById(\'homeMowerSelect\').value=\''+m.val+'\';_updateHomeZones();" style="'+
+        'padding:6px;border:2px solid '+(isActive?'#6abb1e':'#e5e7eb')+';border-radius:8px;cursor:pointer;text-align:center;'+
+        'background:'+(isActive?'#f0f8e8':'#fff')+';transition:all .15s;">'+
+        '<img src="'+m.img+'" alt="'+m.name+'" style="height:36px;object-fit:contain;margin-bottom:2px;" loading="lazy">'+
+        '<div style="font-size:.65rem;font-weight:700;color:#1d1d1f;">'+m.name+'</div>'+
+        '<div style="font-size:.6rem;color:#888;">'+units+'× $'+m.price.toLocaleString()+'</div>'+
+        '</div>';
+    });
+    container.innerHTML=html;
   }
 
   // ── CHARGER PLACEMENT ──
