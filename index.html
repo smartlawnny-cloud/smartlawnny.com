@@ -582,7 +582,7 @@
               </div>
             </div>
             <p style="font-size:.7rem;color:#888;margin-bottom:4px;">Draw one boundary, then auto-split into equal zones:</p>
-            <div id="autoSplitBar" style="display:none;margin-bottom:6px;gap:3px;flex-wrap:wrap;">
+            <div id="autoSplitBar" style="margin-bottom:6px;display:flex;gap:3px;flex-wrap:wrap;">
               <button onclick="_autoSplitZones(2)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 2</button>
               <button onclick="_autoSplitZones(3)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 3</button>
               <button onclick="_autoSplitZones(4)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 4</button>
@@ -1649,14 +1649,16 @@ function _onPropMapReady() {
     _updateHomeZones();
   };
 
-  // Auto-split: take first completed zone and slice into N equal vertical strips
+  // Auto-split: take first completed zone (or property boundary) and slice into N equal vertical strips
   window._autoSplitZones = function(n) {
-    var sourceZone = null;
+    var path = null;
+    // First try: use first drawn zone
     for (var i = 0; i < _homeZones.length; i++) {
-      if (_homeZones[i].polygon) { sourceZone = _homeZones[i]; break; }
+      if (_homeZones[i].polygon) { path = _homeZones[i].polygon.getPath().getArray(); break; }
     }
-    if (!sourceZone) { alert('Draw one zone first, then split it.'); return; }
-    var path = sourceZone.polygon.getPath().getArray();
+    // Fallback: use property boundary
+    if (!path && _propPolygon) { path = _propPolygon.getPath().getArray(); }
+    if (!path) { alert('Draw a mowing zone first, or enter an address to load the property boundary.'); return; }
     var minLat=90,maxLat=-90,minLng=180,maxLng=-180;
     path.forEach(function(p){
       if(p.lat()<minLat)minLat=p.lat();if(p.lat()>maxLat)maxLat=p.lat();
