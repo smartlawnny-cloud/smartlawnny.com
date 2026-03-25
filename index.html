@@ -577,9 +577,18 @@
           <div style="margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
               <span style="font-size:.7rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Mowing Zones</span>
-              <button onclick="_addHomeZone()" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:#6abb1e;color:#fff;">+ Add Zone</button>
+              <div style="display:flex;gap:4px;">
+                <button onclick="_addHomeZone()" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;cursor:pointer;background:#6abb1e;color:#fff;">+ Draw Zone</button>
+              </div>
             </div>
-            <p style="font-size:.7rem;color:#888;margin-bottom:6px;">Draw mowing zones to plan fleet coverage.</p>
+            <p style="font-size:.7rem;color:#888;margin-bottom:4px;">Draw one boundary, then auto-split into equal zones:</p>
+            <div id="autoSplitBar" style="display:none;margin-bottom:6px;gap:3px;flex-wrap:wrap;">
+              <button onclick="_autoSplitZones(2)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 2</button>
+              <button onclick="_autoSplitZones(3)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 3</button>
+              <button onclick="_autoSplitZones(4)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 4</button>
+              <button onclick="_autoSplitZones(5)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 5</button>
+              <button onclick="_autoSplitZones(6)" class="split-btn" style="padding:2px 8px;font-size:.65rem;font-weight:600;border:1px solid #ddd;border-radius:4px;cursor:pointer;background:#fff;color:#333;">Split 6</button>
+            </div>
             <div id="homeZonesList"></div>
             <div id="homeZoneTotals" style="display:none;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;">
               <div style="display:flex;justify-content:space-between;font-size:.8rem;font-weight:700;">
@@ -1622,8 +1631,10 @@ function _onPropMapReady() {
     google.maps.event.addListener(zone.polygon.getPath(), 'set_at', _updateHomeZones);
     google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', _updateHomeZones);
     _updateHomeZones();
+    // Show split buttons after first zone
+    document.getElementById('autoSplitBar').style.display='flex';
     setTimeout(function(){
-      if(confirm('Zone '+zone.name+' = '+acres+' acres. Draw another zone?')) _addHomeZone();
+      if(confirm('Zone '+zone.name+' = '+acres+' acres.\n\nSplit into equal zones? Or draw another manually?')) _addHomeZone();
     }, 300);
   };
 
@@ -1636,6 +1647,61 @@ function _onPropMapReady() {
     _homeZones.splice(idx,1);
     if (window._homeActiveZone===idx) {window._homeActiveZone=null;_propMap.setOptions({draggableCursor:null});}
     _updateHomeZones();
+  };
+
+  // Auto-split: take first completed zone and slice into N equal vertical strips
+  window._autoSplitZones = function(n) {
+    var sourceZone = null;
+    for (var i = 0; i < _homeZones.length; i++) {
+      if (_homeZones[i].polygon) { sourceZone = _homeZones[i]; break; }
+    }
+    if (!sourceZone) { alert('Draw one zone first, then split it.'); return; }
+    var path = sourceZone.polygon.getPath().getArray();
+    var minLat=90,maxLat=-90,minLng=180,maxLng=-180;
+    path.forEach(function(p){
+      if(p.lat()<minLat)minLat=p.lat();if(p.lat()>maxLat)maxLat=p.lat();
+      if(p.lng()<minLng)minLng=p.lng();if(p.lng()>maxLng)maxLng=p.lng();
+    });
+    // Clear all existing zones
+    _homeZones.forEach(function(z){
+      if(z.polygon)z.polygon.setMap(null);if(z.polyline)z.polyline.setMap(null);
+      if(z.labelMarker)z.labelMarker.setMap(null);z.markers.forEach(function(m){m.setMap(null);});
+    });
+    _homeZones=[];window._homeActiveZone=null;
+    // Create N vertical strips
+    var lngStep=(maxLng-minLng)/n;
+    for(var s=0;s<n;s++){
+      var sL=minLng+s*lngStep, sR=minLng+(s+1)*lngStep;
+      var pts=[];
+      for(var j=0;j<path.length;j++){
+        var p1=path[j],p2=path[(j+1)%path.length];
+        if(p1.lng()>=sL-0.00001&&p1.lng()<=sR+0.00001)
+          pts.push(new google.maps.LatLng(p1.lat(),Math.max(sL,Math.min(sR,p1.lng()))));
+        if((p1.lng()<sL&&p2.lng()>sL)||(p2.lng()<sL&&p1.lng()>sL)){
+          var t=(sL-p1.lng())/(p2.lng()-p1.lng());
+          pts.push(new google.maps.LatLng(p1.lat()+t*(p2.lat()-p1.lat()),sL));
+        }
+        if((p1.lng()<sR&&p2.lng()>sR)||(p2.lng()<sR&&p1.lng()>sR)){
+          var t2=(sR-p1.lng())/(p2.lng()-p1.lng());
+          pts.push(new google.maps.LatLng(p1.lat()+t2*(p2.lat()-p1.lat()),sR));
+        }
+      }
+      if(pts.length<3)continue;
+      var cx=0,cy=0;pts.forEach(function(p){cx+=p.lat();cy+=p.lng();});cx/=pts.length;cy/=pts.length;
+      pts.sort(function(a,b){return Math.atan2(a.lng()-cy,a.lat()-cx)-Math.atan2(b.lng()-cy,b.lat()-cx);});
+      var color=_hzColors[s%_hzColors.length],name='Zone '+String.fromCharCode(65+s);
+      var zone={polygon:null,points:pts,markers:[],polyline:null,color:color,name:name,labelMarker:null};
+      zone.polygon=new google.maps.Polygon({paths:pts,map:_propMap,fillColor:color,fillOpacity:0.25,strokeColor:color,strokeWeight:2,editable:false,draggable:false});
+      var areaM2=google.maps.geometry.spherical.computeArea(zone.polygon.getPath());
+      var acres=(areaM2/4046.86).toFixed(1);
+      zone.labelMarker=new google.maps.Marker({position:{lat:cx,lng:cy},map:_propMap,
+        icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
+        label:{text:name+' — '+acres+' ac',color:'#fff',fontSize:'11px',fontWeight:'bold'}});
+      _homeZones.push(zone);
+    }
+    _updateHomeZones();
+    // Show split bar
+    document.getElementById('autoSplitBar').style.display='flex';
   };
 
   window._clearAllHome = function() {
