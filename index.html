@@ -2606,9 +2606,10 @@ document.addEventListener('DOMContentLoaded', updateCartUI);
     <div id="chatMessages">
       <div class="chat-msg bot">Hey! 👋 How can we help you today?</div>
       <div class="chat-quick">
-        <button onclick="_chatQuick('I need a quote for my property')">Get a Quote</button>
-        <button onclick="_chatQuick('What mower is right for my lawn?')">Find My Mower</button>
-        <button onclick="_chatQuick('I have a question about service plans')">Service Plans</button>
+        <button onclick="_chatQuick('How much do mowers cost?')">Pricing</button>
+        <button onclick="_chatQuick('Which mower is right for my property?')">Find My Mower</button>
+        <button onclick="_chatQuick('Tell me about service plans')">Service Plans</button>
+        <button onclick="_chatQuick('I manage an HOA')">HOA / Commercial</button>
       </div>
     </div>
     <div id="chatInputWrap">
@@ -2631,18 +2632,50 @@ function _toggleChat(){
 }
 function _chatQuick(msg){
   document.querySelectorAll('.chat-quick').forEach(function(el){el.remove();});
-  _addMsg(msg,'user');
-  _sendToDoug(msg);
-  setTimeout(function(){_addMsg('Thanks! Doug will text you back shortly. In the meantime, feel free to check out our <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">property assessment tool</a>.','bot');},800);
+  document.getElementById('chatInput').value=msg;
+  _chatSend();
 }
+var _faq=[
+  {k:['price','cost','how much','pricing','expensive','cheap','afford'],a:'Our mowers range from <b>$1,599 to $6,999</b> depending on your lawn size. We also offer <b>Mowing-as-a-Service starting at $99/week</b> — we own the mower, you just enjoy the lawn. <a href="#products" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">See all models →</a>'},
+  {k:['service plan','maintenance','repair','blade','service'],a:'We offer 3 service plans: <b>Essentials ($149/yr)</b>, <b>Pro ($249/yr)</b>, and <b>All-In ($399/yr)</b>. All include blade replacements, seasonal startup/winterization, and phone support. <a href="services.html#plans" style="color:#6abb1e;font-weight:600;">View plans →</a>'},
+  {k:['install','set up','setup','installation'],a:'Professional installation starts at <b>$199</b> for residential and <b>$499</b> for commercial. We handle RTK mapping, zone setup, app configuration — everything. Your mower is cutting within a day.'},
+  {k:['slope','hill','steep','hilly'],a:'Our <b>TerraNox CM240M1</b> handles slopes up to <b>43 degrees</b> — steeper than almost any residential lawn. Use our <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">property assessment tool</a> to check your terrain.'},
+  {k:['acre','acreage','big lawn','large','lot size','how many'],a:'Each mower covers different acreage: <b>i215</b> (½ acre), <b>H220</b> (½ acre), <b>X430</b> (1 acre), <b>X450</b> (1.25 acres), <b>TerraNox</b> (up to 6 acres). Enter your address in our <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">property tool</a> and we\'ll recommend the right one.'},
+  {k:['hoa','condo','association','commercial','property manager'],a:'We specialize in HOA and commercial properties! Our Done-For-You service starts at <b>$150/acre/week</b> — we own and maintain all equipment. <a href="hoa/" style="color:#6abb1e;font-weight:600;">See our HOA page →</a> or try the <a href="commercial-calculator/" style="color:#6abb1e;font-weight:600;">ROI calculator →</a>'},
+  {k:['area','location','serve','service area','where','westchester','putnam'],a:'We serve <b>Westchester and Putnam County</b> — Peekskill, Cortlandt, Yorktown, Mount Kisco, Bedford, Chappaqua, Scarsdale, and surrounding areas. Expanding to Dutchess and Rockland in 2027.'},
+  {k:['wire','boundary','perimeter','wire free'],a:'All our mowers are <b>100% wire-free</b>. No buried wires needed. They use RTK GPS and Vision AI to know exactly where to mow — centimeter accuracy.'},
+  {k:['noise','quiet','loud','neighbor','sound'],a:'Robotic mowers operate at <b>under 60 dB</b> — quieter than a normal conversation. You can run them early morning or late evening without disturbing anyone. Compare that to a gas mower at 90+ dB.'},
+  {k:['snow','winter','leaf','blow','yarbo','4 season','four season'],a:'The <b>Yarbo</b> is a 4-season robot — mow in summer, blow leaves in fall, clear snow in winter. Core platform starts at <b>$3,994</b> with interchangeable modules. <a href="products/yarbo-core.html" style="color:#6abb1e;font-weight:600;">Learn more →</a>'},
+  {k:['finance','affirm','monthly','payment','pay'],a:'We offer financing through <b>Affirm</b> — pay as low as <b>$83/month</b> for the i215 or <b>$250/month</b> for the X450. 0% APR options available at checkout.'},
+  {k:['trade','exchange','return','guarantee','wrong mower'],a:'We offer the <b>Perfect Mower Guarantee</b> — if it\'s not the right fit, exchange it within <b>30 days for full purchase value</b> toward any other model. No restocking fees. No online retailer offers this.'},
+  {k:['quote','estimate','assessment','my lawn','my property'],a:'Use our free <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">satellite property assessment tool</a> — enter your address and we\'ll analyze your lawn size, terrain, and recommend the perfect mower. Takes 30 seconds.'},
+  {k:['open','when','hours','grand opening','may'],a:'Our <b>Grand Opening is May 1st, 2026!</b> Pre-orders are open now with <b>15% off</b> any mower. <a href="#products" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">Shop pre-order deals →</a>'},
+  {k:['vs','compare','difference','better','which'],a:'Not sure which model? Use our <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">property assessment tool</a> — it analyzes your lot size and terrain, then recommends the best match. Or check the <a href="guide.html" style="color:#6abb1e;font-weight:600;">Buyer\'s Guide →</a>'},
+  {k:['hello','hi','hey','sup','yo'],a:'Hey there! 👋 How can I help? I can answer questions about our mowers, pricing, service plans, or your specific property. Try asking about pricing, service plans, or enter your address in our <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">property tool</a>!'},
+  {k:['thank','thanks','thx','awesome','great','cool'],a:'You\'re welcome! Let us know if you need anything else. You can always call us at <a href="tel:9146477276" style="color:#6abb1e;font-weight:600;">(914) 647-7276</a> or use the <a href="#contact" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">contact form</a>.'}
+];
 function _chatSend(){
   var input=document.getElementById('chatInput');
   var msg=input.value.trim();
   if(!msg)return;
   input.value='';
   _addMsg(msg,'user');
-  _sendToDoug(msg);
-  setTimeout(function(){_addMsg('Got it! Doug will text you back shortly. You can also call us at <a href="tel:9146477276" style="color:#6abb1e;font-weight:600;">(914) 647-7276</a>.','bot');},800);
+  var lower=msg.toLowerCase();
+  var matched=false;
+  for(var i=0;i<_faq.length;i++){
+    for(var j=0;j<_faq[i].k.length;j++){
+      if(lower.indexOf(_faq[i].k[j])!==-1){
+        setTimeout(function(ans){return function(){_addMsg(ans,'bot');};}(_faq[i].a),600);
+        matched=true;break;
+      }
+    }
+    if(matched)break;
+  }
+  if(!matched){
+    _sendToDoug(msg);
+    setTimeout(function(){_addMsg('Good question! Let me get Doug on that — he\'ll text you back shortly. In the meantime, try our <a href="#quiz-section" style="color:#6abb1e;font-weight:600;" onclick="_toggleChat()">property assessment tool</a> or call <a href="tel:9146477276" style="color:#6abb1e;font-weight:600;">(914) 647-7276</a>.','bot');},600);
+  }
+  if(typeof gtag==='function')gtag('event','chat_message',{matched:matched,preview:msg.substring(0,50)});
 }
 function _addMsg(text,type){
   var msgs=document.getElementById('chatMessages');
