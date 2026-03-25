@@ -214,7 +214,7 @@
     .slope-legend .dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
     .property-cta { text-align:center; margin-top:20px; padding:16px; background:rgba(106,187,30,.08); border-radius:12px; }
     .property-cta a { display:inline-block; padding:12px 28px; background:var(--green); color:#fff; border-radius:980px; font-weight:600; font-size:.9rem; text-decoration:none; }
-    @media (max-width:768px) { .property-map-wrap { grid-template-columns:1fr; } .section-tab { padding:10px 16px; font-size:.82rem; } }
+    @media (max-width:768px) { .property-map-wrap { grid-template-columns:1fr; } .property-map-wrap #propertyMap { height:350px; } .section-tab { padding:10px 16px; font-size:.82rem; } }
 
     /* === QUIZ === */
     .quiz-section { padding: 72px 0; background: #fff; }
@@ -608,6 +608,9 @@
             <button id="propCloseShapeBtn" onclick="_closePropShape()" style="display:none;padding:6px 14px;font-size:.75rem;font-weight:600;border:none;border-radius:6px;background:#4a8a10;color:#fff;cursor:pointer;animation:pulse 1s infinite;">Close Shape</button>
             <button onclick="_clearAllHome()" style="padding:6px 12px;font-size:.75rem;font-weight:600;border:1px solid #ccc;border-radius:6px;background:#fff;color:#666;cursor:pointer;">Clear All</button>
           </div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--g200);text-align:center;">
+            <a href="tel:9146477276" style="font-size:.78rem;color:#86868b;text-decoration:none;font-weight:500;"><i class="fas fa-phone" style="font-size:.7rem;margin-right:4px;"></i>Questions? (914) 647-7276</a>
+          </div>
         </div>
       </div>
     </div>
@@ -935,8 +938,36 @@
       <div class="why-card fade-in"><div class="icon-circle"><i class="fas fa-seedling"></i></div><h3>Healthier Lawn</h3><p>Daily micro-cuts create thicker, greener grass.</p></div>
       <div class="why-card fade-in"><div class="icon-circle"><i class="fas fa-clock"></i></div><h3>Get Your Time Back</h3><p>No more weekends lost to mowing.</p></div>
     </div>
+
+    <!-- Before/After Comparison -->
+    <div class="fade-in" style="margin-top:40px;max-width:700px;margin-left:auto;margin-right:auto;">
+      <h3 style="text-align:center;font-size:1.2rem;font-weight:700;margin-bottom:16px;">Weekly Mowing vs. Daily Robotic</h3>
+      <div id="baCompare" style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;cursor:col-resize;box-shadow:0 8px 30px rgba(0,0,0,.12);">
+        <img src="https://images.unsplash.com/photo-1558904541-efa843a96f01?w=800&q=80" alt="Overgrown lawn" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div id="baAfter" style="position:absolute;top:0;right:0;width:50%;height:100%;overflow:hidden;">
+          <img src="https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=800&q=80" alt="Perfectly maintained lawn" style="position:absolute;top:0;right:0;width:200%;max-width:none;height:100%;object-fit:cover;transform:translateX(50%);">
+        </div>
+        <div id="baSlider" style="position:absolute;top:0;left:50%;width:4px;height:100%;background:#fff;cursor:col-resize;z-index:10;box-shadow:0 0 8px rgba(0,0,0,.3);">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2);"><span style="font-size:14px;color:#666;">⟷</span></div>
+        </div>
+        <div style="position:absolute;bottom:12px;left:16px;background:rgba(0,0,0,.6);color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Weekly crew cut</div>
+        <div style="position:absolute;bottom:12px;right:16px;background:rgba(106,187,30,.9);color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;">Daily robotic mow</div>
+      </div>
+    </div>
   </div>
 </section>
+<script>
+(function(){
+  var c=document.getElementById('baCompare'),a=document.getElementById('baAfter'),s=document.getElementById('baSlider'),d=false;
+  function m(x){var r=c.getBoundingClientRect();var p=Math.max(5,Math.min(95,((x-r.left)/r.width)*100));a.style.width=(100-p)+'%';s.style.left=p+'%';a.querySelector('img').style.transform='translateX('+p+'%)';}
+  c.addEventListener('mousedown',function(e){d=true;m(e.clientX);});
+  window.addEventListener('mousemove',function(e){if(d)m(e.clientX);});
+  window.addEventListener('mouseup',function(){d=false;});
+  c.addEventListener('touchstart',function(e){d=true;m(e.touches[0].clientX);},{passive:true});
+  window.addEventListener('touchmove',function(e){if(d)m(e.touches[0].clientX);},{passive:true});
+  window.addEventListener('touchend',function(){d=false;});
+})();
+</script>
 
 <!-- Hands-Free Lawn Care Banner -->
 <section class="hands-free-banner">
@@ -2409,11 +2440,22 @@ function submitContactForm(e) {
   var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
   fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
   .then(function() {
-    btn.textContent = 'Sent!';
-    btn.style.background = '#4caf50';
     if (typeof gtag === 'function') gtag('event', 'contact_form_submitted', {interest: data.interest || 'general', county: data.county || 'unknown'});
+    // Hide form fields and show success message
+    var formFields = form.querySelectorAll('.form-row, .form-group, #contactBtn');
+    for (var i = 0; i < formFields.length; i++) formFields[i].style.display = 'none';
+    var successDiv = document.createElement('div');
+    successDiv.id = 'contactSuccess';
+    successDiv.style.cssText = 'text-align:center;padding:48px 24px;';
+    successDiv.innerHTML = '<div style="font-size:3rem;margin-bottom:16px;">&#x2713;</div><h3 style="font-size:1.3rem;font-weight:700;color:#2e7d32;margin-bottom:8px;">Message sent!</h3><p style="color:#4b5563;font-size:.95rem;">We\'ll get back to you within 24 hours.</p>';
+    form.parentNode.insertBefore(successDiv, form.nextSibling);
     form.reset();
-    setTimeout(function() { btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = ''; }, 3000);
+    setTimeout(function() {
+      var sd = document.getElementById('contactSuccess');
+      if (sd) sd.remove();
+      for (var i = 0; i < formFields.length; i++) formFields[i].style.display = '';
+      btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = '';
+    }, 5000);
   })
   .catch(function() {
     btn.textContent = 'Error — try again';
