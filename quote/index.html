@@ -978,6 +978,13 @@ function handleZoneClick(e) {
   var zone = mowZones[activeZoneDraw];
   if (zone.polygon) return; // already closed
 
+  // Snap-to-close: if 3+ points and click near first point, auto-close
+  if (zone.points.length >= 3) {
+    var first = zone.points[0];
+    var dist = google.maps.geometry.spherical.computeDistanceBetween(e.latLng, first);
+    if (dist < 20) { finishZoneDraw(activeZoneDraw); return; }
+  }
+
   var pos = e.latLng;
   zone.points.push(pos);
 

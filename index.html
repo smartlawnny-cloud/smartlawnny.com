@@ -1485,6 +1485,12 @@ function _onPropMapReady() {
     if (idx === null || idx === undefined) return;
     var zone = _homeZones[idx];
     if (zone.polygon) return;
+    // Snap-to-close: if 3+ points and click near first point, auto-close
+    if (zone.points.length >= 3) {
+      var first = zone.points[0];
+      var dist = google.maps.geometry.spherical.computeDistanceBetween(e.latLng, first);
+      if (dist < 20) { _closeHomeZone(idx); return; } // within 20 meters = close
+    }
     zone.points.push(e.latLng);
     zone.markers.push(new google.maps.Marker({
       position:e.latLng, map:_propMap,
