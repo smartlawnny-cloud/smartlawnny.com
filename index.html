@@ -2143,6 +2143,30 @@ function _onPropMapReady() {
   window._printQuote = function() {
     var d = _buildQuoteData();
     if (!d.zones.length) { alert('Draw at least one mowing zone first.'); return; }
+    // Capture map as image first
+    var mapEl = document.getElementById('propertyMap');
+    var mapImg = '';
+    try {
+      // Use Google Maps Static API as fallback
+      var center = _propMap.getCenter();
+      var zoom = _propMap.getZoom();
+      var w = mapEl.offsetWidth || 600;
+      var h = mapEl.offsetHeight || 400;
+      // Build path for zones
+      var paths = '';
+      _homeZones.forEach(function(z){
+        if(!z.polygon) return;
+        paths += '&path=color:0x'+z.color.replace('#','')+'80|weight:2|fillcolor:0x'+z.color.replace('#','')+'40';
+        z.polygon.getPath().forEach(function(p){ paths += '|'+p.lat().toFixed(5)+','+p.lng().toFixed(5); });
+      });
+      // Property boundary
+      if(_propPolygon){
+        paths += '&path=color:0x6abb1e80|weight:2';
+        _propPolygon.getPath().forEach(function(p){ paths += '|'+p.lat().toFixed(5)+','+p.lng().toFixed(5); });
+      }
+      mapImg = 'https://maps.googleapis.com/maps/api/staticmap?center='+center.lat()+','+center.lng()+'&zoom='+(zoom-1)+'&size='+Math.min(w,640)+'x'+Math.min(h,400)+'&maptype=satellite'+paths+'&key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk';
+    } catch(e) { console.log('Map capture failed:', e); }
+
     var today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
     var win = window.open('','_blank');
     var html = '<!DOCTYPE html><html><head><title>Smart Lawn NY — '+d.addr+'</title><style>' +
@@ -2178,6 +2202,11 @@ function _onPropMapReady() {
       '<div class="prop-stats"><div>Mowing Area: <span>' + d.totalAcres + ' acres</span></div>' +
       '<div>Zones: <span>' + d.zones.length + '</span></div>' +
       '<div>Total Mowers: <span>' + d.totalUnits + '</span></div></div></div>';
+
+    // Map image
+    if (mapImg) {
+      html += '<div style="margin:12px 0;text-align:center;"><img src="'+mapImg+'" style="width:100%;max-width:600px;border-radius:8px;border:1px solid #ddd;" alt="Property Map"></div>';
+    }
 
     // Zone table
     html += '<table><thead><tr><th>Zone</th><th>Mower</th><th>Acres</th><th>Qty</th><th>Subtotal</th></tr></thead><tbody>';
