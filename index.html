@@ -2779,10 +2779,11 @@ function _runPropAnalysis() {
         // Make slope cells non-clickable so zone drawing works through them
         try { cell.setClickable(false); } catch(e) { cell.set('clickable', false); }
         // Degree label on steep cells
-        if(sd_r>=22 && r%3===0 && c%3===0){
+        if(sd_r>=20 && r%2===0 && c%2===0){
           _propSlopeCells.push(new google.maps.Marker({position:{lat:lat+latS/2,lng:lng+lngS/2},map:_propMap,
             icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
-            label:{text:sd_r+'°',color:'#fff',fontSize:'9px',fontWeight:'bold'}}));
+            label:{text:sd_r+'°',color:sd_r>=30?'#fff':'#333',fontSize:'10px',fontWeight:'bold'},
+            clickable:false, zIndex:1}));
         }
       }}
       // Elevation display removed
