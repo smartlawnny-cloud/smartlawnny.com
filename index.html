@@ -1641,6 +1641,25 @@ function _onPropMapReady() {
     _updateHomeZones();
   };
 
+  // Cmd+Z / Ctrl+Z to undo last point while drawing a zone
+  document.addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+      var idx = window._homeActiveZone;
+      if (idx === null || idx === undefined) return;
+      var zone = _homeZones[idx];
+      if (!zone || zone.polygon || zone.points.length === 0) return;
+      e.preventDefault();
+      zone.points.pop();
+      var lastMarker = zone.markers.pop();
+      if (lastMarker) lastMarker.setMap(null);
+      if (zone.polyline) zone.polyline.setMap(null);
+      if (zone.points.length > 0) {
+        zone.polyline = new google.maps.Polyline({path:zone.points, map:_propMap, strokeColor:zone.color, strokeWeight:2});
+      } else { zone.polyline = null; }
+      _updateHomeZones();
+    }
+  });
+
   window._closeHomeZone = function(idx) {
     var zone = _homeZones[idx];
     if (zone.points.length < 3) return;
