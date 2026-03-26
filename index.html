@@ -1784,65 +1784,6 @@ function _onPropMapReady() {
     _updateHomeZones();
   };
 
-  // Auto-split: take first completed zone (or property boundary) and slice into N equal vertical strips
-  window._autoSplitZones = function(n) {
-    var path = null;
-    // First try: use first drawn zone
-    for (var i = 0; i < _homeZones.length; i++) {
-      if (_homeZones[i].polygon) { path = _homeZones[i].polygon.getPath().getArray(); break; }
-    }
-    // Fallback: use property boundary
-    if (!path && _propPolygon) { path = _propPolygon.getPath().getArray(); }
-    if (!path) { alert('Draw a mowing zone first, or enter an address to load the property boundary.'); return; }
-    var minLat=90,maxLat=-90,minLng=180,maxLng=-180;
-    path.forEach(function(p){
-      if(p.lat()<minLat)minLat=p.lat();if(p.lat()>maxLat)maxLat=p.lat();
-      if(p.lng()<minLng)minLng=p.lng();if(p.lng()>maxLng)maxLng=p.lng();
-    });
-    // Clear all existing zones
-    _homeZones.forEach(function(z){
-      if(z.polygon)z.polygon.setMap(null);if(z.polyline)z.polyline.setMap(null);
-      if(z.labelMarker)z.labelMarker.setMap(null);z.markers.forEach(function(m){m.setMap(null);});
-    });
-    _homeZones=[];window._homeActiveZone=null;
-    // Create N vertical strips
-    var lngStep=(maxLng-minLng)/n;
-    for(var s=0;s<n;s++){
-      var sL=minLng+s*lngStep, sR=minLng+(s+1)*lngStep;
-      var pts=[];
-      for(var j=0;j<path.length;j++){
-        var p1=path[j],p2=path[(j+1)%path.length];
-        if(p1.lng()>=sL-0.00001&&p1.lng()<=sR+0.00001)
-          pts.push(new google.maps.LatLng(p1.lat(),Math.max(sL,Math.min(sR,p1.lng()))));
-        if((p1.lng()<sL&&p2.lng()>sL)||(p2.lng()<sL&&p1.lng()>sL)){
-          var t=(sL-p1.lng())/(p2.lng()-p1.lng());
-          pts.push(new google.maps.LatLng(p1.lat()+t*(p2.lat()-p1.lat()),sL));
-        }
-        if((p1.lng()<sR&&p2.lng()>sR)||(p2.lng()<sR&&p1.lng()>sR)){
-          var t2=(sR-p1.lng())/(p2.lng()-p1.lng());
-          pts.push(new google.maps.LatLng(p1.lat()+t2*(p2.lat()-p1.lat()),sR));
-        }
-      }
-      if(pts.length<3)continue;
-      var cx=0,cy=0;pts.forEach(function(p){cx+=p.lat();cy+=p.lng();});cx/=pts.length;cy/=pts.length;
-      pts.sort(function(a,b){return Math.atan2(a.lng()-cy,a.lat()-cx)-Math.atan2(b.lng()-cy,b.lat()-cx);});
-      var color=_hzColors[s%_hzColors.length],name='Zone '+String.fromCharCode(65+s);
-      var zone={polygon:null,points:pts,markers:[],polyline:null,color:color,name:name,labelMarker:null};
-      zone.polygon=new google.maps.Polygon({paths:pts,map:_propMap,fillColor:color,fillOpacity:0.25,strokeColor:color,strokeWeight:2,editable:true,draggable:false});
-      // Update acreage when zone is edited
-      google.maps.event.addListener(zone.polygon.getPath(),'set_at',function(){_updateHomeZones();});
-      google.maps.event.addListener(zone.polygon.getPath(),'insert_at',function(){_updateHomeZones();});
-      var areaM2=google.maps.geometry.spherical.computeArea(zone.polygon.getPath());
-      var acres=(areaM2/4046.86).toFixed(1);
-      zone.labelMarker=new google.maps.Marker({position:{lat:cx,lng:cy},map:_propMap,
-        icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
-        label:{text:name+' — '+acres+' ac',color:'#fff',fontSize:'11px',fontWeight:'bold'}});
-      _homeZones.push(zone);
-    }
-    _updateHomeZones();
-    // Show split bar
-  };
-
   window._clearAllHome = function() {
     _homeZones.forEach(function(z){
       if(z.polygon)z.polygon.setMap(null);if(z.polyline)z.polyline.setMap(null);
@@ -2151,7 +2092,6 @@ function _onPropMapReady() {
       zones: d.zones.map(function(z) {
         return { n:z.name, pts:z.points.map(function(p){ return [+p[0].toFixed(4),+p[1].toFixed(4)]; }) };
       }),
-      chargers: (d.chargers||[]).map(function(c){ return [+c[0].toFixed(4),+c[1].toFixed(4)]; })
     };
     var compressed = btoa(JSON.stringify(slim));
     return window.location.origin + '/#quote=' + compressed;
@@ -2381,19 +2321,6 @@ function _onPropMapReady() {
     if (typeof gtag === 'function') gtag('event', 'send_to_rep', {address: d.addr, acres: d.totalAc});
   };
 
-  // Include chargers in clear all
-  var origClear = window._clearAllHome;
-  window._clearAllHome = function() {
-    origClear();
-    _chargerMarkers.forEach(function(m) { m.setMap(null); });
-    _chargerMarkers = [];
-    _updateChargerCount();
-    window._chargerMode = false;
-    var btn = document.getElementById('chargerModeBtn');
-    btn.style.background = '#fff';
-    btn.style.color = '#ff9800';
-    btn.textContent = '⚡ Place Charger';
-  };
 
   // Places autocomplete
   var input = document.getElementById('propAddressInput');
@@ -2457,20 +2384,6 @@ function _onPropMapReady() {
             label:{text:z.name+' — '+z.acres+' ac', color:'#fff', fontSize:'11px', fontWeight:'bold'}
           });
         });
-        // Place chargers
-        if (d.chargers) {
-          d.chargers.forEach(function(c) {
-            var num = _chargerMarkers.length + 1;
-            var marker = new google.maps.Marker({
-              position:{lat:parseFloat(c[1]),lng:parseFloat(c[0])}, map:_propMap,
-              icon:{url:'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40"><path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 24 16 24s16-12 16-24C32 7.2 24.8 0 16 0z" fill="#ff9800"/><text x="16" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="white">⚡</text></svg>'),
-                scaledSize:new google.maps.Size(32,40), anchor:new google.maps.Point(16,40)},
-              title:'Charging Station #'+num, draggable:false
-            });
-            _chargerMarkers.push(marker);
-          });
-          _updateChargerCount();
-        }
         _updateHomeZones();
         // Fit bounds to all zones
         var bounds = new google.maps.LatLngBounds();
