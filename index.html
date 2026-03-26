@@ -209,9 +209,6 @@
     .pstat-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--g200); font-size:.85rem; }
     .pstat-row .label { color:var(--g500); }
     .pstat-row .val { font-weight:600; color:var(--g900); }
-    .slope-legend { margin-top:12px; }
-    .slope-legend .sl { display:flex; align-items:center; gap:6px; padding:3px 0; font-size:.8rem; }
-    .slope-legend .dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
     .property-cta { text-align:center; margin-top:20px; padding:16px; background:rgba(106,187,30,.08); border-radius:12px; }
     .property-cta a { display:inline-block; padding:12px 28px; background:var(--green); color:#fff; border-radius:980px; font-weight:600; font-size:.9rem; text-decoration:none; }
     @media (max-width:768px) { .property-map-wrap { grid-template-columns:1fr; } .property-map-wrap #propertyMap { height:350px; } .section-tab { padding:10px 16px; font-size:.82rem; } }
@@ -568,24 +565,10 @@
           <h4 id="propAddrLabel">Property Analysis</h4>
           <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
           <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
-          <!-- Elevation removed — slope colors are what matters -->
-          <div class="slope-legend">
-          </div>
           <div style="display:flex;gap:4px;">
             <button onclick="if(_propMap){_propMap.setTilt(0);_propMap.setHeading(0);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">2D</button>
             <button onclick="if(_propMap){_propMap.setTilt(67);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">3D</button>
             <button onclick="if(_propMap){_propMap.setHeading((_propMap.getHeading()||0)+90);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">↻</button>
-          </div>
-
-          <!-- Slope Key -->
-          <div id="slopeKey" style="display:none;margin-top:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;">
-            <span style="font-size:.65rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.5px;">Slope Analysis</span>
-            <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;">
-              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#4caf50;display:inline-block;"></span> &lt;20° Flat</div>
-              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#ffeb3b;display:inline-block;"></span> 20-30°</div>
-              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#ff9800;display:inline-block;"></span> 30-43°</div>
-              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#f44336;display:inline-block;"></span> &gt;43° Steep</div>
-            </div>
           </div>
 
           <!-- Mowing Zones Tool -->
@@ -1554,7 +1537,7 @@ function switchBuyTab(tab, el) {
 }
 
 // === PROPERTY CHECK MAP ===
-var _propMap, _propDrawMgr, _propPolygon, _propElevSvc, _propSlopeCells = [];
+var _propMap, _propDrawMgr, _propPolygon;
 function initPropertyMap() {
   if (window._propMapInit) return;
   window._propMapInit = true;
@@ -1570,7 +1553,6 @@ document.addEventListener('DOMContentLoaded', function() {
   setTimeout(initPropertyMap, 500);
 });
 function _onPropMapReady() {
-  _propElevSvc = new google.maps.ElevationService();
   _propMap = new google.maps.Map(document.getElementById('propertyMap'), {
     center:{lat:41.27,lng:-73.92}, zoom:10, mapTypeId:'hybrid',
     mapTypeControl:true, streetViewControl:false, fullscreenControl:true,
@@ -1842,7 +1824,6 @@ function _onPropMapReady() {
     });
     _homeZones=[];window._homeActiveZone=null;
     if(_propPolygon){_propPolygon.setMap(null);_propPolygon=null;}
-    _propSlopeCells.forEach(function(c){c.setMap(null);});_propSlopeCells=[];
     document.getElementById('homeZonesList').innerHTML='';
     document.getElementById('homeZoneTotals').style.display='none';
     document.getElementById('mapRecommendation').style.display='none';
@@ -2759,59 +2740,8 @@ function _runPropAnalysis() {
   var area = google.maps.geometry.spherical.computeArea(path) / 4046.86;
   document.getElementById('pLot').textContent = area.toFixed(2) + ' ac';
   document.getElementById('pMow').textContent = (area * 0.85).toFixed(1) + ' ac';
-  // Slope analysis
-  var bounds = new google.maps.LatLngBounds();
-  for (var i=0;i<path.getLength();i++) bounds.extend(path.getAt(i));
-  var sw=bounds.getSouthWest(), ne=bounds.getNorthEast(), gs=30;
-  var latS=(ne.lat()-sw.lat())/gs, lngS=(ne.lng()-sw.lng())/gs;
-  var locs=[], gm=[];
-  for(var r=0;r<=gs;r++){gm[r]=[];for(var c=0;c<=gs;c++){gm[r][c]=locs.length;locs.push(new google.maps.LatLng(sw.lat()+r*latS,sw.lng()+c*lngS));}}
-  var mid=Math.ceil(locs.length/2);
-  _propElevSvc.getElevationForLocations({locations:locs.slice(0,mid)}, function(r1,s1) {
-    if(s1!=='OK')return;
-    _propElevSvc.getElevationForLocations({locations:locs.slice(mid)}, function(r2,s2) {
-      if(s2!=='OK')return;
-      var res=r1.concat(r2), minE=99999,maxE=-99999, cnt={g:0,y:0,o:0,r:0}, tot=0;
-      _propSlopeCells.forEach(function(c){c.setMap(null);}); _propSlopeCells=[];
-      for(var r=0;r<gs;r++){for(var c=0;c<gs;c++){
-        var lat=sw.lat()+r*latS, lng=sw.lng()+c*lngS;
-        if(!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(lat+latS/2,lng+lngS/2),_propPolygon))continue;
-        tot++;
-        var e00=res[gm[r][c]].elevation,e10=res[gm[r+1][c]].elevation,e01=res[gm[r][c+1]].elevation,e11=res[gm[r+1][c+1]].elevation;
-        minE=Math.min(minE,e00,e10,e01,e11); maxE=Math.max(maxE,e00,e10,e01,e11);
-        var dxM=lngS*111320*Math.cos(lat*Math.PI/180), dyM=latS*111320;
-        var dzX=((e01-e00)+(e11-e10))/2, dzY=((e10-e00)+(e11-e01))/2;
-        var sd=Math.atan(Math.sqrt((dzX/dxM)*(dzX/dxM)+(dzY/dyM)*(dzY/dyM)))*180/Math.PI;
-        var col,op,sd_r=Math.round(sd);
-        if(sd<22){col='#4caf50';op=0.2;cnt.g++;}else if(sd<30){col='#ffeb3b';op=0.4;cnt.y++;}
-        else if(sd<43){col='#ff9800';op=0.5;cnt.o++;}else{col='#f44336';op=0.6;cnt.r++;}
-        var cell=new google.maps.Polygon({paths:[{lat:lat,lng:lng},{lat:lat,lng:lng+lngS},{lat:lat+latS,lng:lng+lngS},{lat:lat+latS,lng:lng}],
-          fillColor:col,fillOpacity:op,strokeColor:col,strokeOpacity:0.3,strokeWeight:1,map:_propMap});
-        _propSlopeCells.push(cell);
-        // Make slope cells non-clickable so zone drawing works through them
-        try { cell.setClickable(false); } catch(e) { cell.set('clickable', false); }
-        // Degree label on steep cells
-        if(sd_r>=30){
-          var fc=sd_r>=43?'#f44336':'#ff9800';
-          var op=sd_r>=43?0.7:0.5;
-          // Colored block
-          _propSlopeCells.push(new google.maps.Rectangle({bounds:{north:lat+latS,south:lat,east:lng+lngS,west:lng},
-            map:_propMap,fillColor:fc,fillOpacity:op,strokeWeight:0,clickable:false,zIndex:5}));
-        }
-      }}
-      // Elevation display removed
-      if(tot>0){
-        document.getElementById('slopeKey').style.display='block';
-        document.getElementById('pGreen').textContent=Math.round(cnt.g/tot*100)+'%';
-        document.getElementById('pYellow').textContent=Math.round(cnt.y/tot*100)+'%';
-        document.getElementById('pOrange').textContent=Math.round(cnt.o/tot*100)+'%';
-        document.getElementById('pRed').textContent=Math.round(cnt.r/tot*100)+'%';
-        // Auto-recommend mowers based on map data
-        var steepPct = Math.round((cnt.o+cnt.r)/tot*100);
-        showMapRecommendation(area, steepPct);
-      }
-    });
-  });
+  // Show mower recommendation based on acreage
+  showMapRecommendation(area, 0);
 }
 
 function showMapRecommendation(acres, steepPct) {
