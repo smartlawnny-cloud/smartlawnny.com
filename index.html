@@ -577,16 +577,6 @@
               <span style="font-size:.7rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Mowing Zones</span>
               <div style="display:flex;gap:4px;">
                 <button onclick="_addHomeZone()" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:6px;background:#6abb1e;color:#fff;cursor:pointer;">✏️ Draw Zone</button>
-                <select id="zoneSplitSelect" onchange="if(this.value)_autoSplitZones(parseInt(this.value))" style="padding:3px 8px;font-size:.7rem;font-weight:600;border:1px solid #6abb1e;border-radius:6px;background:#f0f8e8;color:#4a8a10;cursor:pointer;">
-                  <option value="">Auto Split...</option>
-                  <option value="2">2 Zones</option>
-                  <option value="3">3 Zones</option>
-                  <option value="4">4 Zones</option>
-                  <option value="5">5 Zones</option>
-                  <option value="6">6 Zones</option>
-                  <option value="8">8 Zones</option>
-                  <option value="10">10 Zones</option>
-                </select>
               </div>
             </div>
             <div id="homeZonesList"></div>
@@ -1713,7 +1703,6 @@ function _onPropMapReady() {
     google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', _updateHomeZones);
     _updateHomeZones();
     // Show split buttons after first zone
-    document.getElementById('autoSplitBar').style.display='flex';
     setTimeout(function(){
       if(confirm('Zone '+zone.name+' = '+acres+' acres.\n\nSplit into equal zones? Or draw another manually?')) _addHomeZone();
     }, 300);
@@ -1811,7 +1800,6 @@ function _onPropMapReady() {
     }
     _updateHomeZones();
     // Show split bar
-    document.getElementById('autoSplitBar').style.display='flex';
   };
 
   window._clearAllHome = function() {
@@ -2549,11 +2537,6 @@ function _flyToProperty(lat, lng, name) {
       google.maps.event.addListener(_propPolygon.getPath(), 'insert_at', _runPropAnalysis);
       // Auto-show zone split options after boundary loads
       var acreage = google.maps.geometry.spherical.computeArea(_propPolygon.getPath()) / 4046.86;
-      var suggestedZones = acreage > 10 ? 6 : acreage > 5 ? 4 : acreage > 2 ? 3 : acreage > 0.5 ? 2 : 1;
-      if (suggestedZones > 1) {
-        // Auto-split into suggested number of zones
-        setTimeout(function(){ _autoSplitZones(suggestedZones); }, 500);
-      }
     }
   });
 }
