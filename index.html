@@ -1736,6 +1736,13 @@ function _onPropMapReady() {
   };
   window._setZoneMower = function(idx, val) {
     _homeZones[idx].mower = val;
+    // Auto-collapse after selecting a mower
+    if (val) _homeZones[idx].collapsed = true;
+    _updateHomeZones();
+  };
+
+  window._toggleZoneCollapse = function(idx) {
+    _homeZones[idx].collapsed = !_homeZones[idx].collapsed;
     _updateHomeZones();
   };
 
@@ -1830,30 +1837,51 @@ function _onPropMapReady() {
       }
       total+=acres;
       var drawing=(window._homeActiveZone===i&&!z.polygon);
-      // Per-zone mower selector
-      var mowerSel='';
+      // Per-zone mower selector with collapse
       if(z.polygon){
-        var curMower=z.mower||'terranox-cm240';
-        mowerSel='<select onchange="_setZoneMower('+i+',this.value)" style="font-size:.6rem;padding:1px 2px;border:1px solid #ddd;border-radius:3px;max-width:90px;">'+
-          '<option value="rm21"'+(curMower==='rm21'?' selected':'')+'>FJD RM21</option>'+
-          '<option value="terranox-cm240"'+(curMower==='terranox-cm240'?' selected':'')+'>TerraNox 240</option>'+
-          '<option value="terranox-cm120"'+(curMower==='terranox-cm120'?' selected':'')+'>TerraNox 120</option>'+
-          '<option value="x450"'+(curMower==='x450'?' selected':'')+'>X450</option>'+
-          '<option value="x430"'+(curMower==='x430'?' selected':'')+'>X430</option>'+
-          '<option value="yarbo"'+(curMower==='yarbo'?' selected':'')+'>Yarbo</option>'+
-          '<option value="h220"'+(curMower==='h220'?' selected':'')+'>H220</option>'+
-          '<option value="i215"'+(curMower==='i215'?' selected':'')+'>i215</option>'+
-          '<option value="i105e"'+(curMower==='i105e'?' selected':'')+'>i105E</option>'+
-          '</select>';
+        var curMower=z.mower||'';
+        var spec=curMower?_mowerSpecs[curMower]:null;
+        var collapsed=z.collapsed&&curMower;
+        if(collapsed){
+          // Collapsed: one compact line — zone color, name, acres, mower name, expand button
+          html+='<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:1px solid #eee;font-size:.7rem;cursor:pointer;" onclick="_toggleZoneCollapse('+i+')">'+
+            '<span style="width:10px;height:10px;border-radius:2px;background:'+z.color+';flex-shrink:0;"></span>'+
+            '<strong>'+z.name+'</strong>'+
+            '<span style="color:#888;">'+acres.toFixed(1)+'ac</span>'+
+            '<span style="color:#4a8a10;font-weight:600;font-size:.65rem;">'+spec.name+'</span>'+
+            '<span style="margin-left:auto;color:#aaa;font-size:.6rem;">▼</span>'+
+            '</div>';
+        } else {
+          // Expanded: full row with mower dropdown
+          var mowerSel='<select onchange="_setZoneMower('+i+',this.value)" style="font-size:.6rem;padding:1px 2px;border:1px solid #ddd;border-radius:3px;max-width:90px;">'+
+            '<option value=""'+(curMower===''?' selected':'')+'>Choose mower...</option>'+
+            '<option value="rm21"'+(curMower==='rm21'?' selected':'')+'>FJD RM21</option>'+
+            '<option value="terranox-cm240"'+(curMower==='terranox-cm240'?' selected':'')+'>TerraNox 240</option>'+
+            '<option value="terranox-cm120"'+(curMower==='terranox-cm120'?' selected':'')+'>TerraNox 120</option>'+
+            '<option value="x450"'+(curMower==='x450'?' selected':'')+'>X450</option>'+
+            '<option value="x430"'+(curMower==='x430'?' selected':'')+'>X430</option>'+
+            '<option value="yarbo"'+(curMower==='yarbo'?' selected':'')+'>Yarbo</option>'+
+            '<option value="h220"'+(curMower==='h220'?' selected':'')+'>H220</option>'+
+            '<option value="i215"'+(curMower==='i215'?' selected':'')+'>i215</option>'+
+            '<option value="i105e"'+(curMower==='i105e'?' selected':'')+'>i105E</option>'+
+            '</select>';
+          html+='<div style="display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:1px solid #eee;font-size:.75rem;">'+
+            '<span style="width:10px;height:10px;border-radius:2px;background:'+z.color+';flex-shrink:0;"></span>'+
+            '<strong>'+z.name+'</strong>'+
+            '<span style="font-weight:600;margin:0 2px;">'+acres.toFixed(1)+'ac</span>'+mowerSel+
+            (curMower?'<button onclick="_toggleZoneCollapse('+i+')" style="padding:1px 4px;font-size:.55rem;background:#f0f8e8;color:#4a8a10;border:1px solid #6abb1e;border-radius:3px;cursor:pointer;">▲</button>':'')+
+            '<button onclick="_removeHomeZone('+i+')" style="padding:1px 4px;font-size:.65rem;background:#eee;color:#999;border:none;border-radius:3px;cursor:pointer;">✕</button>'+
+            '</div>';
+        }
+      } else {
+        html+='<div style="display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:1px solid #eee;font-size:.75rem;">'+
+          '<span style="width:10px;height:10px;border-radius:2px;background:'+z.color+';flex-shrink:0;"></span>'+
+          '<strong>'+z.name+'</strong>'+
+          (drawing?'<span style="color:#ff9800;">Drawing ('+z.points.length+')</span>':'')+
+          (drawing&&z.points.length>=3?'<button onclick="_closeHomeZone('+i+')" style="padding:1px 6px;font-size:.65rem;background:#4a8a10;color:#fff;border:none;border-radius:3px;cursor:pointer;">Close</button>':'')+
+          '<button onclick="_removeHomeZone('+i+')" style="padding:1px 4px;font-size:.65rem;background:#eee;color:#999;border:none;border-radius:3px;cursor:pointer;margin-left:auto;">✕</button>'+
+          '</div>';
       }
-      html+='<div style="display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:1px solid #eee;font-size:.75rem;">'+
-        '<span style="width:10px;height:10px;border-radius:2px;background:'+z.color+';flex-shrink:0;"></span>'+
-        '<strong>'+z.name+'</strong>'+
-        (z.polygon?'<span style="font-weight:600;margin:0 2px;">'+acres.toFixed(1)+'ac</span>'+mowerSel:
-          (drawing?'<span style="color:#ff9800;">Drawing ('+z.points.length+')</span>':''))+
-        (drawing&&z.points.length>=3?'<button onclick="_closeHomeZone('+i+')" style="padding:1px 6px;font-size:.65rem;background:#4a8a10;color:#fff;border:none;border-radius:3px;cursor:pointer;">Close</button>':'')+
-        '<button onclick="_removeHomeZone('+i+')" style="padding:1px 4px;font-size:.65rem;background:#eee;color:#999;border:none;border-radius:3px;cursor:pointer;margin-left:auto;">✕</button>'+
-        '</div>';
     });
     document.getElementById('homeZonesList').innerHTML=html;
     // Calculate fleet from per-zone mower assignments
