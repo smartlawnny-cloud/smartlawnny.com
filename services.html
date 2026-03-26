@@ -298,6 +298,10 @@
         <a href="https://instagram.com/SmartLawnNY" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
         <a href="https://youtube.com/@SmartLawnNY" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
       </div>
+      <div class="cart-icon" onclick="toggleCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
       <a href="index.html#contact" class="order-btn">Get a Quote</a>
     </div>
     <button class="mobile-toggle" onclick="document.querySelector('nav').style.display=document.querySelector('nav').style.display==='block'?'none':'block'"><i class="fas fa-bars"></i></button>
@@ -782,8 +786,8 @@
             <td><strong>Daily — always perfect</strong></td>
           </tr>
           <tr>
-            <td>Typical Monthly Cost</td>
-            <td>$200–$400/mo</td>
+            <td>Typical Weekly Cost</td>
+            <td>$50–$100/wk</td>
             <td><strong>$99–$199/wk</strong></td>
           </tr>
           <tr>
@@ -929,11 +933,13 @@
     "@type": "OfferCatalog",
     "name": "Robotic Mower Services",
     "itemListElement": [
-      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Basic Installation"}, "price": "199", "priceCurrency": "USD"},
-      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Standard Installation"}, "price": "499", "priceCurrency": "USD"},
-      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Premium Installation"}, "price": "799", "priceCurrency": "USD"},
-      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Annual Service Plan"}, "price": "199", "priceCurrency": "USD"},
-      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Mowing as a Service (Small Yard)"}, "price": "99", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "unitText": "week"}}
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Basic Installation (up to 1/4 Acre)"}, "price": "199", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Standard Installation (1/4 to 1/2 Acre)"}, "price": "249", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Premium Installation (1/2 to 1 Acre)"}, "price": "299", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Essentials Service Plan (Annual)"}, "price": "149", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Pro Service Plan (Annual)"}, "price": "249", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "All-In Service Plan (Annual)"}, "price": "399", "priceCurrency": "USD"},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Mowing as a Service (up to 1/2 Acre)"}, "price": "99", "priceCurrency": "USD", "priceSpecification": {"@type": "UnitPriceSpecification", "unitText": "week"}}
     ]
   }
 }
