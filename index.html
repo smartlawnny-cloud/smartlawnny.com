@@ -604,6 +604,7 @@
                 <option value="0.5" data-name="Navimow X430" data-price="2499">Navimow X430</option>
                 <option value="0.25" data-name="Navimow H220" data-price="2199">Navimow H220</option>
                 <option value="0.15" data-name="Navimow i215" data-price="1599">Navimow i215</option>
+                <option value="0.13" data-name="Navimow i105E" data-price="799">Navimow i105E</option>
               </select>
               <!-- Live pricing -->
               <div style="margin-top:6px;padding:6px 0;border-top:1px solid #e5e7eb;">
@@ -883,6 +884,21 @@
           <div class="specs">Up to 0.37 acres | LiDAR+Vision | Best Under Trees</div>
           <a href="products/navimow-i215-lidar.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Navimow i215 LiDAR',1599,'images/products/i215-lidar-pdp.png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+        </div>
+      </div>
+      <!-- Navimow i105E -->
+      <div class="product-card fade-in" data-brand="navimow">
+        <div class="product-card-image">
+          <span class="product-badge" style="background:#2563eb;">Entry Level</span>
+          <img src="images/products/i105e-pdp.png" alt="Navimow i105E">
+        </div>
+        <div class="product-card-body">
+          <div class="brand-label">Segway Navimow</div>
+          <h3>Navimow i105E</h3>
+          <div class="price">$799</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $199</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="specs">Up to 5,500 sqft | Wire-Free | 24&deg; Slopes | EFLS Nav</div>
+          <a href="products/navimow-i105e.html" class="btn-details">View Details</a>
+          <button class="btn-cart" onclick="addToCart('Navimow i105E',799,'images/products/i105e-pdp.png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
       <!-- Yarbo Core -->
@@ -1646,7 +1662,8 @@ function _onPropMapReady() {
     'x430':{name:'Navimow X430',price:2499,acres:0.75},
     'yarbo':{name:'Yarbo Core',price:3994,acres:0.75},
     'h220':{name:'Navimow H220',price:2199,acres:0.5},
-    'i215':{name:'Navimow i215',price:1599,acres:0.35}
+    'i215':{name:'Navimow i215',price:1599,acres:0.35},
+    'i105e':{name:'Navimow i105E',price:799,acres:0.13}
   };
   window._setZoneMower = function(idx, val) {
     _homeZones[idx].mower = val;
@@ -1756,6 +1773,7 @@ function _onPropMapReady() {
           '<option value="yarbo"'+(curMower==='yarbo'?' selected':'')+'>Yarbo</option>'+
           '<option value="h220"'+(curMower==='h220'?' selected':'')+'>H220</option>'+
           '<option value="i215"'+(curMower==='i215'?' selected':'')+'>i215</option>'+
+          '<option value="i105e"'+(curMower==='i105e'?' selected':'')+'>i105E</option>'+
           '</select>';
       }
       html+='<div style="display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:1px solid #eee;font-size:.75rem;">'+
@@ -1840,6 +1858,7 @@ function _onPropMapReady() {
   }
 
   var _mowerData=[
+    {val:'0.13',name:'i105E',price:799,acres:0.13,img:'images/products/i105e-pdp.png'},
     {val:'0.15',name:'i215 LiDAR',price:1599,acres:0.15,img:'images/products/i215-lidar-pdp.png'},
     {val:'0.25',name:'H220',price:2199,acres:0.25,img:'images/products/h220-pdp.png'},
     {val:'0.5',name:'X430',price:2499,acres:0.5,img:'images/products/x4-black-pdp.png'},
