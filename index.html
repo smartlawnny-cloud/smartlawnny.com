@@ -637,7 +637,7 @@
             <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;">
               <label style="font-size:.7rem;color:#555;flex:1;">Per mow / visit</label>
               <span style="font-size:.75rem;color:#888;">$</span>
-              <input type="number" id="userCostPerMow" value="" placeholder="75" min="0" step="5" oninput="_recalcUserROI()" style="width:60px;padding:3px 6px;font-size:.75rem;border:1px solid #ddd;border-radius:4px;text-align:right;">
+              <input type="number" id="userCostPerMow" value="" placeholder="75" min="0" step="5" oninput="this._userEdited=true;_recalcUserROI()" style="width:60px;padding:3px 6px;font-size:.75rem;border:1px solid #ddd;border-radius:4px;text-align:right;">
             </div>
             <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;">
               <label style="font-size:.7rem;color:#555;flex:1;">How often?</label>
@@ -1798,7 +1798,10 @@ function _onPropMapReady() {
       pts.sort(function(a,b){return Math.atan2(a.lng()-cy,a.lat()-cx)-Math.atan2(b.lng()-cy,b.lat()-cx);});
       var color=_hzColors[s%_hzColors.length],name='Zone '+String.fromCharCode(65+s);
       var zone={polygon:null,points:pts,markers:[],polyline:null,color:color,name:name,labelMarker:null};
-      zone.polygon=new google.maps.Polygon({paths:pts,map:_propMap,fillColor:color,fillOpacity:0.25,strokeColor:color,strokeWeight:2,editable:false,draggable:false});
+      zone.polygon=new google.maps.Polygon({paths:pts,map:_propMap,fillColor:color,fillOpacity:0.25,strokeColor:color,strokeWeight:2,editable:true,draggable:false});
+      // Update acreage when zone is edited
+      google.maps.event.addListener(zone.polygon.getPath(),'set_at',function(){_updateHomeZones();});
+      google.maps.event.addListener(zone.polygon.getPath(),'insert_at',function(){_updateHomeZones();});
       var areaM2=google.maps.geometry.spherical.computeArea(zone.polygon.getPath());
       var acres=(areaM2/4046.86).toFixed(1);
       zone.labelMarker=new google.maps.Marker({position:{lat:cx,lng:cy},map:_propMap,
@@ -1949,10 +1952,12 @@ function _onPropMapReady() {
     var roiDiv=document.getElementById('inlineROI');
     if(total>0){
       if(costInputs)costInputs.style.display='block';
-      // Auto-fill default cost per mow based on acreage
+      // Auto-fill cost per mow based on $150/acre (user can override)
       var costInput=document.getElementById('userCostPerMow');
-      if(costInput&&!costInput.value){
-        costInput.placeholder=total>2?Math.round(total*150):75;
+      if(costInput && !costInput._userEdited){
+        var autoCost = total > 0.5 ? Math.round(total * 150) : 75;
+        costInput.value = autoCost;
+        costInput.placeholder = autoCost;
       }
       _recalcUserROI();
     } else {
