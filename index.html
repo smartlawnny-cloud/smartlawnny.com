@@ -2749,7 +2749,7 @@ function _runPropAnalysis() {
   // Slope analysis
   var bounds = new google.maps.LatLngBounds();
   for (var i=0;i<path.getLength();i++) bounds.extend(path.getAt(i));
-  var sw=bounds.getSouthWest(), ne=bounds.getNorthEast(), gs=20;
+  var sw=bounds.getSouthWest(), ne=bounds.getNorthEast(), gs=30;
   var latS=(ne.lat()-sw.lat())/gs, lngS=(ne.lng()-sw.lng())/gs;
   var locs=[], gm=[];
   for(var r=0;r<=gs;r++){gm[r]=[];for(var c=0;c<=gs;c++){gm[r][c]=locs.length;locs.push(new google.maps.LatLng(sw.lat()+r*latS,sw.lng()+c*lngS));}}
@@ -2778,11 +2778,11 @@ function _runPropAnalysis() {
         // Make slope cells non-clickable so zone drawing works through them
         try { cell.setClickable(false); } catch(e) { cell.set('clickable', false); }
         // Degree label on steep cells
-        if(sd_r>=20 && r%2===0 && c%2===0){
+        if(sd_r>=40){
           _propSlopeCells.push(new google.maps.Marker({position:{lat:lat+latS/2,lng:lng+lngS/2},map:_propMap,
-            icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
-            label:{text:sd_r+'°',color:sd_r>=30?'#fff':'#333',fontSize:'10px',fontWeight:'bold'},
-            clickable:false, zIndex:1}));
+            icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#f44336',fillOpacity:0.9,strokeColor:'#fff',strokeWeight:1.5},
+            label:{text:sd_r+'°',color:'#fff',fontSize:'9px',fontWeight:'bold'},
+            clickable:false, zIndex:10}));
         }
       }}
       // Elevation display removed
