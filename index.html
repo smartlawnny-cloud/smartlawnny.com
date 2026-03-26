@@ -581,17 +581,19 @@
           <div style="margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
               <span style="font-size:.7rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Mowing Zones</span>
-              <select id="zoneSplitSelect" onchange="if(this.value)_autoSplitZones(parseInt(this.value))" style="padding:3px 8px;font-size:.7rem;font-weight:600;border:1px solid #6abb1e;border-radius:6px;background:#f0f8e8;color:#4a8a10;cursor:pointer;">
-                <option value="">Zones...</option>
-                <option value="1">1 Zone</option>
-                <option value="2">2 Zones</option>
-                <option value="3">3 Zones</option>
-                <option value="4">4 Zones</option>
-                <option value="5">5 Zones</option>
-                <option value="6">6 Zones</option>
-                <option value="8">8 Zones</option>
-                <option value="10">10 Zones</option>
-              </select>
+              <div style="display:flex;gap:4px;">
+                <button onclick="_addHomeZone()" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:6px;background:#6abb1e;color:#fff;cursor:pointer;">✏️ Draw Zone</button>
+                <select id="zoneSplitSelect" onchange="if(this.value)_autoSplitZones(parseInt(this.value))" style="padding:3px 8px;font-size:.7rem;font-weight:600;border:1px solid #6abb1e;border-radius:6px;background:#f0f8e8;color:#4a8a10;cursor:pointer;">
+                  <option value="">Auto Split...</option>
+                  <option value="2">2 Zones</option>
+                  <option value="3">3 Zones</option>
+                  <option value="4">4 Zones</option>
+                  <option value="5">5 Zones</option>
+                  <option value="6">6 Zones</option>
+                  <option value="8">8 Zones</option>
+                  <option value="10">10 Zones</option>
+                </select>
+              </div>
             </div>
             <div id="homeZonesList"></div>
             <div id="homeZoneTotals" style="display:none;margin-top:6px;padding-top:6px;border-top:1px solid #e5e7eb;">
