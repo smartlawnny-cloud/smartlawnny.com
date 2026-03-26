@@ -571,11 +571,7 @@
           <!-- Elevation removed — slope colors are what matters -->
           <div class="slope-legend">
           </div>
-          <div style="display:flex;gap:4px;">
-            <button onclick="if(_propMap){_propMap.setTilt(0);_propMap.setHeading(0);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">2D</button>
-            <button onclick="if(_propMap){_propMap.setTilt(67);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">3D</button>
-            <button onclick="if(_propMap){_propMap.setHeading((_propMap.getHeading()||0)+90);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">↻</button>
-          </div>
+          <!-- 2D/3D buttons require custom Map ID — create at console.cloud.google.com → Maps Platform → Map Management -->
 
           <!-- Mowing Zones Tool -->
           <div style="margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
@@ -1491,10 +1487,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function _onPropMapReady() {
   _propElevSvc = new google.maps.ElevationService();
   _propMap = new google.maps.Map(document.getElementById('propertyMap'), {
-    center:{lat:41.27,lng:-73.92}, zoom:10, mapTypeId:'hybrid', tilt:45, heading:0,
+    center:{lat:41.27,lng:-73.92}, zoom:10, mapTypeId:'hybrid',
     mapTypeControl:true, streetViewControl:false, fullscreenControl:true,
-    rotateControl:true, zoomControl:true, gestureHandling:'greedy',
-    mapId:'4504f8b37365c3d0'
+    rotateControl:true, zoomControl:true, gestureHandling:'greedy'
   });
   // Custom click-to-draw (replaces broken Google Drawing Manager)
   var _drawPts = [], _drawMkrs = [], _drawLine = null, _isDrawing = false;
