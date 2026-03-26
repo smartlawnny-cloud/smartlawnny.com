@@ -598,6 +598,7 @@
               <!-- Mower picker cards -->
               <div id="homeMowerCards" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;"></div>
               <select id="homeMowerSelect" onchange="_updateHomeZones()" style="display:none;">
+                <option value="25" data-name="FJD RM21" data-price="29999">FJD RM21 &mdash; $29,999</option>
                 <option value="6.0" data-name="TerraNox CM240M1" data-price="6999">TerraNox CM240M1</option>
                 <option value="3.0" data-name="TerraNox CM120M1" data-price="5499">TerraNox CM120M1</option>
                 <option value="0.75" data-name="Navimow X450" data-price="2999">Navimow X450</option>
@@ -788,12 +789,13 @@
   <div class="container">
     <div class="section-header fade-in">
       <h2>Shop <span class="underline-accent">Robotic Mowers</span></h2>
-      <p>Authorized Segway Navimow and Yarbo products &mdash; from $1,299 to $6,999</p>
+      <p>Authorized Segway Navimow, Yarbo &amp; FJD Dynamics products &mdash; from $1,299 to $29,999</p>
     </div>
     <div class="product-tabs fade-in">
       <button class="product-tab" onclick="filterProducts('all')">All Mowers</button>
       <button class="product-tab" onclick="filterProducts('navimow')">Segway Navimow</button>
       <button class="product-tab" onclick="filterProducts('yarbo')">Yarbo</button>
+      <button class="product-tab" onclick="filterProducts('fjd')">FJD Dynamics</button>
       <button id="shopToggleBtn" onclick="toggleShop()" style="margin-left:auto;padding:8px 16px;font-size:.8rem;font-weight:600;border:1px solid #e0e0e0;border-radius:8px;background:#fff;color:#666;cursor:pointer;">▼ Collapse</button>
     </div>
     <div class="product-grid" id="productGrid">
@@ -825,6 +827,21 @@
           <div class="specs">Up to 3 acres | 4WD | 40&deg; Slopes | NRTK+Vision</div>
           <a href="products/navimow-terranox-cm120m1.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Terranox CM120M1',5499,'images/products/terranox-robotic-mower.png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+        </div>
+      </div>
+      <!-- FJD Dynamics RM21 -->
+      <div class="product-card fade-in" data-brand="fjd">
+        <div class="product-card-image">
+          <span class="product-badge" style="background:#2c5f2d;">Estate</span>
+          <img src="images/products/fjd-rm21.png" alt="FJD Dynamics RM21">
+        </div>
+        <div class="product-card-body">
+          <div class="brand-label">FJD Dynamics</div>
+          <h3>FJD RM21</h3>
+          <div class="price">$29,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $999</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="specs">Up to 25 acres | 21" Deck | 22&deg; Slopes | RTK-GNSS</div>
+          <a href="products/fjd-rm21.html" class="btn-details">View Details</a>
+          <button class="btn-cart" onclick="addToCart('FJD Dynamics RM21',29999,'images/products/fjd-rm21.png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
       <!-- Navimow X450 -->
@@ -1131,6 +1148,7 @@
             <option value="5499">Navimow Terranox CM120M1 — $5,499</option>
             <option value="6999">Navimow Terranox CM240M1 — $6,999</option>
             <option value="6194">Yarbo Complete Bundle — $6,194</option>
+            <option value="29999">FJD Dynamics RM21 — $29,999</option>
           </select>
         </div>
         <div class="input-group">
@@ -1656,6 +1674,7 @@ function _onPropMapReady() {
 
   // Mower specs for per-zone assignment
   var _mowerSpecs = {
+    'rm21':{name:'FJD RM21',price:29999,acres:25},
     'terranox-cm240':{name:'TerraNox CM240M1',price:6999,acres:6},
     'terranox-cm120':{name:'TerraNox CM120M1',price:5499,acres:4},
     'x450':{name:'Navimow X450',price:2999,acres:1},
@@ -1766,6 +1785,7 @@ function _onPropMapReady() {
       if(z.polygon){
         var curMower=z.mower||'terranox-cm240';
         mowerSel='<select onchange="_setZoneMower('+i+',this.value)" style="font-size:.6rem;padding:1px 2px;border:1px solid #ddd;border-radius:3px;max-width:90px;">'+
+          '<option value="rm21"'+(curMower==='rm21'?' selected':'')+'>FJD RM21</option>'+
           '<option value="terranox-cm240"'+(curMower==='terranox-cm240'?' selected':'')+'>TerraNox 240</option>'+
           '<option value="terranox-cm120"'+(curMower==='terranox-cm120'?' selected':'')+'>TerraNox 120</option>'+
           '<option value="x450"'+(curMower==='x450'?' selected':'')+'>X450</option>'+
@@ -1864,7 +1884,8 @@ function _onPropMapReady() {
     {val:'0.5',name:'X430',price:2499,acres:0.5,img:'images/products/x4-black-pdp.png'},
     {val:'0.75',name:'X450',price:2999,acres:0.75,img:'images/products/x4-black-pdp.png'},
     {val:'3.0',name:'CM120M1',price:5499,acres:3.0,img:'images/products/terranox-robotic-mower.png'},
-    {val:'6.0',name:'CM240M1',price:6999,acres:6.0,img:'images/products/terranox-robotic-mower.png'}
+    {val:'6.0',name:'CM240M1',price:6999,acres:6.0,img:'images/products/terranox-robotic-mower.png'},
+    {val:'25',name:'FJD RM21',price:29999,acres:25,img:'images/products/fjd-rm21.png'}
   ];
 
   function _renderMowerCards(totalAc){
