@@ -1474,7 +1474,7 @@ function initPropertyMap() {
   if (window._propMapInit) return;
   window._propMapInit = true;
   var script = document.createElement('script');
-  script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk&libraries=drawing,geometry,places&v=beta&callback=_onPropMapReady';
+  script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk&libraries=drawing,geometry,places&callback=_onPropMapReady';
   document.head.appendChild(script);
 }
 // Init map on page load (map is always visible now)
@@ -2439,8 +2439,8 @@ function _runPropAnalysis() {
         var cell=new google.maps.Polygon({paths:[{lat:lat,lng:lng},{lat:lat,lng:lng+lngS},{lat:lat+latS,lng:lng+lngS},{lat:lat+latS,lng:lng}],
           fillColor:col,fillOpacity:op,strokeColor:col,strokeOpacity:0.3,strokeWeight:1,map:_propMap});
         _propSlopeCells.push(cell);
-        // Click popup (disabled during zone drawing or charger placement)
-        cell.setClickable(false);
+        // Make slope cells non-clickable so zone drawing works through them
+        try { cell.setClickable(false); } catch(e) { cell.set('clickable', false); }
         // Degree label on steep cells
         if(sd_r>=22 && r%3===0 && c%3===0){
           _propSlopeCells.push(new google.maps.Marker({position:{lat:lat+latS/2,lng:lng+lngS/2},map:_propMap,
