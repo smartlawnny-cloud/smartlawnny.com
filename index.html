@@ -1745,6 +1745,22 @@ function _onPropMapReady() {
     'i215':{name:'Navimow i215',price:1599,acres:0.35},
     'i105e':{name:'Navimow i105E',price:799,acres:0.13}
   };
+  window._deleteZone = function(idx) {
+    var z = _homeZones[idx];
+    if (!z) return;
+    if (z.polygon) z.polygon.setMap(null);
+    if (z.polyline) z.polyline.setMap(null);
+    if (z.labelMarker) z.labelMarker.setMap(null);
+    z.markers.forEach(function(m) { m.setMap(null); });
+    _homeZones.splice(idx, 1);
+    // Re-name remaining zones
+    _homeZones.forEach(function(zone, i) {
+      zone.name = 'Zone ' + String.fromCharCode(65 + i);
+    });
+    if (window._homeActiveZone >= _homeZones.length) window._homeActiveZone = null;
+    _updateHomeZones();
+  };
+
   window._setZoneMower = function(idx, val) {
     _homeZones[idx].mower = val;
     // Auto-collapse after selecting a mower
@@ -1903,7 +1919,8 @@ function _onPropMapReady() {
                 '<span style="font-size:.7rem;color:#888;font-weight:600;">'+acres.toFixed(1)+' acres</span>'+
               '</div>'+
               '<div style="display:flex;gap:3px;">'+
-                (curMower?'<button onclick="event.stopPropagation();_toggleZoneCollapse('+i+')" style="padding:2px 6px;font-size:.55rem;background:#f0f8e8;color:#4a8a10;border:1px solid #c8e6c9;border-radius:3px;cursor:pointer;">▲ collapse</button>':'')+
+                (curMower?'<button onclick="event.stopPropagation();_toggleZoneCollapse('+i+')" style="padding:2px 6px;font-size:.55rem;background:#f0f8e8;color:#4a8a10;border:1px solid #c8e6c9;border-radius:3px;cursor:pointer;">▲</button>':'')+
+                '<button onclick="event.stopPropagation();_deleteZone('+i+')" style="padding:2px 6px;font-size:.55rem;background:#fff0f0;color:#cc0000;border:1px solid #ffcdd2;border-radius:3px;cursor:pointer;">✕</button>'+
               '</div>'+
             '</div>'+
             '<select onchange="_setZoneMower('+i+',this.value)" style="width:100%;padding:4px 6px;font-size:.7rem;border:1px solid #ddd;border-radius:4px;margin-bottom:4px;">'+mowerOpts+'</select>'+
