@@ -697,7 +697,8 @@
               <button onclick="_generateShareLink()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#6abb1e;color:#fff;cursor:pointer;">🔗 Copy Link</button>
               <button onclick="_textQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#2196f3;color:#fff;cursor:pointer;">💬 Text</button>
               <button onclick="_emailQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">📧 Email</button>
-              <button onclick="_printQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#fff;color:#666;border:1px solid #ccc;cursor:pointer;">🖨️ Print</button>
+              <button onclick="_printQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#fff;color:#666;border:1px solid #ccc;cursor:pointer;">📄 Quick Quote</button>
+              <button onclick="_printDetailedQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1a5c5c;color:#fff;cursor:pointer;">📋 Detailed Proposal</button>
               <button onclick="_sendToRep()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#ff9800;color:#fff;cursor:pointer;">📲 Send to Rep</button>
             </div>
             <div id="shareLinkCopied" style="display:none;font-size:.7rem;color:#4a8a10;margin-top:4px;font-weight:600;">✓ Link copied to clipboard!</div>
@@ -2297,6 +2298,105 @@ function _onPropMapReady() {
     win.document.write(html);
     win.document.close();
     setTimeout(function() { win.print(); }, 600);
+  };
+
+  // Detailed mower info for proposal
+  var _mowerDetails = {
+    'rm21':{name:'FJD Dynamics RM21',img:'images/products/fjd-rm21-hero.webp',width:'25"',slope:'20°',nav:'RTK + LiDAR',battery:'4 kWh / 48V',runtime:'5 hrs',weight:'375 lbs',ip:'IPX4',features:['25" commercial deck — widest in class','Multi-functional: mow, ball pick, line mark, collect, dew brush','RTK + LiDAR fusion for reliable signal','360° obstacle detection + emergency stop','Auto docking & fast charge (3 hrs)','Remote app monitoring & scheduling']},
+    'terranox-cm240':{name:'Segway Navimow TerraNox CM240M1',img:'images/products/terranox-robotic-mower.png',width:'9.4"',slope:'43°',nav:'RTK + Vision AI',battery:'Li-Ion',runtime:'Auto',weight:'22 lbs',ip:'IPX6',features:['43° slope capability — handles nearly any terrain','RTK + Vision AI navigation — centimeter precision','Wire-free boundary — no buried wire needed','IPX6 all-weather — operates in rain','OTA firmware updates','NavimowFleet commercial app']},
+    'terranox-cm120':{name:'Segway Navimow TerraNox CM120M1',img:'images/products/terranox-robotic-mower.png',width:'9.4"',slope:'43°',nav:'RTK + Vision AI',battery:'Li-Ion',runtime:'Auto',weight:'22 lbs',ip:'IPX6',features:['43° slope capability','RTK + Vision AI navigation','Wire-free install','IPX6 all-weather','Up to 4 acres per unit','NavimowFleet app']},
+    'x450':{name:'Segway Navimow X450',img:'images/products/x4-black-pdp.png',width:'10.2"',slope:'27°',nav:'EFLS + Vision',battery:'5.2 Ah',runtime:'180 min',weight:'24 lbs',ip:'IPX6',features:['4WD for slopes up to 27°','EFLS + Vision AI navigation','Up to 1 acre coverage','Wire-free, no perimeter wire','Ultra-quiet < 60 dB','Navimow app control']},
+    'x430':{name:'Segway Navimow X430',img:'images/products/x4-black-pdp.png',width:'10.2"',slope:'27°',nav:'EFLS + Vision',battery:'5.2 Ah',runtime:'150 min',weight:'24 lbs',ip:'IPX6',features:['4WD all-wheel drive','EFLS + Vision navigation','Up to 0.75 acre coverage','Wire-free setup','< 60 dB quiet','App controlled']},
+    'yarbo':{name:'Yarbo Core',img:'images/products/yarbo-core.webp',width:'15"',slope:'20°',nav:'RTK-GNSS',battery:'36V Li-Ion',runtime:'120 min',weight:'66 lbs',ip:'IPX5',features:['4-season: mow, snow blow, leaf blow','Interchangeable modules','RTK-GNSS precision','Up to 0.75 acres','Heavy-duty construction','Yarbo app control']},
+    'h220':{name:'Segway Navimow H220',img:'images/products/h220-pdp.png',width:'8.7"',slope:'24°',nav:'EFLS',battery:'5.0 Ah',runtime:'120 min',weight:'19 lbs',ip:'IPX6',features:['Up to 0.5 acre coverage','EFLS navigation','Wire-free setup','IPX6 weatherproof','< 62 dB quiet','Navimow app']},
+    'i215':{name:'Segway Navimow i215 LiDAR',img:'images/products/i215-lidar-pdp.png',width:'7"',slope:'24°',nav:'EFLS + LiDAR',battery:'2.5 Ah',runtime:'90 min',weight:'17 lbs',ip:'IPX6',features:['LiDAR obstacle avoidance','EFLS navigation','Up to 0.35 acres','Wire-free','< 62 dB','Navimow app']},
+    'i105e':{name:'Segway Navimow i105E',img:'images/products/i105e-pdp.png',width:'7"',slope:'24°',nav:'EFLS',battery:'2.5 Ah',runtime:'60 min',weight:'17 lbs',ip:'IPX6',features:['Entry-level — perfect for small yards','EFLS navigation','Up to 5,500 sq ft','Wire-free','< 62 dB','Navimow app']}
+  };
+
+  window._printDetailedQuote = function() {
+    var d = _buildQuoteData();
+    if (!d.zones.length) { alert('Draw at least one mowing zone first.'); return; }
+    var today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    var win = window.open('','_blank');
+    var html = '<!DOCTYPE html><html><head><title>Proposal — '+d.addr+'</title><style>' +
+      '*{margin:0;padding:0;box-sizing:border-box;}' +
+      'body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#1d1d1f;padding:32px 40px;}' +
+      '@media print{body{padding:20px 24px;} .page-break{page-break-before:always;}}' +
+      '.hdr{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid #6abb1e;margin-bottom:20px;}' +
+      '.hdr h1{font-size:20px;}.hdr span{color:#6abb1e;font-size:11px;display:block;}' +
+      '.hdr-right{text-align:right;font-size:11px;color:#666;}' +
+      'h2{font-size:16px;margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid #6abb1e;color:#1d1d1f;}' +
+      '.prop{font-size:14px;margin-bottom:16px;}.prop strong{font-size:16px;}' +
+      '.stats{display:flex;gap:20px;font-size:12px;color:#666;margin:6px 0 16px;}.stats span{font-weight:700;color:#1d1d1f;}' +
+      'table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px;}' +
+      'th{background:#1d1d1f;color:#fff;padding:6px 10px;text-align:left;font-size:10px;text-transform:uppercase;}' +
+      'td{padding:5px 10px;border-bottom:1px solid #eee;font-size:11px;}' +
+      'tr:nth-child(even){background:#f9f9f9;}' +
+      '.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;}' +
+      '.grand td{background:#6abb1e;color:#fff;font-weight:800;font-size:13px;padding:8px 10px;}' +
+      '.zone-card{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:14px;margin:8px 0;border:1px solid #e5e7eb;border-radius:10px;border-left:4px solid;}' +
+      '.zone-card img{width:120px;height:auto;border-radius:6px;object-fit:cover;}' +
+      '.zone-card h3{font-size:13px;margin-bottom:2px;}.zone-card .model{font-size:11px;color:#6abb1e;font-weight:700;}' +
+      '.zone-card .spec-row{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0;font-size:10px;color:#666;}' +
+      '.zone-card .spec-row div{background:#f5f5f7;padding:2px 8px;border-radius:4px;}' +
+      '.features{list-style:none;font-size:10px;color:#555;margin-top:4px;}.features li{padding:1px 0;}.features li:before{content:"✓ ";color:#6abb1e;font-weight:700;}' +
+      '.dfy{background:#f0f8e8;border:1px solid #6abb1e;border-radius:8px;padding:12px;margin:16px 0;font-size:12px;}' +
+      '.foot{margin-top:16px;padding-top:10px;border-top:2px solid #6abb1e;display:flex;justify-content:space-between;font-size:10px;color:#888;}' +
+      '</style></head><body>';
+
+    // Page 1 — Header + Summary
+    html += '<div class="hdr"><div><h1>Smart Lawn NY</h1><span>AUTOMATION & ROBOTICS</span></div>' +
+      '<div class="hdr-right"><strong>Robotic Mower Proposal</strong><br>(914) 647-7276<br>smartlawnny.com</div></div>';
+    html += '<div class="prop"><strong>'+d.addr+'</strong></div>';
+    html += '<div class="stats"><div>Mowing Area: <span>'+d.totalAcres+' acres</span></div>' +
+      '<div>Zones: <span>'+d.zones.length+'</span></div>' +
+      '<div>Total Mowers: <span>'+d.totalUnits+'</span></div></div>';
+
+    // Summary table
+    html += '<h2>Fleet Summary</h2>';
+    html += '<table><tr><th>Zone</th><th>Mower</th><th style="text-align:right;">Acres</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Subtotal</th></tr>';
+    d.zones.forEach(function(z) {
+      html += '<tr><td><span class="dot" style="background:'+z.color+';"></span>'+z.name+'</td><td>'+z.mowerName+'</td>' +
+        '<td style="text-align:right;">'+z.acres+'</td><td style="text-align:right;">'+z.units+'×</td><td style="text-align:right;">$'+z.subtotal.toLocaleString()+'</td></tr>';
+    });
+    html += '<tr><td colspan="3" style="font-weight:700;border-top:2px solid #1d1d1f;">Equipment</td><td style="text-align:right;font-weight:700;border-top:2px solid #1d1d1f;">'+d.totalUnits+'×</td><td style="text-align:right;font-weight:700;border-top:2px solid #1d1d1f;">$'+d.totalFleetCost.toLocaleString()+'</td></tr>';
+    html += '<tr><td colspan="4">Installation ('+d.totalUnits+' units)</td><td style="text-align:right;">$'+d.installCost.toLocaleString()+'</td></tr>';
+    html += '<tr><td colspan="4">RTK Mapping ('+Math.round(parseFloat(d.totalAcres))+' acres × $199)</td><td style="text-align:right;">$'+d.mappingCost.toLocaleString()+'</td></tr>';
+    html += '<tr class="grand"><td colspan="4">TOTAL</td><td style="text-align:right;">$'+d.grandTotal.toLocaleString()+'</td></tr></table>';
+
+    // DFY callout
+    html += '<div class="dfy"><strong style="color:#4a8a10;">Done-For-You Option:</strong> We own, install, and maintain everything. ' +
+      '<strong>$'+Number(d.weeklyDFY).toLocaleString()+'/week</strong> ($'+Number(d.seasonDFY).toLocaleString()+'/season, 30 weeks). 2-year minimum.</div>';
+
+    // Page 2+ — Zone detail cards with mower images
+    html += '<div class="page-break"></div>';
+    html += '<div class="hdr"><div><h1>Smart Lawn NY</h1><span>AUTOMATION & ROBOTICS</span></div>' +
+      '<div class="hdr-right"><strong>Zone Details — '+d.addr+'</strong></div></div>';
+    html += '<h2>Mower Details by Zone</h2>';
+
+    d.zones.forEach(function(z) {
+      var det = _mowerDetails[z.mowerKey] || _mowerDetails['terranox-cm240'];
+      html += '<div class="zone-card" style="border-left-color:'+z.color+';">' +
+        '<img src="'+window.location.origin+'/'+det.img+'" alt="'+det.name+'">' +
+        '<div>' +
+        '<h3><span class="dot" style="background:'+z.color+';"></span>'+z.name+' — '+z.acres+' acres</h3>' +
+        '<div class="model">'+det.name+' × '+z.units+' — $'+z.subtotal.toLocaleString()+'</div>' +
+        '<div class="spec-row">' +
+        '<div>Cutting: '+det.width+'</div><div>Slope: '+det.slope+'</div><div>Nav: '+det.nav+'</div>' +
+        '<div>Runtime: '+det.runtime+'</div><div>'+det.ip+'</div><div>'+det.weight+'</div></div>' +
+        '<ul class="features">';
+      det.features.forEach(function(f) { html += '<li>'+f+'</li>'; });
+      html += '</ul></div></div>';
+    });
+
+    // Footer
+    html += '<div class="foot"><div>Prepared by Doug Brown | '+today+'</div>' +
+      '<div>Smart Lawn NY | smartlawnny.com | (914) 647-7276</div></div>';
+
+    html += '</body></html>';
+    win.document.write(html);
+    win.document.close();
+    setTimeout(function(){ win.print(); }, 600);
   };
 
   window._sendToRep = function() {
