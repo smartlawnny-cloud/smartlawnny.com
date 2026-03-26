@@ -2083,17 +2083,15 @@ function _onPropMapReady() {
 
   function _buildShareURL() {
     var d = _buildQuoteData();
-    // Slim down data for shorter URL — reduce coordinate precision
     var slim = {
       addr: d.addr,
-      totalAc: d.totalAcres,
-      mower: d.mower,
-      units: d.units,
-      fleet: d.fleetCost,
+      ac: d.totalAcres,
+      units: d.totalUnits,
+      fleet: d.totalFleetCost,
       wk: d.weeklyDFY,
       zones: d.zones.map(function(z) {
-        return { n:z.name, pts:z.points.map(function(p){ return [+p[0].toFixed(4),+p[1].toFixed(4)]; }) };
-      }),
+        return { n:z.name, c:z.color, m:z.mowerKey, ac:z.acres, pts:z.pts.map(function(p){ return [+parseFloat(p[0]).toFixed(4),+parseFloat(p[1]).toFixed(4)]; }) };
+      })
     };
     var compressed = btoa(JSON.stringify(slim));
     return window.location.origin + '/#quote=' + compressed;
@@ -2109,10 +2107,15 @@ function _onPropMapReady() {
 
   window._textQuote = function() {
     var d = _buildQuoteData();
-    var msg = 'Smart Lawn NY - Property Quote\n\n' +
+    var zoneLines = d.zones.map(function(z){ return z.name+': '+z.acres+' ac — '+z.units+'× '+z.mowerName+' ($'+z.subtotal.toLocaleString()+')'; }).join('\n');
+    var msg = 'Smart Lawn NY — Property Quote\n\n' +
       d.addr + '\n' +
-      d.totalAcres + ' acres | ' + d.units + ' ' + d.mower + '\n\n' +
-      'Buy Fleet: $' + d.fleetCost.toLocaleString() + '\n' +
+      d.totalAcres + ' acres | ' + d.totalUnits + ' mowers\n\n' +
+      zoneLines + '\n\n' +
+      'Equipment: $' + d.totalFleetCost.toLocaleString() + '\n' +
+      'Install: $' + d.installCost.toLocaleString() + '\n' +
+      'Mapping: $' + d.mappingCost.toLocaleString() + '\n' +
+      'Total: $' + d.grandTotal.toLocaleString() + '\n\n' +
       'Done-For-You: $' + Number(d.weeklyDFY).toLocaleString() + '/week\n\n' +
       'smartlawnny.com | (914) 647-7276';
     window.open('sms:?body=' + encodeURIComponent(msg));
@@ -2121,14 +2124,17 @@ function _onPropMapReady() {
   window._emailQuote = function() {
     var d = _buildQuoteData();
     var subject = 'Robotic Mower Quote — ' + d.addr;
+    var zoneLines = d.zones.map(function(z){ return '  ' + z.name + ': ' + z.acres + ' ac — ' + z.units + '× ' + z.mowerName + ' ($' + z.subtotal.toLocaleString() + ')'; }).join('\n');
     var body = 'Hi,\n\n' +
       'Here is your robotic mower property assessment for ' + d.addr + ':\n\n' +
       'Total Mowing Area: ' + d.totalAcres + ' acres\n' +
-      'Mower: ' + d.mower + ' (' + d.acPerUnit + ' ac/unit)\n' +
-      'Units Needed: ' + d.units + '\n' +
-      'Fleet Cost: $' + d.fleetCost.toLocaleString() + '\n\n' +
+      'Total Mowers: ' + d.totalUnits + '\n\n' +
+      'ZONE BREAKDOWN:\n' + zoneLines + '\n\n' +
+      'Equipment: $' + d.totalFleetCost.toLocaleString() + '\n' +
+      'Installation: $' + d.installCost.toLocaleString() + '\n' +
+      'RTK Mapping: $' + d.mappingCost.toLocaleString() + '\n' +
+      'TOTAL: $' + d.grandTotal.toLocaleString() + '\n\n' +
       'Done-For-You Service: $' + Number(d.weeklyDFY).toLocaleString() + '/week ($' + Number(d.seasonDFY).toLocaleString() + '/season)\n\n' +
-      'View interactive map with zones: ' + _buildShareURL() + '\n\n' +
       'Questions? Call (914) 647-7276\n\n' +
       'Smart Lawn NY\nsmartlawnny.com';
     window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
