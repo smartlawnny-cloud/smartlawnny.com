@@ -577,8 +577,19 @@
             <button onclick="if(_propMap){_propMap.setHeading((_propMap.getHeading()||0)+90);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">↻</button>
           </div>
 
+          <!-- Slope Key -->
+          <div id="slopeKey" style="display:none;margin-top:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:8px 10px;">
+            <span style="font-size:.65rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.5px;">Slope Analysis</span>
+            <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;">
+              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#4caf50;display:inline-block;"></span> &lt;20° Flat</div>
+              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#ffeb3b;display:inline-block;"></span> 20-30°</div>
+              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#ff9800;display:inline-block;"></span> 30-43°</div>
+              <div style="display:flex;align-items:center;gap:3px;font-size:.65rem;"><span style="width:10px;height:10px;border-radius:2px;background:#f44336;display:inline-block;"></span> &gt;43° Steep</div>
+            </div>
+          </div>
+
           <!-- Mowing Zones Tool -->
-          <div style="margin-top:12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
+          <div style="margin-top:8px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:12px;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
               <span style="font-size:.7rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Mowing Zones</span>
               <div style="display:flex;gap:4px;">
@@ -2780,15 +2791,17 @@ function _runPropAnalysis() {
         // Make slope cells non-clickable so zone drawing works through them
         try { cell.setClickable(false); } catch(e) { cell.set('clickable', false); }
         // Degree label on steep cells
-        if(sd_r>=40){
+        if(sd_r>=20){
+          var lc=sd_r>=43?'#fff':sd_r>=30?'#fff':'#333';
           _propSlopeCells.push(new google.maps.Marker({position:{lat:lat+latS/2,lng:lng+lngS/2},map:_propMap,
-            icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#f44336',fillOpacity:0.9,strokeColor:'#fff',strokeWeight:1.5},
-            label:{text:sd_r+'°',color:'#fff',fontSize:'9px',fontWeight:'bold'},
+            icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
+            label:{text:sd_r+'°',color:lc,fontSize:'8px',fontWeight:'bold'},
             clickable:false, zIndex:10}));
         }
       }}
       // Elevation display removed
       if(tot>0){
+        document.getElementById('slopeKey').style.display='block';
         document.getElementById('pGreen').textContent=Math.round(cnt.g/tot*100)+'%';
         document.getElementById('pYellow').textContent=Math.round(cnt.y/tot*100)+'%';
         document.getElementById('pOrange').textContent=Math.round(cnt.o/tot*100)+'%';
