@@ -2140,36 +2140,35 @@ function _onPropMapReady() {
   }
 
   function _buildQuoteData() {
-    var sel = document.getElementById('homeMowerSelect');
-    var opt = sel.options[sel.selectedIndex];
     var zones = [];
     var totalAcres = 0;
+    var totalUnits = 0;
+    var totalFleetCost = 0;
+    var installCost = 0;
     _homeZones.forEach(function(z) {
       if (!z.polygon) return;
       var pts = [];
       z.polygon.getPath().forEach(function(p) { pts.push([p.lng().toFixed(5), p.lat().toFixed(5)]); });
       var acres = google.maps.geometry.spherical.computeArea(z.polygon.getPath()) / 4046.86;
       totalAcres += acres;
-      zones.push({ name: z.name, color: z.color, pts: pts, acres: acres.toFixed(1) });
+      var mKey = z.mower || 'terranox-cm240';
+      var spec = _mowerSpecs[mKey] || {name:'TerraNox CM240M1',price:6999,acres:6};
+      var units = Math.max(1, Math.ceil(acres / spec.acres));
+      totalUnits += units;
+      totalFleetCost += units * spec.price;
+      installCost += units * (spec.price > 10000 ? 999 : spec.price > 3000 ? 499 : 299);
+      zones.push({ name:z.name, color:z.color, pts:pts, acres:acres.toFixed(1), mowerKey:mKey, mowerName:spec.name, mowerPrice:spec.price, units:units, subtotal:units*spec.price });
     });
-    var chargers = [];
-    _chargerMarkers.forEach(function(m) {
-      chargers.push([m.getPosition().lng().toFixed(5), m.getPosition().lat().toFixed(5)]);
-    });
-    var acPerUnit = parseFloat(sel.value) || 1.5;
-    var mowerName = opt.getAttribute('data-name') || 'TerraNox CM240M1';
-    var mowerPrice = parseInt(opt.getAttribute('data-price')) || 6999;
-    var units = Math.ceil(totalAcres / acPerUnit);
+    var mappingCost = Math.round(totalAcres) * 199;
     return {
       addr: document.getElementById('propAddrLabel').textContent || '',
       zones: zones,
-      chargers: chargers,
-      mower: mowerName,
-      mowerPrice: mowerPrice,
-      acPerUnit: acPerUnit,
-      units: units,
-      fleetCost: units * mowerPrice,
       totalAcres: totalAcres.toFixed(1),
+      totalUnits: totalUnits,
+      totalFleetCost: totalFleetCost,
+      installCost: installCost,
+      mappingCost: mappingCost,
+      grandTotal: totalFleetCost + installCost + mappingCost,
       weeklyDFY: (totalAcres * 150).toFixed(0),
       seasonDFY: (totalAcres * 150 * 30).toFixed(0)
     };
@@ -2231,42 +2230,73 @@ function _onPropMapReady() {
 
   window._printQuote = function() {
     var d = _buildQuoteData();
-    var win = window.open('', '_blank');
-    win.document.write('<html><head><title>Quote — ' + d.addr + '</title>' +
-      '<style>body{font-family:-apple-system,sans-serif;padding:40px;color:#1d1d1f;}' +
-      'h1{font-size:24px;color:#6abb1e;margin-bottom:4px;}' +
-      'h2{font-size:16px;font-weight:400;color:#666;margin-bottom:24px;}' +
-      '.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px;}' +
-      '.row strong{color:#1d1d1f;}.row .val{font-weight:600;}' +
-      '.total{font-size:18px;font-weight:700;color:#6abb1e;margin-top:16px;text-align:right;}' +
-      '.zones{margin:16px 0;}.zone{display:inline-block;padding:4px 12px;border-radius:4px;color:#fff;font-size:12px;font-weight:600;margin:2px;}' +
-      '.footer{margin-top:32px;padding-top:16px;border-top:2px solid #6abb1e;font-size:12px;color:#888;}' +
-      '</style></head><body>' +
-      '<h1>Smart Lawn NY</h1><h2>Robotic Mower Property Assessment</h2>' +
-      '<div class="row"><strong>Property</strong><span class="val">' + d.addr + '</span></div>' +
-      '<div class="row"><strong>Total Mowing Area</strong><span class="val">' + d.totalAcres + ' acres</span></div>' +
-      '<div class="row"><strong>Mower Model</strong><span class="val">' + d.mower + ' (' + d.acPerUnit + ' ac/unit)</span></div>' +
-      '<div class="row"><strong>Units Required</strong><span class="val">' + d.units + '</span></div>' +
-      '<div class="row"><strong>Charging Stations</strong><span class="val">' + d.chargers.length + '</span></div>' +
-      '<div class="row"><strong>Fleet Purchase Price</strong><span class="val">$' + d.fleetCost.toLocaleString() + '</span></div>' +
-      '<div class="row"><strong>Done-For-You Weekly</strong><span class="val">$' + Number(d.weeklyDFY).toLocaleString() + '/week</span></div>' +
-      '<div class="row"><strong>Done-For-You Season (30 wks)</strong><span class="val">$' + Number(d.seasonDFY).toLocaleString() + '</span></div>' +
-      '<div class="zones">');
+    if (!d.zones.length) { alert('Draw at least one mowing zone first.'); return; }
+    var today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+    var win = window.open('','_blank');
+    var html = '<!DOCTYPE html><html><head><title>Smart Lawn NY — '+d.addr+'</title><style>' +
+      '*{margin:0;padding:0;box-sizing:border-box;}' +
+      'body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#1d1d1f;padding:32px 40px;}' +
+      '@media print{body{padding:20px 24px;}}' +
+      '.hdr{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:3px solid #6abb1e;margin-bottom:16px;}' +
+      '.hdr-left h1{font-size:20px;color:#1d1d1f;}.hdr-left span{color:#6abb1e;font-size:11px;display:block;}' +
+      '.hdr-right{text-align:right;font-size:11px;color:#666;}' +
+      '.prop{font-size:14px;margin-bottom:12px;}.prop strong{font-size:16px;}' +
+      '.prop-stats{display:flex;gap:24px;font-size:12px;color:#666;margin-top:4px;}' +
+      '.prop-stats span{font-weight:600;color:#1d1d1f;}' +
+      'table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;}' +
+      'th{background:#1d1d1f;color:#fff;padding:6px 10px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;}' +
+      'th:nth-child(3),th:nth-child(4),th:nth-child(5){text-align:right;}' +
+      'td{padding:6px 10px;border-bottom:1px solid #eee;}' +
+      'td:nth-child(3),td:nth-child(4),td:nth-child(5){text-align:right;}' +
+      'tr:nth-child(even){background:#f9f9f9;}' +
+      '.zone-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;}' +
+      '.totals{border-top:2px solid #1d1d1f;}' +
+      '.totals td{font-weight:700;padding:8px 10px;}' +
+      '.extras td{font-size:11px;color:#555;}' +
+      '.grand{background:#6abb1e !important;}.grand td{color:#fff !important;font-size:14px;font-weight:800;padding:10px;}' +
+      '.foot{margin-top:20px;padding-top:12px;border-top:2px solid #6abb1e;display:flex;justify-content:space-between;font-size:10px;color:#888;}' +
+      '</style></head><body>';
+
+    // Header
+    html += '<div class="hdr"><div class="hdr-left"><h1>Smart Lawn NY</h1><span>AUTOMATION & ROBOTICS</span></div>' +
+      '<div class="hdr-right"><strong>Property Assessment</strong><br>(914) 647-7276<br>smartlawnny.com</div></div>';
+
+    // Property info
+    html += '<div class="prop"><strong>' + d.addr + '</strong>' +
+      '<div class="prop-stats"><div>Mowing Area: <span>' + d.totalAcres + ' acres</span></div>' +
+      '<div>Zones: <span>' + d.zones.length + '</span></div>' +
+      '<div>Total Mowers: <span>' + d.totalUnits + '</span></div></div></div>';
+
+    // Zone table
+    html += '<table><thead><tr><th>Zone</th><th>Mower</th><th>Acres</th><th>Qty</th><th>Subtotal</th></tr></thead><tbody>';
     d.zones.forEach(function(z) {
-      win.document.write('<span class="zone" style="background:' + z.color + ';">' + z.name + ': ' + z.acres + ' ac</span>');
+      html += '<tr><td><span class="zone-dot" style="background:'+z.color+';"></span>'+z.name+'</td>' +
+        '<td>'+z.mowerName+'</td>' +
+        '<td>'+z.acres+' ac</td>' +
+        '<td>'+z.units+'×</td>' +
+        '<td>$'+z.subtotal.toLocaleString()+'</td></tr>';
     });
-    win.document.write('</div>' +
-      '<div class="total">Fleet: $' + d.fleetCost.toLocaleString() + ' | DFY: $' + Number(d.weeklyDFY).toLocaleString() + '/wk | Season: $' + Number(d.seasonDFY).toLocaleString() + '</div>' +
-      '<div style="margin-top:12px;padding:12px;background:#f0f8e8;border-radius:8px;font-size:13px;">' +
-      '<strong style="color:#4a8a10;">Savings vs. Traditional:</strong><br>' +
-      'Traditional crew: ~$' + Math.round(parseFloat(d.totalAcres)*150*28).toLocaleString() + '/yr<br>' +
-      'Smart Lawn robotic: ~$' + Math.round((d.fleetCost+199+249+(50+249)*4)/5).toLocaleString() + '/yr (5yr avg)<br>' +
-      '<strong>5-Year Savings: $' + Math.round(parseFloat(d.totalAcres)*150*28*5-(d.fleetCost+199+249+(50+249)*4)).toLocaleString() + '</strong></div>' +
-      '<div class="footer">Smart Lawn NY | (914) 647-7276 | smartlawnny@gmail.com | smartlawnny.com<br>' +
-      'Prices subject to change. Installation and RTK mapping not included in fleet price. 15% pre-order discount available.</div>' +
-      '</body></html>');
+
+    // Totals
+    html += '<tr class="totals"><td colspan="3">Equipment Subtotal</td><td>'+d.totalUnits+'×</td><td>$'+d.totalFleetCost.toLocaleString()+'</td></tr>';
+    html += '<tr class="extras"><td colspan="4">Installation ('+d.totalUnits+' units)</td><td>$'+d.installCost.toLocaleString()+'</td></tr>';
+    html += '<tr class="extras"><td colspan="4">RTK Mapping ('+Math.round(parseFloat(d.totalAcres))+' acres × $199)</td><td>$'+d.mappingCost.toLocaleString()+'</td></tr>';
+    html += '<tr class="grand"><td colspan="4">TOTAL</td><td>$'+d.grandTotal.toLocaleString()+'</td></tr>';
+    html += '</tbody></table>';
+
+    // DFY option
+    html += '<div style="background:#f0f8e8;border:1px solid #6abb1e;border-radius:8px;padding:12px;margin:12px 0;font-size:12px;">' +
+      '<strong style="color:#4a8a10;">Done-For-You Option:</strong> We own, install, and maintain the fleet. ' +
+      'You pay <strong>$'+Number(d.weeklyDFY).toLocaleString()+'/week</strong> ($'+Number(d.seasonDFY).toLocaleString()+'/season, 30 weeks).</div>';
+
+    // Footer
+    html += '<div class="foot"><div>Prepared by Doug Brown | '+today+'</div>' +
+      '<div>Smart Lawn NY | smartlawnny.com | (914) 647-7276</div></div>';
+
+    html += '</body></html>';
+    win.document.write(html);
     win.document.close();
-    setTimeout(function() { win.print(); }, 500);
+    setTimeout(function() { win.print(); }, 600);
   };
 
   window._sendToRep = function() {
