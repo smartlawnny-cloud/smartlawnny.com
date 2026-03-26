@@ -566,8 +566,8 @@
           <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
           <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
           <div style="display:flex;gap:4px;">
-            <button onclick="if(_propMap){_propMap.setTilt(0);_propMap.setHeading(0);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">2D</button>
-            <button onclick="if(_propMap){_propMap.setTilt(67);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">3D</button>
+            <button id="btn2D" onclick="_setMapView('2d')" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">2D</button>
+            <button id="btn3D" onclick="_setMapView('3d')" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">3D</button>
             <button onclick="if(_propMap){_propMap.setHeading((_propMap.getHeading()||0)+90);}" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">↻</button>
           </div>
 
@@ -2477,6 +2477,22 @@ function _heroReset() {
   document.getElementById('quiz-map-section').style.display = 'none';
   document.getElementById('heroAddrInput').value = '';
   document.getElementById('heroAddrInput').focus();
+}
+
+function _setMapView(mode) {
+  if (!_propMap) return;
+  var b2d = document.getElementById('btn2D');
+  var b3d = document.getElementById('btn3D');
+  if (mode === '2d') {
+    _propMap.setTilt(0);
+    _propMap.setHeading(0);
+    b2d.style.background = '#1d1d1f'; b2d.style.color = '#fff'; b2d.style.border = 'none';
+    b3d.style.background = '#fff'; b3d.style.color = '#666'; b3d.style.border = '1px solid #ddd';
+  } else {
+    _propMap.setTilt(67);
+    b3d.style.background = '#1d1d1f'; b3d.style.color = '#fff'; b3d.style.border = 'none';
+    b2d.style.background = '#fff'; b2d.style.color = '#666'; b2d.style.border = '1px solid #ddd';
+  }
 }
 
 function checkProperty() {
