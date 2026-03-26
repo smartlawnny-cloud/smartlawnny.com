@@ -2225,10 +2225,6 @@ function _onPropMapReady() {
     html += '<tr class="grand"><td colspan="4">TOTAL</td><td>$'+d.grandTotal.toLocaleString()+'</td></tr>';
     html += '</tbody></table>';
 
-    // DFY option
-    html += '<div style="background:#f0f8e8;border:1px solid #6abb1e;border-radius:8px;padding:12px;margin:12px 0;font-size:12px;">' +
-      '<strong style="color:#4a8a10;">Done-For-You Option:</strong> We own, install, and maintain the fleet. ' +
-      'You pay <strong>$'+Number(d.weeklyDFY).toLocaleString()+'/week</strong> ($'+Number(d.seasonDFY).toLocaleString()+'/season, 30 weeks).</div>';
 
     // Footer
     html += '<div class="foot"><div>Prepared by Doug Brown | '+today+'</div>' +
