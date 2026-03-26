@@ -1850,17 +1850,27 @@ function _onPropMapReady() {
         var zoneCost=spec?unitsNeeded*spec.price:0;
         var collapsed=z.collapsed&&curMower;
 
-        // Mower dropdown (shared)
-        var mowerOpts='<option value="">Choose mower...</option>'+
-          '<option value="rm21"'+(curMower==='rm21'?' selected':'')+'>FJD RM21 — $29,999</option>'+
-          '<option value="terranox-cm240"'+(curMower==='terranox-cm240'?' selected':'')+'>TerraNox CM240 — $6,999</option>'+
-          '<option value="terranox-cm120"'+(curMower==='terranox-cm120'?' selected':'')+'>TerraNox CM120 — $5,499</option>'+
-          '<option value="x450"'+(curMower==='x450'?' selected':'')+'>Navimow X450 — $2,999</option>'+
-          '<option value="x430"'+(curMower==='x430'?' selected':'')+'>Navimow X430 — $2,499</option>'+
-          '<option value="yarbo"'+(curMower==='yarbo'?' selected':'')+'>Yarbo Core — $3,994</option>'+
-          '<option value="h220"'+(curMower==='h220'?' selected':'')+'>Navimow H220 — $2,199</option>'+
-          '<option value="i215"'+(curMower==='i215'?' selected':'')+'>Navimow i215 — $1,599</option>'+
-          '<option value="i105e"'+(curMower==='i105e'?' selected':'')+'>Navimow i105E — $799</option>';
+        // Mower dropdown — only show models that fit this zone's acreage
+        var mowerList=[
+          {key:'rm21',name:'FJD RM21',price:29999,acres:25},
+          {key:'terranox-cm240',name:'TerraNox CM240',price:6999,acres:6},
+          {key:'terranox-cm120',name:'TerraNox CM120',price:5499,acres:4},
+          {key:'x450',name:'Navimow X450',price:2999,acres:1},
+          {key:'x430',name:'Navimow X430',price:2499,acres:0.75},
+          {key:'yarbo',name:'Yarbo Core',price:3994,acres:0.75},
+          {key:'h220',name:'Navimow H220',price:2199,acres:0.5},
+          {key:'i215',name:'Navimow i215',price:1599,acres:0.35},
+          {key:'i105e',name:'Navimow i105E',price:799,acres:0.13}
+        ];
+        var mowerOpts='<option value="">Choose mower...</option>';
+        mowerList.forEach(function(m){
+          // Show if: zone acreage fits within 10 units of this mower (practical fleet limit)
+          if(acres <= m.acres * 10){
+            var sel=curMower===m.key?' selected':'';
+            var units=Math.max(1,Math.ceil(acres/m.acres));
+            mowerOpts+='<option value="'+m.key+'"'+sel+'>'+m.name+' — $'+m.price.toLocaleString()+' ('+units+'×)</option>';
+          }
+        });
 
         if(collapsed){
           // Collapsed: compact summary with qty and price
