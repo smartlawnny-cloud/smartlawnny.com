@@ -2792,10 +2792,16 @@ function _runPropAnalysis() {
         try { cell.setClickable(false); } catch(e) { cell.set('clickable', false); }
         // Degree label on steep cells
         if(sd_r>=20){
-          var lc=sd_r>=43?'#fff':sd_r>=30?'#fff':'#333';
+          var fc=sd_r>=43?'#f44336':sd_r>=30?'#ff9800':sd_r>=22?'#ffeb3b':'#8bc34a';
+          var op=sd_r>=43?0.7:sd_r>=30?0.5:0.35;
+          // Colored block
+          _propSlopeCells.push(new google.maps.Rectangle({bounds:{north:lat+latS,south:lat,east:lng+lngS,west:lng},
+            map:_propMap,fillColor:fc,fillOpacity:op,strokeWeight:0,clickable:false,zIndex:5}));
+          // Degree label
+          var lc=sd_r>=30?'#fff':'#333';
           _propSlopeCells.push(new google.maps.Marker({position:{lat:lat+latS/2,lng:lng+lngS/2},map:_propMap,
             icon:{path:google.maps.SymbolPath.CIRCLE,scale:0},
-            label:{text:sd_r+'°',color:lc,fontSize:'8px',fontWeight:'bold'},
+            label:{text:sd_r+'°',color:lc,fontSize:'7px',fontWeight:'bold'},
             clickable:false, zIndex:10}));
         }
       }}
