@@ -1724,14 +1724,20 @@ function _onPropMapReady() {
       icon:{path:google.maps.SymbolPath.CIRCLE, scale:0},
       label:{text:zone.name+' — '+acres+' ac', color:'#fff', fontSize:'11px', fontWeight:'bold'}
     });
-    google.maps.event.addListener(zone.polygon.getPath(), 'set_at', _updateHomeZones);
-    google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', _updateHomeZones);
+    google.maps.event.addListener(zone.polygon.getPath(), 'set_at', function(){ _updateZoneLabel(zone); _updateHomeZones(); });
+    google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', function(){ _updateZoneLabel(zone); _updateHomeZones(); });
     _updateHomeZones();
-    // Show split buttons after first zone
-    setTimeout(function(){
-      if(confirm('Zone '+zone.name+' = '+acres+' acres.\n\nSplit into equal zones? Or draw another manually?')) _addHomeZone();
-    }, 300);
   };
+
+  function _updateZoneLabel(zone) {
+    if (!zone.polygon || !zone.labelMarker) return;
+    var path = zone.polygon.getPath();
+    var center = {lat:0, lng:0};
+    path.forEach(function(p){ center.lat += p.lat()/path.getLength(); center.lng += p.lng()/path.getLength(); });
+    zone.labelMarker.setPosition(center);
+    var acres = (google.maps.geometry.spherical.computeArea(path)/4046.86).toFixed(1);
+    zone.labelMarker.setLabel({text:zone.name+' — '+acres+' ac', color:'#fff', fontSize:'11px', fontWeight:'bold'});
+  }
 
   // Mower specs for per-zone assignment
   var _mowerSpecs = {
