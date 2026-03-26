@@ -2570,7 +2570,6 @@ function _flyToProperty(lat, lng, name) {
       date:new Date().toISOString(), source:'Map Tool'})
   });
   if (_propPolygon) { _propPolygon.setMap(null); _propPolygon = null; }
-  _propSlopeCells.forEach(function(c){c.setMap(null);}); _propSlopeCells = [];
   _propMap.setCenter({lat:lat,lng:lng}); _propMap.setZoom(18); _propMap.setTilt(45);
   new google.maps.Marker({position:{lat:lat,lng:lng}, map:_propMap,
     icon:{path:google.maps.SymbolPath.CIRCLE, scale:8, fillColor:'#6abb1e', fillOpacity:1, strokeColor:'#fff', strokeWeight:3}});
