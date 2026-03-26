@@ -1724,8 +1724,17 @@ function _onPropMapReady() {
       icon:{path:google.maps.SymbolPath.CIRCLE, scale:0},
       label:{text:zone.name+' — '+acres+' ac', color:'#fff', fontSize:'11px', fontWeight:'bold'}
     });
-    google.maps.event.addListener(zone.polygon.getPath(), 'set_at', function(){ _updateZoneLabel(zone); _updateHomeZones(); });
-    google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', function(){ _updateZoneLabel(zone); _updateHomeZones(); });
+    google.maps.event.addListener(zone.polygon.getPath(), 'set_at', function(){
+      // Force visual redraw by toggling visibility
+      zone.polygon.setVisible(false);
+      setTimeout(function(){ zone.polygon.setVisible(true); }, 0);
+      _updateZoneLabel(zone); _updateHomeZones();
+    });
+    google.maps.event.addListener(zone.polygon.getPath(), 'insert_at', function(){
+      zone.polygon.setVisible(false);
+      setTimeout(function(){ zone.polygon.setVisible(true); }, 0);
+      _updateZoneLabel(zone); _updateHomeZones();
+    });
     _updateHomeZones();
   };
 
