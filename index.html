@@ -629,11 +629,6 @@
             </div>
           </div>
 
-          <!-- Charger Placement (subtle) -->
-          <div style="margin-top:4px;display:flex;align-items:center;gap:4px;">
-            <button onclick="_placeOneCharger()" id="chargerModeBtn" style="padding:2px 8px;font-size:.65rem;font-weight:500;border:1px solid #ddd;border-radius:3px;background:#fafafa;color:#888;cursor:pointer;">⚡ Charger</button>
-            <span id="chargerCount" style="font-size:.65rem;color:#aaa;"></span>
-          </div>
 
           <!-- Inline ROI Comparison (auto-fills from zones) -->
           <!-- Your Current Costs -->
@@ -1580,7 +1575,6 @@ function _onPropMapReady() {
   }
   _propMap.addListener('click', function(e) {
     // Charger placement takes top priority
-    if (window._chargerMode) return; // handled by separate listener
     // Zone drawing next
     if (window._homeActiveZone !== null && window._homeActiveZone !== undefined) { _handleHomeZoneClick(e); return; }
     if (!_isDrawing) return;
@@ -2011,68 +2005,6 @@ function _onPropMapReady() {
         '</div>';
     });
     container.innerHTML=html;
-  }
-
-  // ── CHARGER PLACEMENT ──
-  window._chargerMarkers = [];
-  window._chargerMode = false;
-
-  window._placeOneCharger = function() {
-    window._chargerMode = true;
-    _propMap.setOptions({draggableCursor:'crosshair'});
-    var btn = document.getElementById('chargerModeBtn');
-    btn.style.background = '#ff9800';
-    btn.style.color = '#fff';
-    btn.textContent = '⚡ Click map to place...';
-  };
-
-  // Hook charger click into existing map listener — add before zone/draw check
-  var origClickHandler = _propMap.__gm.get('click');
-  _propMap.addListener('click', function(e) {
-    if (!window._chargerMode) return;
-    var num = _chargerMarkers.length + 1;
-    var marker = new google.maps.Marker({
-      position: e.latLng,
-      map: _propMap,
-      icon: {
-        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(
-          '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40">' +
-          '<path d="M16 0C7.2 0 0 7.2 0 16c0 12 16 24 16 24s16-12 16-24C32 7.2 24.8 0 16 0z" fill="#ff9800"/>' +
-          '<text x="16" y="20" text-anchor="middle" font-size="16" font-weight="bold" fill="white">⚡</text>' +
-          '</svg>'
-        ),
-        scaledSize: new google.maps.Size(32, 40),
-        anchor: new google.maps.Point(16, 40)
-      },
-      title: 'Charging Station #' + num,
-      draggable: true,
-      label: { text: String(num), color: '#fff', fontSize: '10px', fontWeight: 'bold' }
-    });
-    // Right-click to remove
-    marker.addListener('rightclick', function() {
-      marker.setMap(null);
-      var idx = _chargerMarkers.indexOf(marker);
-      if (idx > -1) _chargerMarkers.splice(idx, 1);
-      _updateChargerCount();
-    });
-    _chargerMarkers.push(marker);
-    _updateChargerCount();
-    // Auto-exit charger mode after placing one
-    window._chargerMode = false;
-    _propMap.setOptions({draggableCursor:null});
-    var btn = document.getElementById('chargerModeBtn');
-    btn.style.background = '#fff';
-    btn.style.color = '#ff9800';
-    btn.textContent = '⚡ Place Charger';
-  });
-
-  function _updateChargerCount() {
-    var el = document.getElementById('chargerCount');
-    if (_chargerMarkers.length > 0) {
-      el.textContent = _chargerMarkers.length + ' station' + (_chargerMarkers.length > 1 ? 's' : '') + ' placed';
-    } else {
-      el.textContent = '';
-    }
   }
 
   // ── QUOTE GENERATION & SHARING ──
