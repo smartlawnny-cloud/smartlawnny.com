@@ -1842,41 +1842,59 @@ function _onPropMapReady() {
       }
       total+=acres;
       var drawing=(window._homeActiveZone===i&&!z.polygon);
-      // Per-zone mower selector with collapse
+      // Per-zone mower card with collapse
       if(z.polygon){
         var curMower=z.mower||'';
         var spec=curMower?_mowerSpecs[curMower]:null;
+        var unitsNeeded=spec?Math.max(1,Math.ceil(acres/spec.acres)):0;
+        var zoneCost=spec?unitsNeeded*spec.price:0;
         var collapsed=z.collapsed&&curMower;
+
+        // Mower dropdown (shared)
+        var mowerOpts='<option value="">Choose mower...</option>'+
+          '<option value="rm21"'+(curMower==='rm21'?' selected':'')+'>FJD RM21 — $29,999</option>'+
+          '<option value="terranox-cm240"'+(curMower==='terranox-cm240'?' selected':'')+'>TerraNox CM240 — $6,999</option>'+
+          '<option value="terranox-cm120"'+(curMower==='terranox-cm120'?' selected':'')+'>TerraNox CM120 — $5,499</option>'+
+          '<option value="x450"'+(curMower==='x450'?' selected':'')+'>Navimow X450 — $2,999</option>'+
+          '<option value="x430"'+(curMower==='x430'?' selected':'')+'>Navimow X430 — $2,499</option>'+
+          '<option value="yarbo"'+(curMower==='yarbo'?' selected':'')+'>Yarbo Core — $3,994</option>'+
+          '<option value="h220"'+(curMower==='h220'?' selected':'')+'>Navimow H220 — $2,199</option>'+
+          '<option value="i215"'+(curMower==='i215'?' selected':'')+'>Navimow i215 — $1,599</option>'+
+          '<option value="i105e"'+(curMower==='i105e'?' selected':'')+'>Navimow i105E — $799</option>';
+
         if(collapsed){
-          // Collapsed: one compact line — zone color, name, acres, mower name, expand button
-          html+='<div style="display:flex;align-items:center;gap:4px;padding:3px 0;border-bottom:1px solid #eee;font-size:.7rem;cursor:pointer;" onclick="_toggleZoneCollapse('+i+')">'+
-            '<span style="width:10px;height:10px;border-radius:2px;background:'+z.color+';flex-shrink:0;"></span>'+
-            '<strong>'+z.name+'</strong>'+
-            '<span style="color:#888;">'+acres.toFixed(1)+'ac</span>'+
-            '<span style="color:#4a8a10;font-weight:600;font-size:.65rem;">'+spec.name+'</span>'+
-            '<span style="margin-left:auto;color:#aaa;font-size:.6rem;">▼</span>'+
-            '</div>';
+          // Collapsed: compact summary with qty and price
+          html+='<div style="background:#fff;border:1px solid #e5e7eb;border-left:3px solid '+z.color+';border-radius:6px;padding:6px 8px;margin-bottom:4px;cursor:pointer;" onclick="_toggleZoneCollapse('+i+')">'+
+            '<div style="display:flex;align-items:center;justify-content:space-between;">'+
+              '<div style="display:flex;align-items:center;gap:6px;">'+
+                '<strong style="font-size:.75rem;">'+z.name+'</strong>'+
+                '<span style="font-size:.65rem;color:#888;">'+acres.toFixed(1)+' ac</span>'+
+              '</div>'+
+              '<span style="font-size:.6rem;color:#aaa;">▼ expand</span>'+
+            '</div>'+
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:3px;">'+
+              '<span style="font-size:.7rem;color:#4a8a10;font-weight:600;">'+spec.name+'</span>'+
+              '<span style="font-size:.7rem;font-weight:700;">'+unitsNeeded+'× &nbsp; $'+zoneCost.toLocaleString()+'</span>'+
+            '</div>'+
+          '</div>';
         } else {
-          // Expanded: full row with mower dropdown
-          var mowerSel='<select onchange="_setZoneMower('+i+',this.value)" style="font-size:.6rem;padding:1px 2px;border:1px solid #ddd;border-radius:3px;max-width:90px;">'+
-            '<option value=""'+(curMower===''?' selected':'')+'>Choose mower...</option>'+
-            '<option value="rm21"'+(curMower==='rm21'?' selected':'')+'>FJD RM21</option>'+
-            '<option value="terranox-cm240"'+(curMower==='terranox-cm240'?' selected':'')+'>TerraNox 240</option>'+
-            '<option value="terranox-cm120"'+(curMower==='terranox-cm120'?' selected':'')+'>TerraNox 120</option>'+
-            '<option value="x450"'+(curMower==='x450'?' selected':'')+'>X450</option>'+
-            '<option value="x430"'+(curMower==='x430'?' selected':'')+'>X430</option>'+
-            '<option value="yarbo"'+(curMower==='yarbo'?' selected':'')+'>Yarbo</option>'+
-            '<option value="h220"'+(curMower==='h220'?' selected':'')+'>H220</option>'+
-            '<option value="i215"'+(curMower==='i215'?' selected':'')+'>i215</option>'+
-            '<option value="i105e"'+(curMower==='i105e'?' selected':'')+'>i105E</option>'+
-            '</select>';
-          html+='<div style="display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:1px solid #eee;font-size:.75rem;">'+
-            '<span style="width:10px;height:10px;border-radius:2px;background:'+z.color+';flex-shrink:0;"></span>'+
-            '<strong>'+z.name+'</strong>'+
-            '<span style="font-weight:600;margin:0 2px;">'+acres.toFixed(1)+'ac</span>'+mowerSel+
-            (curMower?'<button onclick="_toggleZoneCollapse('+i+')" style="padding:1px 4px;font-size:.55rem;background:#f0f8e8;color:#4a8a10;border:1px solid #6abb1e;border-radius:3px;cursor:pointer;">▲</button>':'')+
-            '<button onclick="_removeHomeZone('+i+')" style="padding:1px 4px;font-size:.65rem;background:#eee;color:#999;border:none;border-radius:3px;cursor:pointer;">✕</button>'+
-            '</div>';
+          // Expanded: full card with dropdown, qty, price
+          html+='<div style="background:#fff;border:1px solid #e5e7eb;border-left:3px solid '+z.color+';border-radius:6px;padding:8px;margin-bottom:4px;">'+
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'+
+              '<div style="display:flex;align-items:center;gap:6px;">'+
+                '<strong style="font-size:.8rem;">'+z.name+'</strong>'+
+                '<span style="font-size:.7rem;color:#888;font-weight:600;">'+acres.toFixed(1)+' acres</span>'+
+              '</div>'+
+              '<div style="display:flex;gap:3px;">'+
+                (curMower?'<button onclick="event.stopPropagation();_toggleZoneCollapse('+i+')" style="padding:2px 6px;font-size:.55rem;background:#f0f8e8;color:#4a8a10;border:1px solid #c8e6c9;border-radius:3px;cursor:pointer;">▲ collapse</button>':'')+
+              '</div>'+
+            '</div>'+
+            '<select onchange="_setZoneMower('+i+',this.value)" style="width:100%;padding:4px 6px;font-size:.7rem;border:1px solid #ddd;border-radius:4px;margin-bottom:4px;">'+mowerOpts+'</select>'+
+            (spec?'<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-top:1px solid #f0f0f0;">'+
+              '<span style="font-size:.65rem;color:#888;">'+unitsNeeded+' unit'+(unitsNeeded>1?'s':'')+' × $'+spec.price.toLocaleString()+'</span>'+
+              '<span style="font-size:.8rem;font-weight:800;color:#1d1d1f;">$'+zoneCost.toLocaleString()+'</span>'+
+            '</div>':'')+
+          '</div>';
         }
       } else {
         html+='<div style="display:flex;align-items:center;gap:4px;padding:4px 0;border-bottom:1px solid #eee;font-size:.75rem;">'+
