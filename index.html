@@ -861,7 +861,7 @@
         <div class="product-grid" style="display:grid;">
     <div class="product-grid" id="productGrid">
       <!-- Navimow Terranox CM240M1 -->
-      <div class="product-card fade-in" data-brand="navimow">
+      <div class="product-card fade-in" data-brand="navimow" data-size="large">
         <div class="product-card-image">
           <span class="product-badge teal">Commercial</span>
           <img src="images/products/terranox-robotic-mower.webp" alt="Navimow Terranox CM240M1">
@@ -876,7 +876,7 @@
         </div>
       </div>
       <!-- Navimow Terranox CM120M1 -->
-      <div class="product-card fade-in" data-brand="navimow">
+      <div class="product-card fade-in" data-brand="navimow" data-size="large">
         <div class="product-card-image">
           <span class="product-badge teal">Commercial</span>
           <img src="images/products/terranox-robotic-mower.webp" alt="Navimow Terranox CM120M1">
@@ -891,7 +891,7 @@
         </div>
       </div>
       <!-- Navimow X450 -->
-      <div class="product-card fade-in" data-brand="navimow">
+      <div class="product-card fade-in" data-brand="navimow" data-size="medium">
         <div class="product-card-image">
           <span class="product-badge">Flagship</span>
           <img src="images/products/x4-black-pdp.png" alt="Navimow X450">
@@ -906,7 +906,7 @@
         </div>
       </div>
       <!-- Navimow X430 -->
-      <div class="product-card fade-in" data-brand="navimow">
+      <div class="product-card fade-in" data-brand="navimow" data-size="medium">
         <div class="product-card-image">
           <span class="product-badge">Best Seller</span>
           <img src="images/products/x4-black-pdp.png" alt="Navimow X430">
@@ -921,7 +921,7 @@
         </div>
       </div>
       <!-- Navimow H220 -->
-      <div class="product-card fade-in" data-brand="navimow">
+      <div class="product-card fade-in" data-brand="navimow" data-size="small">
         <div class="product-card-image">
           <span class="product-badge teal">New</span>
           <img src="images/products/h220-pdp.webp" alt="Navimow H220">
@@ -936,7 +936,7 @@
         </div>
       </div>
       <!-- Navimow i215 LiDAR -->
-      <div class="product-card fade-in" data-brand="navimow">
+      <div class="product-card fade-in" data-brand="navimow" data-size="small">
         <div class="product-card-image">
           <img src="images/products/i215-lidar-pdp.webp" alt="Navimow i215 LiDAR">
         </div>
@@ -950,7 +950,7 @@
         </div>
       </div>
       <!-- Navimow i105E -->
-      <div class="product-card fade-in" data-brand="navimow">
+      <div class="product-card fade-in" data-brand="navimow" data-size="small">
         <div class="product-card-image">
           <span class="product-badge" style="background:#2563eb;">Entry Level</span>
           <img src="images/products/i105e-pdp.webp" alt="Navimow i105E">
@@ -1492,6 +1492,7 @@
       <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutSubtotal"></div>
       <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutInstall"></div>
       <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutMapping"></div>
+      <div style="display:flex;justify-content:space-between;font-size:.85rem;color:#4a8a10;padding:4px 0;display:none;" id="checkoutPlan"></div>
       <div style="display:flex;justify-content:space-between;font-size:.85rem;color:#6abb1e;padding:4px 0;display:none;" id="checkoutDiscount"></div>
       <div style="display:flex;justify-content:space-between;font-size:.85rem;color:#888;padding:4px 0;" id="checkoutTax"></div>
       <div style="border-top:2px solid #1d1d1f;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between;font-size:1.3rem;font-weight:800;" id="checkoutTotal"></div>
@@ -2000,7 +2001,7 @@ function _onPropMapReady() {
       _autoDetectLabels.push(lawnLabel);
 
       // Update panel stats
-      var statsEl = document.getElementById('pMowable');
+      var statsEl = document.getElementById('pMow');
       if (statsEl) statsEl.textContent = mowableAc + ' acres';
 
       btn.innerHTML = '<i class="fas fa-seedling"></i> Auto-Detect';
@@ -2067,6 +2068,96 @@ function _onPropMapReady() {
     // Use existing split function on property boundary
     _autoSplitZones(n);
   };
+
+  function _autoSplitZones(n) {
+    if (!_propPolygon) return;
+    // Clear existing zones
+    _homeZones.forEach(function(z) {
+      if (z.polygon) z.polygon.setMap(null);
+      if (z.polyline) z.polyline.setMap(null);
+      if (z.labelMarker) z.labelMarker.setMap(null);
+      z.markers.forEach(function(m) { m.setMap(null); });
+    });
+    _homeZones = [];
+    window._homeActiveZone = -1;
+
+    // Get bounding box of property polygon
+    var bounds = new google.maps.LatLngBounds();
+    _propPolygon.getPath().forEach(function(p) { bounds.extend(p); });
+    var sw = bounds.getSouthWest();
+    var ne = bounds.getNorthEast();
+    var west = sw.lng();
+    var east = ne.lng();
+    var south = sw.lat();
+    var north = ne.lat();
+    var stripWidth = (east - west) / n;
+
+    // Hide property boundary fill so zone colors show
+    _propPolygon.setMap(null);
+
+    for (var i = 0; i < n; i++) {
+      var color = _hzColors[i % _hzColors.length];
+      var name = 'Zone ' + String.fromCharCode(65 + i);
+      var stripWest = west + i * stripWidth;
+      var stripEast = west + (i + 1) * stripWidth;
+
+      // Build a clipping rectangle for this strip
+      var clipPath = [
+        new google.maps.LatLng(south - 0.01, stripWest),
+        new google.maps.LatLng(north + 0.01, stripWest),
+        new google.maps.LatLng(north + 0.01, stripEast),
+        new google.maps.LatLng(south - 0.01, stripEast)
+      ];
+
+      // Intersect the strip with the property polygon
+      var propPath = [];
+      _propPolygon.getPath().forEach(function(p) { propPath.push(p); });
+
+      // Collect property vertices inside this strip + edge intersections
+      var zonePts = [];
+      for (var j = 0; j < propPath.length; j++) {
+        var curr = propPath[j];
+        var next = propPath[(j + 1) % propPath.length];
+        var currIn = curr.lng() >= stripWest && curr.lng() <= stripEast;
+        var nextIn = next.lng() >= stripWest && next.lng() <= stripEast;
+        if (currIn) zonePts.push(curr);
+        // Check west edge crossing
+        if ((curr.lng() < stripWest) !== (next.lng() < stripWest)) {
+          var t = (stripWest - curr.lng()) / (next.lng() - curr.lng());
+          var lat = curr.lat() + t * (next.lat() - curr.lat());
+          zonePts.push(new google.maps.LatLng(lat, stripWest));
+        }
+        // Check east edge crossing
+        if ((curr.lng() < stripEast) !== (next.lng() < stripEast)) {
+          var t2 = (stripEast - curr.lng()) / (next.lng() - curr.lng());
+          var lat2 = curr.lat() + t2 * (next.lat() - curr.lat());
+          zonePts.push(new google.maps.LatLng(lat2, stripEast));
+        }
+      }
+
+      if (zonePts.length < 3) continue;
+
+      // Sort points by angle from centroid
+      var cLat = 0, cLng = 0;
+      zonePts.forEach(function(p) { cLat += p.lat(); cLng += p.lng(); });
+      cLat /= zonePts.length; cLng /= zonePts.length;
+      zonePts.sort(function(a, b) {
+        return Math.atan2(a.lat() - cLat, a.lng() - cLng) - Math.atan2(b.lat() - cLat, b.lng() - cLng);
+      });
+
+      var poly = new google.maps.Polygon({
+        paths: zonePts, map: _propMap,
+        fillColor: color, fillOpacity: 0.35,
+        strokeColor: color, strokeWeight: 2, strokeOpacity: 0.8,
+        editable: true, draggable: false, zIndex: 5
+      });
+
+      var zone = { polygon: poly, points: zonePts, markers: [], polyline: null, color: color, name: name, labelMarker: null, mower: null };
+      _homeZones.push(zone);
+    }
+
+    _updateHomeZones();
+  }
 
   window._clearAutoDetect = function() {
     if (window._autoDetectPolygons) { window._autoDetectPolygons.forEach(function(p){p.setMap(null);}); window._autoDetectPolygons=[]; }
@@ -2393,7 +2484,7 @@ function _onPropMapReady() {
     _checkShowQuoteActions();
     // Update recommendations based on zones
     if(total>0){
-      propertyData={totalAcres:total,mowableAcres:total};
+      var propertyData={totalAcres:total,mowableAcres:total};
       // Show current lawn care cost estimate
       var costEstEl=document.getElementById('currentCostEstimate');
       if(costEstEl){
@@ -2605,8 +2696,15 @@ function _onPropMapReady() {
   window._stripeCheckout = function(method) {
     var d = _buildQuoteData();
     if (!d.zones.length) return;
-    var tax = Math.round(d.totalFleetCost * 0.08375);
-    var total = d.grandTotal + tax;
+    var equipCost = d.totalFleetCost;
+    var installCost = document.getElementById('chkInstall').checked ? d.installCost : 0;
+    var mappingCost = document.getElementById('chkMapping').checked ? d.mappingCost : 0;
+    var planCost = parseInt(document.getElementById('servicePlanSelect').value) || 0;
+    var discount = 0;
+    if (_activeDiscount) { discount = Math.round(equipCost * _activeDiscount.pct / 100); }
+    var subtotal = equipCost + installCost + mappingCost + planCost - discount;
+    var tax = Math.round(equipCost * 0.08375);
+    var total = subtotal + tax;
     var email = document.getElementById('quoteEmailInput') ? document.getElementById('quoteEmailInput').value.trim() : '';
 
     // Build Stripe line items (amounts in cents)
@@ -2614,8 +2712,13 @@ function _onPropMapReady() {
     d.zones.forEach(function(z) {
       lineItems.push({ name: z.name + ': ' + z.units + '× ' + z.mowerName, unitAmount: Math.round(z.subtotal * 100), quantity: 1 });
     });
-    if (d.installCost > 0) lineItems.push({ name: 'Professional Installation (' + d.totalUnits + ' units)', unitAmount: Math.round(d.installCost * 100), quantity: 1 });
-    if (d.mappingCost > 0) lineItems.push({ name: 'RTK Property Mapping (' + d.totalAcres + ' acres)', unitAmount: Math.round(d.mappingCost * 100), quantity: 1 });
+    if (installCost > 0) lineItems.push({ name: 'Professional Installation (' + d.totalUnits + ' units)', unitAmount: Math.round(installCost * 100), quantity: 1 });
+    if (mappingCost > 0) lineItems.push({ name: 'RTK Property Mapping (' + d.totalAcres + ' acres)', unitAmount: Math.round(mappingCost * 100), quantity: 1 });
+    if (planCost > 0) {
+      var planName = document.getElementById('servicePlanSelect').options[document.getElementById('servicePlanSelect').selectedIndex].text;
+      lineItems.push({ name: 'Service Plan: ' + planName, unitAmount: Math.round(planCost * 100), quantity: 1 });
+    }
+    if (discount > 0) lineItems.push({ name: 'Discount (' + _activeDiscount.label + ')', unitAmount: -Math.round(discount * 100), quantity: 1 });
     if (tax > 0) lineItems.push({ name: 'NY Sales Tax (8.375%)', unitAmount: Math.round(tax * 100), quantity: 1 });
 
     // Show loading
@@ -2782,11 +2885,12 @@ function _onPropMapReady() {
       discEl.innerHTML = '<span>Discount ('+_activeDiscount.label+')</span><span>-$'+discount.toLocaleString()+'</span>';
       discEl.style.display = 'flex';
     } else { discEl.style.display = 'none'; }
+    var planEl = document.getElementById('checkoutPlan');
     if (planCost > 0) {
       var planName = document.getElementById('servicePlanSelect').options[document.getElementById('servicePlanSelect').selectedIndex].text;
-      document.getElementById('checkoutSubtotal').innerHTML += '<div style="display:flex;justify-content:space-between;font-size:.85rem;color:#4a8a10;padding:4px 0;margin-top:4px;">'+
-        '<span>'+planName+'</span><span>$'+planCost+'</span></div>';
-    }
+      planEl.innerHTML = '<span>'+planName+'</span><span>$'+planCost+'</span>';
+      planEl.style.display = 'flex';
+    } else { planEl.style.display = 'none'; }
     document.getElementById('checkoutTax').innerHTML = '<span>Est. Tax (8.375% on equipment)</span><span>$'+tax.toLocaleString()+'</span>';
     document.getElementById('checkoutTotal').innerHTML = '<span>Total</span><span>$'+total.toLocaleString()+'</span>';
     document.getElementById('checkoutAffirm').textContent = 'As low as $' + Math.round(total * 1.1 / 12).toLocaleString() + '/mo for 12 months';
@@ -2831,12 +2935,11 @@ function _onPropMapReady() {
     window.scrollTo({top: 0, behavior: 'smooth'});
 
     // GA4 event
-    if (window.gtag) gtag('event', 'begin_checkout', {value: grandWithTax, items: d.zones.map(function(z){ return {item_name:z.mowerName, quantity:z.units, price:z.mowerPrice}; })});
+    if (window.gtag) gtag('event', 'begin_checkout', {value: d.grandTotal, items: d.zones.map(function(z){ return {item_name:z.mowerName, quantity:z.units, price:z.mowerPrice}; })});
   };
 
   window._exitCheckout = function() {
-    // Show everything again
-    document.querySelectorAll('section').forEach(function(s) { s.style.removeProperty('display'); });
+    // Hide checkout, show only the map-related sections
     document.getElementById('mapCheckout').style.display = 'none';
     document.getElementById('heroMap').style.display = 'block';
     document.getElementById('quiz-map-section').style.display = 'block';
@@ -3040,21 +3143,22 @@ function _onPropMapReady() {
 
   window._sendToRep = function() {
     var d = _buildQuoteData();
+    var mowerNames = d.zones.map(function(z){return z.mowerName;}).join(', ');
     var body = 'New property assessment from smartlawnny.com:\n\n' +
       'Address: ' + d.addr + '\n' +
-      'Total Area: ' + d.totalAc + ' acres\n' +
+      'Total Area: ' + d.totalAcres + ' acres\n' +
       'Zones: ' + d.zones.map(function(z){return z.name+' ('+z.acres+' ac)';}).join(', ') + '\n' +
-      'Recommended: ' + d.mowerName + ' x' + d.unitsNeeded + '\n' +
-      'Fleet Cost: $' + d.fleetCost.toLocaleString() + '\n' +
+      'Recommended: ' + mowerNames + ' x' + d.totalUnits + '\n' +
+      'Fleet Cost: $' + d.totalFleetCost.toLocaleString() + '\n' +
       'DFY: $' + Number(d.weeklyDFY).toLocaleString() + '/week\n\n' +
       'Map link: ' + window.location.href;
     // Send via Apps Script to text Doug
     var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
-    fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'MAP QUOTE', address:d.addr, totalAcres:d.totalAc, zones:d.zones.length, mower:d.mowerName, units:d.unitsNeeded, fleetCost:d.fleetCost, weeklyDFY:d.weeklyDFY, date:new Date().toISOString()}) });
+    fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'MAP QUOTE', address:d.addr, totalAcres:d.totalAcres, zones:d.zones.length, mower:mowerNames, units:d.totalUnits, fleetCost:d.totalFleetCost, weeklyDFY:d.weeklyDFY, date:new Date().toISOString()}) });
     // Also open SMS to Doug
-    var sms = 'sms:9146477276&body=' + encodeURIComponent('New quote request: ' + d.addr + ' - ' + d.totalAc + ' acres, ' + d.zones.length + ' zones, ' + d.mowerName + ' x' + d.unitsNeeded + '. $' + Number(d.weeklyDFY).toLocaleString() + '/wk DFY');
+    var sms = 'sms:9146477276&body=' + encodeURIComponent('New quote request: ' + d.addr + ' - ' + d.totalAcres + ' acres, ' + d.zones.length + ' zones, ' + mowerNames + ' x' + d.totalUnits + '. $' + Number(d.weeklyDFY).toLocaleString() + '/wk DFY');
     window.open(sms, '_self');
-    if (typeof gtag === 'function') gtag('event', 'send_to_rep', {address: d.addr, acres: d.totalAc});
+    if (typeof gtag === 'function') gtag('event', 'send_to_rep', {address: d.addr, acres: d.totalAcres});
   };
 
 
@@ -3390,10 +3494,9 @@ function showMapRecommendation(acres, steepPct) {
   var prevSummary = cards.previousElementSibling;
   if (prevSummary && prevSummary.style && prevSummary.style.display !== 'none' && !prevSummary.id) prevSummary.remove();
   cards.innerHTML = '';
+  var sqft = Math.round(acres * 43560);
   document.getElementById('mapRecommendation').style.display = 'block';
   document.getElementById('recSubtitle').textContent = sqft.toLocaleString() + ' sq ft (' + acres.toFixed(2) + ' acres) | ' + steepPct + '% steep terrain';
-
-  var sqft = Math.round(acres * 43560);
   var recs = [];
 
   // Logic: recommend based on acreage + slope
@@ -3482,52 +3585,7 @@ function showMapRecommendation(acres, steepPct) {
   }
 }
 
-// === QUIZ (legacy — kept for backward compat) ===
-let quizStep = 1;
-let quizAnswers = {};
-function selectQuiz(el, key, value) {
-  el.parentElement.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  quizAnswers[key] = value;
-  setTimeout(() => { if (quizStep < 5) nextQuiz(); else showQuizResult(); }, 400);
-}
-function nextQuiz() {
-  if (quizStep >= 5) return showQuizResult();
-  document.querySelector(`.quiz-step[data-step="${quizStep}"]`).classList.remove('active');
-  quizStep++;
-  document.querySelector(`.quiz-step[data-step="${quizStep}"]`).classList.add('active');
-  updateQuizDots();
-}
-function updateQuizDots() {
-  document.querySelectorAll('.quiz-dot').forEach((dot, i) => {
-    dot.className = 'quiz-dot' + (i < quizStep - 1 ? ' done' : (i === quizStep - 1 ? ' active' : ''));
-  });
-}
-function showQuizResult() {
-  document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('quizProgress').style.display = 'none';
-  const r = document.getElementById('quizResult');
-  const rec = document.getElementById('quizRecommendation');
-  let name, price, desc;
-  const s = quizAnswers.size, b = quizAnswers.budget, f = quizAnswers.feature;
-  if (f === 'multi-season') {
-    name = 'Yarbo Lawn Mower + Snow Blower'; price = 'From $4,999'; desc = 'The only modular platform that mows and blows snow. One robot, multiple attachments for year-round yard automation.';
-  } else if (s === 'xlarge' && b === 'pro') {
-    name = 'Navimow Terranox CM240M1'; price = '$6,999'; desc = 'Commercial-grade powerhouse covering up to 6 acres with 4WD and 40-degree slope capability. Built for large estates.';
-  } else if (s === 'xlarge' || b === 'pro') {
-    name = 'Navimow X450'; price = '$2,999'; desc = 'Flagship residential mower with 4WD and NRTK navigation. Handles up to 1.5 acres with precision.';
-  } else if (s === 'large' || b === 'premium') {
-    name = 'Navimow X430'; price = '$2,499'; desc = 'Large-yard 4WD mower with NRTK precision navigation. Handles up to 1 acre effortlessly.';
-  } else if (s === 'medium') {
-    name = 'Navimow H220'; price = '$2,199'; desc = 'Triple fusion navigation (LiDAR + RTK + Vision) for up to half an acre. The smartest mower in its class.';
-  } else if (b === 'economy' || s === 'small') {
-    name = 'Navimow i215 LiDAR'; price = '$1,599'; desc = 'LiDAR + Vision navigation, perfect for yards up to 0.37 acres. Excellent under tree canopy.';
-  } else {
-    name = 'Navimow H220'; price = '$2,199'; desc = 'Triple fusion navigation for up to half an acre. LiDAR + RTK + Vision for the most accurate coverage.';
-  }
-  rec.innerHTML = `<h4>${name}</h4><div class="rec-price">${price}</div><p>${desc}</p>`;
-  r.style.display = 'block';
-}
+// === QUIZ (removed — HTML elements no longer exist) ===
 
 // === ROI CALCULATOR ===
 var roiMode = 'landscaper';
