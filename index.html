@@ -1460,13 +1460,56 @@
     <!-- Line items -->
     <div id="checkoutItems" style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;"></div>
 
+    <!-- Add-ons (optional) -->
+    <div style="margin-top:16px;background:#f9fafb;border-radius:12px;padding:16px 20px;">
+      <div style="font-size:.8rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">Optional Add-Ons</div>
+      <label style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer;border-bottom:1px solid #e5e7eb;" id="checkoutInstallRow">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="chkInstall" checked onchange="_recalcCheckout()" style="width:18px;height:18px;accent-color:#6abb1e;">
+          <div><div style="font-size:.9rem;font-weight:600;">Professional Installation</div><div style="font-size:.75rem;color:#86868b;">Dock setup, zone programming, calibration, training</div></div>
+        </div>
+        <span style="font-size:.9rem;font-weight:700;" id="checkoutInstallPrice"></span>
+      </label>
+      <label style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer;" id="checkoutMappingRow">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="checkbox" id="chkMapping" checked onchange="_recalcCheckout()" style="width:18px;height:18px;accent-color:#6abb1e;">
+          <div><div style="font-size:.9rem;font-weight:600;">RTK Property Mapping</div><div style="font-size:.75rem;color:#86868b;">Satellite survey, boundary mapping, zone optimization</div></div>
+        </div>
+        <span style="font-size:.9rem;font-weight:700;" id="checkoutMappingPrice"></span>
+      </label>
+    </div>
+
+    <!-- Discount Code -->
+    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+      <input type="text" id="discountCode" placeholder="Discount code" style="flex:1;padding:10px 14px;border:1px solid #e0e0e0;border-radius:8px;font-size:.85rem;font-family:inherit;">
+      <button onclick="_applyDiscount()" style="padding:10px 16px;background:#1d1d1f;color:#fff;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;">Apply</button>
+    </div>
+    <div id="discountMsg" style="font-size:.8rem;color:#6abb1e;margin-top:4px;display:none;"></div>
+
     <!-- Totals -->
     <div style="margin-top:16px;background:#f9fafb;border-radius:12px;padding:20px;">
       <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutSubtotal"></div>
       <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutInstall"></div>
       <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutMapping"></div>
+      <div style="display:flex;justify-content:space-between;font-size:.85rem;color:#6abb1e;padding:4px 0;display:none;" id="checkoutDiscount"></div>
       <div style="display:flex;justify-content:space-between;font-size:.85rem;color:#888;padding:4px 0;" id="checkoutTax"></div>
       <div style="border-top:2px solid #1d1d1f;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between;font-size:1.3rem;font-weight:800;" id="checkoutTotal"></div>
+    </div>
+
+    <!-- Service Plan Upsell -->
+    <div style="margin-top:16px;border:2px solid #f0f8e8;border-radius:12px;padding:16px 20px;background:#fafff5;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:.95rem;font-weight:700;color:#1d1d1f;">Add a Service Plan?</div>
+          <div style="font-size:.8rem;color:#86868b;">Blade replacements, annual maintenance, priority support</div>
+        </div>
+        <select id="servicePlanSelect" onchange="_recalcCheckout()" style="padding:8px 12px;border:1px solid #ddd;border-radius:8px;font-size:.85rem;font-family:inherit;">
+          <option value="0">No thanks</option>
+          <option value="149">Essentials — $149/yr</option>
+          <option value="249" selected>Pro — $249/yr</option>
+          <option value="399">All-In — $399/yr</option>
+        </select>
+      </div>
     </div>
 
     <!-- Email Quote Section -->
@@ -2465,6 +2508,69 @@ function _onPropMapReady() {
   };
 
   // ═══ CHECKOUT FLOW ═══
+  // Discount codes — add yours here
+  var _discountCodes = {
+    'SPRING15': {pct: 15, label: '15% off equipment'},
+    'WELCOME10': {pct: 10, label: '10% off equipment'},
+    'SHEA20': {pct: 20, label: '20% off equipment'},
+  };
+  var _activeDiscount = null;
+
+  window._applyDiscount = function() {
+    var code = document.getElementById('discountCode').value.trim().toUpperCase();
+    var msg = document.getElementById('discountMsg');
+    if (_discountCodes[code]) {
+      _activeDiscount = _discountCodes[code];
+      msg.textContent = '✓ ' + _activeDiscount.label + ' applied!';
+      msg.style.display = 'block';
+      msg.style.color = '#6abb1e';
+      _recalcCheckout();
+    } else {
+      _activeDiscount = null;
+      msg.textContent = 'Invalid code';
+      msg.style.display = 'block';
+      msg.style.color = '#e53e3e';
+      _recalcCheckout();
+    }
+  };
+
+  window._recalcCheckout = function() {
+    var d = _buildQuoteData();
+    if (!d.zones.length) return;
+    var equipCost = d.totalFleetCost;
+    var installCost = document.getElementById('chkInstall').checked ? d.installCost : 0;
+    var mappingCost = document.getElementById('chkMapping').checked ? d.mappingCost : 0;
+    var planCost = parseInt(document.getElementById('servicePlanSelect').value) || 0;
+    var discount = 0;
+    if (_activeDiscount) {
+      discount = Math.round(equipCost * _activeDiscount.pct / 100);
+    }
+    var subtotal = equipCost + installCost + mappingCost + planCost - discount;
+    var tax = Math.round(equipCost * 0.08375);
+    var total = subtotal + tax;
+
+    document.getElementById('checkoutSubtotal').innerHTML = '<span>Equipment ('+d.totalUnits+' mowers)</span><span>$'+equipCost.toLocaleString()+'</span>';
+    document.getElementById('checkoutInstall').innerHTML = installCost > 0 ? '<span>Installation</span><span>$'+installCost.toLocaleString()+'</span>' : '';
+    document.getElementById('checkoutInstall').style.display = installCost > 0 ? 'flex' : 'none';
+    document.getElementById('checkoutMapping').innerHTML = mappingCost > 0 ? '<span>RTK Mapping</span><span>$'+mappingCost.toLocaleString()+'</span>' : '';
+    document.getElementById('checkoutMapping').style.display = mappingCost > 0 ? 'flex' : 'none';
+    var discEl = document.getElementById('checkoutDiscount');
+    if (discount > 0) {
+      discEl.innerHTML = '<span>Discount ('+_activeDiscount.label+')</span><span>-$'+discount.toLocaleString()+'</span>';
+      discEl.style.display = 'flex';
+    } else { discEl.style.display = 'none'; }
+    if (planCost > 0) {
+      var planName = document.getElementById('servicePlanSelect').options[document.getElementById('servicePlanSelect').selectedIndex].text;
+      document.getElementById('checkoutSubtotal').innerHTML += '<div style="display:flex;justify-content:space-between;font-size:.85rem;color:#4a8a10;padding:4px 0;margin-top:4px;">'+
+        '<span>'+planName+'</span><span>$'+planCost+'</span></div>';
+    }
+    document.getElementById('checkoutTax').innerHTML = '<span>Est. Tax (8.375% on equipment)</span><span>$'+tax.toLocaleString()+'</span>';
+    document.getElementById('checkoutTotal').innerHTML = '<span>Total</span><span>$'+total.toLocaleString()+'</span>';
+    document.getElementById('checkoutAffirm').textContent = 'As low as $' + Math.round(total * 1.1 / 12).toLocaleString() + '/mo for 12 months';
+    document.getElementById('checkoutInstallPrice').textContent = '$'+d.installCost.toLocaleString();
+    document.getElementById('checkoutMappingPrice').textContent = '$'+d.mappingCost.toLocaleString();
+  };
+
   window._proceedToCheckout = function() {
     var d = _buildQuoteData();
     if (!d.zones.length) { alert('Select mowers for your zones first.'); return; }
@@ -2484,16 +2590,12 @@ function _onPropMapReady() {
     });
     document.getElementById('checkoutItems').innerHTML = itemsHTML;
 
-    // Fill totals
-    var tax = Math.round(d.totalFleetCost * 0.08375);
-    var grandWithTax = d.grandTotal + tax;
+    // Fill address and recalculate totals
     document.getElementById('checkoutAddr').textContent = d.addr + ' — ' + d.totalAcres + ' acres, ' + d.totalUnits + ' mowers';
-    document.getElementById('checkoutSubtotal').innerHTML = '<span>Equipment ('+d.totalUnits+' mowers)</span><span>$'+d.totalFleetCost.toLocaleString()+'</span>';
-    document.getElementById('checkoutInstall').innerHTML = '<span>Professional Installation</span><span>$'+d.installCost.toLocaleString()+'</span>';
-    document.getElementById('checkoutMapping').innerHTML = '<span>RTK Mapping ('+d.totalAcres+' ac × $199)</span><span>$'+d.mappingCost.toLocaleString()+'</span>';
-    document.getElementById('checkoutTax').innerHTML = '<span>Est. Tax (8.375%)</span><span>$'+tax.toLocaleString()+'</span>';
-    document.getElementById('checkoutTotal').innerHTML = '<span>Total</span><span>$'+grandWithTax.toLocaleString()+'</span>';
-    document.getElementById('checkoutAffirm').textContent = 'As low as $' + Math.round(grandWithTax * 1.1 / 12).toLocaleString() + '/mo for 12 months';
+    _activeDiscount = null;
+    document.getElementById('discountCode').value = '';
+    document.getElementById('discountMsg').style.display = 'none';
+    _recalcCheckout();
 
     // Hide everything except header, checkout, and footer
     document.querySelectorAll('section, .brand-section').forEach(function(s) {
