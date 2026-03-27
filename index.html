@@ -1473,34 +1473,59 @@
 
     <!-- Payment Options -->
     <div style="margin-top:24px;">
-      <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;">Payment Options</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div style="border:2px solid #6abb1e;border-radius:12px;padding:16px;text-align:center;cursor:pointer;" onclick="alert('Payment processing coming soon. Call (914) 647-7276 to complete your order.')">
-          <div style="font-size:1.5rem;margin-bottom:4px;">💳</div>
-          <div style="font-size:.85rem;font-weight:700;">Pay in Full</div>
-          <div style="font-size:.75rem;color:#86868b;">Credit card or wire transfer</div>
-        </div>
-        <div style="border:2px solid #e5e7eb;border-radius:12px;padding:16px;text-align:center;cursor:pointer;" onclick="alert('Affirm financing available at checkout. Call (914) 647-7276 to get started.')">
-          <div style="font-size:1.5rem;margin-bottom:4px;">📅</div>
-          <div style="font-size:.85rem;font-weight:700;">Finance with Affirm</div>
-          <div style="font-size:.75rem;color:#86868b;" id="checkoutAffirm">As low as $XX/mo</div>
-        </div>
-      </div>
-      <div style="margin-top:12px;border:2px solid #e5e7eb;border-radius:12px;padding:16px;text-align:center;cursor:pointer;" onclick="alert('Our team will reach out to set up your MaaS subscription. Call (914) 647-7276.')">
-        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
-          <span style="font-size:1.5rem;">🔄</span>
-          <div style="text-align:left;">
-            <div style="font-size:.85rem;font-weight:700;">Mowing as a Service (MaaS)</div>
-            <div style="font-size:.75rem;color:#86868b;">We own the mower. Starting at $99/week. No upfront cost.</div>
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;">How Would You Like to Pay?</h3>
+      <div style="display:grid;gap:12px;">
+
+        <!-- Pay with Card (Stripe) -->
+        <div id="stripePayBtn" onclick="_stripeCheckout()" style="border:2px solid #6abb1e;border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;" onmouseover="this.style.background='#f0f8e8'" onmouseout="this.style.background='#fff'">
+          <div style="font-size:2rem;">💳</div>
+          <div style="flex:1;">
+            <div style="font-size:1rem;font-weight:700;">Pay with Card</div>
+            <div style="font-size:.8rem;color:#86868b;">Visa, Mastercard, Amex, Apple Pay, Google Pay</div>
           </div>
+          <div style="font-size:.85rem;font-weight:700;color:#6abb1e;" id="checkoutPayFull"></div>
+        </div>
+
+        <!-- Monthly Financing -->
+        <div onclick="_stripeCheckout('affirm')" style="border:2px solid #e5e7eb;border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+          <div style="font-size:2rem;">📅</div>
+          <div style="flex:1;">
+            <div style="font-size:1rem;font-weight:700;">Monthly Financing</div>
+            <div style="font-size:.8rem;color:#86868b;">Affirm, Klarna — split into monthly payments, instant approval</div>
+          </div>
+          <div style="font-size:.85rem;font-weight:700;color:#555;" id="checkoutAffirm">As low as $XX/mo</div>
+        </div>
+
+        <!-- MaaS -->
+        <div onclick="_requestMaaS()" style="border:2px solid #e5e7eb;border-radius:12px;padding:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+          <div style="font-size:2rem;">🔄</div>
+          <div style="flex:1;">
+            <div style="font-size:1rem;font-weight:700;">Mowing as a Service</div>
+            <div style="font-size:.8rem;color:#86868b;">$0 upfront — we own the equipment. Starting at $99/week.</div>
+          </div>
+          <div style="font-size:.85rem;font-weight:700;color:#555;" id="checkoutMaaS"></div>
+        </div>
+
+        <!-- Venmo / Zelle -->
+        <div style="border:1px solid #e5e7eb;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:12px;background:#f9fafb;">
+          <div style="font-size:.85rem;color:#86868b;">Also accepted:</div>
+          <span style="font-weight:600;color:#008CFF;font-size:.85rem;">Venmo</span>
+          <span style="color:#ccc;">|</span>
+          <span style="font-weight:600;color:#6D1ED4;font-size:.85rem;">Zelle</span>
+          <span style="color:#ccc;">|</span>
+          <span style="font-weight:600;color:#555;font-size:.85rem;">Wire Transfer</span>
+          <span style="color:#ccc;">|</span>
+          <span style="font-weight:600;color:#555;font-size:.85rem;">Check</span>
         </div>
       </div>
     </div>
 
-    <!-- Contact to finalize -->
-    <div style="margin-top:24px;background:#f0f8e8;border-radius:12px;padding:20px;text-align:center;">
-      <p style="font-size:.95rem;color:#555;margin-bottom:12px;">Ready to order? Call us to finalize your purchase and schedule installation.</p>
-      <a href="tel:9146477276" style="display:inline-block;padding:14px 32px;background:#6abb1e;color:#fff;border-radius:980px;font-size:1rem;font-weight:700;text-decoration:none;">📞 Call (914) 647-7276</a>
+    <!-- Contact -->
+    <div style="margin-top:20px;text-align:center;">
+      <p style="font-size:.85rem;color:#86868b;margin-bottom:8px;">Questions? We're here to help.</p>
+      <a href="tel:9146477276" style="font-size:1rem;font-weight:700;color:#6abb1e;text-decoration:none;">📞 (914) 647-7276</a>
+      <span style="color:#ccc;margin:0 8px;">|</span>
+      <a href="mailto:smartlawnny@gmail.com" style="font-size:.9rem;color:#6abb1e;text-decoration:none;">smartlawnny@gmail.com</a>
     </div>
 
     <!-- Back button -->
@@ -2280,6 +2305,76 @@ function _onPropMapReady() {
       'Questions? Call (914) 647-7276\n\n' +
       'Smart Lawn NY\nsmartlawnny.com';
     window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+  };
+
+  // ═══ STRIPE CHECKOUT ═══
+  window._stripeCheckout = function(method) {
+    var d = _buildQuoteData();
+    if (!d.zones.length) return;
+    var tax = Math.round(d.totalFleetCost * 0.08375);
+    var total = d.grandTotal + tax;
+
+    // Build line items description
+    var desc = d.zones.map(function(z){ return z.units+'× '+z.mowerName+' ('+z.name+')'; }).join(', ');
+    desc += ' + Install + RTK Mapping';
+
+    // Use Apps Script as Stripe session creator
+    var STRIPE_SCRIPT = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
+
+    // For now, send order details to Doug and open a payment request
+    var orderData = {
+      type: 'ORDER',
+      firstName: 'Online Order',
+      email: '',
+      phone: '',
+      street: d.addr,
+      lawnSize: d.totalAcres + ' acres',
+      interest: method === 'affirm' ? 'Monthly Financing' : 'Pay in Full',
+      message: desc + ' | Total: $' + total.toLocaleString(),
+      date: new Date().toISOString(),
+      source: 'Checkout'
+    };
+
+    fetch(STRIPE_SCRIPT, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(orderData)});
+
+    // Show confirmation
+    var checkoutEl = document.getElementById('mapCheckout');
+    checkoutEl.querySelector('.container').innerHTML =
+      '<div style="text-align:center;padding:60px 20px;">' +
+        '<div style="font-size:3rem;margin-bottom:16px;">✅</div>' +
+        '<h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px;">Order Submitted!</h2>' +
+        '<p style="font-size:1rem;color:#86868b;max-width:480px;margin:0 auto 24px;">We\'ve received your order for <strong>' + d.totalUnits + ' mowers</strong> at <strong>' + d.addr + '</strong>. Total: <strong>$' + total.toLocaleString() + '</strong></p>' +
+        '<p style="font-size:.95rem;color:#555;margin-bottom:24px;">' + (method === 'affirm' ? 'We\'ll send you a financing application link within the hour.' : 'We\'ll send you a secure payment link via email shortly.') + '</p>' +
+        '<a href="tel:9146477276" style="display:inline-block;padding:14px 32px;background:#6abb1e;color:#fff;border-radius:980px;font-size:1rem;font-weight:700;text-decoration:none;">📞 Call to Expedite: (914) 647-7276</a>' +
+        '<div style="margin-top:16px;"><a href="/" style="color:#86868b;font-size:.85rem;">← Back to Smart Lawn NY</a></div>' +
+      '</div>';
+    window.scrollTo({top:0});
+
+    // GA4
+    if (window.gtag) gtag('event', 'purchase', {value: total, transaction_id: 'ORD-' + Date.now(), items: d.zones.map(function(z){ return {item_name:z.mowerName, quantity:z.units, price:z.mowerPrice}; })});
+  };
+
+  window._requestMaaS = function() {
+    var d = _buildQuoteData();
+    var weekly = Number(d.weeklyDFY);
+    var checkoutEl = document.getElementById('mapCheckout');
+    checkoutEl.querySelector('.container').innerHTML =
+      '<div style="text-align:center;padding:60px 20px;">' +
+        '<div style="font-size:3rem;margin-bottom:16px;">🔄</div>' +
+        '<h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px;">MaaS Request Submitted</h2>' +
+        '<p style="font-size:1rem;color:#86868b;max-width:480px;margin:0 auto 24px;">We\'ll prepare a Done-For-You proposal for <strong>' + d.addr + '</strong> — <strong>' + d.totalAcres + ' acres</strong> at <strong>$' + weekly.toLocaleString() + '/week</strong>.</p>' +
+        '<p style="font-size:.95rem;color:#555;margin-bottom:24px;">Our team will reach out within 24 hours to schedule a site assessment.</p>' +
+        '<a href="tel:9146477276" style="display:inline-block;padding:14px 32px;background:#6abb1e;color:#fff;border-radius:980px;font-size:1rem;font-weight:700;text-decoration:none;">📞 Call (914) 647-7276</a>' +
+        '<div style="margin-top:16px;"><a href="/" style="color:#86868b;font-size:.85rem;">← Back to Smart Lawn NY</a></div>' +
+      '</div>';
+
+    // Send notification
+    fetch('https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec', {
+      method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'CONTACT', firstName:'MaaS Request', street:d.addr, lawnSize:d.totalAcres+' acres', interest:'Mowing as a Service', message:'$'+weekly+'/week, '+d.totalAcres+' acres', date:new Date().toISOString(), source:'MaaS Checkout'})
+    });
+    window.scrollTo({top:0});
+    if (window.gtag) gtag('event', 'generate_lead', {value: weekly * 30});
   };
 
   // ═══ CHECKOUT FLOW ═══
