@@ -1892,6 +1892,12 @@ function _onPropMapReady() {
       data.elements.forEach(function(el) {
         if (el.geometry && el.geometry.length > 2) {
           var path = el.geometry.map(function(g) { return {lat: g.lat, lng: g.lon}; });
+          // Only include if centroid is inside property boundary
+          var centLat = 0, centLng = 0;
+          path.forEach(function(p) { centLat += p.lat; centLng += p.lng; });
+          centLat /= path.length; centLng /= path.length;
+          if (!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(centLat, centLng), _propPolygon)) return;
+
           var poly = new google.maps.Polygon({
             paths: path,
             fillColor: '#ff4444',
