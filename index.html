@@ -1856,113 +1856,153 @@ function _onPropMapReady() {
   window._homeActiveZone = null;
   var _hzColors = ['#4caf50','#2196f3','#ff9800','#9c27b0','#e91e63','#00bcd4','#ff5722','#607d8b'];
 
-  // ── AUTO-DETECT LAWN using OpenStreetMap building/road data ──
+  // ── AUTO-DETECT LAWN (DeepLawn-style) ──
+  window._autoDetectLabels = [];
+  window._autoDetectPolygons = [];
+  window._autoDetectLawnPoly = null;
+
   window._autoDetectLawn = function() {
     if (!_propPolygon) { alert('Enter an address first to load the property boundary.'); return; }
     var btn = document.getElementById('autoDetectBtn');
-    btn.textContent = '⏳ Detecting...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
     btn.disabled = true;
 
-    // Get bounds of property polygon
+    // Clear previous detection
+    _clearAutoDetect();
+
     var bounds = new google.maps.LatLngBounds();
     _propPolygon.getPath().forEach(function(p) { bounds.extend(p); });
-    var sw = bounds.getSouthWest();
-    var ne = bounds.getNorthEast();
+    var sw = bounds.getSouthWest(), ne = bounds.getNorthEast();
+    var bbox = sw.lat()+','+sw.lng()+','+ne.lat()+','+ne.lng();
 
-    // Query Overpass API for buildings, driveways, pools, patios within bounds
-    var bbox = sw.lat() + ',' + sw.lng() + ',' + ne.lat() + ',' + ne.lng();
-    var query = '[out:json][timeout:10];(' +
-      'way["building"]('+bbox+');' +
-      'way["highway"="driveway"]('+bbox+');' +
-      'way["highway"="service"]('+bbox+');' +
-      'way["leisure"="swimming_pool"]('+bbox+');' +
-      'way["man_made"="pier"]('+bbox+');' +
-      'way["amenity"="parking"]('+bbox+');' +
+    // Query OSM for buildings, driveways, pools, parking, paths
+    var query = '[out:json][timeout:15];('+
+      'way["building"]('+bbox+');'+
+      'way["highway"~"driveway|service|footway|path"]('+bbox+');'+
+      'way["leisure"~"swimming_pool|pitch"]('+bbox+');'+
+      'way["man_made"~"pier|bridge"]('+bbox+');'+
+      'way["amenity"~"parking"]('+bbox+');'+
+      'way["landuse"~"farmyard"]('+bbox+');'+
+      'relation["building"]('+bbox+');'+
       ');out body geom;';
 
-    fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      body: 'data=' + encodeURIComponent(query)
-    })
-    .then(function(r) { return r.json(); })
+    fetch('https://overpass-api.de/api/interpreter', {method:'POST', body:'data='+encodeURIComponent(query)})
+    .then(function(r){return r.json();})
     .then(function(data) {
-      // Draw excluded areas (buildings, driveways, etc) in red
-      var excludePolygons = [];
-      var excludeArea = 0;
-      data.elements.forEach(function(el) {
-        if (el.geometry && el.geometry.length > 2) {
-          var path = el.geometry.map(function(g) { return {lat: g.lat, lng: g.lon}; });
-          // Only include if centroid is inside property boundary
-          var centLat = 0, centLng = 0;
-          path.forEach(function(p) { centLat += p.lat; centLng += p.lng; });
-          centLat /= path.length; centLng /= path.length;
-          if (!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(centLat, centLng), _propPolygon)) return;
+      var buildingArea = 0, driveArea = 0, otherArea = 0;
+      var totalPropArea = google.maps.geometry.spherical.computeArea(_propPolygon.getPath());
 
-          var poly = new google.maps.Polygon({
-            paths: path,
-            fillColor: '#333333',
-            fillOpacity: 0.5,
-            strokeColor: '#555',
-            strokeWeight: 1,
-            clickable: false,
-            map: _propMap,
-            zIndex: 5
+      data.elements.forEach(function(el) {
+        if (!el.geometry || el.geometry.length < 3) return;
+        var path = el.geometry.map(function(g){return {lat:g.lat,lng:g.lon};});
+
+        // Check centroid inside property
+        var cLat=0,cLng=0;
+        path.forEach(function(p){cLat+=p.lat;cLng+=p.lng;});
+        cLat/=path.length; cLng/=path.length;
+        if (!google.maps.geometry.poly.containsLocation(new google.maps.LatLng(cLat,cLng), _propPolygon)) return;
+
+        // Categorize and style
+        var isBuilding = el.tags && el.tags.building;
+        var isDrive = el.tags && (el.tags.highway || el.tags.amenity === 'parking');
+        var fillColor = isBuilding ? '#455a64' : isDrive ? '#78909c' : '#607d8b';
+        var fillOpacity = isBuilding ? 0.6 : 0.4;
+        var label = isBuilding ? 'Building' : isDrive ? 'Driveway' : 'Other';
+
+        var poly = new google.maps.Polygon({
+          paths: path, fillColor: fillColor, fillOpacity: fillOpacity,
+          strokeColor: '#fff', strokeWeight: 1.5, strokeOpacity: 0.8,
+          clickable: false, map: _propMap, zIndex: 5
+        });
+        _autoDetectPolygons.push(poly);
+
+        var area = google.maps.geometry.spherical.computeArea(poly.getPath());
+        if (isBuilding) buildingArea += area;
+        else if (isDrive) driveArea += area;
+        else otherArea += area;
+
+        // Add sq ft label on each detected feature
+        var sqft = Math.round(area * 10.764);
+        if (sqft > 200) {
+          var marker = new google.maps.Marker({
+            position: {lat:cLat, lng:cLng}, map: _propMap,
+            icon: {path: google.maps.SymbolPath.CIRCLE, scale: 0},
+            label: {text: label+'\n'+sqft.toLocaleString()+' sf', color:'#fff', fontSize:'9px', fontWeight:'bold',
+              className: 'detect-label'},
+            clickable: false, zIndex: 10
           });
-          excludePolygons.push(poly);
-          excludeArea += google.maps.geometry.spherical.computeArea(poly.getPath());
+          _autoDetectLabels.push(marker);
         }
       });
 
-      // Store for cleanup
-      window._autoDetectPolygons = excludePolygons;
+      // Mowable = total - all excluded
+      var excludeTotal = buildingArea + driveArea + otherArea;
+      var mowableArea = totalPropArea - excludeTotal;
+      var totalAc = (totalPropArea/4046.86).toFixed(1);
+      var mowableAc = (mowableArea/4046.86).toFixed(1);
+      var buildAc = (buildingArea/4046.86).toFixed(2);
+      var driveAc = (driveArea/4046.86).toFixed(2);
+      var mowableSqft = Math.round(mowableArea * 10.764);
 
-      // Calculate mowable area
-      var totalArea = google.maps.geometry.spherical.computeArea(_propPolygon.getPath());
-      var mowableArea = totalArea - excludeArea;
-      var mowableAcres = (mowableArea / 4046.86).toFixed(1);
-      var totalAcres = (totalArea / 4046.86).toFixed(1);
-      var excludeAcres = (excludeArea / 4046.86).toFixed(1);
-
-      // Show mowable area as a soft green overlay
-      if (window._autoDetectLawnPoly) window._autoDetectLawnPoly.setMap(null);
-      // Make the property boundary transparent (no fill) so lawn overlay is the only color
-      if (_propPolygon) {
-        _propPolygon.setOptions({fillOpacity: 0, strokeColor: '#fff', strokeWeight: 2, strokeOpacity: 0.8});
-      }
-      window._autoDetectLawnPoly = new google.maps.Polygon({
+      // Green lawn overlay on the property
+      _propPolygon.setOptions({fillOpacity:0, strokeColor:'#fff', strokeWeight:2.5, strokeOpacity:0.9});
+      _autoDetectLawnPoly = new google.maps.Polygon({
         paths: _propPolygon.getPath(),
-        fillColor: '#4ade80',
-        fillOpacity: 0.15,
-        strokeColor: '#22c55e',
-        strokeWeight: 1.5,
-        strokeOpacity: 0.6,
-        clickable: false,
-        map: _propMap,
-        zIndex: 3
+        fillColor: '#22c55e', fillOpacity: 0.18,
+        strokeColor: '#16a34a', strokeWeight: 0, clickable: false,
+        map: _propMap, zIndex: 2
       });
 
-      // Update stats
-      var statsEl = document.getElementById('pMowable');
-      if (statsEl) statsEl.textContent = mowableAcres + ' acres';
-      var totalEl = document.getElementById('pTotal');
-      if (totalEl) totalEl.textContent = totalAcres + ' acres';
+      // Lawn area label in center of property
+      var center = bounds.getCenter();
+      var lawnLabel = new google.maps.Marker({
+        position: center, map: _propMap,
+        icon: {path: google.maps.SymbolPath.CIRCLE, scale: 0},
+        label: {text: '🌿 Lawn\n'+mowableSqft.toLocaleString()+' sq ft\n('+mowableAc+' acres)',
+          color: '#fff', fontSize: '11px', fontWeight: 'bold'},
+        clickable: false, zIndex: 8
+      });
+      _autoDetectLabels.push(lawnLabel);
 
-      // Show a summary
-      btn.textContent = '🌿 Auto-Detect';
+      // Update panel stats
+      var statsEl = document.getElementById('pMowable');
+      if (statsEl) statsEl.textContent = mowableAc + ' acres';
+
+      btn.innerHTML = '<i class="fas fa-seedling"></i> Auto-Detect';
       btn.disabled = false;
 
-      // Add a results bar
-      var resultsHTML = '<div id="autoDetectResults" style="margin-bottom:8px;padding:8px;background:#f0f8e8;border-radius:6px;font-size:.75rem;">' +
-        '<div style="font-weight:700;color:#4a8a10;margin-bottom:4px;">🌿 Auto-Detection Complete</div>' +
-        '<div>Total lot: <strong>' + totalAcres + ' ac</strong></div>' +
-        '<div>Buildings/hardscape: <strong style="color:#cc0000;">' + excludeAcres + ' ac</strong></div>' +
-        '<div>Est. mowable lawn: <strong style="color:#6abb1e;">' + mowableAcres + ' ac</strong></div>' +
-        '<div style="margin-top:4px;display:flex;gap:4px;">' +
-          '<button onclick="_autoSplitMowable(2)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 2</button>' +
-          '<button onclick="_autoSplitMowable(3)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 3</button>' +
-          '<button onclick="_autoSplitMowable(4)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 4</button>' +
-          '<button onclick="_autoSplitMowable(6)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 6</button>' +
-          '<button onclick="_clearAutoDetect()" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;color:#cc0000;cursor:pointer;">Clear</button>' +
+      // Results panel — DeepLawn-style breakdown
+      var pct = Math.round(mowableArea / totalPropArea * 100);
+      var resultsHTML = '<div id="autoDetectResults" style="margin-bottom:8px;border-radius:8px;overflow:hidden;border:1px solid #e5e7eb;">' +
+        '<div style="background:#1e293b;color:#fff;padding:10px 12px;font-size:.8rem;font-weight:700;">'+
+          '<i class="fas fa-satellite-dish" style="margin-right:6px;color:#22c55e;"></i>Property Analysis Complete</div>' +
+        '<div style="padding:10px 12px;background:#fff;">' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">' +
+            '<div style="background:#f0fdf4;border-radius:6px;padding:8px;text-align:center;">'+
+              '<div style="font-size:1.1rem;font-weight:800;color:#16a34a;">'+mowableAc+'</div>'+
+              '<div style="font-size:.65rem;color:#86868b;">Mowable Acres</div></div>' +
+            '<div style="background:#f8fafc;border-radius:6px;padding:8px;text-align:center;">'+
+              '<div style="font-size:1.1rem;font-weight:800;color:#1e293b;">'+totalAc+'</div>'+
+              '<div style="font-size:.65rem;color:#86868b;">Total Lot Acres</div></div>' +
+          '</div>' +
+          '<div style="font-size:.7rem;color:#64748b;margin-bottom:6px;">' +
+            '<div style="display:flex;justify-content:space-between;padding:2px 0;">'+
+              '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#22c55e;margin-right:4px;"></span>Lawn Area</span>'+
+              '<span style="font-weight:600;">'+mowableSqft.toLocaleString()+' sf ('+pct+'%)</span></div>' +
+            '<div style="display:flex;justify-content:space-between;padding:2px 0;">'+
+              '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#455a64;margin-right:4px;"></span>Buildings</span>'+
+              '<span style="font-weight:600;">'+buildAc+' ac</span></div>' +
+            '<div style="display:flex;justify-content:space-between;padding:2px 0;">'+
+              '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#78909c;margin-right:4px;"></span>Driveways/Paths</span>'+
+              '<span style="font-weight:600;">'+driveAc+' ac</span></div>' +
+          '</div>' +
+          '<div style="display:flex;gap:3px;flex-wrap:wrap;">' +
+            '<button onclick="_autoSplitMowable(2)" style="flex:1;padding:4px;font-size:.65rem;font-weight:600;border:1px solid #e2e8f0;border-radius:5px;background:#fff;cursor:pointer;">2 Zones</button>' +
+            '<button onclick="_autoSplitMowable(3)" style="flex:1;padding:4px;font-size:.65rem;font-weight:600;border:1px solid #e2e8f0;border-radius:5px;background:#fff;cursor:pointer;">3 Zones</button>' +
+            '<button onclick="_autoSplitMowable(4)" style="flex:1;padding:4px;font-size:.65rem;font-weight:600;border:1px solid #e2e8f0;border-radius:5px;background:#fff;cursor:pointer;">4 Zones</button>' +
+            '<button onclick="_autoSplitMowable(6)" style="flex:1;padding:4px;font-size:.65rem;font-weight:600;border:1px solid #e2e8f0;border-radius:5px;background:#fff;cursor:pointer;">6 Zones</button>' +
+          '</div>' +
+          '<button onclick="_clearAutoDetect()" style="width:100%;margin-top:4px;padding:4px;font-size:.65rem;border:1px solid #e2e8f0;border-radius:5px;background:#fff;color:#94a3b8;cursor:pointer;">Reset Detection</button>' +
         '</div>' +
       '</div>';
 
@@ -1972,9 +2012,9 @@ function _onPropMapReady() {
     })
     .catch(function(err) {
       console.error('Auto-detect error:', err);
-      btn.textContent = '🌿 Auto-Detect';
+      btn.innerHTML = '<i class="fas fa-seedling"></i> Auto-Detect';
       btn.disabled = false;
-      alert('Auto-detection failed. Try drawing zones manually.');
+      alert('Auto-detection unavailable. Draw zones manually.');
     });
   };
 
@@ -1988,8 +2028,11 @@ function _onPropMapReady() {
   };
 
   window._clearAutoDetect = function() {
-    if (window._autoDetectPolygons) { window._autoDetectPolygons.forEach(function(p) { p.setMap(null); }); window._autoDetectPolygons = []; }
-    if (window._autoDetectLawnPoly) { window._autoDetectLawnPoly.setMap(null); window._autoDetectLawnPoly = null; }
+    if (window._autoDetectPolygons) { window._autoDetectPolygons.forEach(function(p){p.setMap(null);}); window._autoDetectPolygons=[]; }
+    if (window._autoDetectLabels) { window._autoDetectLabels.forEach(function(m){m.setMap(null);}); window._autoDetectLabels=[]; }
+    if (window._autoDetectLawnPoly) { window._autoDetectLawnPoly.setMap(null); window._autoDetectLawnPoly=null; }
+    // Restore property boundary fill
+    if (_propPolygon) _propPolygon.setOptions({fillColor:'#6abb1e',fillOpacity:0.15,strokeColor:'#6abb1e',strokeWeight:2,strokeOpacity:0.7});
     var results = document.getElementById('autoDetectResults');
     if (results) results.remove();
   };
