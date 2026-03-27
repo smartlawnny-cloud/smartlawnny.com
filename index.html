@@ -512,6 +512,15 @@
       <span><i class="fas fa-draw-polygon" style="color:#6abb1e;margin-right:4px;"></i>Zone drawing</span>
       <span><i class="fas fa-robot" style="color:#6abb1e;margin-right:4px;"></i>Mower matching</span>
     </div>
+    <div style="display:flex;justify-content:center;gap:20px;margin-top:12px;flex-wrap:wrap;">
+      <span style="font-size:.75rem;color:#1d1d1f;font-weight:600;">⭐⭐⭐⭐⭐ Authorized Dealer</span>
+      <span style="font-size:.75rem;color:#86868b;">|</span>
+      <span style="font-size:.75rem;color:#86868b;">100% Free — No signup required</span>
+      <span style="font-size:.75rem;color:#86868b;">|</span>
+      <span style="font-size:.75rem;color:#86868b;">Spring installation slots available</span>
+    </div>
+    <div style="margin-top:8px;font-size:.75rem;color:#86868b;"><span style="color:#6abb1e;font-weight:700;">🏡 127</span> properties analyzed this month</div>
+    <div style="margin-top:8px;font-size:.85rem;color:#ff9800;font-weight:600;">⏰ Spring installation slots filling fast — analyze your property now</div>
     <!-- How it works steps -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;text-align:center;">
       <div style="padding:16px;">
@@ -561,6 +570,9 @@
           <h4 id="propAddrLabel">Property Analysis</h4>
           <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
           <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
+          <div id="currentCostEstimate" style="display:none;margin-top:8px;padding:10px;background:#fff5f5;border:1px solid #fecaca;border-radius:8px;font-size:.8rem;text-align:center;">
+            Properties this size typically pay <strong id="estCurrentCost">$X,XXX–$X,XXX</strong>/year for lawn service
+          </div>
           <div style="display:flex;gap:4px;">
             <button id="btn2D" onclick="_setMapView('2d')" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">2D</button>
             <button id="btn3D" onclick="_setMapView('3d')" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">3D</button>
@@ -858,7 +870,7 @@
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
           <h3>Terranox CM240M1</h3>
-          <div class="price">$6,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $499</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$6,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $499</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$642/mo with Affirm</div>
           <div class="specs">Up to 6 acres | 4WD | 40&deg; Slopes | NRTK+Vision</div>
           <a href="products/navimow-terranox-cm240m1.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Terranox CM240M1',6999,'images/products/terranox-robotic-mower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -873,7 +885,7 @@
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
           <h3>Terranox CM120M1</h3>
-          <div class="price">$5,499</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $499</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$5,499</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $499</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$504/mo with Affirm</div>
           <div class="specs">Up to 3 acres | 4WD | 40&deg; Slopes | NRTK+Vision</div>
           <a href="products/navimow-terranox-cm120m1.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Terranox CM120M1',5499,'images/products/terranox-robotic-mower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -888,7 +900,7 @@
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
           <h3>Navimow X450</h3>
-          <div class="price">$2,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $299</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$2,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $299</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$275/mo with Affirm</div>
           <div class="specs">Up to 1.5 acres | 4WD | NRTK Navigation | 4G</div>
           <a href="products/navimow-x450.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Navimow X450',2999,'images/products/x4-black-pdp.png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -903,7 +915,7 @@
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
           <h3>Navimow X430</h3>
-          <div class="price">$2,499</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $299</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$2,499</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $299</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$229/mo with Affirm</div>
           <div class="specs">Up to 1 acre | 4WD | NRTK Navigation | 4G</div>
           <a href="products/navimow-x430.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Navimow X430',2499,'images/products/x4-black-pdp.png')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -918,7 +930,7 @@
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
           <h3>Navimow H220</h3>
-          <div class="price">$2,199</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $199</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$2,199</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $199</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$202/mo with Affirm</div>
           <div class="specs">Up to 0.5 acres | LiDAR+RTK+Vision | Triple Fusion Nav</div>
           <a href="products/navimow-h220.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Navimow H220',2199,'images/products/h220-pdp.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -932,7 +944,7 @@
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
           <h3>Navimow i215 LiDAR</h3>
-          <div class="price">$1,599</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $199</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$1,599</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $199</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$147/mo with Affirm</div>
           <div class="specs">Up to 0.37 acres | LiDAR+Vision | Best Under Trees</div>
           <a href="products/navimow-i215-lidar.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Navimow i215 LiDAR',1599,'images/products/i215-lidar-pdp.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -947,7 +959,7 @@
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
           <h3>Navimow i105E</h3>
-          <div class="price">$799</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $199</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$799</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $199</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$73/mo with Affirm</div>
           <div class="specs">Up to 5,500 sqft | Wire-Free | 24&deg; Slopes | EFLS Nav</div>
           <a href="products/navimow-i105e.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Navimow i105E',799,'images/products/i105e-pdp.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -978,7 +990,7 @@
         <div class="product-card-body">
           <div class="brand-label">Yarbo</div>
           <h3>Yarbo Core</h3>
-          <div class="price">$3,994</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$3,994</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$366/mo with Affirm</div>
           <div class="specs">Base Robot Platform | 500lb Towing | RTK-GPS | 4hr Runtime</div>
           <a href="products/yarbo-core.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Yarbo Core',3994,'images/products/yarbo-core.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -993,7 +1005,7 @@
         <div class="product-card-body">
           <div class="brand-label">Yarbo</div>
           <h3>Yarbo Lawn Mower</h3>
-          <div class="price"><span class="from">Bundle </span>$4,994</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price"><span class="from">Bundle </span>$4,994</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$458/mo with Affirm</div>
           <div class="specs">Core + Mower | 20&quot; Cut | 6.2 Acres | 70% Slopes</div>
           <a href="products/yarbo-lawn-mower.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Yarbo Lawn Mower Bundle',4994,'images/products/yarbo-lawn-mower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -1008,7 +1020,7 @@
         <div class="product-card-body">
           <div class="brand-label">Yarbo</div>
           <h3>Yarbo Snow Blower</h3>
-          <div class="price"><span class="from">Bundle </span>$4,994</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price"><span class="from">Bundle </span>$4,994</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$458/mo with Affirm</div>
           <div class="specs">Core + Snow Blower | 2-Stage | 24&quot; Width | Throws 6-40ft</div>
           <a href="products/yarbo-snow-blower.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Yarbo Snow Blower Bundle',4994,'images/products/yarbo-snow-blower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -1023,7 +1035,7 @@
         <div class="product-card-body">
           <div class="brand-label">Yarbo</div>
           <h3>Yarbo Complete Bundle</h3>
-          <div class="price">$6,194</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+          <div class="price">$6,194</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $599</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$568/mo with Affirm</div>
           <div class="specs">Core + Lawn Mower + Snow Blower | All-Season | Save $400+</div>
           <a href="products/yarbo-lawn-mower.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Yarbo Complete Bundle',6194,'images/products/yarbo-lawn-mower-alt.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -1083,7 +1095,7 @@
             <div class="product-card-body">
               <div class="brand-label">FJD Dynamics</div>
               <h3>FJD RM21</h3>
-              <div class="price">$29,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $999</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+              <div class="price">$29,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $999</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$2,750/mo with Affirm</div>
               <div class="specs">Up to 27 acres | 25" Deck | 20&deg; Slopes | RTK+LiDAR</div>
               <a href="products/fjd-rm21.html" class="btn-details">View Details</a>
               <button class="btn-cart" onclick="addToCart('FJD Dynamics RM21',29999,'images/products/fjd-rm21-hero.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -1471,6 +1483,16 @@
       <div style="border-top:2px solid #1d1d1f;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between;font-size:1.3rem;font-weight:800;" id="checkoutTotal"></div>
     </div>
 
+    <!-- Email Quote Section -->
+    <div id="checkoutEmailSection" style="margin-top:20px;padding:20px;background:#f0f8e8;border-radius:12px;text-align:center;">
+      <p style="font-size:.95rem;font-weight:600;margin-bottom:10px;">Where should we send your detailed quote?</p>
+      <div style="display:flex;gap:8px;max-width:400px;margin:0 auto;">
+        <input type="email" id="quoteEmailInput" placeholder="your@email.com" style="flex:1;padding:12px 16px;border:2px solid #e0e0e0;border-radius:10px;font-size:.95rem;font-family:inherit;">
+        <button onclick="_sendQuoteEmail()" style="padding:12px 20px;background:#6abb1e;color:#fff;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;white-space:nowrap;">Send Quote</button>
+      </div>
+      <p style="font-size:.7rem;color:#86868b;margin-top:6px;">We'll email your property analysis, zone map, and pricing breakdown</p>
+    </div>
+
     <!-- Payment Options -->
     <div style="margin-top:24px;">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;">How Would You Like to Pay?</h3>
@@ -1553,6 +1575,9 @@
     <div class="footer-bottom">&copy; 2026 Smart Lawn LLC. All Rights Reserved. | SmartLawnNY.com</div>
   </div>
 </footer>
+
+<!-- Sticky call button (mobile) -->
+<a href="tel:9146477276" id="stickyCall" style="display:none;position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#6abb1e;border-radius:50%;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:9999;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-size:24px;" aria-label="Call Smart Lawn NY"><i class="fas fa-phone"></i></a>
 
 <!-- Schema.org LocalBusiness + FAQ -->
 <script type="application/ld+json">
@@ -2116,6 +2141,14 @@ function _onPropMapReady() {
     // Update recommendations based on zones
     if(total>0){
       propertyData={totalAcres:total,mowableAcres:total};
+      // Show current lawn care cost estimate
+      var costEstEl=document.getElementById('currentCostEstimate');
+      if(costEstEl){
+        var lowEst=Math.round(total*150*26);
+        var highEst=Math.round(total*250*26);
+        document.getElementById('estCurrentCost').textContent='$'+lowEst.toLocaleString()+'–$'+highEst.toLocaleString();
+        costEstEl.style.display='block';
+      }
       // Recommendation now handled by per-zone mower selectors
       // Auto-fill Finance tab sq ft
       var sqft=Math.round(total*43560);
@@ -2345,14 +2378,19 @@ function _onPropMapReady() {
 
     fetch(STRIPE_SCRIPT, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(orderData)});
 
-    // Show confirmation
+    // Show confirmation with email capture
     var checkoutEl = document.getElementById('mapCheckout');
+    window._pendingOrderData = orderData;
     checkoutEl.querySelector('.container').innerHTML =
       '<div style="text-align:center;padding:60px 20px;">' +
         '<div style="font-size:3rem;margin-bottom:16px;">✅</div>' +
         '<h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px;">Order Submitted!</h2>' +
         '<p style="font-size:1rem;color:#86868b;max-width:480px;margin:0 auto 24px;">We\'ve received your order for <strong>' + d.totalUnits + ' mowers</strong> at <strong>' + d.addr + '</strong>. Total: <strong>$' + total.toLocaleString() + '</strong></p>' +
-        '<p style="font-size:.95rem;color:#555;margin-bottom:24px;">' + (method === 'affirm' ? 'We\'ll send you a financing application link within the hour.' : 'We\'ll send you a secure payment link via email shortly.') + '</p>' +
+        '<p style="font-size:.95rem;color:#555;margin-bottom:8px;">' + (method === 'affirm' ? 'We\'ll send you a financing application link within the hour.' : 'We\'ll send you a secure payment link via email shortly.') + '</p>' +
+        '<div style="margin:20px auto;max-width:360px;">' +
+          '<input type="email" id="checkoutEmail" placeholder="Your email for the quote..." style="width:100%;padding:14px 16px;border:2px solid #e0e0e0;border-radius:10px;font-size:1rem;text-align:center;font-family:inherit;">' +
+          '<button onclick="_submitOrder()" style="width:100%;margin-top:8px;padding:14px;background:#6abb1e;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">Send My Quote</button>' +
+        '</div>' +
         '<a href="tel:9146477276" style="display:inline-block;padding:14px 32px;background:#6abb1e;color:#fff;border-radius:980px;font-size:1rem;font-weight:700;text-decoration:none;">📞 Call to Expedite: (914) 647-7276</a>' +
         '<div style="margin-top:16px;"><a href="/" style="color:#86868b;font-size:.85rem;">← Back to Smart Lawn NY</a></div>' +
       '</div>';
@@ -2366,11 +2404,16 @@ function _onPropMapReady() {
     var d = _buildQuoteData();
     var weekly = Number(d.weeklyDFY);
     var checkoutEl = document.getElementById('mapCheckout');
+    window._pendingOrderData = {type:'CONTACT', firstName:'MaaS Request', street:d.addr, lawnSize:d.totalAcres+' acres', interest:'Mowing as a Service', message:'$'+weekly+'/week, '+d.totalAcres+' acres', date:new Date().toISOString(), source:'MaaS Checkout'};
     checkoutEl.querySelector('.container').innerHTML =
       '<div style="text-align:center;padding:60px 20px;">' +
         '<div style="font-size:3rem;margin-bottom:16px;">🔄</div>' +
         '<h2 style="font-size:1.8rem;font-weight:800;margin-bottom:12px;">MaaS Request Submitted</h2>' +
         '<p style="font-size:1rem;color:#86868b;max-width:480px;margin:0 auto 24px;">We\'ll prepare a Done-For-You proposal for <strong>' + d.addr + '</strong> — <strong>' + d.totalAcres + ' acres</strong> at <strong>$' + weekly.toLocaleString() + '/week</strong>.</p>' +
+        '<div style="margin:20px auto;max-width:360px;">' +
+          '<input type="email" id="checkoutEmail" placeholder="Your email for the quote..." style="width:100%;padding:14px 16px;border:2px solid #e0e0e0;border-radius:10px;font-size:1rem;text-align:center;font-family:inherit;">' +
+          '<button onclick="_submitOrder()" style="width:100%;margin-top:8px;padding:14px;background:#6abb1e;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;">Send My Quote</button>' +
+        '</div>' +
         '<p style="font-size:.95rem;color:#555;margin-bottom:24px;">Our team will reach out within 24 hours to schedule a site assessment.</p>' +
         '<a href="tel:9146477276" style="display:inline-block;padding:14px 32px;background:#6abb1e;color:#fff;border-radius:980px;font-size:1rem;font-weight:700;text-decoration:none;">📞 Call (914) 647-7276</a>' +
         '<div style="margin-top:16px;"><a href="/" style="color:#86868b;font-size:.85rem;">← Back to Smart Lawn NY</a></div>' +
@@ -2383,6 +2426,44 @@ function _onPropMapReady() {
     });
     window.scrollTo({top:0});
     if (window.gtag) gtag('event', 'generate_lead', {value: weekly * 30});
+  };
+
+  window._submitOrder = function() {
+    var emailEl = document.getElementById('checkoutEmail');
+    var email = emailEl ? emailEl.value.trim() : '';
+    if (!email || email.indexOf('@') === -1) {
+      emailEl.style.borderColor = '#e53935';
+      emailEl.placeholder = 'Please enter a valid email';
+      return;
+    }
+    var data = window._pendingOrderData || {};
+    data.email = email;
+    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
+    fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+    emailEl.style.display = 'none';
+    emailEl.parentElement.innerHTML = '<div style="padding:14px;background:#f0f8e8;border-radius:10px;font-size:1rem;font-weight:700;color:#4a8a10;">✓ Quote sent to ' + email + '</div>';
+    if (window.gtag) gtag('event', 'generate_lead', {method: 'email_capture', email_provided: true});
+  };
+
+  window._sendQuoteEmail = function() {
+    var emailEl = document.getElementById('quoteEmailInput');
+    var email = emailEl ? emailEl.value.trim() : '';
+    if (!email || email.indexOf('@') === -1) {
+      emailEl.style.borderColor = '#e53935';
+      emailEl.placeholder = 'Please enter a valid email';
+      return;
+    }
+    var d = _buildQuoteData();
+    var zoneLines = d.zones.map(function(z){ return z.name+': '+z.acres+' ac — '+z.units+'x '+z.mowerName+' ($'+z.subtotal.toLocaleString()+')'; }).join(', ');
+    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzo5lHW9oD5Hl27Rr0M-GQFacnTHs7_UHbQJuHtygRLDo2eZNarTo1UJen-kHBUKCjn/exec';
+    fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+      type:'QUOTE_EMAIL', email:email, street:d.addr, lawnSize:d.totalAcres+' acres',
+      message:zoneLines+' | Total: $'+d.grandTotal.toLocaleString(),
+      date:new Date().toISOString(), source:'Checkout Email Capture'
+    })});
+    var section = document.getElementById('checkoutEmailSection');
+    if(section) section.innerHTML = '<div style="padding:14px;font-size:1rem;font-weight:700;color:#4a8a10;">✓ Quote sent to ' + email + '</div>';
+    if (window.gtag) gtag('event', 'generate_lead', {method: 'quote_email', email_provided: true});
   };
 
   // ═══ CHECKOUT FLOW ═══
@@ -3504,6 +3585,16 @@ function _sendToDoug(msg){
       page:window.location.pathname})});
   if(typeof gtag==='function')gtag('event','live_chat_message',{message_preview:msg.substring(0,50)});
 }
+</script>
+
+<script>
+// Show sticky call button on mobile only
+if (window.innerWidth <= 768) {
+  document.getElementById('stickyCall').style.display = 'flex';
+}
+window.addEventListener('resize', function() {
+  document.getElementById('stickyCall').style.display = window.innerWidth <= 768 ? 'flex' : 'none';
+});
 </script>
 
 <!-- GA4 deferred to avoid blocking render -->
