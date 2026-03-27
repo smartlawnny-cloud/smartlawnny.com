@@ -211,7 +211,17 @@
     .pstat-row .val { font-weight:600; color:var(--g900); }
     .property-cta { text-align:center; margin-top:20px; padding:16px; background:rgba(106,187,30,.08); border-radius:12px; }
     .property-cta a { display:inline-block; padding:12px 28px; background:var(--green); color:#fff; border-radius:980px; font-weight:600; font-size:.9rem; text-decoration:none; }
-    @media (max-width:768px) { .property-map-wrap { grid-template-columns:1fr; } .property-map-wrap #propertyMap { height:350px; } .section-tab { padding:10px 16px; font-size:.82rem; } }
+    @media (max-width:768px) {
+      .property-map-wrap { grid-template-columns:1fr; }
+      .property-map-wrap #propertyMap { height:50vh; min-height:300px; }
+      .section-tab { padding:10px 16px; font-size:.82rem; }
+      .property-search { flex-direction:column; }
+      .property-search input { width:100%; font-size:16px; }
+      .property-search button { width:100%; min-height:48px; font-size:1rem; }
+      .property-stats { padding:16px; }
+      #quoteActions button { min-height:44px !important; padding:10px 14px !important; font-size:.8rem !important; }
+      #homeMowerCards { grid-template-columns:1fr !important; }
+    }
 
     /* === QUIZ === */
     .quiz-section { padding: 72px 0; background: #fff; }
@@ -421,7 +431,7 @@
       .header-social { display: none !important; }
       .header-right { display: none !important; }
       .hero-split { grid-template-columns: 1fr; text-align: center; padding: 60px 24px; }
-      .hero h1 { font-size: 3rem; }
+      .hero h1 { font-size: 2.2rem; }
       .hero .hero-tagline { font-size: 1.05rem; }
       .hero-buttons { justify-content: center; }
       .hero-badge { margin-left: auto; margin-right: auto; }
@@ -435,12 +445,36 @@
       .why-buy-grid { grid-template-columns: 1fr 1fr; gap: 30px; }
       .footer-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
-      .section-header h2, .find-mower h2, .cta-section h2 { font-size: 2rem; }
+      .section-header h2, .find-mower h2, .cta-section h2 { font-size: 1.8rem; }
       .quiz-options { grid-template-columns: 1fr; }
+      .quiz-container { padding: 24px 16px; }
       .video-grid { grid-template-columns: 1fr; }
       .shorts-grid { flex-direction: column; align-items: center; }
       .short-card { width: 280px; }
       .area-grid { grid-template-columns: repeat(2, 1fr); }
+      /* Checkout mobile fixes */
+      #mapCheckout { padding: 24px 0; }
+      #mapCheckout .container { padding: 0 16px; }
+      #mapCheckout h2 { font-size: 1.5rem !important; }
+      #checkoutEmailSection > div { flex-direction: column !important; max-width: 100% !important; }
+      #checkoutEmailSection input, #checkoutEmailSection button { width: 100%; }
+      /* Service plan stacking on mobile */
+      #servicePlanSelect { width: 100%; margin-top: 8px; }
+      /* Payment cards wrap price below on mobile */
+      #stripePayBtn, #stripePayBtn + div, #stripePayBtn + div + div { flex-wrap: wrap; }
+      /* Venmo/Zelle row wrapping */
+      #mapCheckout div[style*="Also accepted"] { flex-wrap: wrap !important; }
+      /* Ensure minimum touch targets */
+      button, a.btn, .quiz-option, select { min-height: 44px; }
+      /* Newsletter stacking */
+      .newsletter-form { flex-direction: column; }
+      .newsletter-form .btn { width: 100%; }
+      /* Prevent horizontal scroll */
+      body { overflow-x: hidden; }
+      /* Minimum readable font sizes */
+      .pstat-row { font-size: .875rem; }
+      /* Prevent iOS zoom on input focus */
+      input[type="text"], input[type="email"], select, textarea { font-size: 16px !important; }
     }
 
     /* === ANIMATIONS === */
@@ -2659,17 +2693,11 @@ function _onPropMapReady() {
 
   window._textQuote = function() {
     var d = _buildQuoteData();
-    var zoneLines = d.zones.map(function(z){ return z.name+': '+z.acres+' ac — '+z.units+'× '+z.mowerName+' ($'+z.subtotal.toLocaleString()+')'; }).join('\n');
-    var msg = 'Smart Lawn NY — Property Quote\n\n' +
-      d.addr + '\n' +
-      d.totalAcres + ' acres | ' + d.totalUnits + ' mowers\n\n' +
-      zoneLines + '\n\n' +
-      'Equipment: $' + d.totalFleetCost.toLocaleString() + '\n' +
-      'Install: $' + d.installCost.toLocaleString() + '\n' +
-      'Mapping: $' + d.mappingCost.toLocaleString() + '\n' +
-      'Total: $' + d.grandTotal.toLocaleString() + '\n\n' +
-      'Done-For-You: $' + Number(d.weeklyDFY).toLocaleString() + '/week\n\n' +
-      'smartlawnny.com | (914) 647-7276';
+    var mowerNames = [];
+    d.zones.forEach(function(z) { if (mowerNames.indexOf(z.mowerName) === -1) mowerNames.push(z.mowerName); });
+    var msg = 'Smart Lawn NY Property Analysis: ' + d.addr + ' - ' +
+      d.totalAcres + ' mowable acres, ' + d.zones.length + ' zones, ' +
+      mowerNames.join(', ') + '. View details: https://smartlawnny.com';
     window.open('sms:?body=' + encodeURIComponent(msg));
   };
 
