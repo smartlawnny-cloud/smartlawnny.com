@@ -577,6 +577,7 @@
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
               <span style="font-size:.7rem;font-weight:700;color:#86868b;text-transform:uppercase;letter-spacing:.8px;">Mowing Zones</span>
               <div style="display:flex;gap:4px;">
+                <button onclick="_autoDetectLawn()" id="autoDetectBtn" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #6abb1e;border-radius:6px;background:#fff;color:#6abb1e;cursor:pointer;">🌿 Auto-Detect</button>
                 <button onclick="_addHomeZone()" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:6px;background:#6abb1e;color:#fff;cursor:pointer;">✏️ Draw Zone</button>
               </div>
             </div>
@@ -1854,6 +1855,134 @@ function _onPropMapReady() {
   window._homeZones = [];
   window._homeActiveZone = null;
   var _hzColors = ['#4caf50','#2196f3','#ff9800','#9c27b0','#e91e63','#00bcd4','#ff5722','#607d8b'];
+
+  // ── AUTO-DETECT LAWN using OpenStreetMap building/road data ──
+  window._autoDetectLawn = function() {
+    if (!_propPolygon) { alert('Enter an address first to load the property boundary.'); return; }
+    var btn = document.getElementById('autoDetectBtn');
+    btn.textContent = '⏳ Detecting...';
+    btn.disabled = true;
+
+    // Get bounds of property polygon
+    var bounds = new google.maps.LatLngBounds();
+    _propPolygon.getPath().forEach(function(p) { bounds.extend(p); });
+    var sw = bounds.getSouthWest();
+    var ne = bounds.getNorthEast();
+
+    // Query Overpass API for buildings, driveways, pools, patios within bounds
+    var bbox = sw.lat() + ',' + sw.lng() + ',' + ne.lat() + ',' + ne.lng();
+    var query = '[out:json][timeout:10];(' +
+      'way["building"]('+bbox+');' +
+      'way["highway"="driveway"]('+bbox+');' +
+      'way["highway"="service"]('+bbox+');' +
+      'way["leisure"="swimming_pool"]('+bbox+');' +
+      'way["man_made"="pier"]('+bbox+');' +
+      'way["amenity"="parking"]('+bbox+');' +
+      ');out body geom;';
+
+    fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST',
+      body: 'data=' + encodeURIComponent(query)
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      // Draw excluded areas (buildings, driveways, etc) in red
+      var excludePolygons = [];
+      var excludeArea = 0;
+      data.elements.forEach(function(el) {
+        if (el.geometry && el.geometry.length > 2) {
+          var path = el.geometry.map(function(g) { return {lat: g.lat, lng: g.lon}; });
+          var poly = new google.maps.Polygon({
+            paths: path,
+            fillColor: '#ff4444',
+            fillOpacity: 0.35,
+            strokeColor: '#cc0000',
+            strokeWeight: 1,
+            clickable: false,
+            map: _propMap,
+            zIndex: 5
+          });
+          excludePolygons.push(poly);
+          excludeArea += google.maps.geometry.spherical.computeArea(poly.getPath());
+        }
+      });
+
+      // Store for cleanup
+      window._autoDetectPolygons = excludePolygons;
+
+      // Calculate mowable area
+      var totalArea = google.maps.geometry.spherical.computeArea(_propPolygon.getPath());
+      var mowableArea = totalArea - excludeArea;
+      var mowableAcres = (mowableArea / 4046.86).toFixed(1);
+      var totalAcres = (totalArea / 4046.86).toFixed(1);
+      var excludeAcres = (excludeArea / 4046.86).toFixed(1);
+
+      // Show mowable area as a green overlay (property minus exclusions)
+      // For simplicity, shade the whole property green and overlay red on excluded areas
+      if (window._autoDetectLawnPoly) window._autoDetectLawnPoly.setMap(null);
+      window._autoDetectLawnPoly = new google.maps.Polygon({
+        paths: _propPolygon.getPath(),
+        fillColor: '#6abb1e',
+        fillOpacity: 0.2,
+        strokeColor: '#6abb1e',
+        strokeWeight: 2,
+        clickable: false,
+        map: _propMap,
+        zIndex: 3
+      });
+
+      // Update stats
+      var statsEl = document.getElementById('pMowable');
+      if (statsEl) statsEl.textContent = mowableAcres + ' acres';
+      var totalEl = document.getElementById('pTotal');
+      if (totalEl) totalEl.textContent = totalAcres + ' acres';
+
+      // Show a summary
+      btn.textContent = '🌿 Auto-Detect';
+      btn.disabled = false;
+
+      // Add a results bar
+      var resultsHTML = '<div id="autoDetectResults" style="margin-bottom:8px;padding:8px;background:#f0f8e8;border-radius:6px;font-size:.75rem;">' +
+        '<div style="font-weight:700;color:#4a8a10;margin-bottom:4px;">🌿 Auto-Detection Complete</div>' +
+        '<div>Total lot: <strong>' + totalAcres + ' ac</strong></div>' +
+        '<div>Buildings/hardscape: <strong style="color:#cc0000;">' + excludeAcres + ' ac</strong></div>' +
+        '<div>Est. mowable lawn: <strong style="color:#6abb1e;">' + mowableAcres + ' ac</strong></div>' +
+        '<div style="margin-top:4px;display:flex;gap:4px;">' +
+          '<button onclick="_autoSplitMowable(2)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 2</button>' +
+          '<button onclick="_autoSplitMowable(3)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 3</button>' +
+          '<button onclick="_autoSplitMowable(4)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 4</button>' +
+          '<button onclick="_autoSplitMowable(6)" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;cursor:pointer;">Split 6</button>' +
+          '<button onclick="_clearAutoDetect()" style="padding:2px 8px;font-size:.65rem;border:1px solid #ddd;border-radius:4px;background:#fff;color:#cc0000;cursor:pointer;">Clear</button>' +
+        '</div>' +
+      '</div>';
+
+      var existing = document.getElementById('autoDetectResults');
+      if (existing) existing.remove();
+      document.getElementById('homeZonesList').insertAdjacentHTML('beforebegin', resultsHTML);
+    })
+    .catch(function(err) {
+      console.error('Auto-detect error:', err);
+      btn.textContent = '🌿 Auto-Detect';
+      btn.disabled = false;
+      alert('Auto-detection failed. Try drawing zones manually.');
+    });
+  };
+
+  // Split mowable area into N zones using the property boundary
+  window._autoSplitMowable = function(n) {
+    // Clear existing auto-detect overlays
+    if (window._autoDetectPolygons) window._autoDetectPolygons.forEach(function(p) { p.setMap(null); });
+    if (window._autoDetectLawnPoly) { window._autoDetectLawnPoly.setMap(null); window._autoDetectLawnPoly = null; }
+    // Use existing split function on property boundary
+    _autoSplitZones(n);
+  };
+
+  window._clearAutoDetect = function() {
+    if (window._autoDetectPolygons) { window._autoDetectPolygons.forEach(function(p) { p.setMap(null); }); window._autoDetectPolygons = []; }
+    if (window._autoDetectLawnPoly) { window._autoDetectLawnPoly.setMap(null); window._autoDetectLawnPoly = null; }
+    var results = document.getElementById('autoDetectResults');
+    if (results) results.remove();
+  };
 
   window._addHomeZone = function() {
     if (_homeZones.length >= 10) { alert('Maximum 10 mowing zones. Remove one to add another.'); return; }
