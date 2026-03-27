@@ -679,6 +679,7 @@
               <button onclick="_sendToRep()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#ff9800;color:#fff;cursor:pointer;">📲 Send to Rep</button>
             </div>
             <div id="shareLinkCopied" style="display:none;font-size:.7rem;color:#4a8a10;margin-top:4px;font-weight:600;">✓ Link copied to clipboard!</div>
+            <button onclick="_proceedToCheckout()" style="margin-top:8px;width:100%;padding:12px;font-size:.9rem;font-weight:700;border:none;border-radius:8px;background:#6abb1e;color:#fff;cursor:pointer;letter-spacing:.5px;">🛒 Proceed to Checkout</button>
           </div>
 
           <!-- Clear button -->
@@ -1446,6 +1447,65 @@
           <button type="submit" class="btn btn-primary" id="contactBtn">Submit Request</button>
         </form>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CHECKOUT (hidden until map checkout triggered) ═══ -->
+<section id="mapCheckout" style="display:none;padding:48px 0;background:#fff;min-height:80vh;">
+  <div class="container" style="max-width:720px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <h2 style="font-size:2rem;font-weight:800;">Your Mower Package</h2>
+      <p id="checkoutAddr" style="color:#86868b;font-size:.95rem;"></p>
+    </div>
+
+    <!-- Line items -->
+    <div id="checkoutItems" style="border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;"></div>
+
+    <!-- Totals -->
+    <div style="margin-top:16px;background:#f9fafb;border-radius:12px;padding:20px;">
+      <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutSubtotal"></div>
+      <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutInstall"></div>
+      <div style="display:flex;justify-content:space-between;font-size:.9rem;color:#555;padding:4px 0;" id="checkoutMapping"></div>
+      <div style="display:flex;justify-content:space-between;font-size:.85rem;color:#888;padding:4px 0;" id="checkoutTax"></div>
+      <div style="border-top:2px solid #1d1d1f;margin-top:8px;padding-top:12px;display:flex;justify-content:space-between;font-size:1.3rem;font-weight:800;" id="checkoutTotal"></div>
+    </div>
+
+    <!-- Payment Options -->
+    <div style="margin-top:24px;">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:12px;">Payment Options</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="border:2px solid #6abb1e;border-radius:12px;padding:16px;text-align:center;cursor:pointer;" onclick="alert('Payment processing coming soon. Call (914) 647-7276 to complete your order.')">
+          <div style="font-size:1.5rem;margin-bottom:4px;">💳</div>
+          <div style="font-size:.85rem;font-weight:700;">Pay in Full</div>
+          <div style="font-size:.75rem;color:#86868b;">Credit card or wire transfer</div>
+        </div>
+        <div style="border:2px solid #e5e7eb;border-radius:12px;padding:16px;text-align:center;cursor:pointer;" onclick="alert('Affirm financing available at checkout. Call (914) 647-7276 to get started.')">
+          <div style="font-size:1.5rem;margin-bottom:4px;">📅</div>
+          <div style="font-size:.85rem;font-weight:700;">Finance with Affirm</div>
+          <div style="font-size:.75rem;color:#86868b;" id="checkoutAffirm">As low as $XX/mo</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;border:2px solid #e5e7eb;border-radius:12px;padding:16px;text-align:center;cursor:pointer;" onclick="alert('Our team will reach out to set up your MaaS subscription. Call (914) 647-7276.')">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+          <span style="font-size:1.5rem;">🔄</span>
+          <div style="text-align:left;">
+            <div style="font-size:.85rem;font-weight:700;">Mowing as a Service (MaaS)</div>
+            <div style="font-size:.75rem;color:#86868b;">We own the mower. Starting at $99/week. No upfront cost.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact to finalize -->
+    <div style="margin-top:24px;background:#f0f8e8;border-radius:12px;padding:20px;text-align:center;">
+      <p style="font-size:.95rem;color:#555;margin-bottom:12px;">Ready to order? Call us to finalize your purchase and schedule installation.</p>
+      <a href="tel:9146477276" style="display:inline-block;padding:14px 32px;background:#6abb1e;color:#fff;border-radius:980px;font-size:1rem;font-weight:700;text-decoration:none;">📞 Call (914) 647-7276</a>
+    </div>
+
+    <!-- Back button -->
+    <div style="text-align:center;margin-top:20px;">
+      <button onclick="_exitCheckout()" style="padding:10px 24px;font-size:.85rem;font-weight:600;border:1px solid #ccc;border-radius:8px;background:#fff;color:#666;cursor:pointer;">← Edit Zones & Mowers</button>
     </div>
   </div>
 </section>
@@ -2220,6 +2280,60 @@ function _onPropMapReady() {
       'Questions? Call (914) 647-7276\n\n' +
       'Smart Lawn NY\nsmartlawnny.com';
     window.open('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body));
+  };
+
+  // ═══ CHECKOUT FLOW ═══
+  window._proceedToCheckout = function() {
+    var d = _buildQuoteData();
+    if (!d.zones.length) { alert('Select mowers for your zones first.'); return; }
+
+    // Build checkout items HTML
+    var itemsHTML = '';
+    d.zones.forEach(function(z, i) {
+      var bg = i % 2 === 0 ? '#fff' : '#f9fafb';
+      itemsHTML += '<div style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:'+bg+';border-bottom:1px solid #f0f0f0;">' +
+        '<div style="width:12px;height:12px;border-radius:3px;background:'+z.color+';flex-shrink:0;"></div>' +
+        '<div style="flex:1;">' +
+          '<div style="font-size:.9rem;font-weight:700;">'+z.name+' — '+z.acres+' acres</div>' +
+          '<div style="font-size:.8rem;color:#86868b;">'+z.units+'× '+z.mowerName+'</div>' +
+        '</div>' +
+        '<div style="font-size:.95rem;font-weight:700;">$'+z.subtotal.toLocaleString()+'</div>' +
+      '</div>';
+    });
+    document.getElementById('checkoutItems').innerHTML = itemsHTML;
+
+    // Fill totals
+    var tax = Math.round(d.totalFleetCost * 0.08375);
+    var grandWithTax = d.grandTotal + tax;
+    document.getElementById('checkoutAddr').textContent = d.addr + ' — ' + d.totalAcres + ' acres, ' + d.totalUnits + ' mowers';
+    document.getElementById('checkoutSubtotal').innerHTML = '<span>Equipment ('+d.totalUnits+' mowers)</span><span>$'+d.totalFleetCost.toLocaleString()+'</span>';
+    document.getElementById('checkoutInstall').innerHTML = '<span>Professional Installation</span><span>$'+d.installCost.toLocaleString()+'</span>';
+    document.getElementById('checkoutMapping').innerHTML = '<span>RTK Mapping ('+d.totalAcres+' ac × $199)</span><span>$'+d.mappingCost.toLocaleString()+'</span>';
+    document.getElementById('checkoutTax').innerHTML = '<span>Est. Tax (8.375%)</span><span>$'+tax.toLocaleString()+'</span>';
+    document.getElementById('checkoutTotal').innerHTML = '<span>Total</span><span>$'+grandWithTax.toLocaleString()+'</span>';
+    document.getElementById('checkoutAffirm').textContent = 'As low as $' + Math.round(grandWithTax * 1.1 / 12).toLocaleString() + '/mo for 12 months';
+
+    // Hide everything except header, checkout, and footer
+    document.querySelectorAll('section, .brand-section').forEach(function(s) {
+      if (s.id !== 'mapCheckout') s.style.display = 'none';
+    });
+    document.getElementById('heroInitial').style.display = 'none';
+    document.getElementById('heroMap').style.display = 'none';
+    document.getElementById('quiz-map-section').style.display = 'none';
+    document.getElementById('mapCheckout').style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+
+    // GA4 event
+    if (window.gtag) gtag('event', 'begin_checkout', {value: grandWithTax, items: d.zones.map(function(z){ return {item_name:z.mowerName, quantity:z.units, price:z.mowerPrice}; })});
+  };
+
+  window._exitCheckout = function() {
+    // Show everything again
+    document.querySelectorAll('section').forEach(function(s) { s.style.removeProperty('display'); });
+    document.getElementById('mapCheckout').style.display = 'none';
+    document.getElementById('heroMap').style.display = 'block';
+    document.getElementById('quiz-map-section').style.display = 'block';
+    document.getElementById('quiz-map-section').scrollIntoView({behavior:'smooth'});
   };
 
   window._printQuote = function() {
