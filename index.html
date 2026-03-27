@@ -821,15 +821,32 @@
   <div class="container">
     <div class="section-header fade-in">
       <h2>Shop <span class="underline-accent">Robotic Mowers</span></h2>
-      <p>Authorized Segway Navimow, Yarbo &amp; FJD Dynamics products &mdash; from $1,299 to $29,999</p>
+      <p>From $799 starter mowers to $29,999 commercial fleets — installed and serviced locally</p>
     </div>
-    <div class="product-tabs fade-in">
-      <button class="product-tab" onclick="filterProducts('all')">All Mowers</button>
-      <button class="product-tab" onclick="filterProducts('navimow')">Segway Navimow</button>
-      <button class="product-tab" onclick="filterProducts('yarbo')">Yarbo</button>
-      <button class="product-tab" onclick="filterProducts('fjd')">FJD Dynamics</button>
-      <button id="shopToggleBtn" onclick="toggleShop()" style="margin-left:auto;padding:8px 16px;font-size:.8rem;font-weight:600;border:1px solid #e0e0e0;border-radius:8px;background:#fff;color:#666;cursor:pointer;">▼ Collapse</button>
+
+    <!-- Quick Size Filter -->
+    <div class="fade-in" style="display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;">
+      <button onclick="filterBySize('all')" class="size-pill active" style="padding:8px 20px;border-radius:980px;border:2px solid #6abb1e;background:#6abb1e;color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;">All Sizes</button>
+      <button onclick="filterBySize('small')" class="size-pill" style="padding:8px 20px;border-radius:980px;border:2px solid #e0e0e0;background:#fff;color:#555;font-size:.8rem;font-weight:600;cursor:pointer;">Small Yard (&lt;½ ac)</button>
+      <button onclick="filterBySize('medium')" class="size-pill" style="padding:8px 20px;border-radius:980px;border:2px solid #e0e0e0;background:#fff;color:#555;font-size:.8rem;font-weight:600;cursor:pointer;">Medium (½–2 ac)</button>
+      <button onclick="filterBySize('large')" class="size-pill" style="padding:8px 20px;border-radius:980px;border:2px solid #e0e0e0;background:#fff;color:#555;font-size:.8rem;font-weight:600;cursor:pointer;">Large / Commercial (2+ ac)</button>
+      <button onclick="filterBySize('4season')" class="size-pill" style="padding:8px 20px;border-radius:980px;border:2px solid #e0e0e0;background:#fff;color:#555;font-size:.8rem;font-weight:600;cursor:pointer;">🌨 4-Season</button>
     </div>
+
+    <!-- Brand Sections (Collapsible) -->
+
+    <!-- ▸ Segway Navimow -->
+    <div class="brand-section fade-in" style="margin-bottom:16px;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+      <div onclick="toggleBrand('navimow')" style="display:flex;align-items:center;gap:16px;padding:16px 20px;cursor:pointer;background:#fff;transition:background .2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+        <img src="images/hero/navimow-lawn-2.jpg" alt="Navimow" style="width:80px;height:56px;object-fit:cover;border-radius:10px;">
+        <div style="flex:1;">
+          <h3 style="font-size:1.1rem;font-weight:700;margin:0;">Segway Navimow</h3>
+          <span style="font-size:.8rem;color:#86868b;">8 models — $799 to $6,999</span>
+        </div>
+        <span id="navimow-arrow" style="font-size:1.2rem;color:#86868b;transition:transform .2s;">▸</span>
+      </div>
+      <div id="navimow-products" style="display:none;padding:0 16px 16px;">
+        <div class="product-grid" style="display:grid;">
     <div class="product-grid" id="productGrid">
       <!-- Navimow Terranox CM240M1 -->
       <div class="product-card fade-in" data-brand="navimow">
@@ -859,21 +876,6 @@
           <div class="specs">Up to 3 acres | 4WD | 40&deg; Slopes | NRTK+Vision</div>
           <a href="products/navimow-terranox-cm120m1.html" class="btn-details">View Details</a>
           <button class="btn-cart" onclick="addToCart('Terranox CM120M1',5499,'images/products/terranox-robotic-mower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
-        </div>
-      </div>
-      <!-- FJD Dynamics RM21 -->
-      <div class="product-card fade-in" data-brand="fjd">
-        <div class="product-card-image">
-          <span class="product-badge" style="background:#2c5f2d;">Estate</span>
-          <img src="images/products/fjd-rm21-hero.webp" alt="FJD Dynamics RM21">
-        </div>
-        <div class="product-card-body">
-          <div class="brand-label">FJD Dynamics</div>
-          <h3>FJD RM21</h3>
-          <div class="price">$29,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $999</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
-          <div class="specs">Up to 27 acres | 25" Deck | 20&deg; Slopes | RTK+LiDAR</div>
-          <a href="products/fjd-rm21.html" class="btn-details">View Details</a>
-          <button class="btn-cart" onclick="addToCart('FJD Dynamics RM21',29999,'images/products/fjd-rm21-hero.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
       <!-- Navimow X450 -->
@@ -950,8 +952,24 @@
           <button class="btn-cart" onclick="addToCart('Navimow i105E',799,'images/products/i105e-pdp.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ▸ Yarbo -->
+    <div class="brand-section fade-in" style="margin-bottom:16px;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+      <div onclick="toggleBrand('yarbo')" style="display:flex;align-items:center;gap:16px;padding:16px 20px;cursor:pointer;background:#fff;transition:background .2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+        <img src="images/products/yarbo-lawn-mower-alt.webp" alt="Yarbo" style="width:80px;height:56px;object-fit:cover;border-radius:10px;">
+        <div style="flex:1;">
+          <h3 style="font-size:1.1rem;font-weight:700;margin:0;">Yarbo — 4-Season Automation</h3>
+          <span style="font-size:.8rem;color:#86868b;">Mow + Snow + Blow — $3,994 to $6,194</span>
+        </div>
+        <span id="yarbo-arrow" style="font-size:1.2rem;color:#86868b;transition:transform .2s;">▸</span>
+      </div>
+      <div id="yarbo-products" style="display:none;padding:0 16px 16px;">
+        <div class="product-grid" style="display:grid;">
       <!-- Yarbo Core -->
-      <div class="product-card fade-in" data-brand="yarbo">
+      <div class="product-card fade-in" data-brand="yarbo" data-size="4season">
         <div class="product-card-image">
           <span class="product-badge">Platform</span>
           <img src="images/products/yarbo-core.webp" alt="Yarbo Core">
@@ -966,7 +984,7 @@
         </div>
       </div>
       <!-- Yarbo Lawn Mower -->
-      <div class="product-card fade-in" data-brand="yarbo">
+      <div class="product-card fade-in" data-brand="yarbo" data-size="4season">
         <div class="product-card-image">
           <span class="product-badge">Multi-Season</span>
           <img src="images/products/yarbo-lawn-mower.webp" alt="Yarbo Lawn Mower">
@@ -981,7 +999,7 @@
         </div>
       </div>
       <!-- Yarbo Snow Blower -->
-      <div class="product-card fade-in" data-brand="yarbo">
+      <div class="product-card fade-in" data-brand="yarbo" data-size="4season">
         <div class="product-card-image">
           <span class="product-badge teal">Winter</span>
           <img src="images/products/yarbo-snow-blower.webp" alt="Yarbo Snow Blower">
@@ -996,7 +1014,7 @@
         </div>
       </div>
       <!-- Yarbo Complete Bundle -->
-      <div class="product-card fade-in" data-brand="yarbo">
+      <div class="product-card fade-in" data-brand="yarbo" data-size="4season">
         <div class="product-card-image">
           <span class="product-badge" style="background:var(--green);">Best Value</span>
           <img src="images/products/yarbo-core.webp" alt="Yarbo Complete Bundle">
@@ -1011,7 +1029,7 @@
         </div>
       </div>
       <!-- Yarbo Mower Module Only -->
-      <div class="product-card fade-in" data-brand="yarbo">
+      <div class="product-card fade-in" data-brand="yarbo" data-size="4season">
         <div class="product-card-image">
           <span class="product-badge">Module Only</span>
           <img src="images/products/yarbo-lawn-mower.webp" alt="Yarbo Lawn Mower Module" loading="lazy">
@@ -1026,7 +1044,7 @@
         </div>
       </div>
       <!-- Yarbo Snow Blower Module Only -->
-      <div class="product-card fade-in" data-brand="yarbo">
+      <div class="product-card fade-in" data-brand="yarbo" data-size="4season">
         <div class="product-card-image">
           <span class="product-badge">Module Only</span>
           <img src="images/products/yarbo-snow-blower.webp" alt="Yarbo Snow Blower Module" loading="lazy">
@@ -1040,10 +1058,40 @@
           <button class="btn-cart" onclick="addToCart('Yarbo Snow Blower Module',1294,'images/products/yarbo-snow-blower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
+        </div>
+      </div>
     </div>
-    <div class="products-cta fade-in">
-      <a href="#products" class="btn btn-dark">See All Models</a>
+
+    <!-- ▸ FJD Dynamics -->
+    <div class="brand-section fade-in" style="margin-bottom:16px;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
+      <div onclick="toggleBrand('fjd')" style="display:flex;align-items:center;gap:16px;padding:16px 20px;cursor:pointer;background:#fff;transition:background .2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+        <img src="images/products/fjd-rm21-hero.webp" alt="FJD Dynamics" style="width:80px;height:56px;object-fit:cover;border-radius:10px;">
+        <div style="flex:1;">
+          <h3 style="font-size:1.1rem;font-weight:700;margin:0;">FJD Dynamics — Estate &amp; Commercial</h3>
+          <span style="font-size:.8rem;color:#86868b;">25" industrial deck — $29,999</span>
+        </div>
+        <span id="fjd-arrow" style="font-size:1.2rem;color:#86868b;transition:transform .2s;">▸</span>
+      </div>
+      <div id="fjd-products" style="display:none;padding:0 16px 16px;">
+        <div class="product-grid" style="display:grid;">
+          <div class="product-card fade-in" data-brand="fjd" data-size="large">
+            <div class="product-card-image">
+              <span class="product-badge" style="background:#2c5f2d;">Estate</span>
+              <img src="images/products/fjd-rm21-hero.webp" alt="FJD Dynamics RM21">
+            </div>
+            <div class="product-card-body">
+              <div class="brand-label">FJD Dynamics</div>
+              <h3>FJD RM21</h3>
+              <div class="price">$29,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $999</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div>
+              <div class="specs">Up to 27 acres | 25" Deck | 20&deg; Slopes | RTK+LiDAR</div>
+              <a href="products/fjd-rm21.html" class="btn-details">View Details</a>
+              <button class="btn-cart" onclick="addToCart('FJD Dynamics RM21',29999,'images/products/fjd-rm21-hero.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -1497,6 +1545,59 @@ function filterProducts(brand) {
   }
   document.querySelectorAll('.product-card').forEach(card => {
     card.style.display = (brand === 'all' || card.dataset.brand === brand) ? '' : 'none';
+  });
+}
+
+// Brand section toggle
+function toggleBrand(brand) {
+  var el = document.getElementById(brand + '-products');
+  var arrow = document.getElementById(brand + '-arrow');
+  if (el.style.display === 'none') {
+    el.style.display = 'block';
+    arrow.textContent = '▾';
+    arrow.style.transform = 'rotate(0deg)';
+  } else {
+    el.style.display = 'none';
+    arrow.textContent = '▸';
+  }
+}
+
+// Size filter — shows/hides brand sections and cards by data-size
+function filterBySize(size) {
+  // Update pill styles
+  document.querySelectorAll('.size-pill').forEach(function(p) {
+    p.style.background = '#fff'; p.style.color = '#555'; p.style.borderColor = '#e0e0e0';
+  });
+  if (event && event.target) {
+    event.target.style.background = '#6abb1e'; event.target.style.color = '#fff'; event.target.style.borderColor = '#6abb1e';
+  }
+
+  if (size === 'all') {
+    // Collapse all brand sections
+    ['navimow','yarbo','fjd'].forEach(function(b) {
+      document.getElementById(b + '-products').style.display = 'none';
+      document.getElementById(b + '-arrow').textContent = '▸';
+    });
+    document.querySelectorAll('.brand-section').forEach(function(s) { s.style.display = ''; });
+    return;
+  }
+
+  // Expand all brands and filter cards
+  ['navimow','yarbo','fjd'].forEach(function(b) {
+    var section = document.getElementById(b + '-products');
+    var container = section.closest('.brand-section');
+    var cards = section.querySelectorAll('.product-card');
+    var hasMatch = false;
+    cards.forEach(function(card) {
+      var show = card.dataset.size === size;
+      card.style.display = show ? '' : 'none';
+      if (show) hasMatch = true;
+    });
+    container.style.display = hasMatch ? '' : 'none';
+    if (hasMatch) {
+      section.style.display = 'block';
+      document.getElementById(b + '-arrow').textContent = '▾';
+    }
   });
 }
 
