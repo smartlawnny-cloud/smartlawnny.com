@@ -1608,6 +1608,14 @@ function toggleMobileNav() {
   var nav = document.querySelector('nav');
   nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
 }
+// Auto-close mobile menu when a nav link is clicked
+document.querySelectorAll('nav a').forEach(function(a) {
+  a.addEventListener('click', function() {
+    if (window.innerWidth <= 768) {
+      document.querySelector('nav').style.display = 'none';
+    }
+  });
+});
 
 function toggleShop() {
   var grid = document.getElementById('productGrid');
@@ -2108,7 +2116,7 @@ function _onPropMapReady() {
     // Update recommendations based on zones
     if(total>0){
       propertyData={totalAcres:total,mowableAcres:total};
-      _showRecommendation(total);
+      // Recommendation now handled by per-zone mower selectors
       // Auto-fill Finance tab sq ft
       var sqft=Math.round(total*43560);
       var sqftEl=document.getElementById('financeSqft');
