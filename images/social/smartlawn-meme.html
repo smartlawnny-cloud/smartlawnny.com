@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Inter',sans-serif;}
+.meme{width:1080px;background:#fff;border-radius:0;overflow:hidden;}
+.meme-header{background:#1d1d1f;color:#fff;padding:24px 32px;text-align:center;}
+.meme-header h1{font-size:28px;font-weight:900;letter-spacing:-0.5px;}
+.meme-header h1 span{color:#6abb1e;}
+.panels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;}
+.panel{padding:32px 24px;text-align:center;position:relative;border-right:1px solid #e5e7eb;}
+.panel:last-child{border-right:none;}
+.panel.active{background:#f0fdf4;}
+.era{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#999;margin-bottom:16px;}
+.emoji{font-size:80px;margin-bottom:16px;display:block;}
+.action{font-size:15px;font-weight:700;color:#1d1d1f;margin-bottom:8px;}
+.sub{font-size:13px;color:#6b7280;line-height:1.5;}
+.vibe{display:inline-block;margin-top:12px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;}
+.vibe-suffer{background:#fef2f2;color:#dc2626;}
+.vibe-meh{background:#fef3c7;color:#d97706;}
+.vibe-chill{background:#dcfce7;color:#16a34a;}
+.arrow{position:absolute;right:-16px;top:50%;transform:translateY(-50%);font-size:24px;color:#6abb1e;z-index:2;background:#fff;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:2px solid #e5e7eb;}
+.side-eye{position:absolute;right:8px;top:40%;font-size:28px;transform:rotate(-10deg);}
+.bottom{background:#1d1d1f;color:#fff;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;}
+.bottom .logo{font-weight:900;font-size:18px;}
+.bottom .logo span{color:#6abb1e;font-weight:400;font-size:11px;display:block;}
+.bottom .tag{font-size:13px;color:#999;}
+.bottom .cta{background:#6abb1e;color:#fff;padding:8px 20px;border-radius:20px;font-weight:700;font-size:13px;}
+.judge{font-size:40px;position:absolute;right:16px;bottom:60px;opacity:0.15;}
+</style>
+</head>
+<body>
+<div class="meme">
+  <div class="meme-header">
+    <h1>The <span>Evolution</span> of Lawn Care</h1>
+  </div>
+  <div class="panels">
+    <div class="panel">
+      <div class="era">1826</div>
+      <div class="emoji">🧑‍🌾</div>
+      <div class="action">Swinging a scythe</div>
+      <div class="sub">4 hours in the sun<br>Back destroyed<br>Neighbors concerned</div>
+      <div class="vibe vibe-suffer">Vibes: suffering</div>
+      <div class="arrow">→</div>
+      <div class="judge">👀</div>
+    </div>
+    <div class="panel">
+      <div class="era">2006</div>
+      <div class="emoji">🧑‍🔧</div>
+      <div class="action">Pushing a gas mower</div>
+      <div class="sub">2 hours every Saturday<br>$150/month in gas<br>"Look at that guy with the scythe"</div>
+      <div class="vibe vibe-meh">Vibes: meh</div>
+      <div class="arrow">→</div>
+      <div class="judge">👀</div>
+    </div>
+    <div class="panel active">
+      <div class="era">2026</div>
+      <div class="emoji">☕😎</div>
+      <div class="action">Sipping coffee on the patio</div>
+      <div class="sub">Robot mows daily at 6am<br>Lawn looks incredible<br>"Look at that guy pushing a mower"</div>
+      <div class="vibe vibe-chill">Vibes: immaculate</div>
+    </div>
+  </div>
+  <div class="bottom">
+    <div class="logo">Smart Lawn<span>AUTOMATION & ROBOTICS</span></div>
+    <div class="tag">smartlawnny.com &nbsp;|&nbsp; (914) 647-7276</div>
+    <div class="cta">Stop Mowing →</div>
+  </div>
+</div>
+</body>
+</html>

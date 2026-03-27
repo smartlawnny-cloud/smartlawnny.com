@@ -1,0 +1,83 @@
+MOWER EVOLUTION SILHOUETTE — AI Image Prompts
+================================================
+
+Use these in ChatGPT (DALL-E), Midjourney, or Ideogram.
+Best results: Midjourney or Ideogram for silhouette style.
+
+═══════════════════════════════════════════════════
+PROMPT 1 — Classic Evolution Silhouette (Best)
+═══════════════════════════════════════════════════
+
+Minimalist evolution silhouette illustration on a clean white background showing the progression of lawn care through 5 stages, left to right, in the style of the famous "March of Progress" ape-to-human evolution chart. All figures shown as solid black silhouettes:
+
+1. A hunched caveman dragging a primitive scythe through tall grass
+2. A person pushing an old-fashioned reel push mower (1920s style)
+3. A person straining behind a bulky gas-powered push mower with visible exhaust fumes
+4. A person riding a large sit-down riding mower / zero-turn
+5. A person standing upright and relaxed, holding a coffee mug, looking at their phone while a small robotic lawn mower works at their feet
+
+Each silhouette progressively more upright and relaxed. The final figure is the most evolved — completely at ease. Simple, iconic, no background details. Vector art style with clean edges. Horizontal banner format, 3:1 aspect ratio.
+
+═══════════════════════════════════════════════════
+PROMPT 2 — Sunset Gradient Version
+═══════════════════════════════════════════════════
+
+Evolution of lawn care silhouette illustration against a warm orange-to-yellow sunset gradient background. Five black silhouettes progressing left to right like the March of Progress evolution chart:
+
+Figure 1: Hunched person swinging a hand scythe in tall weeds
+Figure 2: Person pushing an antique reel mower
+Figure 3: Person leaning into a heavy gas push mower with smoke
+Figure 4: Person on a riding lawn tractor
+Figure 5: Person standing tall, relaxed, sipping coffee while a small robot mower works nearby
+
+Progressive posture from hunched/struggling to fully upright/relaxed. Clean silhouette style, no facial details. Horizontal panoramic format. Professional, modern design suitable for a business website banner.
+
+═══════════════════════════════════════════════════
+PROMPT 3 — Green Gradient (Brand Colors)
+═══════════════════════════════════════════════════
+
+Evolution March of Progress silhouette showing the history of lawn mowing. Five stages on a gradient background going from dark brown (left/past) to bright green (right/future). Solid black silhouettes:
+
+1. Primitive farmer with hand scythe, hunched over
+2. 1950s man with manual reel push mower
+3. Modern dad struggling with loud gas push mower (exhaust clouds)
+4. Guy on a big zero-turn riding mower looking bored
+5. Happy person standing upright holding coffee, phone in pocket, small sleek robotic mower at their feet cutting perfect stripes
+
+Each figure more upright and relaxed than the last. The grass under their feet gets progressively neater from ragged (left) to perfectly manicured stripes (right). Minimalist vector silhouette art, clean lines, horizontal 3:1 banner ratio.
+
+═══════════════════════════════════════════════════
+PROMPT 4 — Realistic Photo Composite
+═══════════════════════════════════════════════════
+
+Wide panoramic photograph showing 5 people on one continuous lawn, each representing a different era of lawn care, arranged left to right like the evolution of man chart:
+
+Far left: A farmer in old work clothes using a hand scythe on overgrown weeds, bent over and struggling
+Center-left: A 1960s man in vintage clothes pushing a manual reel mower
+Center: A tired modern dad in cargo shorts pushing a smoking gas mower, wiping sweat
+Center-right: A bored man sitting on a large orange riding mower
+Far right: A relaxed person in sunglasses on a patio chair, sipping iced coffee, while a sleek robot mower perfectly cuts the lawn nearby
+
+Shot from the side, same lawn throughout but the grass gets progressively better maintained from left to right. Golden hour lighting. Cinematic wide angle. Realistic photograph, not illustration.
+
+═══════════════════════════════════════════════════
+BEST TOOL FOR EACH STYLE:
+═══════════════════════════════════════════════════
+- Silhouette (Prompts 1-3): Ideogram.ai or Midjourney → cleanest vector look
+- Photo (Prompt 4): ChatGPT DALL-E → best at realistic composites
+- Quick & dirty: Paste Prompt 1 into ChatGPT right now
+
+═══════════════════════════════════════════════════
+SOCIAL MEDIA CAPTION:
+═══════════════════════════════════════════════════
+
+The Evolution of Lawn Care 🌱
+
+Which stage are you at? 😎
+
+We're here to get you to Stage 5.
+Grand Opening May 1st — 15% off pre-orders.
+
+smartlawnny.com
+
+#RoboticMower #SmartLawn #Evolution #LawnCare #Navimow #Yarbo
