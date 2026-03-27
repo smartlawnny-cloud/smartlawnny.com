@@ -1889,13 +1889,38 @@ function _onPropMapReady() {
       'relation["landuse"="forest"]('+bbox+');'+
       ');out body geom;';
 
-    fetch('https://overpass-api.de/api/interpreter', {method:'POST', body:'data='+encodeURIComponent(query)})
-    .then(function(r){return r.json();})
-    .then(function(data) {
+    // Fetch from BOTH OSM + Microsoft Building Footprints for best coverage
+    var osmFetch = fetch('https://overpass-api.de/api/interpreter', {method:'POST', body:'data='+encodeURIComponent(query)})
+      .then(function(r){return r.json();}).catch(function(){return {elements:[]};});
+
+    // Microsoft Building Footprints via Planetary Computer STAC
+    var msBbox = sw.lng()+','+sw.lat()+','+ne.lng()+','+ne.lat();
+    var msUrl = 'https://planetarycomputer.microsoft.com/api/stac/v1/collections/ms-buildings/items?bbox='+msBbox+'&limit=50';
+    var msFetch = fetch(msUrl).then(function(r){return r.json();}).catch(function(){return {features:[]};});
+
+    Promise.all([osmFetch, msFetch]).then(function(results) {
+      var data = results[0];
+      var msData = results[1];
+
+      // Merge MS buildings into a unified format
+      var msElements = [];
+      if (msData.features) {
+        msData.features.forEach(function(f) {
+          if (f.geometry && f.geometry.type === 'Polygon' && f.geometry.coordinates[0]) {
+            msElements.push({
+              tags: {building: 'yes', source: 'microsoft'},
+              geometry: f.geometry.coordinates[0].map(function(c) { return {lat: c[1], lon: c[0]}; })
+            });
+          }
+        });
+      }
+
+      // Combine: OSM elements + MS elements (dedupe by checking overlap)
+      var allElements = data.elements.concat(msElements);
       var buildingArea = 0, driveArea = 0, treeArea = 0, waterArea = 0, otherArea = 0;
       var totalPropArea = google.maps.geometry.spherical.computeArea(_propPolygon.getPath());
 
-      data.elements.forEach(function(el) {
+      allElements.forEach(function(el) {
         if (!el.geometry || el.geometry.length < 3) return;
         var path = el.geometry.map(function(g){return {lat:g.lat,lng:g.lon};});
 
