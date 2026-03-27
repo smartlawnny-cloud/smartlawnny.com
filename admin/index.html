@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Smart Lawn NY — Inventory Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--green:#6abb1e;--dark:#1d1d1f;--g100:#f5f5f7;--g300:#d1d5db;--g500:#6b7280;--g800:#1f2937;--red:#ef4444;--blue:#3b82f6;--orange:#f59e0b;}
+body{font-family:'Inter',sans-serif;background:var(--g100);color:var(--g800);min-height:100vh;}
+
+/* Login */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--g100);}
+.login-card{background:#fff;border-radius:16px;padding:40px;max-width:360px;width:100%;box-shadow:0 4px 20px rgba(0,0,0,.08);text-align:center;}
+.login-card h1{font-size:1.3rem;margin-bottom:4px;}
+.login-card p{font-size:.85rem;color:var(--g500);margin-bottom:24px;}
+.login-card input{width:100%;padding:12px 16px;border:2px solid var(--g300);border-radius:10px;font-size:1rem;font-family:inherit;margin-bottom:12px;}
+.login-card button{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;}
+
+/* Dashboard */
+#dashboard{display:none;}
+.top-bar{background:#fff;border-bottom:1px solid rgba(0,0,0,.08);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.top-bar h1{font-size:1.1rem;font-weight:800;}
+.top-bar .badge{background:var(--green);color:#fff;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid rgba(0,0,0,.08);padding:0 24px;overflow-x:auto;}
+.tabs button{padding:12px 20px;font-size:.85rem;font-weight:600;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;color:var(--g500);font-family:inherit;white-space:nowrap;}
+.tabs button.active{color:var(--green);border-bottom-color:var(--green);}
+
+.content{max-width:1200px;margin:0 auto;padding:24px;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.stat-card .label{font-size:.75rem;color:var(--g500);text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+.stat-card .value{font-size:1.8rem;font-weight:800;margin-top:4px;}
+.stat-card .value.green{color:var(--green);}
+
+/* Product table */
+.product-table{width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.product-table table{width:100%;border-collapse:collapse;}
+.product-table th{background:var(--dark);color:#fff;padding:10px 16px;text-align:left;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;font-weight:600;}
+.product-table td{padding:10px 16px;border-bottom:1px solid var(--g100);font-size:.9rem;vertical-align:middle;}
+.product-table tr:hover{background:#f9fafb;}
+.product-table .sku{font-family:monospace;font-size:.8rem;color:var(--g500);}
+.product-table .stock{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.stock.instock{background:#dcfce7;color:#166534;}
+.stock.low{background:#fef3c7;color:#92400e;}
+.stock.out{background:#fecaca;color:#991b1b;}
+.qty-controls{display:flex;align-items:center;gap:6px;}
+.qty-controls button{width:28px;height:28px;border-radius:6px;border:1px solid var(--g300);background:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.qty-controls button:hover{background:var(--g100);}
+.qty-controls span{min-width:28px;text-align:center;font-weight:700;font-size:1.1rem;}
+
+/* Sales form */
+.sale-form{background:#fff;border-radius:12px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-top:24px;}
+.sale-form h3{font-size:1rem;font-weight:700;margin-bottom:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-grid label{font-size:.8rem;font-weight:600;color:var(--g500);display:block;margin-bottom:4px;}
+.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px 12px;border:1px solid var(--g300);border-radius:8px;font-size:.9rem;font-family:inherit;}
+.form-grid .full{grid-column:1/-1;}
+.btn-sale{padding:12px 24px;background:var(--green);color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:12px;}
+
+/* Sales log */
+.sales-log{margin-top:24px;}
+.sales-log h3{font-size:1rem;font-weight:700;margin-bottom:12px;}
+.log-table{width:100%;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.log-table table{width:100%;border-collapse:collapse;}
+.log-table th{background:var(--g100);padding:8px 12px;text-align:left;font-size:.75rem;text-transform:uppercase;color:var(--g500);font-weight:600;}
+.log-table td{padding:8px 12px;border-bottom:1px solid var(--g100);font-size:.85rem;}
+
+@media(max-width:768px){
+  .form-grid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .content{padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="loginScreen">
+  <div class="login-card">
+    <h1>🌿 Smart Lawn NY</h1>
+    <p>Inventory Manager</p>
+    <input type="password" id="loginPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+  <div class="top-bar">
+    <div>
+      <h1>🌿 Smart Lawn NY <span class="badge">Inventory</span></h1>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <span style="font-size:.8rem;color:var(--g500);" id="lastSync">Last sync: —</span>
+      <button onclick="loadInventory()" style="padding:6px 14px;border:1px solid var(--g300);border-radius:8px;background:#fff;font-size:.8rem;cursor:pointer;font-family:inherit;"><i class="fas fa-sync"></i> Refresh</button>
+      <button onclick="logout()" style="padding:6px 14px;border:1px solid var(--g300);border-radius:8px;background:#fff;font-size:.8rem;cursor:pointer;font-family:inherit;">Logout</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="active" onclick="switchTab('inventory',this)">Inventory</button>
+    <button onclick="switchTab('sales',this)">Record Sale</button>
+    <button onclick="switchTab('log',this)">Sales Log</button>
+    <button onclick="switchTab('orders',this)">Online Orders</button>
+  </div>
+
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats" id="statsBar">
+      <div class="stat-card"><div class="label">Total SKUs</div><div class="value" id="statSkus">0</div></div>
+      <div class="stat-card"><div class="label">Total Units</div><div class="value green" id="statUnits">0</div></div>
+      <div class="stat-card"><div class="label">Inventory Value</div><div class="value" id="statValue">$0</div></div>
+      <div class="stat-card"><div class="label">Low Stock</div><div class="value" style="color:var(--orange);" id="statLow">0</div></div>
+    </div>
+
+    <!-- Inventory Tab -->
+    <div id="tab-inventory">
+      <div class="product-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Price</th>
+              <th>Cost</th>
+              <th>Stock</th>
+              <th>Adjust</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Record Sale Tab -->
+    <div id="tab-sales" style="display:none;">
+      <div class="sale-form">
+        <h3><i class="fas fa-cash-register" style="color:var(--green);margin-right:8px;"></i>Record a Sale</h3>
+        <div class="form-grid">
+          <div>
+            <label>Product</label>
+            <select id="saleProduct"></select>
+          </div>
+          <div>
+            <label>Quantity</label>
+            <input type="number" id="saleQty" value="1" min="1">
+          </div>
+          <div>
+            <label>Customer Name</label>
+            <input type="text" id="saleName" placeholder="John Doe">
+          </div>
+          <div>
+            <label>Customer Email</label>
+            <input type="email" id="saleEmail" placeholder="john@example.com">
+          </div>
+          <div>
+            <label>Customer Phone</label>
+            <input type="tel" id="salePhone" placeholder="(914) 555-1234">
+          </div>
+          <div>
+            <label>Payment Method</label>
+            <select id="salePayment">
+              <option>Credit Card (Stripe)</option>
+              <option>Cash</option>
+              <option>Check</option>
+              <option>Venmo</option>
+              <option>Zelle</option>
+              <option>Wire Transfer</option>
+              <option>Affirm / Financing</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Address</label>
+            <input type="text" id="saleAddr" placeholder="123 Main St, Scarsdale, NY">
+          </div>
+          <div class="full">
+            <label>Notes</label>
+            <textarea id="saleNotes" rows="2" placeholder="Installation date, special instructions..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+          <div style="font-size:1.2rem;font-weight:800;" id="saleTotal">Total: $0</div>
+          <button class="btn-sale" onclick="recordSale()"><i class="fas fa-check"></i> Record Sale</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sales Log Tab -->
+    <div id="tab-log" style="display:none;">
+      <div class="sales-log">
+        <h3>Recent Sales</h3>
+        <div class="log-table">
+          <table>
+            <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Total</th><th>Customer</th><th>Payment</th></tr></thead>
+            <tbody id="salesLogBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Online Orders Tab -->
+    <div id="tab-orders" style="display:none;">
+      <div class="sales-log">
+        <h3>Online Orders (Stripe)</h3>
+        <div class="log-table">
+          <table>
+            <thead><tr><th>Date</th><th>Items</th><th>Total</th><th>Email</th><th>Status</th></tr></thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Supabase config
+var SUPABASE_URL = 'https://hsjodrniizoctxsznjsy.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk';
+var ADMIN_PASS = 'smartlawn2026';
+
+var products = [];
+var sales = [];
+
+function doLogin() {
+  if (document.getElementById('loginPass').value === ADMIN_PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadInventory();
+  } else { alert('Wrong password'); }
+}
+function logout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('[id^="tab-"]').forEach(function(el){el.style.display='none';});
+  document.getElementById('tab-'+tab).style.display='block';
+  document.querySelectorAll('.tabs button').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  if (tab==='log') loadSales();
+}
+
+function sbFetch(path, opts) {
+  opts = opts || {};
+  opts.headers = Object.assign({'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=representation'}, opts.headers||{});
+  return fetch(SUPABASE_URL+'/rest/v1/'+path, opts).then(function(r){return r.json();});
+}
+
+function loadInventory() {
+  sbFetch('products?select=*&order=brand,name').then(function(data) {
+    products = data;
+    renderInventory();
+    renderStats();
+    renderSaleDropdown();
+    document.getElementById('lastSync').textContent = 'Synced: ' + new Date().toLocaleTimeString();
+  });
+}
+
+function renderInventory() {
+  var html = '';
+  products.forEach(function(p) {
+    var stockClass = p.quantity <= 0 ? 'out' : p.quantity <= p.low_stock_threshold ? 'low' : 'instock';
+    var stockLabel = p.quantity <= 0 ? 'Out of Stock' : p.quantity <= p.low_stock_threshold ? 'Low Stock' : 'In Stock';
+    html += '<tr>' +
+      '<td><strong>'+p.name+'</strong><br><span style="font-size:.75rem;color:var(--g500);">'+p.brand+'</span></td>' +
+      '<td class="sku">'+p.sku+'</td>' +
+      '<td>$'+Number(p.price).toLocaleString()+'</td>' +
+      '<td>$'+Number(p.cost).toLocaleString()+'</td>' +
+      '<td><span class="stock '+stockClass+'">'+p.quantity+' — '+stockLabel+'</span></td>' +
+      '<td><div class="qty-controls">' +
+        '<button onclick="adjustStock(\''+p.id+'\',-1)">−</button>' +
+        '<span>'+p.quantity+'</span>' +
+        '<button onclick="adjustStock(\''+p.id+'\',1)">+</button>' +
+        '<input type="number" min="0" value="'+p.quantity+'" style="width:50px;padding:4px;border:1px solid var(--g300);border-radius:4px;font-size:.85rem;margin-left:4px;" onchange="setStock(\''+p.id+'\',this.value)">' +
+      '</div></td>' +
+    '</tr>';
+  });
+  document.getElementById('inventoryBody').innerHTML = html;
+}
+
+function renderStats() {
+  var totalUnits = 0, totalValue = 0, lowCount = 0;
+  products.forEach(function(p) {
+    totalUnits += p.quantity;
+    totalValue += p.quantity * p.price;
+    if (p.quantity > 0 && p.quantity <= p.low_stock_threshold) lowCount++;
+  });
+  document.getElementById('statSkus').textContent = products.length;
+  document.getElementById('statUnits').textContent = totalUnits;
+  document.getElementById('statValue').textContent = '$' + totalValue.toLocaleString();
+  document.getElementById('statLow').textContent = lowCount;
+}
+
+function renderSaleDropdown() {
+  var html = '<option value="">Select product...</option>';
+  products.forEach(function(p) {
+    html += '<option value="'+p.id+'" data-price="'+p.price+'">'+p.name+' — $'+Number(p.price).toLocaleString()+' ('+p.quantity+' in stock)</option>';
+  });
+  document.getElementById('saleProduct').innerHTML = html;
+}
+
+function adjustStock(id, delta) {
+  var p = products.find(function(x){return x.id===id;});
+  if (!p) return;
+  var newQty = Math.max(0, p.quantity + delta);
+  sbFetch('products?id=eq.'+id, {method:'PATCH', body:JSON.stringify({quantity:newQty, updated_at:new Date().toISOString()})}).then(function() {
+    // Log the adjustment
+    sbFetch('inventory_log', {method:'POST', body:JSON.stringify({product_id:id, change:delta, reason:delta>0?'Stock added':'Stock removed'})});
+    loadInventory();
+  });
+}
+
+function setStock(id, val) {
+  var newQty = Math.max(0, parseInt(val) || 0);
+  var p = products.find(function(x){return x.id===id;});
+  var delta = newQty - (p ? p.quantity : 0);
+  sbFetch('products?id=eq.'+id, {method:'PATCH', body:JSON.stringify({quantity:newQty, updated_at:new Date().toISOString()})}).then(function() {
+    sbFetch('inventory_log', {method:'POST', body:JSON.stringify({product_id:id, change:delta, reason:'Manual set to '+newQty})});
+    loadInventory();
+  });
+}
+
+// Sale total calculation
+document.getElementById('saleProduct').addEventListener('change', calcSaleTotal);
+document.getElementById('saleQty').addEventListener('input', calcSaleTotal);
+function calcSaleTotal() {
+  var sel = document.getElementById('saleProduct');
+  var opt = sel.options[sel.selectedIndex];
+  var price = opt ? parseFloat(opt.dataset.price) || 0 : 0;
+  var qty = parseInt(document.getElementById('saleQty').value) || 0;
+  document.getElementById('saleTotal').textContent = 'Total: $' + (price * qty).toLocaleString();
+}
+
+function recordSale() {
+  var sel = document.getElementById('saleProduct');
+  var opt = sel.options[sel.selectedIndex];
+  if (!opt || !opt.value) { alert('Select a product'); return; }
+  var productId = opt.value;
+  var price = parseFloat(opt.dataset.price) || 0;
+  var qty = parseInt(document.getElementById('saleQty').value) || 1;
+  var total = price * qty;
+
+  var saleData = {
+    product_id: productId,
+    quantity: qty,
+    unit_price: price,
+    total: total,
+    customer_name: document.getElementById('saleName').value,
+    customer_email: document.getElementById('saleEmail').value,
+    customer_phone: document.getElementById('salePhone').value,
+    customer_address: document.getElementById('saleAddr').value,
+    payment_method: document.getElementById('salePayment').value,
+    notes: document.getElementById('saleNotes').value,
+    sale_type: 'in-store'
+  };
+
+  sbFetch('sales', {method:'POST', body:JSON.stringify(saleData)}).then(function() {
+    // Decrease inventory
+    adjustStock(productId, -qty);
+    alert('Sale recorded! $' + total.toLocaleString());
+    // Reset form
+    sel.selectedIndex = 0;
+    document.getElementById('saleQty').value = 1;
+    document.getElementById('saleName').value = '';
+    document.getElementById('saleEmail').value = '';
+    document.getElementById('salePhone').value = '';
+    document.getElementById('saleAddr').value = '';
+    document.getElementById('saleNotes').value = '';
+    calcSaleTotal();
+  });
+}
+
+function loadSales() {
+  sbFetch('sales?select=*,products(name)&order=created_at.desc&limit=50').then(function(data) {
+    sales = data;
+    var html = '';
+    data.forEach(function(s) {
+      var date = new Date(s.created_at).toLocaleDateString();
+      html += '<tr>' +
+        '<td>'+date+'</td>' +
+        '<td>'+(s.products?s.products.name:'—')+'</td>' +
+        '<td>'+s.quantity+'</td>' +
+        '<td>$'+Number(s.total).toLocaleString()+'</td>' +
+        '<td>'+(s.customer_name||'—')+'</td>' +
+        '<td>'+(s.payment_method||'—')+'</td>' +
+      '</tr>';
+    });
+    document.getElementById('salesLogBody').innerHTML = html || '<tr><td colspan="6" style="text-align:center;color:var(--g500);padding:24px;">No sales recorded yet</td></tr>';
+  });
+}
+</script>
+</body>
+</html>

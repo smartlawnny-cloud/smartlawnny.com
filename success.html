@@ -105,12 +105,22 @@
 </footer>
 
 <script>
-  // Show session ID if present in URL
+  // Show session ID and trigger confirmation email
   (function() {
     var params = new URLSearchParams(window.location.search);
     var sid = params.get('session_id');
     if (sid) {
       document.getElementById('sessionInfo').textContent = 'Order reference: ' + sid;
+      // Tell Apps Script to send confirmation email + update order status
+      var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4EdYGft-clzGx4b9X5C2J-OOKBk6r7kIGvRghZ3wd4NwDSNh2uJ2xvtkRDYSX6PqWpw/exec';
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'text/plain'},
+        body: JSON.stringify({
+          type: 'ORDER_CONFIRM',
+          sessionId: sid
+        })
+      }).catch(function(){});
     }
   })();
 </script>
