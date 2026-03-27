@@ -1882,14 +1882,17 @@ function _onPropMapReady() {
       'way["leisure"~"swimming_pool|pitch"]('+bbox+');'+
       'way["man_made"~"pier|bridge"]('+bbox+');'+
       'way["amenity"~"parking"]('+bbox+');'+
-      'way["landuse"~"farmyard"]('+bbox+');'+
+      'way["landuse"~"farmyard|forest"]('+bbox+');'+
+      'way["natural"~"wood|scrub|wetland|water"]('+bbox+');'+
       'relation["building"]('+bbox+');'+
+      'relation["natural"~"wood|water"]('+bbox+');'+
+      'relation["landuse"="forest"]('+bbox+');'+
       ');out body geom;';
 
     fetch('https://overpass-api.de/api/interpreter', {method:'POST', body:'data='+encodeURIComponent(query)})
     .then(function(r){return r.json();})
     .then(function(data) {
-      var buildingArea = 0, driveArea = 0, otherArea = 0;
+      var buildingArea = 0, driveArea = 0, treeArea = 0, waterArea = 0, otherArea = 0;
       var totalPropArea = google.maps.geometry.spherical.computeArea(_propPolygon.getPath());
 
       data.elements.forEach(function(el) {
@@ -1905,9 +1908,12 @@ function _onPropMapReady() {
         // Categorize and style
         var isBuilding = el.tags && el.tags.building;
         var isDrive = el.tags && (el.tags.highway || el.tags.amenity === 'parking');
-        var fillColor = isBuilding ? '#455a64' : isDrive ? '#78909c' : '#607d8b';
-        var fillOpacity = isBuilding ? 0.6 : 0.4;
-        var label = isBuilding ? 'Building' : isDrive ? 'Driveway' : 'Other';
+        var isTrees = el.tags && (el.tags.natural === 'wood' || el.tags.natural === 'scrub' || el.tags.landuse === 'forest');
+        var isWater = el.tags && (el.tags.natural === 'water' || el.tags.natural === 'wetland');
+        var isPool = el.tags && el.tags.leisure === 'swimming_pool';
+        var fillColor = isBuilding ? '#455a64' : isDrive ? '#78909c' : isTrees ? '#2d5016' : isWater ? '#1e40af' : isPool ? '#0ea5e9' : '#607d8b';
+        var fillOpacity = isBuilding ? 0.6 : isTrees ? 0.45 : isWater ? 0.5 : 0.4;
+        var label = isBuilding ? 'Building' : isDrive ? 'Driveway' : isTrees ? 'Trees' : isWater ? 'Water' : isPool ? 'Pool' : 'Other';
 
         var poly = new google.maps.Polygon({
           paths: path, fillColor: fillColor, fillOpacity: fillOpacity,
@@ -1919,6 +1925,8 @@ function _onPropMapReady() {
         var area = google.maps.geometry.spherical.computeArea(poly.getPath());
         if (isBuilding) buildingArea += area;
         else if (isDrive) driveArea += area;
+        else if (isTrees) treeArea += area;
+        else if (isWater || isPool) waterArea += area;
         else otherArea += area;
 
         // Add sq ft label on each detected feature
@@ -1936,12 +1944,14 @@ function _onPropMapReady() {
       });
 
       // Mowable = total - all excluded
-      var excludeTotal = buildingArea + driveArea + otherArea;
+      var excludeTotal = buildingArea + driveArea + treeArea + waterArea + otherArea;
       var mowableArea = totalPropArea - excludeTotal;
       var totalAc = (totalPropArea/4046.86).toFixed(1);
       var mowableAc = (mowableArea/4046.86).toFixed(1);
       var buildAc = (buildingArea/4046.86).toFixed(2);
       var driveAc = (driveArea/4046.86).toFixed(2);
+      var treeAc = (treeArea/4046.86).toFixed(2);
+      var waterAc = (waterArea/4046.86).toFixed(2);
       var mowableSqft = Math.round(mowableArea * 10.764);
 
       // Green lawn overlay on the property
@@ -1995,6 +2005,12 @@ function _onPropMapReady() {
             '<div style="display:flex;justify-content:space-between;padding:2px 0;">'+
               '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#78909c;margin-right:4px;"></span>Driveways/Paths</span>'+
               '<span style="font-weight:600;">'+driveAc+' ac</span></div>' +
+            (treeArea > 0 ? '<div style="display:flex;justify-content:space-between;padding:2px 0;">'+
+              '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#2d5016;margin-right:4px;"></span>Trees/Wooded</span>'+
+              '<span style="font-weight:600;">'+treeAc+' ac</span></div>' : '') +
+            (waterArea > 0 ? '<div style="display:flex;justify-content:space-between;padding:2px 0;">'+
+              '<span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:#1e40af;margin-right:4px;"></span>Water/Pool</span>'+
+              '<span style="font-weight:600;">'+waterAc+' ac</span></div>' : '') +
           '</div>' +
           '<div style="display:flex;gap:3px;flex-wrap:wrap;">' +
             '<button onclick="_autoSplitMowable(2)" style="flex:1;padding:4px;font-size:.65rem;font-weight:600;border:1px solid #e2e8f0;border-radius:5px;background:#fff;cursor:pointer;">2 Zones</button>' +
