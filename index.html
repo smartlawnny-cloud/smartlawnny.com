@@ -1900,9 +1900,9 @@ function _onPropMapReady() {
 
           var poly = new google.maps.Polygon({
             paths: path,
-            fillColor: '#ff4444',
-            fillOpacity: 0.35,
-            strokeColor: '#cc0000',
+            fillColor: '#333333',
+            fillOpacity: 0.5,
+            strokeColor: '#555',
             strokeWeight: 1,
             clickable: false,
             map: _propMap,
@@ -1923,15 +1923,19 @@ function _onPropMapReady() {
       var totalAcres = (totalArea / 4046.86).toFixed(1);
       var excludeAcres = (excludeArea / 4046.86).toFixed(1);
 
-      // Show mowable area as a green overlay (property minus exclusions)
-      // For simplicity, shade the whole property green and overlay red on excluded areas
+      // Show mowable area as a soft green overlay
       if (window._autoDetectLawnPoly) window._autoDetectLawnPoly.setMap(null);
+      // Make the property boundary transparent (no fill) so lawn overlay is the only color
+      if (_propPolygon) {
+        _propPolygon.setOptions({fillOpacity: 0, strokeColor: '#fff', strokeWeight: 2, strokeOpacity: 0.8});
+      }
       window._autoDetectLawnPoly = new google.maps.Polygon({
         paths: _propPolygon.getPath(),
-        fillColor: '#6abb1e',
-        fillOpacity: 0.2,
-        strokeColor: '#6abb1e',
-        strokeWeight: 2,
+        fillColor: '#4ade80',
+        fillOpacity: 0.15,
+        strokeColor: '#22c55e',
+        strokeWeight: 1.5,
+        strokeOpacity: 0.6,
         clickable: false,
         map: _propMap,
         zIndex: 3
