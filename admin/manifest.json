@@ -1,0 +1,14 @@
+{
+  "name": "Smart Lawn NY — POS",
+  "short_name": "Smart Lawn",
+  "description": "Point of Sale & Inventory Management for Smart Lawn NY",
+  "start_url": "/admin/",
+  "display": "standalone",
+  "background_color": "#1d1d1f",
+  "theme_color": "#6abb1e",
+  "orientation": "any",
+  "icons": [
+    {"src": "/images/logo.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "/images/logo.png", "sizes": "512x512", "type": "image/png"}
+  ]
+}
