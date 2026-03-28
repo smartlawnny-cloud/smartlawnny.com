@@ -703,7 +703,10 @@ function renderPOS(){
   html+='<div class="form-group" style="margin:0;"><label>Payment</label><select id="posPayment" style="padding:8px;"><option>Credit Card</option><option>Cash</option><option>Check</option><option>Venmo</option><option>Zelle</option><option>Wire Transfer</option><option>Affirm</option></select></div>';
   html+='</div>';
   html+='<div class="form-group" style="margin:0;"><label>Discount ($)</label><input type="number" id="posDiscount" value="0" min="0" step="0.01" oninput="updateCartTotals()" style="padding:8px;"></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
   html+='<button class="btn btn-primary" onclick="completeSale()" style="padding:14px;font-size:1rem;"><i class="fas fa-check-circle"></i> Complete Sale</button>';
+  html+='<button class="btn btn-outline" onclick="sendPaymentLink()" style="padding:14px;font-size:.9rem;border-color:var(--blue);color:var(--blue);"><i class="fas fa-link"></i> Send Payment Link</button>';
+  html+='</div>';
   html+='</div>';
   html+='</div>';
 
@@ -898,6 +901,48 @@ function confirmSerialSale(){
   });
   closeModal();
   finalizeSale();
+}
+
+function sendPaymentLink(){
+  if(cart.length===0){toast('Cart is empty','error');return;}
+  var subtotal=0;cart.forEach(function(c){subtotal+=c.price*c.qty;});
+  var discount=parseFloat((document.getElementById('posDiscount')||{}).value)||0;
+  var taxable=Math.max(0,subtotal-discount);
+  var tax=Math.round(taxable*TAX_RATE*100)/100;
+  var total=taxable+tax;
+
+  // Build Stripe payment link URL with cart items
+  var desc=cart.map(function(c){return c.name+' x'+c.qty;}).join(', ');
+  var custId=document.getElementById('posCustomer').value||null;
+  var custEmail='';
+  if(custId){var c=customers.find(function(x){return x.id===custId;});if(c&&c.email)custEmail=c.email;}
+
+  // Create invoice-style payment link via Stripe API
+  toast('Creating payment link...');
+  fetch('https://api.stripe.com/v1/payment_links',{
+    method:'POST',
+    headers:{'Authorization':'Bearer pk_live_51TFOTRKHStBZPZdKhAI5ZhmF1HIkOSffIo6ExDRHNX3QtYsTJJ5JyN8XJ12JyOCvbShFrJ3ln0oE0h9mXZaiPnp800jydZUjmh','Content-Type':'application/x-www-form-urlencoded'},
+    body:'line_items[0][price_data][currency]=usd&line_items[0][price_data][product_data][name]='+encodeURIComponent('Smart Lawn NY — '+desc)+'&line_items[0][price_data][unit_amount]='+Math.round(total*100)+'&line_items[0][quantity]=1&after_completion[type]=redirect&after_completion[redirect][url]=https://smartlawnny.com/thank-you.html'
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.url){
+      var html='<div style="text-align:center;padding:20px;">';
+      html+='<div style="font-size:1.3rem;font-weight:800;margin-bottom:8px;">Payment Link Ready</div>';
+      html+='<div style="font-size:2rem;font-weight:900;color:var(--green);margin-bottom:16px;">'+money(total)+'</div>';
+      html+='<div style="font-size:.85rem;color:var(--g500);margin-bottom:20px;">'+escHtml(desc)+'</div>';
+      html+='<div style="background:var(--g50);border-radius:10px;padding:16px;margin-bottom:16px;word-break:break-all;">';
+      html+='<input type="text" value="'+d.url+'" id="payLinkUrl" readonly style="width:100%;padding:10px;border:1px solid var(--g300);border-radius:8px;font-size:.82rem;font-family:monospace;" onclick="this.select();document.execCommand(\'copy\');toast(\'Copied!\')">';
+      html+='<div style="font-size:.72rem;color:var(--g400);margin-top:6px;">Tap to copy</div></div>';
+      html+='<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">';
+      if(custEmail) html+='<a href="mailto:'+custEmail+'?subject=Payment%20Link%20-%20Smart%20Lawn%20NY&body=Hi!%20Here%20is%20your%20payment%20link:%20'+encodeURIComponent(d.url)+'" class="btn btn-outline" style="font-size:.85rem;"><i class="fas fa-envelope"></i> Email</a>';
+      html+='<a href="sms:?body=Smart%20Lawn%20NY%20Payment:%20'+encodeURIComponent(d.url)+'" class="btn btn-outline" style="font-size:.85rem;"><i class="fas fa-sms"></i> Text</a>';
+      html+='<button class="btn btn-outline" style="font-size:.85rem;" onclick="navigator.clipboard.writeText(\''+d.url+'\');toast(\'Copied!\')"><i class="fas fa-copy"></i> Copy</button>';
+      html+='</div></div>';
+      openModal('Payment Link',html,'<button class="btn btn-outline" onclick="closeModal()">Close</button>');
+    } else {
+      toast('Could not create link — use manual payment','error');
+      console.error(d);
+    }
+  }).catch(function(e){toast('Error: '+e.message,'error');});
 }
 
 function finalizeSale(){
