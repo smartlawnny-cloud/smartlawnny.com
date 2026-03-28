@@ -307,16 +307,35 @@ ul{list-style:none;}
   <div class="summary-box" id="summaryBox"></div>
 </div>
 
-<!-- ── CTA ── -->
-<div class="cta-section">
-  <h2>Ready to see the savings for your property?</h2>
-  <p>Get a free consultation and custom quote from Smart Lawn NY.</p>
-  <a href="/#contact" class="cta-btn"><i class="fas fa-paper-plane"></i> Get in Touch</a>
-  <div style="margin-top:16px;">
-    <a href="tel:9146477276" style="color:#6abb1e;font-weight:600;font-size:.9rem;"><i class="fas fa-phone" style="margin-right:4px;"></i>(914) 647-7276</a>
-    <span style="color:#d1d5db;margin:0 12px;">|</span>
-    <a href="mailto:smartlawnny@gmail.com" style="color:#6abb1e;font-weight:600;font-size:.9rem;"><i class="fas fa-envelope" style="margin-right:4px;"></i>smartlawnny@gmail.com</a>
+<!-- ── Lead Capture ── -->
+<div style="max-width:600px;margin:40px auto 0;padding:0 24px;">
+  <div style="background:#fff;border:2px solid #6abb1e;border-radius:16px;padding:32px;text-align:center;">
+    <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:4px;">Get Your Free Property Assessment</h2>
+    <p style="color:#6b7280;font-size:.9rem;margin-bottom:24px;">We'll visit your property, map it, and give you exact pricing. No obligation.</p>
+    <form id="leadForm" onsubmit="submitLead(event)" style="text-align:left;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <input type="text" id="leadName" placeholder="Your name" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;font-family:inherit;">
+        <input type="tel" id="leadPhone" placeholder="Phone number" required style="padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;font-family:inherit;">
+      </div>
+      <input type="email" id="leadEmail" placeholder="Email address" style="width:100%;padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;font-family:inherit;margin-bottom:12px;">
+      <input type="text" id="leadAddr" placeholder="Property address (for assessment)" style="width:100%;padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;font-family:inherit;margin-bottom:12px;">
+      <textarea id="leadNotes" placeholder="Anything else? (property size, current crew cost, timeline...)" rows="2" style="width:100%;padding:12px 14px;border:1px solid #d1d5db;border-radius:8px;font-size:.9rem;font-family:inherit;margin-bottom:16px;resize:vertical;"></textarea>
+      <button type="submit" class="cta-btn" style="width:100%;justify-content:center;"><i class="fas fa-paper-plane"></i> Request Free Assessment</button>
+    </form>
+    <div id="leadSuccess" style="display:none;padding:24px;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">✅</div>
+      <div style="font-size:1.1rem;font-weight:700;">We got your request!</div>
+      <div style="color:#6b7280;margin-top:4px;">We'll call you within 24 hours to schedule your free property assessment.</div>
+    </div>
+    <p style="font-size:.75rem;color:#9ca3af;margin-top:12px;">Or call <a href="tel:9146477276" style="color:#6abb1e;">(914) 647-7276</a> anytime</p>
   </div>
+</div>
+
+<!-- ── CTA ── -->
+<div class="cta-section" style="padding-top:24px;">
+  <a href="tel:9146477276" style="color:#6abb1e;font-weight:600;font-size:1rem;"><i class="fas fa-phone" style="margin-right:4px;"></i>(914) 647-7276</a>
+  <span style="color:#d1d5db;margin:0 12px;">|</span>
+  <a href="mailto:smartlawnny@gmail.com" style="color:#6abb1e;font-weight:600;font-size:1rem;"><i class="fas fa-envelope" style="margin-right:4px;"></i>smartlawnny@gmail.com</a>
 </div>
 
 <!-- ── Footer ── -->
@@ -515,6 +534,37 @@ document.getElementById('acresSlider').addEventListener('input',function(){updat
 document.getElementById('costSlider').addEventListener('input',function(){updateDisplayValues();calculate();});
 updateDisplayValues();
 calculate();
+
+function submitLead(e){
+  e.preventDefault();
+  var data={
+    name:document.getElementById('leadName').value,
+    phone:document.getElementById('leadPhone').value,
+    email:document.getElementById('leadEmail').value||null,
+    address:document.getElementById('leadAddr').value||null,
+    notes:document.getElementById('leadNotes').value||null,
+    city:'',state:'NY',
+    tags:'{calculator-lead}',
+    total_spent:0,total_orders:0
+  };
+  // Save to Supabase customers table
+  fetch('https://hsjodrniizoctxsznjsy.supabase.co/rest/v1/customers',{
+    method:'POST',
+    headers:{
+      'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
+      'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify(data)
+  }).then(function(){
+    document.getElementById('leadForm').style.display='none';
+    document.getElementById('leadSuccess').style.display='block';
+    if(typeof gtag==='function') gtag('event','lead_capture',{event_category:'Calculator',event_label:data.name});
+  }).catch(function(){
+    document.getElementById('leadForm').style.display='none';
+    document.getElementById('leadSuccess').style.display='block';
+  });
+}
 </script>
 
 <!--Start of Tawk.to Script-->
