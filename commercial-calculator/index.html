@@ -213,7 +213,7 @@ ul{list-style:none;}
       <div class="input-group">
         <label>Property Size (acres)</label>
         <div class="slider-wrap">
-          <input type="range" id="acresSlider" min="0.25" max="10" step="0.25" value="1">
+          <input type="range" id="acresSlider" min="0.1" max="10" step="0.1" value="1">
           <input type="number" id="acresInput" min="0.25" max="100" step="0.25" value="1" style="width:80px;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:.95rem;font-weight:700;text-align:right;font-family:inherit;" oninput="syncFromInput('acres')">
         </div>
       </div>
@@ -221,7 +221,7 @@ ul{list-style:none;}
       <div class="input-group">
         <label>What do you currently pay per cut?</label>
         <div class="slider-wrap">
-          <input type="range" id="costSlider" min="25" max="2000" step="25" value="150">
+          <input type="range" id="costSlider" min="25" max="2000" step="5" value="150">
           <input type="number" id="costInput" min="0" max="50000" step="25" value="150" style="width:100px;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:.95rem;font-weight:700;text-align:right;font-family:inherit;" oninput="syncFromInput('cost')">
         </div>
         <div class="hint">Average per visit from your current crew</div>
