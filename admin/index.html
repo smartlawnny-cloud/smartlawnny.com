@@ -2476,6 +2476,14 @@ function renderSettings(){
   html+='<button class="btn btn-outline" onclick="exportActivityCSV()"><i class="fas fa-clipboard-list"></i> Activity Log ('+activityLog.length+')</button>';
   html+='</div></div></div>';
 
+  // CSV Import
+  html+='<div class="card" style="margin-bottom:20px;"><div class="card-header"><h3><i class="fas fa-upload" style="color:var(--green);margin-right:6px;"></i>Import Products (CSV)</h3></div><div class="card-body">';
+  html+='<p style="font-size:.85rem;color:var(--g500);margin-bottom:12px;">Upload a CSV to bulk-add products. Required columns: <strong>name, price</strong>. Optional: brand, sku, cost, quantity, description, status.</p>';
+  html+='<div style="margin-bottom:12px;"><a href="#" onclick="downloadImportTemplate();return false;" style="font-size:.82rem;color:var(--blue);"><i class="fas fa-download" style="margin-right:4px;"></i>Download CSV template</a></div>';
+  html+='<input type="file" id="csvImport" accept=".csv" onchange="handleCSVImport(this)" style="padding:10px;border:1px solid var(--g300);border-radius:8px;width:100%;font-size:.85rem;">';
+  html+='<div id="csvPreview" style="margin-top:12px;"></div>';
+  html+='</div></div>';
+
   // Supabase Info
   html+='<div class="card" style="margin-bottom:20px;"><div class="card-header"><h3><i class="fas fa-server" style="color:var(--teal);margin-right:6px;"></i>System Info</h3></div><div class="card-body">';
   html+='<div style="font-size:.85rem;color:var(--g600);display:grid;gap:8px;">';
@@ -2489,6 +2497,73 @@ function renderSettings(){
   html+='<button class="btn btn-primary" onclick="saveSettings()" style="width:100%;justify-content:center;padding:14px;"><i class="fas fa-check"></i> Save Settings</button>';
   html+='</div>';
   return html;
+}
+
+function downloadImportTemplate(){
+  var rows=[['name','brand','sku','price','cost','quantity','low_stock_threshold','description','status'],['Example Mower','Navimow','NAV-001','2499.00','1715.00','5','2','Description here','active']];
+  downloadCSV('product-import-template.csv',rows);
+}
+
+function handleCSVImport(input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var text=e.target.result;
+    var lines=text.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+    if(lines.length<2){toast('CSV needs a header row + at least 1 data row','error');return;}
+    var headers=lines[0].split(',').map(function(h){return h.trim().replace(/"/g,'').toLowerCase();});
+    var nameIdx=headers.indexOf('name');
+    var priceIdx=headers.indexOf('price');
+    if(nameIdx===-1||priceIdx===-1){toast('CSV must have "name" and "price" columns','error');return;}
+
+    var items=[];
+    for(var i=1;i<lines.length;i++){
+      var cols=lines[i].match(/(".*?"|[^,]+)/g);
+      if(!cols)continue;
+      cols=cols.map(function(c){return c.trim().replace(/^"|"$/g,'');});
+      var item={
+        name:cols[nameIdx]||'',
+        brand:cols[headers.indexOf('brand')]||'',
+        sku:cols[headers.indexOf('sku')]||'',
+        price:parseFloat(cols[priceIdx])||0,
+        cost:parseFloat(cols[headers.indexOf('cost')])||0,
+        quantity:parseInt(cols[headers.indexOf('quantity')])||0,
+        low_stock_threshold:parseInt(cols[headers.indexOf('low_stock_threshold')])||5,
+        description:cols[headers.indexOf('description')]||'',
+        status:cols[headers.indexOf('status')]||'active'
+      };
+      if(item.name&&item.price>0) items.push(item);
+    }
+
+    if(items.length===0){toast('No valid products found in CSV','error');return;}
+
+    // Preview
+    var html='<div style="font-weight:700;margin-bottom:8px;">Preview: '+items.length+' products to import</div>';
+    html+='<div style="max-height:200px;overflow-y:auto;border:1px solid var(--g200);border-radius:8px;"><table class="data-table"><thead><tr><th>Name</th><th>Brand</th><th>SKU</th><th>Price</th><th>Cost</th><th>Qty</th></tr></thead><tbody>';
+    items.forEach(function(p){
+      html+='<tr><td>'+escHtml(p.name)+'</td><td>'+escHtml(p.brand)+'</td><td class="mono">'+escHtml(p.sku)+'</td><td>'+money(p.price)+'</td><td>'+money(p.cost)+'</td><td>'+p.quantity+'</td></tr>';
+    });
+    html+='</tbody></table></div>';
+    html+='<button class="btn btn-primary" onclick="confirmCSVImport()" style="margin-top:12px;"><i class="fas fa-upload"></i> Import '+items.length+' Products</button>';
+    document.getElementById('csvPreview').innerHTML=html;
+    window._csvImportItems=items;
+  };
+  reader.readAsText(file);
+}
+
+function confirmCSVImport(){
+  var items=window._csvImportItems;
+  if(!items||!items.length)return;
+  toast('Importing '+items.length+' products...');
+  var promises=items.map(function(item){
+    return sb('products',{method:'POST',body:JSON.stringify(item)});
+  });
+  Promise.all(promises).then(function(){
+    toast(items.length+' products imported!');
+    document.getElementById('csvPreview').innerHTML='<div style="color:var(--green);font-weight:700;"><i class="fas fa-check-circle"></i> '+items.length+' products imported successfully</div>';
+    window._csvImportItems=null;
+    loadAll();
+  }).catch(function(e){toast('Import error: '+e.message,'error');});
 }
 
 function saveSettings(){
@@ -2768,6 +2843,37 @@ function printAllLabels(){
   html+='</div>';
   openModal('All Product Labels ('+products.filter(function(p){return p.status==='active';}).length+')',html,'<button class="btn btn-outline" onclick="closeModal()">Close</button> <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print All</button>');
 }
+
+// ====================================================================
+// KEYBOARD SHORTCUTS
+// ====================================================================
+document.addEventListener('keydown',function(e){
+  // Don't trigger if typing in input/textarea/select
+  var tag=document.activeElement.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+
+  // ⌘K or Ctrl+K = Global search
+  if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();var s=document.getElementById('globalSearch');if(s){s.focus();s.select();}}
+  // Escape = close modal or clear search
+  if(e.key==='Escape'){closeModal();closeGlobalSearch();}
+  // 1-9 = quick nav
+  var navMap={'1':'dashboard','2':'pos','3':'products','4':'customers','5':'orders','6':'invoices','7':'purchasing','8':'service','9':'reports'};
+  if(navMap[e.key]&&!e.metaKey&&!e.ctrlKey&&!e.altKey){go(navMap[e.key]);}
+  // N = new (context-sensitive)
+  if(e.key==='n'&&!e.metaKey&&!e.ctrlKey){
+    if(currentPage==='products')openProductModal();
+    else if(currentPage==='customers')openCustomerModal();
+    else if(currentPage==='orders')openOrderModal();
+    else if(currentPage==='invoices')openInvoiceModal();
+    else if(currentPage==='purchasing')openPOModal();
+    else if(currentPage==='service')openTicketModal();
+    else if(currentPage==='subscriptions')openSubModal();
+  }
+  // S = go to POS/Sell
+  if(e.key==='s'&&!e.metaKey&&!e.ctrlKey){go('pos');}
+  // R = refresh data
+  if(e.key==='r'&&!e.metaKey&&!e.ctrlKey){refreshData();}
+});
 </script>
 </body>
 </html>
