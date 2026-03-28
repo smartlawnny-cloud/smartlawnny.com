@@ -67,7 +67,7 @@ ul{list-style:none;}
 
 /* ── Calculator ── */
 .calc-section{padding:32px 24px 0;}
-.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1100px;margin:0 auto;}
+.calc-grid{display:grid;grid-template-columns:1fr;gap:24px;max-width:800px;margin:0 auto;}
 .calc-inputs{background:#f9fafb;border-radius:16px;padding:32px;border:1px solid #e5e7eb;}
 .calc-inputs h2{font-size:1.15rem;font-weight:800;margin-bottom:24px;color:#1d1d1f;}
 .input-group{margin-bottom:20px;}
@@ -270,31 +270,35 @@ ul{list-style:none;}
         <span class="mval" id="monthlySavings">$0</span>
       </div>
 
-      <!-- Electric vs Gas -->
-      <div class="comparison">
-        <div class="comp-card smart" style="background:#f0fdf4;border-color:#bbf7d0;">
-          <div class="comp-label"><i class="fas fa-bolt" style="margin-right:4px;color:#16a34a;"></i>Robot Electric Cost</div>
-          <div class="comp-amount" id="electricCost" style="color:#16a34a;">$0</div>
-          <div class="comp-sub">per season (~$5-15/mo)</div>
-        </div>
-        <div class="comp-card current" style="background:#fef2f2;border-color:#fecaca;">
-          <div class="comp-label"><i class="fas fa-gas-pump" style="margin-right:4px;color:#dc2626;"></i>Crew Gas & Equipment</div>
-          <div class="comp-amount" id="gasCost" style="color:#dc2626;">$0</div>
-          <div class="comp-sub">per season (fuel, oil, blades)</div>
-        </div>
-      </div>
-
-      <!-- 5-Year Chart -->
-      <div class="chart-section">
-        <h3><i class="fas fa-chart-bar" style="margin-right:6px;color:#6abb1e;"></i>5-Year Cost Comparison</h3>
-        <div class="chart-bars" id="chartBars"></div>
-        <div class="chart-legend">
-          <span><span class="dot red"></span> Traditional</span>
-          <span><span class="dot green"></span> Smart Lawn NY</span>
-        </div>
-        <div class="cumulative-note" id="cumulativeSavings"></div>
-      </div>
     </div>
+  </div>
+</div>
+
+<!-- Full-width sections below the grid -->
+<div style="max-width:1100px;margin:0 auto;padding:20px 24px 0;">
+  <!-- Electric vs Gas -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+    <div class="comp-card smart" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px;text-align:center;">
+      <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#16a34a;margin-bottom:4px;"><i class="fas fa-bolt" style="margin-right:4px;"></i>Robot Electric Cost</div>
+      <div style="font-size:1.5rem;font-weight:800;color:#16a34a;" id="electricCost">$0</div>
+      <div style="font-size:.72rem;color:#6b7280;margin-top:2px;">per season (~$5-15/mo)</div>
+    </div>
+    <div class="comp-card current" style="background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:20px;text-align:center;">
+      <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#dc2626;margin-bottom:4px;"><i class="fas fa-gas-pump" style="margin-right:4px;"></i>Crew Gas & Equipment</div>
+      <div style="font-size:1.5rem;font-weight:800;color:#dc2626;" id="gasCost">$0</div>
+      <div style="font-size:.72rem;color:#6b7280;margin-top:2px;">per season (fuel, oil, blades)</div>
+    </div>
+  </div>
+
+  <!-- 5-Year Chart -->
+  <div class="chart-section">
+    <h3><i class="fas fa-chart-bar" style="margin-right:6px;color:#6abb1e;"></i>5-Year Cumulative Cost</h3>
+    <div class="chart-bars" id="chartBars"></div>
+    <div class="chart-legend">
+      <span><span class="dot red"></span> Traditional Crew</span>
+      <span><span class="dot green"></span> Smart Lawn NY</span>
+    </div>
+    <div class="cumulative-note" id="cumulativeSavings"></div>
   </div>
 </div>
 
