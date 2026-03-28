@@ -850,6 +850,48 @@ function updateCartTotals(){
 
 function completeSale(){
   if(cart.length===0){toast('Cart is empty','error');return;}
+
+  // Check if any cart items have serial numbers that need assigning
+  var needsSerial=[];
+  cart.forEach(function(item){
+    var avail=serialNumbers.filter(function(s){return s.product_id===item.product_id&&s.status==='in_stock';});
+    if(avail.length>0) needsSerial.push({item:item,serials:avail});
+  });
+
+  if(needsSerial.length>0&&!cart._serialsAssigned){
+    // Show serial number picker
+    var html='<p style="margin-bottom:16px;color:var(--g500);font-size:.85rem;">Select which unit(s) you\'re selling:</p>';
+    needsSerial.forEach(function(ns){
+      html+='<div style="margin-bottom:16px;"><div style="font-weight:700;margin-bottom:8px;">'+escHtml(ns.item.name)+' (×'+ns.item.qty+')</div>';
+      ns.serials.forEach(function(sn,i){
+        var checked=i<ns.item.qty?' checked':'';
+        html+='<label style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--g50);border-radius:8px;margin-bottom:4px;cursor:pointer;font-size:.88rem;">';
+        html+='<input type="checkbox" class="sn-pick" data-product="'+ns.item.product_id+'" data-sn-id="'+sn.id+'" value="'+escHtml(sn.serial_number)+'"'+checked+'>';
+        html+='<span class="mono" style="font-weight:600;">'+escHtml(sn.serial_number)+'</span>';
+        html+='</label>';
+      });
+      html+='</div>';
+    });
+    var footer='<button class="btn btn-outline" onclick="closeModal()">Cancel</button> <button class="btn btn-primary" onclick="confirmSerialSale()"><i class="fas fa-check-circle"></i> Confirm & Complete Sale</button>';
+    openModal('Assign Serial Numbers',html,footer);
+    return;
+  }
+
+  finalizeSale();
+}
+
+function confirmSerialSale(){
+  // Collect selected serial numbers
+  cart._serialsAssigned=true;
+  cart._selectedSerials=[];
+  document.querySelectorAll('.sn-pick:checked').forEach(function(cb){
+    cart._selectedSerials.push({product_id:cb.getAttribute('data-product'),sn_id:cb.getAttribute('data-sn-id'),serial:cb.value});
+  });
+  closeModal();
+  finalizeSale();
+}
+
+function finalizeSale(){
   var subtotal=0;
   cart.forEach(function(c){subtotal+=c.price*c.qty;});
   var discount=parseFloat((document.getElementById('posDiscount')||{}).value)||0;
@@ -888,20 +930,38 @@ function completeSale(){
         promises.push(sb('inventory_log',{method:'POST',body:JSON.stringify({product_id:item.product_id,change:-item.qty,reason:'Sale '+((result&&result[0])?result[0].receipt_number:'')})}));
       }
     });
+    // Mark serial numbers as sold
+    if(cart._selectedSerials&&cart._selectedSerials.length>0){
+      cart._selectedSerials.forEach(function(sn){
+        promises.push(sb('serial_numbers?id=eq.'+sn.sn_id,{method:'PATCH',body:JSON.stringify({
+          status:'sold',sale_id:saleId,customer_id:custId,sold_at:new Date().toISOString()
+        })}));
+      });
+    }
     return Promise.all(promises).then(function(){return result;});
   }).then(function(result){
     var receipt=result&&result[0]?result[0]:{};
-    showReceipt(receipt,cart,subtotal,tax,discount,total,custName,payment);
-    cart=[];
+    // Include serial numbers on receipt
+    var receiptSerials=cart._selectedSerials||[];
+    showReceipt(receipt,cart,subtotal,tax,discount,total,custName,payment,receiptSerials);
+    cart=[];cart._serialsAssigned=false;cart._selectedSerials=[];
     loadAll();
   }).catch(function(e){toast('Sale failed: '+e.message,'error');console.error(e);});
 }
 
-function showReceipt(sale,items,subtotal,tax,discount,total,custName,payment){
+function showReceipt(sale,items,subtotal,tax,discount,total,custName,payment,receiptSerials){
+  receiptSerials=receiptSerials||[];
   var html='<div class="receipt">';
   html+='<div class="r-header"><strong>'+escHtml(settings.bizName)+'</strong><br>'+escHtml(settings.bizPhone)+'<br>'+fmtDateTime(new Date())+'<br>'+(sale.receipt_number||'')+'</div>';
   items.forEach(function(item){
     html+='<div class="r-line"><span>'+escHtml(item.name)+' x'+item.qty+'</span><span>'+money(item.price*item.qty)+'</span></div>';
+    // Show serial numbers for this item
+    var itemSerials=receiptSerials.filter(function(s){return s.product_id===item.product_id;});
+    if(itemSerials.length>0){
+      itemSerials.forEach(function(sn){
+        html+='<div style="font-size:.75rem;color:var(--g500);padding-left:12px;">SN: '+escHtml(sn.serial)+'</div>';
+      });
+    }
   });
   html+='<div class="r-divider"></div>';
   html+='<div class="r-line"><span>Subtotal</span><span>'+money(subtotal)+'</span></div>';
@@ -929,7 +989,7 @@ function renderProducts(){
   else products.forEach(function(p){
     var margin=p.price>0?((p.price-(p.cost||0))/p.price):0;
     var stockSt=p.quantity<=0?'out':p.quantity<=(p.low_stock_threshold||5)?'low':'completed';
-    html+='<tr>';
+    html+='<tr onclick="viewProduct(\''+p.id+'\')" style="cursor:pointer;">';
     html+='<td><strong>'+escHtml(p.name)+'</strong><br><span style="font-size:.75rem;color:var(--g500);">'+escHtml(p.brand||'')+'</span></td>';
     html+='<td class="mono">'+escHtml(p.sku||'')+'</td>';
     html+='<td>'+money(p.price)+'</td>';
@@ -938,7 +998,7 @@ function renderProducts(){
     html+='<td>'+statusBadge(stockSt)+' <strong>'+p.quantity+'</strong></td>';
     html+='<td>'+statusBadge(p.status||'active')+'</td>';
     var snCount=serialNumbers.filter(function(s){return s.product_id===p.id;}).length;
-    html+='<td><button class="btn-icon" onclick="openProductModal(\''+p.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="openStockModal(\''+p.id+'\')" title="Stock"><i class="fas fa-boxes-stacked"></i></button> <button class="btn-icon" onclick="printLabel(\''+p.id+'\')" title="Print Label"><i class="fas fa-barcode"></i></button>'+(snCount>0?' <button class="btn-icon" onclick="viewSerials(\''+p.id+'\')" title="'+snCount+' Serial Numbers" style="color:var(--blue);"><i class="fas fa-fingerprint"></i></button>':'')+'</td>';
+    html+='<td><button class="btn-icon" onclick="event.stopPropagation();openProductModal(\''+p.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="event.stopPropagation();openStockModal(\''+p.id+'\')" title="Stock"><i class="fas fa-boxes-stacked"></i></button> <button class="btn-icon" onclick="event.stopPropagation();printLabel(\''+p.id+'\')" title="Print Label"><i class="fas fa-barcode"></i></button>'+(snCount>0?' <button class="btn-icon" onclick="event.stopPropagation();viewSerials(\''+p.id+'\')" title="'+snCount+' Serial Numbers" style="color:var(--blue);"><i class="fas fa-fingerprint"></i></button>':'')+'</td>';
     html+='</tr>';
   });
   html+='</tbody></table></div></div>';
@@ -1520,6 +1580,58 @@ function viewSerials(pid){
   });
   html+='</tbody></table>';
   openModal('Serial Numbers — '+escHtml(p.name),html,'<button class="btn btn-outline" onclick="closeModal()">Close</button>');
+}
+
+function viewProduct(id){
+  var p=products.find(function(x){return x.id===id;});
+  if(!p)return;
+  var margin=p.price>0?((p.price-(p.cost||0))/p.price):0;
+  var sns=serialNumbers.filter(function(s){return s.product_id===id;});
+  var productSales=sales.filter(function(s){return s.product_id===id;});
+  var cat=categories.find(function(c){return c.id===p.category_id;});
+
+  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">';
+
+  // Left: image + specs
+  html+='<div>';
+  if(p.image_url) html+='<div style="width:100%;height:200px;background:#f3f4f6 url(\''+escHtml(p.image_url)+'\') center/contain no-repeat;border-radius:12px;margin-bottom:16px;"></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.85rem;">';
+  html+='<div style="padding:10px;background:var(--g50);border-radius:8px;"><div style="color:var(--g500);font-size:.72rem;font-weight:600;">SKU</div><div class="mono" style="font-weight:700;">'+escHtml(p.sku||'—')+'</div></div>';
+  html+='<div style="padding:10px;background:var(--g50);border-radius:8px;"><div style="color:var(--g500);font-size:.72rem;font-weight:600;">Brand</div><div style="font-weight:700;">'+escHtml(p.brand||'—')+'</div></div>';
+  html+='<div style="padding:10px;background:var(--g50);border-radius:8px;"><div style="color:var(--g500);font-size:.72rem;font-weight:600;">Category</div><div style="font-weight:700;">'+escHtml(cat?cat.name:'—')+'</div></div>';
+  html+='<div style="padding:10px;background:var(--g50);border-radius:8px;"><div style="color:var(--g500);font-size:.72rem;font-weight:600;">Status</div><div>'+statusBadge(p.status||'active')+'</div></div>';
+  html+='</div>';
+  if(p.description) html+='<div style="margin-top:12px;font-size:.85rem;color:var(--g600);">'+escHtml(p.description)+'</div>';
+  html+='</div>';
+
+  // Right: financials + serial numbers
+  html+='<div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">';
+  html+='<div style="padding:14px;background:var(--green-light);border-radius:10px;text-align:center;"><div style="font-size:.72rem;font-weight:600;color:#166534;">Retail Price</div><div style="font-size:1.3rem;font-weight:800;color:#166534;">'+money(p.price)+'</div></div>';
+  html+='<div style="padding:14px;background:var(--g100);border-radius:10px;text-align:center;"><div style="font-size:.72rem;font-weight:600;color:var(--g600);">Cost</div><div style="font-size:1.3rem;font-weight:800;">'+money(p.cost)+'</div></div>';
+  html+='<div style="padding:14px;background:var(--g50);border-radius:10px;text-align:center;"><div style="font-size:.72rem;font-weight:600;color:var(--g600);">Margin</div><div style="font-size:1.3rem;font-weight:800;color:'+(margin>=.3?'var(--green)':'var(--orange)')+';">'+pct(margin)+'</div></div>';
+  html+='<div style="padding:14px;background:var(--g50);border-radius:10px;text-align:center;"><div style="font-size:.72rem;font-weight:600;color:var(--g600);">In Stock</div><div style="font-size:1.3rem;font-weight:800;">'+p.quantity+'</div></div>';
+  html+='</div>';
+
+  // Serial numbers
+  if(sns.length>0){
+    html+='<div style="font-weight:700;font-size:.85rem;margin-bottom:8px;"><i class="fas fa-fingerprint" style="color:var(--blue);margin-right:4px;"></i>Serial Numbers ('+sns.length+')</div>';
+    sns.forEach(function(sn){
+      html+='<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--g50);border-radius:6px;margin-bottom:4px;font-size:.82rem;"><span class="mono" style="font-weight:600;">'+escHtml(sn.serial_number)+'</span>'+statusBadge(sn.status)+'</div>';
+    });
+  }
+
+  // Recent sales of this product
+  if(productSales.length>0){
+    html+='<div style="font-weight:700;font-size:.85rem;margin:12px 0 8px;"><i class="fas fa-receipt" style="color:var(--green);margin-right:4px;"></i>Sales History ('+productSales.length+')</div>';
+    productSales.slice(0,5).forEach(function(s){
+      html+='<div style="display:flex;justify-content:space-between;padding:6px 10px;background:var(--g50);border-radius:6px;margin-bottom:4px;font-size:.82rem;"><span>'+fmtDate(s.created_at)+'</span><span>'+escHtml(s.customer_name||'Walk-in')+'</span><strong>'+money(s.total)+'</strong></div>';
+    });
+  }
+  html+='</div></div>';
+
+  var footer='<button class="btn btn-outline" onclick="closeModal()">Close</button> <button class="btn btn-outline" onclick="closeModal();openStockModal(\''+id+'\')"><i class="fas fa-boxes-stacked"></i> Adjust Stock</button> <button class="btn btn-primary" onclick="closeModal();openProductModal(\''+id+'\')"><i class="fas fa-pen"></i> Edit</button>';
+  openModal(escHtml(p.name),html,footer);
 }
 
 function initCharts(){/* Charts rendered inline via CSS */}
