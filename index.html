@@ -597,9 +597,7 @@
           <h4 id="propAddrLabel">Property Analysis</h4>
           <div class="pstat-row"><span class="label">Total Lot</span><span class="val" id="pLot">—</span></div>
           <div class="pstat-row"><span class="label">Mowable Area</span><span class="val" id="pMow">—</span></div>
-          <div id="currentCostEstimate" style="display:none;margin-top:8px;padding:10px;background:#fff5f5;border:1px solid #fecaca;border-radius:8px;font-size:.8rem;text-align:center;">
-            Properties this size typically pay <strong id="estCurrentCost">$X,XXX–$X,XXX</strong>/year for lawn service
-          </div>
+          <div id="currentCostEstimate" style="display:none;"></div>
           <div style="display:flex;gap:4px;">
             <button id="btn2D" onclick="_setMapView('2d')" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">2D</button>
             <button id="btn3D" onclick="_setMapView('3d')" style="padding:3px 10px;font-size:.7rem;font-weight:600;border:1px solid #ddd;border-radius:4px;background:#fff;color:#666;cursor:pointer;">3D</button>
@@ -708,18 +706,14 @@
           </div>
 
           <!-- Generate Quote / Share -->
-          <div id="quoteActions" style="display:none;margin-top:10px;background:#f0f8e8;border:1px solid #6abb1e;border-radius:8px;padding:10px;">
-            <div style="font-size:.7rem;font-weight:700;color:#4a8a10;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Share This Quote</div>
-            <div style="display:flex;flex-wrap:wrap;gap:4px;">
-              <button onclick="_generateShareLink()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#6abb1e;color:#fff;cursor:pointer;">🔗 Copy Link</button>
-              <button onclick="_textQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#2196f3;color:#fff;cursor:pointer;">💬 Text</button>
-              <button onclick="_emailQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1d1d1f;color:#fff;cursor:pointer;">📧 Email</button>
-              <button onclick="_printQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#fff;color:#666;border:1px solid #ccc;cursor:pointer;">📄 Quick Quote</button>
-              <button onclick="_printDetailedQuote()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#1a5c5c;color:#fff;cursor:pointer;">📋 Detailed Proposal</button>
-              <button onclick="_sendToRep()" style="padding:5px 10px;font-size:.7rem;font-weight:600;border:none;border-radius:4px;background:#ff9800;color:#fff;cursor:pointer;">📲 Send to Rep</button>
+          <div id="quoteActions" style="display:none;margin-top:10px;">
+            <button onclick="_proceedToCheckout()" style="width:100%;padding:14px;font-size:1rem;font-weight:700;border:none;border-radius:10px;background:#6abb1e;color:#fff;cursor:pointer;letter-spacing:.5px;margin-bottom:8px;">🛒 Proceed to Checkout</button>
+            <div style="display:flex;gap:4px;">
+              <button onclick="_generateShareLink()" style="flex:1;padding:8px;font-size:.75rem;font-weight:600;border:1px solid #ddd;border-radius:6px;background:#fff;color:#666;cursor:pointer;">🔗 Share</button>
+              <button onclick="_textQuote()" style="flex:1;padding:8px;font-size:.75rem;font-weight:600;border:1px solid #ddd;border-radius:6px;background:#fff;color:#666;cursor:pointer;">💬 Text</button>
+              <button onclick="_printQuote()" style="flex:1;padding:8px;font-size:.75rem;font-weight:600;border:1px solid #ddd;border-radius:6px;background:#fff;color:#666;cursor:pointer;">📄 Print</button>
             </div>
-            <div id="shareLinkCopied" style="display:none;font-size:.7rem;color:#4a8a10;margin-top:4px;font-weight:600;">✓ Link copied to clipboard!</div>
-            <button onclick="_proceedToCheckout()" style="margin-top:8px;width:100%;padding:12px;font-size:.9rem;font-weight:700;border:none;border-radius:8px;background:#6abb1e;color:#fff;cursor:pointer;letter-spacing:.5px;">🛒 Proceed to Checkout</button>
+            <div id="shareLinkCopied" style="display:none;font-size:.7rem;color:#4a8a10;margin-top:4px;font-weight:600;">✓ Link copied!</div>
           </div>
 
           <!-- Clear button -->
