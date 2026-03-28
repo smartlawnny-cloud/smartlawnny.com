@@ -453,14 +453,15 @@ function formatMoney(n){return '$'+Math.round(n).toLocaleString();}
 // ═══════════════════════════════════
 function renderChart(crewSeason,smartSeason){
   var c=document.getElementById('chartBars');c.innerHTML='';
-  var max=crewSeason*5;if(max===0)max=1;
+  var max=crewSeason;if(max===0)max=1;
+  var cumSavings=0;
   for(var y=1;y<=5;y++){
-    var cc=crewSeason*y,sc=smartSeason*y;
+    cumSavings+=(crewSeason-smartSeason);
     var d=document.createElement('div');d.className='chart-year';
-    d.innerHTML='<div class="bars"><div class="bar current" style="height:'+(cc/max*100)+'%"><span class="bar-label">'+formatMoney(cc)+'</span></div><div class="bar smart" style="height:'+(sc/max*100)+'%"><span class="bar-label">'+formatMoney(sc)+'</span></div></div><span class="year-label">Year '+y+'</span>';
+    d.innerHTML='<div class="bars"><div class="bar current" style="height:'+(crewSeason/max*100)+'%"><span class="bar-label">'+formatMoney(crewSeason)+'</span></div><div class="bar smart" style="height:'+(smartSeason/max*100)+'%"><span class="bar-label">'+formatMoney(smartSeason)+'</span></div></div><span class="year-label">Year '+y+'</span>';
     c.appendChild(d);
   }
-  document.getElementById('cumulativeSavings').textContent='5-Year Savings: '+formatMoney(Math.max(0,(crewSeason-smartSeason)*5));
+  document.getElementById('cumulativeSavings').textContent='5-Year Total Savings: '+formatMoney(Math.max(0,cumSavings));
 }
 
 // ═══════════════════════════════════
