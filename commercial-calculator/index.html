@@ -270,6 +270,20 @@ ul{list-style:none;}
         <span class="mval" id="monthlySavings">$0</span>
       </div>
 
+      <!-- Electric vs Gas -->
+      <div class="comparison">
+        <div class="comp-card smart" style="background:#f0fdf4;border-color:#bbf7d0;">
+          <div class="comp-label"><i class="fas fa-bolt" style="margin-right:4px;color:#16a34a;"></i>Robot Electric Cost</div>
+          <div class="comp-amount" id="electricCost" style="color:#16a34a;">$0</div>
+          <div class="comp-sub">per season (~$5-15/mo)</div>
+        </div>
+        <div class="comp-card current" style="background:#fef2f2;border-color:#fecaca;">
+          <div class="comp-label"><i class="fas fa-gas-pump" style="margin-right:4px;color:#dc2626;"></i>Crew Gas & Equipment</div>
+          <div class="comp-amount" id="gasCost" style="color:#dc2626;">$0</div>
+          <div class="comp-sub">per season (fuel, oil, blades)</div>
+        </div>
+      </div>
+
       <!-- 5-Year Chart -->
       <div class="chart-section">
         <h3><i class="fas fa-chart-bar" style="margin-right:6px;color:#6abb1e;"></i>5-Year Cost Comparison</h3>
@@ -449,8 +463,17 @@ function calculate(){
   document.getElementById('perCutCrew').textContent=formatMoney(costPerVisit);
   document.getElementById('perCutSmart').textContent='$'+perDay;
 
-  // 5-Year chart
-  renderChart(crewSeason,smartSeason);
+  // Electric vs Gas costs
+  var electricPerMonth=acres<=1?8:acres<=3?12:18; // rough estimate
+  var electricSeason=electricPerMonth*6;
+  var gasPerVisit=acres<=1?15:acres<=3?35:60; // fuel + wear per crew visit
+  var gasSeason=gasPerVisit*SEASON_VISITS;
+  document.getElementById('electricCost').textContent=formatMoney(electricSeason);
+  document.getElementById('gasCost').textContent=formatMoney(gasSeason);
+
+  // 5-Year chart with amortization (mower cost goes down over time)
+  var mowerCost=setup.tier.monthly*setup.count*BILLING_MONTHS; // same each year for MaaS
+  renderChart(crewSeason,smartSeason,setup);
 
   // Summary
   var savingsNote=savings>0?'That\'s <strong style="color:#6abb1e;">'+formatMoney(savings)+' saved per season</strong> ('+savingsPct+'%) and <strong style="color:#6abb1e;">'+formatMoney(savings*5)+' over 5 years</strong>.':'';
@@ -465,17 +488,20 @@ function formatMoney(n){return '$'+Math.round(n).toLocaleString();}
 // ═══════════════════════════════════
 // 5-YEAR BAR CHART
 // ═══════════════════════════════════
-function renderChart(crewSeason,smartSeason){
+function renderChart(crewSeason,smartSeason,setup){
   var c=document.getElementById('chartBars');c.innerHTML='';
-  var max=crewSeason;if(max===0)max=1;
-  var cumSavings=0;
+  // Traditional: same every year. Smart Lawn MaaS: same every year.
+  // Show cumulative total to make the gap dramatic
+  var max=crewSeason*5;if(max===0)max=1;
+  var cumCrew=0,cumSmart=0;
   for(var y=1;y<=5;y++){
-    cumSavings+=(crewSeason-smartSeason);
+    cumCrew+=crewSeason;
+    cumSmart+=smartSeason;
     var d=document.createElement('div');d.className='chart-year';
-    d.innerHTML='<div class="bars"><div class="bar current" style="height:'+(crewSeason/max*100)+'%"><span class="bar-label">'+formatMoney(crewSeason)+'</span></div><div class="bar smart" style="height:'+(smartSeason/max*100)+'%"><span class="bar-label">'+formatMoney(smartSeason)+'</span></div></div><span class="year-label">Year '+y+'</span>';
+    d.innerHTML='<div class="bars"><div class="bar current" style="height:'+(cumCrew/max*100)+'%"><span class="bar-label">'+formatMoney(cumCrew)+'</span></div><div class="bar smart" style="height:'+(cumSmart/max*100)+'%"><span class="bar-label">'+formatMoney(cumSmart)+'</span></div></div><span class="year-label">Year '+y+'</span>';
     c.appendChild(d);
   }
-  document.getElementById('cumulativeSavings').textContent='5-Year Total Savings: '+formatMoney(Math.max(0,cumSavings));
+  document.getElementById('cumulativeSavings').textContent='5-Year Total: '+formatMoney(cumCrew)+' (crew) vs '+formatMoney(cumSmart)+' (Smart Lawn) — Save '+formatMoney(Math.max(0,cumCrew-cumSmart));
 }
 
 // ═══════════════════════════════════
