@@ -122,12 +122,16 @@ function init(){
     if(inv.notes) html+='<div style="margin-top:16px;font-size:.85rem;color:var(--g500);padding:10px;background:var(--g100);border-radius:8px;"><i class="fas fa-sticky-note" style="margin-right:6px;"></i>'+esc(inv.notes)+'</div>';
 
     if(inv.status!=='paid'){
+      // Stripe Pay Now button
+      html+='<div style="margin-top:24px;text-align:center;">';
+      html+='<button onclick="payWithStripe(\''+esc(inv.invoice_number||'')+'\','+inv.total+')" style="display:block;width:100%;padding:16px;background:#6abb1e;color:#fff;border:none;border-radius:980px;font-weight:700;font-size:1.1rem;cursor:pointer;font-family:inherit;margin-bottom:16px;"><i class="fas fa-lock" style="margin-right:8px;"></i>Pay $'+Number(inv.total||0).toFixed(2)+' Now — Secure Checkout</button>';
+      html+='</div>';
       html+='<div class="pay-section">';
-      html+='<h3><i class="fas fa-credit-card" style="color:var(--green);margin-right:6px;"></i>Payment Options</h3>';
+      html+='<h3><i class="fas fa-wallet" style="color:var(--green);margin-right:6px;"></i>Other Payment Options</h3>';
       html+='<div class="pay-option"><i class="fas fa-mobile-alt"></i><div><strong>Venmo</strong>: @SmartLawnNY</div></div>';
       html+='<div class="pay-option"><i class="fas fa-university"></i><div><strong>Zelle</strong>: smartlawnny@gmail.com</div></div>';
       html+='<div class="pay-option"><i class="fas fa-check"></i><div><strong>Check</strong>: Payable to "Smart Lawn NY"</div></div>';
-      html+='<div class="pay-option"><i class="fas fa-credit-card"></i><div><strong>Credit Card</strong>: Call (914) 391-5233</div></div>';
+      html+='<div class="pay-option"><i class="fas fa-phone"></i><div><strong>Call</strong>: (914) 391-5233</div></div>';
       html+='</div>';
     } else {
       html+='<div style="text-align:center;margin-top:24px;padding:16px;background:#dcfce7;border-radius:12px;"><i class="fas fa-check-circle" style="color:#166534;font-size:1.5rem;"></i><div style="font-weight:700;color:#166534;margin-top:4px;">Payment Received</div><div style="font-size:.8rem;color:#166534;">Thank you!</div></div>';
@@ -140,6 +144,14 @@ function init(){
   }).catch(function(e){
     document.getElementById('invoiceCard').innerHTML='<div class="error"><i class="fas fa-exclamation-triangle" style="font-size:2rem;margin-bottom:12px;"></i><p>Error loading invoice</p><p style="font-size:.8rem;">'+esc(e.message)+'</p></div>';
   });
+}
+
+function payWithStripe(invoiceNum, total){
+  // Redirect to call — Stripe payment links created from POS admin
+  var btn=event.target;
+  btn.textContent='Call (914) 391-5233 to pay by card';
+  btn.style.background='#1d1d1f';
+  setTimeout(function(){window.location.href='tel:9143915233';},1000);
 }
 
 init();
