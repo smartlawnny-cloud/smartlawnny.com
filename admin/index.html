@@ -211,6 +211,7 @@ input,select,textarea{font-family:inherit;}
   .stat-card .value{font-size:1.3rem;}
   .stat-card .label{font-size:.6rem;}
 }
+@keyframes spin{to{transform:rotate(360deg);}}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;}
 .sidebar-overlay.show{display:block;}
 
@@ -402,6 +403,8 @@ function sb(path,opts){
 // DATA LOADING
 // ====================================================================
 function loadAll(){
+  var mc=document.getElementById('mainContent');
+  if(mc) mc.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;color:var(--g400);"><div style="width:40px;height:40px;border:3px solid var(--g200);border-top-color:var(--green);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px;"></div><div style="font-size:.9rem;">Loading data...</div></div>';
   Promise.all([
     sb('products?select=*&order=brand,name').then(function(d){products=d||[];}),
     sb('customers?select=*&order=name').then(function(d){customers=d||[];}).catch(function(){customers=[];}),
