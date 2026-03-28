@@ -676,8 +676,8 @@
             <div style="display:flex;gap:6px;align-items:center;">
               <label style="font-size:.7rem;color:#555;flex:1;">Months/year</label>
               <select id="userMowMonths" onchange="_recalcUserROI()" style="padding:3px 4px;font-size:.7rem;border:1px solid #ddd;border-radius:4px;">
-                <option value="6">6</option>
-                <option value="7" selected>7</option>
+                <option value="6" selected>6</option>
+                <option value="7">7</option>
                 <option value="8">8</option>
                 <option value="9">9</option>
                 <option value="12">12</option>
@@ -1505,13 +1505,13 @@
         </div>
         <span style="font-size:.9rem;font-weight:700;" id="checkoutInstallPrice"></span>
       </label>
-      <label style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer;" id="checkoutMappingRow">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;" id="checkoutMappingRow">
         <div style="display:flex;align-items:center;gap:8px;">
-          <input type="checkbox" id="chkMapping" checked onchange="_recalcCheckout()" style="width:18px;height:18px;accent-color:#6abb1e;">
-          <div><div style="font-size:.9rem;font-weight:600;">RTK Property Mapping</div><div style="font-size:.75rem;color:#86868b;">Satellite survey, boundary mapping, zone optimization</div></div>
+          <i class="fas fa-check-circle" style="color:#6abb1e;font-size:1.1rem;"></i>
+          <div><div style="font-size:.9rem;font-weight:600;">RTK Property Mapping</div><div style="font-size:.75rem;color:#6abb1e;font-weight:600;">Included FREE</div></div>
         </div>
-        <span style="font-size:.9rem;font-weight:700;" id="checkoutMappingPrice"></span>
-      </label>
+        <span style="font-size:.9rem;font-weight:700;color:#6abb1e;">$0</span>
+      </div>
     </div>
 
     <!-- Discount Code -->
@@ -2511,8 +2511,8 @@ function _onPropMapReady() {
       // Show current lawn care cost estimate
       var costEstEl=document.getElementById('currentCostEstimate');
       if(costEstEl){
-        var lowEst=Math.round(total*150*26);
-        var highEst=Math.round(total*250*26);
+        var lowEst=Math.round(total*75*25);
+        var highEst=Math.round(total*150*25);
         document.getElementById('estCurrentCost').textContent='$'+lowEst.toLocaleString()+'–$'+highEst.toLocaleString();
         costEstEl.style.display='block';
       }
@@ -2715,7 +2715,7 @@ function _onPropMapReady() {
     if (!d.zones.length) return;
     var equipCost = d.totalFleetCost;
     var installCost = document.getElementById('chkInstall').checked ? d.installCost : 0;
-    var mappingCost = document.getElementById('chkMapping').checked ? d.mappingCost : 0;
+    var mappingCost = 0; // RTK mapping now included free
     var planCost = parseInt(document.getElementById('servicePlanSelect').value) || 0;
     var discount = 0;
     if (_activeDiscount) { discount = Math.round(equipCost * _activeDiscount.pct / 100); }
@@ -2882,7 +2882,7 @@ function _onPropMapReady() {
     if (!d.zones.length) return;
     var equipCost = d.totalFleetCost;
     var installCost = document.getElementById('chkInstall').checked ? d.installCost : 0;
-    var mappingCost = document.getElementById('chkMapping').checked ? d.mappingCost : 0;
+    var mappingCost = 0; // RTK mapping now included free
     var planCost = parseInt(document.getElementById('servicePlanSelect').value) || 0;
     var discount = 0;
     if (_activeDiscount) {
