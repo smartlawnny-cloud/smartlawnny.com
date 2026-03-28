@@ -1173,10 +1173,26 @@ function viewCustomer(id){
   var custOrders=orders.filter(function(o){return o.customer_id===id;});
   var custInvoices=invoices.filter(function(i){return i.customer_id===id;});
 
-  var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">';
-  html+='<div class="stat-card"><div class="label">Total Spent</div><div class="value" style="color:var(--green);">'+money(c.total_spent)+'</div></div>';
-  html+='<div class="stat-card"><div class="label">Orders</div><div class="value">'+(c.total_orders||0)+'</div></div>';
+  // Customer metrics
+  var avgOrder=custSales.length>0?(Number(c.total_spent)||0)/custSales.length:0;
+  var firstPurchase=custSales.length>0?custSales[custSales.length-1].created_at:null;
+  var daysSinceFirst=firstPurchase?Math.floor((Date.now()-new Date(firstPurchase))/(86400000)):0;
+  var custSubs=subscriptions.filter(function(s){return s.customer_id===id&&s.status==='active';});
+  var mrrValue=0;custSubs.forEach(function(s){mrrValue+=Number(s.monthly_rate)||0;});
+  var ltv=(Number(c.total_spent)||0)+(mrrValue*6*5); // current spend + projected 5yr MaaS
+
+  var html='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">';
+  html+='<div class="stat-card"><div class="label">Lifetime Value</div><div class="value" style="color:var(--green);font-size:1.2rem;">'+money(ltv)+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Total Spent</div><div class="value" style="font-size:1.2rem;">'+money(c.total_spent)+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Avg Order</div><div class="value" style="font-size:1.2rem;">'+money(avgOrder)+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Purchases</div><div class="value" style="font-size:1.2rem;">'+(c.total_orders||0)+'</div></div>';
   html+='</div>';
+  if(custSubs.length>0){
+    html+='<div style="margin-bottom:16px;padding:12px 16px;background:var(--blue-light);border-radius:10px;border:1px solid #93c5fd;"><i class="fas fa-sync-alt" style="color:var(--blue);margin-right:6px;"></i><strong style="color:var(--blue);">Active MaaS:</strong> '+custSubs.length+' subscription'+(custSubs.length>1?'s':'')+' — <strong>'+money(mrrValue)+'/mo</strong></div>';
+  }
+  if(firstPurchase){
+    html+='<div style="margin-bottom:16px;font-size:.82rem;color:var(--g500);"><i class="fas fa-calendar" style="margin-right:4px;"></i>Customer since '+fmtDate(firstPurchase)+' ('+daysSinceFirst+' days)</div>';
+  }
 
   // Contact info
   html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;font-size:.88rem;">';
@@ -1217,7 +1233,28 @@ function viewCustomer(id){
     html+='</tbody></table>';
   }
 
-  var footer='<button class="btn btn-outline" onclick="closeModal()">Close</button> <button class="btn btn-primary" onclick="closeModal();openCustomerModal(\''+id+'\')"><i class="fas fa-pen"></i> Edit</button>';
+  // Service tickets
+  var custTickets=serviceTickets.filter(function(t){return t.customer_id===id;});
+  if(custTickets.length>0){
+    html+='<div style="margin-bottom:8px;font-weight:700;font-size:.9rem;"><i class="fas fa-wrench" style="color:var(--orange);margin-right:4px;"></i>Service Tickets ('+custTickets.length+')</div>';
+    html+='<table class="data-table" style="margin-bottom:16px;"><thead><tr><th>Ticket</th><th>Date</th><th>Type</th><th>Status</th><th>Cost</th></tr></thead><tbody>';
+    custTickets.forEach(function(t){
+      html+='<tr><td class="mono">'+escHtml(t.ticket_number||'—')+'</td><td>'+fmtDate(t.created_at)+'</td><td>'+statusBadge(t.type)+'</td><td>'+statusBadge(t.status)+'</td><td>'+money(t.total_cost)+'</td></tr>';
+    });
+    html+='</tbody></table>';
+  }
+
+  // Subscriptions
+  if(custSubs.length>0){
+    html+='<div style="margin-bottom:8px;font-weight:700;font-size:.9rem;"><i class="fas fa-sync-alt" style="color:var(--blue);margin-right:4px;"></i>MaaS Subscriptions ('+custSubs.length+')</div>';
+    html+='<table class="data-table"><thead><tr><th>Plan</th><th>Monthly</th><th>Property</th><th>Status</th></tr></thead><tbody>';
+    custSubs.forEach(function(s){
+      html+='<tr><td>'+escHtml(s.plan_name||'—')+'</td><td style="color:var(--green);font-weight:700;">'+money(s.monthly_rate)+'</td><td>'+escHtml(s.property_address||'—')+'</td><td>'+statusBadge(s.status)+'</td></tr>';
+    });
+    html+='</tbody></table>';
+  }
+
+  var footer='<button class="btn btn-outline" onclick="closeModal()">Close</button> <button class="btn btn-outline" onclick="closeModal();openTicketModal();setTimeout(function(){$(\'tCust\').value=\''+id+'\';autoFillSubCust();},100)"><i class="fas fa-wrench"></i> New Ticket</button> <button class="btn btn-primary" onclick="closeModal();openCustomerModal(\''+id+'\')"><i class="fas fa-pen"></i> Edit</button>';
   openModal(escHtml(c.name),html,footer);
 }
 
