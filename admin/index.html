@@ -263,6 +263,7 @@ input,select,textarea{font-family:inherit;}
         <button class="nav-item" onclick="go('orders',this)"><i class="fas fa-truck"></i>Orders</button>
         <button class="nav-item" onclick="go('invoices',this)"><i class="fas fa-file-invoice-dollar"></i>Invoices</button>
         <button class="nav-item" onclick="go('purchasing',this)"><i class="fas fa-dolly"></i>Purchasing</button>
+        <button class="nav-item" onclick="go('service',this)"><i class="fas fa-wrench"></i>Service</button>
         <div class="nav-section">Insights</div>
         <button class="nav-item" onclick="go('reports',this)"><i class="fas fa-chart-bar"></i>Reports</button>
         <button class="nav-item" onclick="go('history',this)"><i class="fas fa-receipt"></i>Sales History</button>
@@ -333,7 +334,7 @@ var currentUser = null;
 // ====================================================================
 // STATE
 // ====================================================================
-var products = [], customers = [], sales = [], orders = [], invoices = [], categories = [], activityLog = [], purchaseOrders = [], serialNumbers = [];
+var products = [], customers = [], sales = [], orders = [], invoices = [], categories = [], activityLog = [], purchaseOrders = [], serialNumbers = [], serviceTickets = [];
 var cart = [];
 var currentPage = 'dashboard';
 var settings = {taxRate:0.08375,bizName:'Smart Lawn NY',bizPhone:'(914) 391-5233',bizEmail:'smartlawnny@gmail.com',bizAddr:'Westchester County, NY',receiptFooter:'Thank you for your purchase!'};
@@ -406,6 +407,7 @@ function loadAll(){
     sb('categories?select=*&order=sort_order').then(function(d){categories=d||[];}).catch(function(){categories=[];}),
     sb('inventory_log?select=*,products(name)&order=created_at.desc&limit=200').then(function(d){activityLog=d||[];}).catch(function(){activityLog=[];}),
     sb('serial_numbers?select=*,products(name,sku)&order=created_at.desc').then(function(d){serialNumbers=d||[];}).catch(function(){serialNumbers=[];}),
+    sb('service_tickets?select=*&order=created_at.desc&limit=200').then(function(d){serviceTickets=d||[];}).catch(function(){serviceTickets=[];}),
     sb('purchase_orders?select=*&order=created_at.desc&limit=100').then(function(d){purchaseOrders=d||[];}).catch(function(){purchaseOrders=[];})
   ]).then(function(){
     // Load saved settings from localStorage
@@ -439,7 +441,7 @@ function closeSidebar(){
 // PAGE RENDERER
 // ====================================================================
 function renderPage(){
-  var titles={dashboard:'Dashboard',pos:'POS / Sell',products:'Products',customers:'Customers',orders:'Orders',invoices:'Invoices',purchasing:'Purchasing',reports:'Reports',history:'Sales History',activity:'Activity Log',settings:'Settings'};
+  var titles={dashboard:'Dashboard',pos:'POS / Sell',products:'Products',customers:'Customers',orders:'Orders',invoices:'Invoices',purchasing:'Purchasing',service:'Service',reports:'Reports',history:'Sales History',activity:'Activity Log',settings:'Settings'};
   document.getElementById('pageTitle').textContent=titles[currentPage]||'';
   var mc=document.getElementById('mainContent');
   switch(currentPage){
@@ -450,6 +452,7 @@ function renderPage(){
     case 'orders': mc.innerHTML=renderOrders(); break;
     case 'invoices': mc.innerHTML=renderInvoices(); break;
     case 'purchasing': mc.innerHTML=renderPurchasing(); break;
+    case 'service': mc.innerHTML=renderService(); break;
     case 'history': mc.innerHTML=renderHistory(); break;
     case 'activity': mc.innerHTML=renderActivity(); break;
     case 'settings': mc.innerHTML=renderSettings(); break;
@@ -2145,6 +2148,128 @@ function exportPOsCSV(){
     rows.push([po.po_number||'',fmtDate(po.order_date),po.supplier_name,po.invoice_number||'',po.subtotal||0,po.shipping||0,po.tax||0,po.total||0,po.status,po.notes||'']);
   });
   downloadCSV('smart-lawn-purchase-orders-'+new Date().toISOString().slice(0,10)+'.csv',rows);
+}
+
+// ====================================================================
+// SERVICE TICKETS
+// ====================================================================
+function renderService(){
+  var html='<div class="search-bar"><input type="text" id="svcSearch" placeholder="Search tickets..." oninput="filterService()"><div style="display:flex;gap:8px;"><button class="btn btn-outline" onclick="exportServiceCSV()"><i class="fas fa-download"></i> CSV</button><button class="btn btn-primary" onclick="openTicketModal()"><i class="fas fa-plus"></i> New Ticket</button></div></div>';
+
+  var open=serviceTickets.filter(function(t){return t.status==='open'||t.status==='in_progress'||t.status==='waiting_parts';});
+  var completed=serviceTickets.filter(function(t){return t.status==='completed';});
+  var warranty=serviceTickets.filter(function(t){return t.is_warranty;});
+
+  html+='<div class="stat-grid" style="margin-bottom:20px;">';
+  html+='<div class="stat-card"><div class="label">Open Tickets</div><div class="value" style="color:var(--orange);">'+open.length+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Completed</div><div class="value" style="color:var(--green);">'+completed.length+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Warranty Claims</div><div class="value" style="color:var(--blue);">'+warranty.length+'</div></div>';
+  var totalRevenue=0;serviceTickets.forEach(function(t){if(!t.is_warranty)totalRevenue+=Number(t.total_cost)||0;});
+  html+='<div class="stat-card"><div class="label">Service Revenue</div><div class="value" style="color:var(--green);">'+money(totalRevenue)+'</div></div>';
+  html+='</div>';
+
+  html+='<div class="card"><div style="overflow-x:auto;"><table class="data-table" id="svcTable"><thead><tr><th>Ticket</th><th>Date</th><th>Type</th><th>Customer</th><th>Product / SN</th><th>Priority</th><th>Status</th><th>Cost</th><th></th></tr></thead><tbody>';
+  if(serviceTickets.length===0) html+='<tr><td colspan="9" class="empty-state">No service tickets yet — <a href="#" onclick="openTicketModal();return false;">create your first ticket</a></td></tr>';
+  else serviceTickets.forEach(function(t){
+    var custName='—';if(t.customer_id){var c=customers.find(function(x){return x.id===t.customer_id;});if(c)custName=c.name;}
+    var prodName='—';if(t.product_id){var p=products.find(function(x){return x.id===t.product_id;});if(p)prodName=p.name;}
+    var snText='';if(t.serial_number_id){var sn=serialNumbers.find(function(x){return x.id===t.serial_number_id;});if(sn)snText=' <span class="mono" style="font-size:.72rem;color:var(--g400);">'+sn.serial_number+'</span>';}
+    html+='<tr>';
+    html+='<td class="mono"><strong>'+escHtml(t.ticket_number||'—')+'</strong>'+(t.is_warranty?' <span class="badge-blue" style="font-size:.6rem;">WARRANTY</span>':'')+'</td>';
+    html+='<td>'+fmtDate(t.created_at)+'</td>';
+    html+='<td>'+statusBadge(t.type)+'</td>';
+    html+='<td>'+escHtml(custName)+'</td>';
+    html+='<td>'+escHtml(prodName)+snText+'</td>';
+    html+='<td>'+statusBadge(t.priority)+'</td>';
+    html+='<td>'+statusBadge(t.status)+'</td>';
+    html+='<td>'+money(t.total_cost)+'</td>';
+    html+='<td><button class="btn-icon" onclick="openTicketModal(\''+t.id+'\')"><i class="fas fa-pen"></i></button></td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table></div></div>';
+  return html;
+}
+
+function filterService(){
+  var q=(document.getElementById('svcSearch').value||'').toLowerCase();
+  var rows=document.querySelectorAll('#svcTable tbody tr');
+  rows.forEach(function(r){r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
+}
+
+function openTicketModal(id){
+  var t=id?serviceTickets.find(function(x){return x.id===id;}):null;
+
+  var custOpts='<option value="">Select customer...</option>';
+  customers.forEach(function(c){custOpts+='<option value="'+c.id+'"'+(t&&t.customer_id===c.id?' selected':'')+'>'+escHtml(c.name)+'</option>';});
+
+  var prodOpts='<option value="">Select product...</option>';
+  products.forEach(function(p){prodOpts+='<option value="'+p.id+'"'+(t&&t.product_id===p.id?' selected':'')+'>'+escHtml(p.name)+' ('+escHtml(p.sku)+')</option>';});
+
+  var snOpts='<option value="">No serial number</option>';
+  serialNumbers.forEach(function(s){
+    var pName=s.products?s.products.name:'';
+    snOpts+='<option value="'+s.id+'"'+(t&&t.serial_number_id===s.id?' selected':'')+'>'+escHtml(s.serial_number)+' — '+escHtml(pName)+' ('+s.status+')</option>';
+  });
+
+  var html='<div class="form-row"><div class="form-group"><label>Customer</label><select id="tCust">'+custOpts+'</select></div><div class="form-group"><label>Product</label><select id="tProd">'+prodOpts+'</select></div></div>';
+  html+='<div class="form-row"><div class="form-group"><label>Serial Number</label><select id="tSN">'+snOpts+'</select></div><div class="form-group"><label>Type</label><select id="tType"><option value="repair"'+(t&&t.type==='repair'?' selected':'')+'>Repair</option><option value="maintenance"'+(t&&t.type==='maintenance'?' selected':'')+'>Maintenance</option><option value="warranty"'+(t&&t.type==='warranty'?' selected':'')+'>Warranty Claim</option><option value="blade_change"'+(t&&t.type==='blade_change'?' selected':'')+'>Blade Change</option><option value="install"'+(t&&t.type==='install'?' selected':'')+'>Installation</option><option value="inspection"'+(t&&t.type==='inspection'?' selected':'')+'>Inspection</option><option value="other"'+(t&&t.type==='other'?' selected':'')+'>Other</option></select></div></div>';
+  html+='<div class="form-row"><div class="form-group"><label>Priority</label><select id="tPri"><option value="low"'+(t&&t.priority==='low'?' selected':'')+'>Low</option><option value="normal"'+(t&&t.priority==='normal'?' selected':'')+'>Normal</option><option value="high"'+(t&&t.priority==='high'?' selected':'')+'>High</option><option value="urgent"'+(t&&t.priority==='urgent'?' selected':'')+'>Urgent</option></select></div><div class="form-group"><label>Status</label><select id="tStatus"><option value="open"'+(t&&t.status==='open'?' selected':'')+'>Open</option><option value="in_progress"'+(t&&t.status==='in_progress'?' selected':'')+'>In Progress</option><option value="waiting_parts"'+(t&&t.status==='waiting_parts'?' selected':'')+'>Waiting for Parts</option><option value="completed"'+(t&&t.status==='completed'?' selected':'')+'>Completed</option><option value="cancelled"'+(t&&t.status==='cancelled'?' selected':'')+'>Cancelled</option></select></div></div>';
+  html+='<div class="form-group"><label>Description</label><textarea id="tDesc" rows="3" placeholder="What\'s the issue?">'+escHtml(t?t.description:'')+'</textarea></div>';
+  html+='<div class="form-group"><label>Resolution</label><textarea id="tRes" rows="2" placeholder="How was it resolved?">'+escHtml(t?t.resolution:'')+'</textarea></div>';
+  html+='<div class="form-row"><div class="form-group"><label>Labor Hours</label><input type="number" step="0.25" id="tHours" value="'+(t?t.labor_hours:0)+'"></div><div class="form-group"><label>Parts Cost ($)</label><input type="number" step="0.01" id="tParts" value="'+(t?t.parts_cost:0)+'"></div></div>';
+  html+='<div class="form-row"><div class="form-group"><label>Labor Cost ($)</label><input type="number" step="0.01" id="tLabor" value="'+(t?t.labor_cost:0)+'"></div><div class="form-group"><label>Scheduled Date</label><input type="date" id="tSchedule" value="'+(t&&t.scheduled_date?t.scheduled_date:'')+'"></div></div>';
+  html+='<div class="form-group"><label><input type="checkbox" id="tWarranty"'+(t&&t.is_warranty?' checked':'')+' style="margin-right:6px;">Warranty Claim (no charge to customer)</label></div>';
+
+  var footer='<button class="btn btn-outline" onclick="closeModal()">Cancel</button>';
+  if(id) footer+=' <button class="btn btn-danger btn-sm" onclick="deleteTicket(\''+id+'\')"><i class="fas fa-trash"></i></button>';
+  footer+=' <button class="btn btn-primary" onclick="saveTicket('+(id?'\''+id+'\'':'null')+')"><i class="fas fa-check"></i> '+(id?'Update':'Create')+'</button>';
+  openModal((id?'Edit':'New')+' Service Ticket',html,footer);
+}
+
+function saveTicket(id){
+  var data={
+    customer_id:$('tCust').value||null,
+    product_id:$('tProd').value||null,
+    serial_number_id:$('tSN').value||null,
+    type:$('tType').value,
+    priority:$('tPri').value,
+    status:$('tStatus').value,
+    description:$('tDesc').value.trim()||null,
+    resolution:$('tRes').value.trim()||null,
+    labor_hours:parseFloat($('tHours').value)||0,
+    parts_cost:parseFloat($('tParts').value)||0,
+    labor_cost:parseFloat($('tLabor').value)||0,
+    total_cost:(parseFloat($('tParts').value)||0)+(parseFloat($('tLabor').value)||0),
+    is_warranty:$('tWarranty').checked,
+    scheduled_date:$('tSchedule').value||null,
+    completed_date:$('tStatus').value==='completed'?new Date().toISOString().slice(0,10):null,
+    updated_at:new Date().toISOString()
+  };
+  if(data.is_warranty) data.total_cost=0;
+
+  var url=id?'service_tickets?id=eq.'+id:'service_tickets';
+  var method=id?'PATCH':'POST';
+  sb(url,{method:method,body:JSON.stringify(data)}).then(function(){
+    closeModal();toast(id?'Ticket updated':'Ticket created');loadAll();
+  }).catch(function(e){toast('Error: '+e.message,'error');});
+}
+
+function deleteTicket(id){
+  if(!confirm('Delete this service ticket?'))return;
+  sb('service_tickets?id=eq.'+id,{method:'DELETE'}).then(function(){
+    closeModal();toast('Ticket deleted');loadAll();
+  }).catch(function(e){toast('Error: '+e.message,'error');});
+}
+
+function exportServiceCSV(){
+  var rows=[['Ticket','Date','Type','Customer','Product','Serial','Priority','Status','Labor Hrs','Parts $','Labor $','Total','Warranty','Description','Resolution']];
+  serviceTickets.forEach(function(t){
+    var custName='';if(t.customer_id){var c=customers.find(function(x){return x.id===t.customer_id;});if(c)custName=c.name;}
+    var prodName='';if(t.product_id){var p=products.find(function(x){return x.id===t.product_id;});if(p)prodName=p.name;}
+    var snNum='';if(t.serial_number_id){var sn=serialNumbers.find(function(x){return x.id===t.serial_number_id;});if(sn)snNum=sn.serial_number;}
+    rows.push([t.ticket_number||'',fmtDate(t.created_at),t.type,custName,prodName,snNum,t.priority,t.status,t.labor_hours,t.parts_cost,t.labor_cost,t.total_cost,t.is_warranty?'Yes':'No',t.description||'',t.resolution||'']);
+  });
+  downloadCSV('smart-lawn-service-'+new Date().toISOString().slice(0,10)+'.csv',rows);
 }
 
 // ====================================================================
