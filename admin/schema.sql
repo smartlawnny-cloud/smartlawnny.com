@@ -277,3 +277,10 @@ DROP TRIGGER IF EXISTS trg_update_customer_totals ON sales;
 CREATE TRIGGER trg_update_customer_totals
   AFTER INSERT OR UPDATE ON sales
   FOR EACH ROW EXECUTE FUNCTION update_customer_totals();
+
+-- ============================================================
+-- WARRANTY TRACKING
+-- ============================================================
+ALTER TABLE serial_numbers ADD COLUMN IF NOT EXISTS warranty_start DATE;
+ALTER TABLE serial_numbers ADD COLUMN IF NOT EXISTS warranty_end DATE;
+ALTER TABLE serial_numbers ADD COLUMN IF NOT EXISTS warranty_type TEXT DEFAULT '2-year manufacturer';
