@@ -4027,6 +4027,15 @@ window.addEventListener('resize', function() {
 <!--Start of Tawk.to Script-->
 <script type="text/javascript">
 var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+
+// Customize Tawk widget
+Tawk_API.customStyle = {
+  visibility: { desktop:{ position:'br', xOffset:20, yOffset:20 }, mobile:{ position:'br', xOffset:10, yOffset:10 } }
+};
+
+// Pre-chat form: require name/email before chatting (acts as lead capture when offline)
+Tawk_API.visitor = { name:'', email:'' };
+
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
 s1.async=true;

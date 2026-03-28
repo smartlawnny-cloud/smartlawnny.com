@@ -192,41 +192,14 @@ ul{list-style:none;}
 
 <!-- ── Hero ── -->
 <div class="hero">
-  <h1>Commercial Lawn Care ROI Calculator</h1>
-  <p>See how much your property can save by switching from traditional lawn care to autonomous robotic mowing.</p>
-</div>
-
-<!-- ── Pre-filled Scenarios ── -->
-<div class="scenarios">
-  <h2>Quick Scenarios</h2>
-  <div class="scenario-grid">
-    <div class="scenario-card" onclick="loadScenario('hoa')">
-      <div class="scenario-icon"><i class="fas fa-building"></i></div>
-      <h3>64-Unit HOA in Cortlandt</h3>
-      <div class="scenario-detail">4 acres &middot; $600/visit &middot; Weekly mowing &middot; 7 months<br>Current: $16,800/yr &rarr; Smart Lawn: $4,188/yr</div>
-      <span class="scenario-savings">Saves $12,612/yr</span>
-    </div>
-    <div class="scenario-card" onclick="loadScenario('corporate')">
-      <div class="scenario-icon"><i class="fas fa-city"></i></div>
-      <h3>Corporate Campus in White Plains</h3>
-      <div class="scenario-detail">8 acres &middot; $1,200/visit &middot; Weekly mowing &middot; 7 months<br>Current: $33,600/yr &rarr; Smart Lawn: $9,588/yr</div>
-      <span class="scenario-savings">Saves $24,012/yr</span>
-    </div>
-    <div class="scenario-card" onclick="loadScenario('landscaper')">
-      <div class="scenario-icon"><i class="fas fa-truck"></i></div>
-      <h3>Landscaper Managing 10 Properties</h3>
-      <div class="scenario-detail">2 acres avg each &middot; $300/visit each &middot; Weekly &middot; 7 months<br>Current: $63,000/yr &rarr; Smart Lawn: $23,880/yr</div>
-      <span class="scenario-savings">Saves $39,120/yr</span>
-    </div>
-  </div>
-</div>
-
-<!-- ── Tabs ── -->
-<div class="tabs-wrap">
-  <div class="tabs">
-    <div class="tab active" data-tab="hoa" onclick="switchTab('hoa')"><i class="fas fa-building" style="margin-right:6px;"></i>HOA / Condo</div>
-    <div class="tab" data-tab="commercial" onclick="switchTab('commercial')"><i class="fas fa-city" style="margin-right:6px;"></i>Commercial</div>
-    <div class="tab" data-tab="landscaper" onclick="switchTab('landscaper')"><i class="fas fa-truck" style="margin-right:6px;"></i>Landscaper</div>
+  <h1>How Much Can You Save?</h1>
+  <p>Two sliders. Real numbers. See what robotic mowing costs vs your current crew.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;">
+    <button class="sample-btn" onclick="loadSample(0.25,75)" style="padding:8px 16px;border-radius:980px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;">🏡 Small Yard &middot; $75/cut</button>
+    <button class="sample-btn" onclick="loadSample(0.5,150)" style="padding:8px 16px;border-radius:980px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;">🏠 Half Acre &middot; $150/cut</button>
+    <button class="sample-btn" onclick="loadSample(1,300)" style="padding:8px 16px;border-radius:980px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;">🏘️ 1 Acre &middot; $300/cut</button>
+    <button class="sample-btn" onclick="loadSample(3,600)" style="padding:8px 16px;border-radius:980px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;">🏢 HOA 3 Acre &middot; $600/cut</button>
+    <button class="sample-btn" onclick="loadSample(6,900)" style="padding:8px 16px;border-radius:980px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;">🏗️ Commercial 6 Acre &middot; $900/cut</button>
   </div>
 </div>
 
@@ -235,59 +208,27 @@ ul{list-style:none;}
   <div class="calc-grid">
     <!-- Inputs -->
     <div class="calc-inputs">
-      <h2 id="inputsTitle">HOA / Condo Property</h2>
+      <h2>How much lawn do you maintain?</h2>
 
       <div class="input-group">
-        <label>Property Size (acres)</label>
+        <label>Property Size</label>
         <div class="slider-wrap">
-          <input type="range" id="acresSlider" min="0.5" max="50" step="0.5" value="3">
-          <span class="slider-val" id="acresVal">3 acres</span>
+          <input type="range" id="acresSlider" min="0.25" max="10" step="0.25" value="1">
+          <span class="slider-val" id="acresVal">1 acre</span>
         </div>
       </div>
 
       <div class="input-group">
-        <label>Number of Properties</label>
+        <label>What do you currently pay per cut?</label>
         <div class="slider-wrap">
-          <input type="range" id="propsSlider" min="1" max="50" step="1" value="1">
-          <span class="slider-val" id="propsVal">1</span>
+          <input type="range" id="costSlider" min="25" max="2000" step="25" value="150">
+          <span class="slider-val" id="costVal">$150</span>
         </div>
+        <div class="hint">Average per visit from your current crew</div>
       </div>
 
-      <div class="input-group">
-        <label>Current Cost Per Visit</label>
-        <div class="slider-wrap">
-          <input type="range" id="costSlider" min="50" max="5000" step="25" value="450">
-          <span class="slider-val" id="costVal">$450</span>
-        </div>
-        <div class="hint" id="costHint">Per visit, all properties combined</div>
-      </div>
-
-      <div class="input-group">
-        <label>Mowing Frequency</label>
-        <select id="freqSelect">
-          <option value="weekly" selected>Weekly (30 visits/season)</option>
-          <option value="biweekly">Bi-Weekly (15 visits/season)</option>
-          <option value="monthly">Monthly (7 visits/season)</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>Active Mowing Months</label>
-        <div class="slider-wrap">
-          <input type="range" id="monthsSlider" min="4" max="10" step="1" value="7">
-          <span class="slider-val" id="monthsVal">7 months</span>
-        </div>
-        <div class="hint">April through October typical in the Hudson Valley</div>
-      </div>
-
-      <div class="input-group">
-        <label>Smart Lawn NY Monthly Rate</label>
-        <div class="slider-wrap">
-          <input type="range" id="rateSlider" min="99" max="2500" step="10" value="349">
-          <span class="slider-val" id="rateVal">$349/mo</span>
-        </div>
-        <div class="hint" id="rateHint">Monthly service plan per property</div>
-      </div>
+      <!-- Auto-calculated recommendation -->
+      <div id="recommendation" style="margin-top:24px;background:linear-gradient(135deg,#f0f8e8,#e8f5d8);border-radius:12px;padding:20px;border:2px solid #6abb1e;"></div>
     </div>
 
     <!-- Results -->
@@ -311,8 +252,21 @@ ul{list-style:none;}
         </div>
       </div>
 
+      <div class="comparison">
+        <div class="comp-card current">
+          <div class="comp-label"><i class="fas fa-dollar-sign" style="margin-right:4px;"></i>Per Crew Visit</div>
+          <div class="comp-amount" id="perCutCrew">$0</div>
+          <div class="comp-sub">25 visits/season</div>
+        </div>
+        <div class="comp-card smart">
+          <div class="comp-label"><i class="fas fa-robot" style="margin-right:4px;"></i>Per Robot Mow</div>
+          <div class="comp-amount" id="perCutSmart">$0</div>
+          <div class="comp-sub">175 mows/season</div>
+        </div>
+      </div>
+
       <div class="monthly-box">
-        <span class="mlabel">Monthly Savings</span>
+        <span class="mlabel">Savings Per Month (in season)</span>
         <span class="mval" id="monthlySavings">$0</span>
       </div>
 
@@ -384,211 +338,136 @@ ul{list-style:none;}
 
 <script>
 // ═══════════════════════════════════
-// STATE & DEFAULTS
+// MOWER TIERS — 25-week season, 6 billing months
 // ═══════════════════════════════════
-var currentTab = 'hoa';
+var SEASON_WEEKS = 25;
+var SEASON_VISITS = 25; // weekly crew visits
+var BILLING_MONTHS = 6;
+var MOWS_PER_SEASON = 175; // robot mows daily
 
-var defaults = {
-  hoa:        { acres:3,  props:1,  cost:450,  freq:'weekly', months:7, rate:349,  title:'HOA / Condo Property',        costHint:'Per visit for the property',           rateHint:'Monthly service plan' },
-  commercial: { acres:5,  props:1,  cost:750,  freq:'weekly', months:7, rate:499,  title:'Commercial Property',          costHint:'Per visit for the property',           rateHint:'Monthly service plan' },
-  landscaper: { acres:10, props:5,  cost:300,  freq:'weekly', months:7, rate:199,  title:'Landscaper / Multi-Property',  costHint:'Per visit, per property',              rateHint:'Monthly rate per property' }
-};
+var tiers = [
+  {name:'Small',      mower:'Navimow i105E',       acres:0.25, monthly:129, perDay:4.42},
+  {name:'Medium',     mower:'Navimow H220',        acres:0.5,  monthly:199, perDay:6.82},
+  {name:'Large',      mower:'Navimow X430',        acres:1.0,  monthly:249, perDay:8.54},
+  {name:'XL',         mower:'Navimow X450',        acres:1.5,  monthly:349, perDay:11.97},
+  {name:'Commercial', mower:'TerraNox CM120M1',    acres:3.0,  monthly:449, perDay:15.39},
+  {name:'Fleet',      mower:'TerraNox CM240M1',    acres:6.0,  monthly:599, perDay:20.54}
+];
 
-// ═══════════════════════════════════
-// TAB SWITCHING
-// ═══════════════════════════════════
-function switchTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelector('.tab[data-tab="'+tab+'"]').classList.add('active');
-  var d = defaults[tab];
-  document.getElementById('acresSlider').value = d.acres;
-  document.getElementById('propsSlider').value = d.props;
-  document.getElementById('costSlider').value = d.cost;
-  document.getElementById('freqSelect').value = d.freq;
-  document.getElementById('monthsSlider').value = d.months;
-  document.getElementById('rateSlider').value = d.rate;
-  document.getElementById('inputsTitle').textContent = d.title;
-  document.getElementById('costHint').textContent = d.costHint;
-  document.getElementById('rateHint').textContent = d.rateHint;
-  updateDisplayValues();
-  calculate();
+function getTier(acres){
+  for(var i=tiers.length-1;i>=0;i--){ if(acres>=tiers[i].acres) return tiers[i]; }
+  return tiers[0];
 }
 
-// ═══════════════════════════════════
-// SCENARIO LOADER
-// ═══════════════════════════════════
-function loadScenario(type) {
-  document.querySelectorAll('.scenario-card').forEach(function(c){ c.classList.remove('active'); });
-  event.currentTarget.classList.add('active');
+function getMowerCount(acres){
+  var tier=getTier(acres);
+  return Math.ceil(acres/tier.acres);
+}
 
-  if(type === 'hoa') {
-    switchTab('hoa');
-    document.getElementById('acresSlider').value = 4;
-    document.getElementById('costSlider').value = 600;
-    document.getElementById('rateSlider').value = 349;
-  } else if(type === 'corporate') {
-    switchTab('commercial');
-    document.getElementById('acresSlider').value = 8;
-    document.getElementById('costSlider').value = 1200;
-    document.getElementById('rateSlider').value = 799;
-  } else if(type === 'landscaper') {
-    switchTab('landscaper');
-    document.getElementById('acresSlider').value = 2;
-    document.getElementById('propsSlider').value = 10;
-    document.getElementById('costSlider').value = 300;
-    document.getElementById('rateSlider').value = 199;
+function getBestSetup(acres){
+  // Find combo that covers acreage with fewest mowers
+  var best=null, bestCost=Infinity;
+  for(var i=tiers.length-1;i>=0;i--){
+    var count=Math.ceil(acres/tiers[i].acres);
+    var cost=count*tiers[i].monthly*BILLING_MONTHS;
+    if(cost<bestCost){bestCost=cost;best={tier:tiers[i],count:count,seasonCost:cost};}
   }
-  updateDisplayValues();
-  calculate();
-
-  // Scroll to calculator
-  document.querySelector('.calc-section').scrollIntoView({behavior:'smooth', block:'start'});
+  return best;
 }
 
 // ═══════════════════════════════════
-// UPDATE DISPLAY VALUES
+// SAMPLE PROPERTIES
 // ═══════════════════════════════════
-function updateDisplayValues() {
-  document.getElementById('acresVal').textContent = document.getElementById('acresSlider').value + ' acres';
-  document.getElementById('propsVal').textContent = document.getElementById('propsSlider').value;
-  document.getElementById('costVal').textContent = '$' + Number(document.getElementById('costSlider').value).toLocaleString();
-  document.getElementById('monthsVal').textContent = document.getElementById('monthsSlider').value + ' months';
-  document.getElementById('rateVal').textContent = '$' + Number(document.getElementById('rateSlider').value).toLocaleString() + '/mo';
+function loadSample(acres,cost){
+  document.getElementById('acresSlider').value=acres;
+  document.getElementById('costSlider').value=cost;
+  // Update slider max if needed
+  if(acres>10) document.getElementById('acresSlider').max=acres;
+  if(cost>2000) document.getElementById('costSlider').max=cost;
+  updateDisplayValues();
+  calculate();
+  document.querySelectorAll('.sample-btn').forEach(function(b){b.style.background='';b.style.color='';});
+  if(event&&event.currentTarget){event.currentTarget.style.background='#6abb1e';event.currentTarget.style.color='#fff';}
+}
+
+// ═══════════════════════════════════
+// UPDATE DISPLAY
+// ═══════════════════════════════════
+function updateDisplayValues(){
+  var acres=parseFloat(document.getElementById('acresSlider').value);
+  var cost=parseFloat(document.getElementById('costSlider').value);
+  document.getElementById('acresVal').textContent=acres<1?(acres*43560/1000).toFixed(0)+'k sq ft':acres+' acre'+(acres!==1?'s':'');
+  document.getElementById('costVal').textContent='$'+Number(cost).toLocaleString();
 }
 
 // ═══════════════════════════════════
 // CALCULATE
 // ═══════════════════════════════════
-function calculate() {
-  var acres = parseFloat(document.getElementById('acresSlider').value);
-  var props = parseInt(document.getElementById('propsSlider').value);
-  var costPerVisit = parseFloat(document.getElementById('costSlider').value);
-  var freq = document.getElementById('freqSelect').value;
-  var months = parseInt(document.getElementById('monthsSlider').value);
-  var monthlyRate = parseFloat(document.getElementById('rateSlider').value);
+function calculate(){
+  var acres=parseFloat(document.getElementById('acresSlider').value);
+  var costPerVisit=parseFloat(document.getElementById('costSlider').value);
 
-  // Visits per season based on frequency and months
-  var visitsPerMonth = freq === 'weekly' ? 4.33 : freq === 'biweekly' ? 2.17 : 1;
-  var totalVisits = Math.round(visitsPerMonth * months);
+  // Current crew cost: per visit × 25 weekly visits
+  var crewSeason=costPerVisit*SEASON_VISITS;
 
-  // For landscaper: cost is per property per visit
-  var currentAnnual, smartAnnual;
-  if(currentTab === 'landscaper') {
-    currentAnnual = costPerVisit * totalVisits * props;
-    smartAnnual = monthlyRate * 12 * props;
-  } else {
-    currentAnnual = costPerVisit * totalVisits * props;
-    smartAnnual = monthlyRate * 12 * props;
-  }
+  // Smart Lawn: auto-pick best tier
+  var setup=getBestSetup(acres);
+  var smartSeason=setup.seasonCost;
+  var savings=crewSeason-smartSeason;
+  var savingsPct=crewSeason>0?Math.round(savings/crewSeason*100):0;
+  var perDay=(smartSeason/MOWS_PER_SEASON).toFixed(2);
 
-  var annualSavings = currentAnnual - smartAnnual;
-  var monthlySavings = annualSavings / 12;
+  // Recommendation box
+  var rec=document.getElementById('recommendation');
+  var h='<div style="font-weight:800;font-size:1rem;color:#4a8214;margin-bottom:12px;"><i class="fas fa-robot" style="margin-right:6px;"></i>Recommended Setup</div>';
+  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:1.1rem;font-weight:700;">'+setup.count+'&times; '+setup.tier.mower+'</span><span class="badge" style="background:#6abb1e;color:#fff;padding:4px 12px;border-radius:980px;font-size:.75rem;font-weight:700;">'+setup.tier.name+'</span></div>';
+  h+='<div style="font-size:.85rem;color:#374151;">Covers up to <strong>'+setup.tier.acres*setup.count+' acres</strong> &mdash; mows <strong>every day</strong>, rain or shine</div>';
+  h+='<div style="margin-top:12px;font-size:.85rem;color:#374151;"><strong>$'+setup.tier.monthly+'/mo</strong> per unit &times; '+BILLING_MONTHS+' months'+(setup.count>1?' &times; '+setup.count+' mowers':'')+'</div>';
+  rec.innerHTML=h;
 
-  // Update display
-  document.getElementById('annualSavings').textContent = formatMoney(Math.max(0, annualSavings));
-  document.getElementById('currentAnnual').textContent = formatMoney(currentAnnual);
-  document.getElementById('smartAnnual').textContent = formatMoney(smartAnnual);
-  document.getElementById('monthlySavings').textContent = formatMoney(Math.max(0, monthlySavings));
+  // Results
+  document.getElementById('annualSavings').textContent=formatMoney(Math.max(0,savings));
+  document.getElementById('currentAnnual').textContent=formatMoney(crewSeason);
+  document.getElementById('smartAnnual').textContent=formatMoney(smartSeason);
+  document.getElementById('monthlySavings').textContent=formatMoney(Math.max(0,Math.round(savings/BILLING_MONTHS)));
 
-  // Handle negative savings
-  if(annualSavings < 0) {
-    document.getElementById('annualSavings').textContent = '-' + formatMoney(Math.abs(annualSavings));
-    document.getElementById('monthlySavings').textContent = '-' + formatMoney(Math.abs(monthlySavings));
-  }
+  // Per-cut comparison
+  document.getElementById('perCutCrew').textContent=formatMoney(costPerVisit);
+  document.getElementById('perCutSmart').textContent='$'+perDay;
 
-  // 5-Year bar chart
-  renderChart(currentAnnual, smartAnnual);
+  // 5-Year chart
+  renderChart(crewSeason,smartSeason);
 
   // Summary
-  renderSummary(acres, props, costPerVisit, freq, months, monthlyRate, currentAnnual, smartAnnual, annualSavings, totalVisits);
+  var savingsNote=savings>0?'That\'s <strong style="color:#6abb1e;">'+formatMoney(savings)+' saved per season</strong> ('+savingsPct+'%) and <strong style="color:#6abb1e;">'+formatMoney(savings*5)+' over 5 years</strong>.':'';
+  document.getElementById('summaryBox').innerHTML='<i class="fas fa-leaf" style="color:#6abb1e;margin-right:6px;"></i>Your <strong>'+acres+'-acre</strong> property currently costs <strong>'+formatMoney(costPerVisit)+'</strong> per crew visit &times; 25 weeks = <strong>'+formatMoney(crewSeason)+'/season</strong>. With Smart Lawn NY, '+setup.count+' '+setup.tier.mower+(setup.count>1?'s':'')+' at <strong>$'+setup.tier.monthly+'/mo</strong> costs just <strong>'+formatMoney(smartSeason)+'/season</strong> — and your lawn gets cut <strong>every single day</strong> instead of once a week. '+savingsNote;
 
-  // GA4 event
-  if(typeof gtag === 'function') {
-    gtag('event', 'calculator_update', {
-      'event_category': 'Commercial Calculator',
-      'event_label': currentTab,
-      'value': Math.round(annualSavings)
-    });
+  // GA4
+  if(typeof gtag==='function') gtag('event','calculator_update',{event_category:'ROI Calculator',value:Math.round(savings)});
+}
+
+function formatMoney(n){return '$'+Math.round(n).toLocaleString();}
+
+// ═══════════════════════════════════
+// 5-YEAR BAR CHART
+// ═══════════════════════════════════
+function renderChart(crewSeason,smartSeason){
+  var c=document.getElementById('chartBars');c.innerHTML='';
+  var max=crewSeason*5;if(max===0)max=1;
+  for(var y=1;y<=5;y++){
+    var cc=crewSeason*y,sc=smartSeason*y;
+    var d=document.createElement('div');d.className='chart-year';
+    d.innerHTML='<div class="bars"><div class="bar current" style="height:'+(cc/max*100)+'%"><span class="bar-label">'+formatMoney(cc)+'</span></div><div class="bar smart" style="height:'+(sc/max*100)+'%"><span class="bar-label">'+formatMoney(sc)+'</span></div></div><span class="year-label">Year '+y+'</span>';
+    c.appendChild(d);
   }
+  document.getElementById('cumulativeSavings').textContent='5-Year Savings: '+formatMoney(Math.max(0,(crewSeason-smartSeason)*5));
 }
 
 // ═══════════════════════════════════
-// FORMAT MONEY
+// LISTENERS & INIT
 // ═══════════════════════════════════
-function formatMoney(n) {
-  return '$' + Math.round(n).toLocaleString();
-}
-
-// ═══════════════════════════════════
-// RENDER 5-YEAR BAR CHART
-// ═══════════════════════════════════
-function renderChart(currentAnnual, smartAnnual) {
-  var container = document.getElementById('chartBars');
-  container.innerHTML = '';
-  var maxCumulative = currentAnnual * 5;
-  if(maxCumulative === 0) maxCumulative = 1;
-  var cumulativeSavings = 0;
-
-  for(var y = 1; y <= 5; y++) {
-    var cumCurrent = currentAnnual * y;
-    var cumSmart = smartAnnual * y;
-    cumulativeSavings = cumCurrent - cumSmart;
-
-    var currentHeight = (cumCurrent / maxCumulative) * 100;
-    var smartHeight = (cumSmart / maxCumulative) * 100;
-
-    var yearDiv = document.createElement('div');
-    yearDiv.className = 'chart-year';
-
-    yearDiv.innerHTML =
-      '<div class="bars">' +
-        '<div class="bar current" style="height:'+currentHeight+'%"><span class="bar-label">'+formatMoney(cumCurrent)+'</span></div>' +
-        '<div class="bar smart" style="height:'+smartHeight+'%"><span class="bar-label">'+formatMoney(cumSmart)+'</span></div>' +
-      '</div>' +
-      '<span class="year-label">Year '+y+'</span>';
-
-    container.appendChild(yearDiv);
-  }
-
-  document.getElementById('cumulativeSavings').textContent = '5-Year Cumulative Savings: ' + formatMoney(Math.max(0, cumulativeSavings));
-}
-
-// ═══════════════════════════════════
-// RENDER SUMMARY
-// ═══════════════════════════════════
-function renderSummary(acres, props, costPerVisit, freq, months, monthlyRate, currentAnnual, smartAnnual, annualSavings, totalVisits) {
-  var typeLabel = currentTab === 'hoa' ? 'HOA/condo property' : currentTab === 'commercial' ? 'commercial property' : 'landscaping operation';
-  var freqLabel = freq === 'weekly' ? 'weekly' : freq === 'biweekly' ? 'bi-weekly' : 'monthly';
-  var propDesc = props > 1 ? props + ' properties averaging ' + acres + ' acres each' : 'a ' + acres + '-acre ' + typeLabel;
-  var fiveYear = (currentAnnual - smartAnnual) * 5;
-
-  var html = '<i class="fas fa-calculator" style="color:#6abb1e;margin-right:6px;"></i>';
-  if(props > 1) {
-    html += '<strong>' + propDesc + '</strong> currently spending <strong>' + formatMoney(costPerVisit) + ' per visit per property</strong> for ' + freqLabel + ' mowing (' + totalVisits + ' visits over ' + months + ' months) pays approximately <strong>' + formatMoney(currentAnnual) + ' per year</strong>. ';
-    html += 'With Smart Lawn NY at <strong>' + formatMoney(monthlyRate) + '/month per property</strong>, the total annual cost drops to <strong>' + formatMoney(smartAnnual) + '</strong> — a savings of <strong style="color:#6abb1e;">' + formatMoney(Math.max(0, annualSavings)) + ' annually</strong>';
-  } else {
-    html += '<strong>' + propDesc.charAt(0).toUpperCase() + propDesc.slice(1) + '</strong> currently spending <strong>' + formatMoney(costPerVisit) + ' per visit</strong> for ' + freqLabel + ' mowing (' + totalVisits + ' visits over ' + months + ' months) pays approximately <strong>' + formatMoney(currentAnnual) + ' per year</strong>. ';
-    html += 'With Smart Lawn NY at <strong>' + formatMoney(monthlyRate) + '/month</strong>, the annual cost is just <strong>' + formatMoney(smartAnnual) + '</strong> — saving <strong style="color:#6abb1e;">' + formatMoney(Math.max(0, annualSavings)) + ' annually</strong>';
-  }
-  html += ', or <strong style="color:#6abb1e;">' + formatMoney(Math.max(0, fiveYear)) + ' over 5 years</strong>.';
-
-  document.getElementById('summaryBox').innerHTML = html;
-}
-
-// ═══════════════════════════════════
-// EVENT LISTENERS
-// ═══════════════════════════════════
-document.getElementById('acresSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
-document.getElementById('propsSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
-document.getElementById('costSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
-document.getElementById('freqSelect').addEventListener('change', function(){ calculate(); });
-document.getElementById('monthsSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
-document.getElementById('rateSlider').addEventListener('input', function(){ updateDisplayValues(); calculate(); });
-
-// ═══════════════════════════════════
-// INIT
-// ═══════════════════════════════════
+document.getElementById('acresSlider').addEventListener('input',function(){updateDisplayValues();calculate();});
+document.getElementById('costSlider').addEventListener('input',function(){updateDisplayValues();calculate();});
 updateDisplayValues();
 calculate();
 </script>
