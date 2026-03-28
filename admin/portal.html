@@ -96,7 +96,7 @@ function init(){
 
     var html='<div class="inv-header">';
     html+='<div class="brand">🌿 <span>Smart Lawn</span> NY</div>';
-    html+='<div class="sub">smartlawnny.com • (914) 391-5233</div>';
+    html+='<div class="sub">smartlawnny.com • (914) 647-7276</div>';
     html+='</div>';
 
     html+='<div class="inv-body">';
@@ -131,7 +131,7 @@ function init(){
       html+='<div class="pay-option"><i class="fas fa-mobile-alt"></i><div><strong>Venmo</strong>: @SmartLawnNY</div></div>';
       html+='<div class="pay-option"><i class="fas fa-university"></i><div><strong>Zelle</strong>: smartlawnny@gmail.com</div></div>';
       html+='<div class="pay-option"><i class="fas fa-check"></i><div><strong>Check</strong>: Payable to "Smart Lawn NY"</div></div>';
-      html+='<div class="pay-option"><i class="fas fa-phone"></i><div><strong>Call</strong>: (914) 391-5233</div></div>';
+      html+='<div class="pay-option"><i class="fas fa-phone"></i><div><strong>Call</strong>: (914) 647-7276</div></div>';
       html+='</div>';
     } else {
       html+='<div style="text-align:center;margin-top:24px;padding:16px;background:#dcfce7;border-radius:12px;"><i class="fas fa-check-circle" style="color:#166534;font-size:1.5rem;"></i><div style="font-weight:700;color:#166534;margin-top:4px;">Payment Received</div><div style="font-size:.8rem;color:#166534;">Thank you!</div></div>';
@@ -149,9 +149,9 @@ function init(){
 function payWithStripe(invoiceNum, total){
   // Redirect to call — Stripe payment links created from POS admin
   var btn=event.target;
-  btn.textContent='Call (914) 391-5233 to pay by card';
+  btn.textContent='Call (914) 647-7276 to pay by card';
   btn.style.background='#1d1d1f';
-  setTimeout(function(){window.location.href='tel:9143915233';},1000);
+  setTimeout(function(){window.location.href='tel:9146477276';},1000);
 }
 
 init();

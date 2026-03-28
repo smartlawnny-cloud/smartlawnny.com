@@ -29,10 +29,10 @@ var EmailTemplates = {
         '<p style="margin:4px 0;font-size:.9rem;">✅ Full setup, testing, and app walkthrough on-site</p>' +
         '<p style="margin:4px 0;font-size:.9rem;">✅ 2-year manufacturer warranty activated at delivery</p>' +
         '</div>' +
-        '<p style="color:#666;font-size:.85rem;">Questions? Call <a href="tel:9143915233" style="color:#6abb1e;">(914) 391-5233</a> or reply to this email.</p>' +
+        '<p style="color:#666;font-size:.85rem;">Questions? Call <a href="tel:9146477276" style="color:#6abb1e;">(914) 647-7276</a> or reply to this email.</p>' +
         '</div>' +
         '<div style="background:#1d1d1f;padding:20px 32px;text-align:center;">' +
-        '<div style="color:#999;font-size:.75rem;">Smart Lawn NY — smartlawnny.com<br>(914) 391-5233 — smartlawnny@gmail.com</div>' +
+        '<div style="color:#999;font-size:.75rem;">Smart Lawn NY — smartlawnny.com<br>(914) 647-7276 — smartlawnny@gmail.com</div>' +
         '</div>' +
         '</div></body></html>'
     };
@@ -58,7 +58,7 @@ var EmailTemplates = {
         '<p style="color:#666;font-size:.85rem;">Payment methods: Credit Card, Venmo (@SmartLawnNY), Zelle (smartlawnny@gmail.com), Check</p>' +
         '</div>' +
         '<div style="background:#1d1d1f;padding:20px 32px;text-align:center;">' +
-        '<div style="color:#999;font-size:.75rem;">Smart Lawn NY — smartlawnny.com<br>(914) 391-5233 — smartlawnny@gmail.com</div>' +
+        '<div style="color:#999;font-size:.75rem;">Smart Lawn NY — smartlawnny.com<br>(914) 647-7276 — smartlawnny@gmail.com</div>' +
         '</div>' +
         '</div></body></html>'
     };
@@ -82,10 +82,10 @@ var EmailTemplates = {
         '<div style="margin-bottom:8px;"><strong>Description:</strong> ' + (data.description||'') + '</div>' +
         (data.scheduledDate ? '<div><strong>Scheduled:</strong> ' + data.scheduledDate + '</div>' : '') +
         '</div>' +
-        '<p style="color:#666;font-size:.85rem;margin-top:24px;">We\'ll keep you updated on progress. Call <a href="tel:9143915233" style="color:#6abb1e;">(914) 391-5233</a> with any questions.</p>' +
+        '<p style="color:#666;font-size:.85rem;margin-top:24px;">We\'ll keep you updated on progress. Call <a href="tel:9146477276" style="color:#6abb1e;">(914) 647-7276</a> with any questions.</p>' +
         '</div>' +
         '<div style="background:#1d1d1f;padding:20px 32px;text-align:center;">' +
-        '<div style="color:#999;font-size:.75rem;">Smart Lawn NY — smartlawnny.com<br>(914) 391-5233 — smartlawnny@gmail.com</div>' +
+        '<div style="color:#999;font-size:.75rem;">Smart Lawn NY — smartlawnny.com<br>(914) 647-7276 — smartlawnny@gmail.com</div>' +
         '</div>' +
         '</div></body></html>'
     };
