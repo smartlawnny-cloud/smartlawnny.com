@@ -262,6 +262,7 @@ input,select,textarea{font-family:inherit;}
         <button class="nav-item" onclick="go('customers',this)"><i class="fas fa-users"></i>Customers</button>
         <button class="nav-item" onclick="go('orders',this)"><i class="fas fa-truck"></i>Orders</button>
         <button class="nav-item" onclick="go('invoices',this)"><i class="fas fa-file-invoice-dollar"></i>Invoices</button>
+        <button class="nav-item" onclick="go('purchasing',this)"><i class="fas fa-dolly"></i>Purchasing</button>
         <div class="nav-section">Insights</div>
         <button class="nav-item" onclick="go('reports',this)"><i class="fas fa-chart-bar"></i>Reports</button>
         <button class="nav-item" onclick="go('history',this)"><i class="fas fa-receipt"></i>Sales History</button>
@@ -331,7 +332,7 @@ var currentUser = null;
 // ====================================================================
 // STATE
 // ====================================================================
-var products = [], customers = [], sales = [], orders = [], invoices = [], categories = [], activityLog = [];
+var products = [], customers = [], sales = [], orders = [], invoices = [], categories = [], activityLog = [], purchaseOrders = [];
 var cart = [];
 var currentPage = 'dashboard';
 var settings = {taxRate:0.08375,bizName:'Smart Lawn NY',bizPhone:'(914) 391-5233',bizEmail:'info@smartlawnny.com',bizAddr:'Westchester County, NY',receiptFooter:'Thank you for your purchase!'};
@@ -402,7 +403,8 @@ function loadAll(){
     sb('orders?select=*&order=created_at.desc&limit=100').then(function(d){orders=d||[];}).catch(function(){orders=[];}),
     sb('invoices?select=*&order=created_at.desc&limit=100').then(function(d){invoices=d||[];}).catch(function(){invoices=[];}),
     sb('categories?select=*&order=sort_order').then(function(d){categories=d||[];}).catch(function(){categories=[];}),
-    sb('inventory_log?select=*,products(name)&order=created_at.desc&limit=200').then(function(d){activityLog=d||[];}).catch(function(){activityLog=[];})
+    sb('inventory_log?select=*,products(name)&order=created_at.desc&limit=200').then(function(d){activityLog=d||[];}).catch(function(){activityLog=[];}),
+    sb('purchase_orders?select=*&order=created_at.desc&limit=100').then(function(d){purchaseOrders=d||[];}).catch(function(){purchaseOrders=[];})
   ]).then(function(){
     // Load saved settings from localStorage
     try{var s=JSON.parse(localStorage.getItem('slny_settings'));if(s)Object.assign(settings,s);TAX_RATE=settings.taxRate;}catch(e){}
@@ -435,7 +437,7 @@ function closeSidebar(){
 // PAGE RENDERER
 // ====================================================================
 function renderPage(){
-  var titles={dashboard:'Dashboard',pos:'POS / Sell',products:'Products',customers:'Customers',orders:'Orders',invoices:'Invoices',reports:'Reports',history:'Sales History',activity:'Activity Log',settings:'Settings'};
+  var titles={dashboard:'Dashboard',pos:'POS / Sell',products:'Products',customers:'Customers',orders:'Orders',invoices:'Invoices',purchasing:'Purchasing',reports:'Reports',history:'Sales History',activity:'Activity Log',settings:'Settings'};
   document.getElementById('pageTitle').textContent=titles[currentPage]||'';
   var mc=document.getElementById('mainContent');
   switch(currentPage){
@@ -445,6 +447,7 @@ function renderPage(){
     case 'customers': mc.innerHTML=renderCustomers(); break;
     case 'orders': mc.innerHTML=renderOrders(); break;
     case 'invoices': mc.innerHTML=renderInvoices(); break;
+    case 'purchasing': mc.innerHTML=renderPurchasing(); break;
     case 'history': mc.innerHTML=renderHistory(); break;
     case 'activity': mc.innerHTML=renderActivity(); break;
     case 'settings': mc.innerHTML=renderSettings(); break;
@@ -1624,6 +1627,222 @@ function exportActivityCSV(){
     rows.push([fmtDateTime(a.created_at),a.products?a.products.name:'Unknown',a.change,a.reason||'']);
   });
   downloadCSV('smart-lawn-activity-'+new Date().toISOString().slice(0,10)+'.csv',rows);
+}
+
+// ====================================================================
+// PURCHASING / PURCHASE ORDERS
+// ====================================================================
+function renderPurchasing(){
+  var html='<div class="search-bar"><input type="text" id="poSearch" placeholder="Search purchase orders..." oninput="filterPOs()"><div style="display:flex;gap:8px;"><button class="btn btn-outline" onclick="exportPOsCSV()"><i class="fas fa-download"></i> CSV</button><button class="btn btn-primary" onclick="openPOModal()"><i class="fas fa-plus"></i> New PO</button></div></div>';
+
+  // Stats
+  var totalCost=0,pending=0,received=0;
+  purchaseOrders.forEach(function(po){
+    totalCost+=Number(po.total)||0;
+    if(po.status==='pending'||po.status==='ordered'||po.status==='shipped') pending++;
+    if(po.status==='received') received++;
+  });
+
+  html+='<div class="stat-grid" style="margin-bottom:20px;">';
+  html+='<div class="stat-card"><div class="label">Total POs</div><div class="value">'+purchaseOrders.length+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Open Orders</div><div class="value" style="color:var(--orange);">'+pending+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Received</div><div class="value" style="color:var(--green);">'+received+'</div></div>';
+  html+='<div class="stat-card"><div class="label">Total COGS</div><div class="value">'+money(totalCost)+'</div></div>';
+  html+='</div>';
+
+  // COGS Summary by product
+  html+='<div class="card" style="margin-bottom:20px;"><div class="card-header"><h3><i class="fas fa-chart-pie" style="color:var(--purple);margin-right:6px;"></i>COGS Summary</h3></div><div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Product</th><th>Price</th><th>Cost</th><th>Margin $</th><th>Margin %</th><th>In Stock</th><th>Inventory Cost</th></tr></thead><tbody>';
+  var totalInvCost=0,totalInvValue=0;
+  products.forEach(function(p){
+    var margin=p.price-(p.cost||0);
+    var marginPct=p.price>0?margin/p.price:0;
+    var invCost=(p.cost||0)*p.quantity;
+    totalInvCost+=invCost; totalInvValue+=p.price*p.quantity;
+    html+='<tr><td><strong>'+escHtml(p.name)+'</strong></td><td>'+money(p.price)+'</td><td>'+money(p.cost)+'</td><td style="color:var(--green);font-weight:700;">'+money(margin)+'</td><td><strong style="color:'+(marginPct>=.3?'var(--green)':marginPct>=.15?'var(--orange)':'var(--red)')+';">'+pct(marginPct)+'</strong></td><td>'+p.quantity+'</td><td>'+money(invCost)+'</td></tr>';
+  });
+  html+='</tbody><tfoot><tr style="font-weight:700;background:var(--g50);"><td>TOTAL</td><td>'+money(totalInvValue)+'</td><td></td><td></td><td></td><td></td><td>'+money(totalInvCost)+'</td></tr></tfoot></table></div></div>';
+
+  // PO List
+  html+='<div class="card"><div class="card-header"><h3>Purchase Orders</h3></div><div style="overflow-x:auto;"><table class="data-table" id="poTable"><thead><tr><th>PO #</th><th>Date</th><th>Supplier</th><th>Invoice #</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>';
+  if(purchaseOrders.length===0) html+='<tr><td colspan="8" class="empty-state">No purchase orders yet — <a href="#" onclick="openPOModal();return false;">create your first PO</a></td></tr>';
+  else purchaseOrders.forEach(function(po){
+    html+='<tr><td class="mono"><strong>'+escHtml(po.po_number||'—')+'</strong></td><td>'+fmtDate(po.order_date||po.created_at)+'</td><td>'+escHtml(po.supplier_name)+'</td><td class="mono">'+escHtml(po.invoice_number||'—')+'</td><td>—</td><td><strong>'+money(po.total)+'</strong></td><td>'+statusBadge(po.status)+'</td><td><button class="btn-icon" onclick="openPOModal(\''+po.id+'\')" title="Edit"><i class="fas fa-pen"></i></button>'+(po.status!=='received'?' <button class="btn-icon" onclick="receivePO(\''+po.id+'\')" title="Mark Received"><i class="fas fa-check-circle"></i></button>':'')+'</td></tr>';
+  });
+  html+='</tbody></table></div></div>';
+  return html;
+}
+
+function filterPOs(){
+  var q=(document.getElementById('poSearch').value||'').toLowerCase();
+  var rows=document.querySelectorAll('#poTable tbody tr');
+  rows.forEach(function(r){r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';});
+}
+
+function openPOModal(id){
+  var po=id?purchaseOrders.find(function(x){return x.id===id;}):null;
+
+  var html='<div class="form-row"><div class="form-group"><label>Supplier Name *</label><input id="poSupplier" value="'+escHtml((po?po.supplier_name:''))+'" placeholder="Segway-Navimow, Yarbo, FJD..."></div><div class="form-group"><label>Supplier Invoice #</label><input id="poInvNum" value="'+escHtml((po?po.invoice_number:''))+'" placeholder="INV-12345"></div></div>';
+  html+='<div class="form-row"><div class="form-group"><label>Order Date</label><input type="date" id="poDate" value="'+(po&&po.order_date?po.order_date:new Date().toISOString().slice(0,10))+'"></div><div class="form-group"><label>Status</label><select id="poStatus"><option value="pending"'+(po&&po.status==='pending'?' selected':'')+'>Pending</option><option value="ordered"'+(po&&po.status==='ordered'?' selected':'')+'>Ordered</option><option value="shipped"'+(po&&po.status==='shipped'?' selected':'')+'>Shipped</option><option value="received"'+(po&&po.status==='received'?' selected':'')+'>Received</option><option value="cancelled"'+(po&&po.status==='cancelled'?' selected':'')+'>Cancelled</option></select></div></div>';
+
+  // Line items
+  html+='<div style="margin:16px 0 8px;font-weight:700;font-size:.9rem;">Line Items</div>';
+  html+='<div id="poLines">';
+  html+='<div class="po-line" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:8px;">';
+  html+='<select id="poProduct0" style="padding:8px;border:1px solid var(--g300);border-radius:8px;"><option value="">Select product...</option>';
+  products.forEach(function(p){html+='<option value="'+p.id+'" data-cost="'+(p.cost||0)+'">'+escHtml(p.name)+' ('+escHtml(p.sku)+')</option>';});
+  html+='</select>';
+  html+='<input type="number" id="poQty0" placeholder="Qty" min="1" value="1" style="padding:8px;border:1px solid var(--g300);border-radius:8px;">';
+  html+='<input type="number" id="poCost0" placeholder="Unit cost" step="0.01" style="padding:8px;border:1px solid var(--g300);border-radius:8px;">';
+  html+='<button class="btn-icon" onclick="addPOLine()" title="Add line" style="border:1px solid var(--g300);border-radius:8px;padding:8px 12px;"><i class="fas fa-plus"></i></button>';
+  html+='</div></div>';
+
+  html+='<div class="form-row"><div class="form-group"><label>Shipping</label><input type="number" step="0.01" id="poShipping" value="'+(po?po.shipping:0)+'" oninput="calcPOTotal()"></div><div class="form-group"><label>Tax</label><input type="number" step="0.01" id="poTax" value="'+(po?po.tax:0)+'" oninput="calcPOTotal()"></div></div>';
+  html+='<div class="form-group"><label>Total</label><input type="number" step="0.01" id="poTotal" value="'+(po?po.total:'')+'" style="font-weight:700;font-size:1.1rem;"></div>';
+  html+='<div class="form-group"><label>Notes</label><textarea id="poNotes" rows="2" placeholder="Tracking #, delivery notes...">'+escHtml((po?po.notes:''))+'</textarea></div>';
+
+  var footer='<button class="btn btn-outline" onclick="closeModal()">Cancel</button>';
+  if(id) footer+=' <button class="btn btn-danger btn-sm" onclick="deletePO(\''+id+'\')"><i class="fas fa-trash"></i></button>';
+  footer+=' <button class="btn btn-primary" onclick="savePO('+(id?'\''+id+'\'':'null')+')"><i class="fas fa-check"></i> '+(id?'Update':'Create PO')+'</button>';
+  openModal((id?'Edit':'New')+' Purchase Order',html,footer);
+
+  // Auto-fill cost when product selected
+  var sel=document.getElementById('poProduct0');
+  if(sel) sel.addEventListener('change',function(){
+    var opt=sel.options[sel.selectedIndex];
+    var costField=document.getElementById('poCost0');
+    if(opt&&opt.dataset.cost&&costField) costField.value=opt.dataset.cost;
+    calcPOTotal();
+  });
+}
+
+var poLineCount=1;
+function addPOLine(){
+  var container=document.getElementById('poLines');
+  var i=poLineCount++;
+  var html='<div class="po-line" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:8px;">';
+  html+='<select id="poProduct'+i+'" style="padding:8px;border:1px solid var(--g300);border-radius:8px;"><option value="">Select product...</option>';
+  products.forEach(function(p){html+='<option value="'+p.id+'" data-cost="'+(p.cost||0)+'">'+escHtml(p.name)+' ('+escHtml(p.sku)+')</option>';});
+  html+='</select>';
+  html+='<input type="number" id="poQty'+i+'" placeholder="Qty" min="1" value="1" style="padding:8px;border:1px solid var(--g300);border-radius:8px;">';
+  html+='<input type="number" id="poCost'+i+'" placeholder="Unit cost" step="0.01" style="padding:8px;border:1px solid var(--g300);border-radius:8px;">';
+  html+='<button class="btn-icon" onclick="this.parentElement.remove();calcPOTotal();" title="Remove" style="border:1px solid var(--g300);border-radius:8px;padding:8px 12px;"><i class="fas fa-times"></i></button>';
+  html+='</div>';
+  container.insertAdjacentHTML('beforeend',html);
+  // Auto-fill cost
+  var sel=document.getElementById('poProduct'+i);
+  if(sel) sel.addEventListener('change',function(){
+    var opt=sel.options[sel.selectedIndex];
+    var costField=document.getElementById('poCost'+i);
+    if(opt&&opt.dataset.cost&&costField) costField.value=opt.dataset.cost;
+    calcPOTotal();
+  });
+}
+
+function calcPOTotal(){
+  var subtotal=0;
+  document.querySelectorAll('.po-line').forEach(function(line,i){
+    var qty=parseFloat(line.querySelector('[id^="poQty"]').value)||0;
+    var cost=parseFloat(line.querySelector('[id^="poCost"]').value)||0;
+    subtotal+=qty*cost;
+  });
+  var shipping=parseFloat(($('poShipping')||{}).value)||0;
+  var tax=parseFloat(($('poTax')||{}).value)||0;
+  if($('poTotal')) $('poTotal').value=(subtotal+shipping+tax).toFixed(2);
+}
+
+function savePO(id){
+  var supplier=$('poSupplier').value.trim();
+  if(!supplier){toast('Supplier name is required','error');return;}
+
+  // Collect line items
+  var lines=[];
+  document.querySelectorAll('.po-line').forEach(function(line){
+    var prodSel=line.querySelector('[id^="poProduct"]');
+    var qtySel=line.querySelector('[id^="poQty"]');
+    var costSel=line.querySelector('[id^="poCost"]');
+    if(prodSel&&prodSel.value){
+      var p=products.find(function(x){return x.id===prodSel.value;});
+      lines.push({
+        product_id:prodSel.value,
+        product_name:p?p.name:'',
+        quantity:parseInt(qtySel.value)||1,
+        unit_cost:parseFloat(costSel.value)||0,
+        total:(parseInt(qtySel.value)||1)*(parseFloat(costSel.value)||0)
+      });
+    }
+  });
+
+  var subtotal=0;lines.forEach(function(l){subtotal+=l.total;});
+  var data={
+    supplier_name:supplier,
+    invoice_number:$('poInvNum').value.trim()||null,
+    order_date:$('poDate').value||new Date().toISOString().slice(0,10),
+    status:$('poStatus').value,
+    subtotal:subtotal,
+    shipping:parseFloat($('poShipping').value)||0,
+    tax:parseFloat($('poTax').value)||0,
+    total:parseFloat($('poTotal').value)||0,
+    notes:$('poNotes').value.trim()||null,
+    updated_at:new Date().toISOString()
+  };
+
+  var url=id?'purchase_orders?id=eq.'+id:'purchase_orders';
+  var method=id?'PATCH':'POST';
+  sb(url,{method:method,body:JSON.stringify(data)}).then(function(result){
+    var poId=id||(result&&result[0]?result[0].id:null);
+    if(!id&&poId&&lines.length>0){
+      // Insert line items
+      var promises=lines.map(function(l){
+        l.po_id=poId;
+        return sb('purchase_order_items',{method:'POST',body:JSON.stringify(l)});
+      });
+      return Promise.all(promises);
+    }
+  }).then(function(){
+    closeModal();toast(id?'PO updated':'PO created');loadAll();
+  }).catch(function(e){toast('Error: '+e.message,'error');});
+}
+
+function deletePO(id){
+  if(!confirm('Delete this purchase order?'))return;
+  sb('purchase_orders?id=eq.'+id,{method:'DELETE'}).then(function(){
+    closeModal();toast('PO deleted');loadAll();
+  }).catch(function(e){toast('Error: '+e.message,'error');});
+}
+
+function receivePO(id){
+  var po=purchaseOrders.find(function(x){return x.id===id;});
+  if(!po)return;
+  if(!confirm('Mark '+po.po_number+' as received? This will update inventory.'))return;
+
+  // Mark received
+  sb('purchase_orders?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:'received',received_date:new Date().toISOString().slice(0,10),updated_at:new Date().toISOString()})}).then(function(){
+    // Get PO items and add to inventory
+    return sb('purchase_order_items?po_id=eq.'+id+'&select=*');
+  }).then(function(items){
+    var promises=[];
+    if(items&&items.length){
+      items.forEach(function(item){
+        var p=products.find(function(x){return x.id===item.product_id;});
+        if(p){
+          var newQty=p.quantity+item.quantity;
+          promises.push(sb('products?id=eq.'+item.product_id,{method:'PATCH',body:JSON.stringify({quantity:newQty,cost:item.unit_cost,updated_at:new Date().toISOString()})}));
+          promises.push(sb('inventory_log',{method:'POST',body:JSON.stringify({product_id:item.product_id,change:item.quantity,reason:'PO Received '+po.po_number})}));
+        }
+      });
+    }
+    return Promise.all(promises);
+  }).then(function(){
+    toast('PO received — inventory updated');loadAll();
+  }).catch(function(e){toast('Error: '+e.message,'error');});
+}
+
+function exportPOsCSV(){
+  var rows=[['PO #','Date','Supplier','Invoice #','Subtotal','Shipping','Tax','Total','Status','Notes']];
+  purchaseOrders.forEach(function(po){
+    rows.push([po.po_number||'',fmtDate(po.order_date),po.supplier_name,po.invoice_number||'',po.subtotal||0,po.shipping||0,po.tax||0,po.total||0,po.status,po.notes||'']);
+  });
+  downloadCSV('smart-lawn-purchase-orders-'+new Date().toISOString().slice(0,10)+'.csv',rows);
 }
 
 // ====================================================================

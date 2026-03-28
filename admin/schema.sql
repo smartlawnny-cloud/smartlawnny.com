@@ -179,26 +179,28 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 
 -- Allow all operations for anon (password-protected admin page)
-CREATE POLICY IF NOT EXISTS "anon_all_categories" ON categories FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "anon_all_customers" ON customers FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "anon_all_sale_items" ON sale_items FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "anon_all_invoices" ON invoices FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "anon_all_invoice_items" ON invoice_items FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "anon_all_orders" ON orders FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "anon_all_order_items" ON order_items FOR ALL USING (true) WITH CHECK (true);
-
--- Also ensure existing tables have RLS policies
 DO $$
+DECLARE
+  t TEXT; p TEXT;
+  pairs TEXT[][] := ARRAY[
+    ['categories','anon_all_categories'],
+    ['customers','anon_all_customers'],
+    ['sale_items','anon_all_sale_items'],
+    ['invoices','anon_all_invoices'],
+    ['invoice_items','anon_all_invoice_items'],
+    ['orders','anon_all_orders'],
+    ['order_items','anon_all_order_items'],
+    ['products','anon_all_products'],
+    ['sales','anon_all_sales'],
+    ['inventory_log','anon_all_inventory_log']
+  ];
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'products' AND policyname = 'anon_all_products') THEN
-    CREATE POLICY "anon_all_products" ON products FOR ALL USING (true) WITH CHECK (true);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'sales' AND policyname = 'anon_all_sales') THEN
-    CREATE POLICY "anon_all_sales" ON sales FOR ALL USING (true) WITH CHECK (true);
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'inventory_log' AND policyname = 'anon_all_inventory_log') THEN
-    CREATE POLICY "anon_all_inventory_log" ON inventory_log FOR ALL USING (true) WITH CHECK (true);
-  END IF;
+  FOR i IN 1..array_length(pairs, 1) LOOP
+    t := pairs[i][1]; p := pairs[i][2];
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = t AND policyname = p) THEN
+      EXECUTE format('CREATE POLICY %I ON %I FOR ALL USING (true) WITH CHECK (true)', p, t);
+    END IF;
+  END LOOP;
 END $$;
 
 -- ============================================================
