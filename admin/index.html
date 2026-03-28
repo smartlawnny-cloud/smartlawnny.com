@@ -1755,7 +1755,7 @@ function renderPurchasing(){
   html+='<div class="card"><div class="card-header"><h3>Purchase Orders</h3></div><div style="overflow-x:auto;"><table class="data-table" id="poTable"><thead><tr><th>PO #</th><th>Date</th><th>Supplier</th><th>Invoice #</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody>';
   if(purchaseOrders.length===0) html+='<tr><td colspan="8" class="empty-state">No purchase orders yet — <a href="#" onclick="openPOModal();return false;">create your first PO</a></td></tr>';
   else purchaseOrders.forEach(function(po){
-    html+='<tr><td class="mono"><strong>'+escHtml(po.po_number||'—')+'</strong></td><td>'+fmtDate(po.order_date||po.created_at)+'</td><td>'+escHtml(po.supplier_name)+'</td><td class="mono">'+escHtml(po.invoice_number||'—')+'</td><td>—</td><td><strong>'+money(po.total)+'</strong></td><td>'+statusBadge(po.status)+'</td><td><button class="btn-icon" onclick="openPOModal(\''+po.id+'\')" title="Edit"><i class="fas fa-pen"></i></button>'+(po.status!=='received'?' <button class="btn-icon" onclick="receivePO(\''+po.id+'\')" title="Mark Received"><i class="fas fa-check-circle"></i></button>':'')+'</td></tr>';
+    html+='<tr><td class="mono"><strong>'+escHtml(po.po_number||'—')+'</strong></td><td>'+fmtDate(po.order_date||po.created_at)+'</td><td>'+escHtml(po.supplier_name)+'</td><td class="mono">'+escHtml(po.invoice_number||'—')+(po.file_url?' <a href="'+escHtml(po.file_url)+'" target="_blank" title="View Invoice"><i class="fas fa-file-pdf" style="color:var(--red);margin-left:4px;"></i></a>':'')+'</td><td>—</td><td><strong>'+money(po.total)+'</strong></td><td>'+statusBadge(po.status)+'</td><td><button class="btn-icon" onclick="openPOModal(\''+po.id+'\')" title="Edit"><i class="fas fa-pen"></i></button>'+(po.status!=='received'?' <button class="btn-icon" onclick="receivePO(\''+po.id+'\')" title="Mark Received"><i class="fas fa-check-circle"></i></button>':'')+'</td></tr>';
   });
   html+='</tbody></table></div></div>';
   return html;
@@ -1788,6 +1788,12 @@ function openPOModal(id){
   html+='<div class="form-row"><div class="form-group"><label>Shipping</label><input type="number" step="0.01" id="poShipping" value="'+(po?po.shipping:0)+'" oninput="calcPOTotal()"></div><div class="form-group"><label>Tax</label><input type="number" step="0.01" id="poTax" value="'+(po?po.tax:0)+'" oninput="calcPOTotal()"></div></div>';
   html+='<div class="form-group"><label>Total</label><input type="number" step="0.01" id="poTotal" value="'+(po?po.total:'')+'" style="font-weight:700;font-size:1.1rem;"></div>';
   html+='<div class="form-group"><label>Notes</label><textarea id="poNotes" rows="2" placeholder="Tracking #, delivery notes...">'+escHtml((po?po.notes:''))+'</textarea></div>';
+
+  // File upload
+  html+='<div class="form-group"><label><i class="fas fa-paperclip" style="margin-right:4px;"></i>Attach Invoice PDF/Image</label>';
+  if(po&&po.file_url) html+='<div style="margin-bottom:8px;"><a href="'+escHtml(po.file_url)+'" target="_blank" class="badge-blue" style="text-decoration:none;"><i class="fas fa-file-pdf" style="margin-right:4px;"></i>View Attached Invoice</a></div>';
+  html+='<input type="file" id="poFile" accept=".pdf,.jpg,.jpeg,.png,.webp" style="padding:8px;border:1px solid var(--g300);border-radius:8px;width:100%;font-size:.85rem;">';
+  html+='<p style="font-size:.72rem;color:var(--g400);margin-top:4px;">PDF, JPG, or PNG. Stored securely in cloud backup.</p></div>';
 
   var footer='<button class="btn btn-outline" onclick="closeModal()">Cancel</button>';
   if(id) footer+=' <button class="btn btn-danger btn-sm" onclick="deletePO(\''+id+'\')"><i class="fas fa-trash"></i></button>';
@@ -1879,14 +1885,36 @@ function savePO(id){
   var method=id?'PATCH':'POST';
   sb(url,{method:method,body:JSON.stringify(data)}).then(function(result){
     var poId=id||(result&&result[0]?result[0].id:null);
+    var poNum=result&&result[0]?result[0].po_number:(id?'update':'');
+
+    // Insert line items for new POs
+    var itemPromise=Promise.resolve();
     if(!id&&poId&&lines.length>0){
-      // Insert line items
       var promises=lines.map(function(l){
         l.po_id=poId;
         return sb('purchase_order_items',{method:'POST',body:JSON.stringify(l)});
       });
-      return Promise.all(promises);
+      itemPromise=Promise.all(promises);
     }
+
+    return itemPromise.then(function(){
+      // Upload file if selected
+      var fileInput=$('poFile');
+      if(fileInput&&fileInput.files&&fileInput.files[0]&&poId){
+        var file=fileInput.files[0];
+        var ext=file.name.split('.').pop().toLowerCase();
+        var path='purchase-orders/'+poId+'.'+ext;
+        return fetch(SB+'/storage/v1/object/documents/'+path,{
+          method:'POST',
+          headers:{'apikey':KEY,'Authorization':'Bearer '+KEY,'Content-Type':file.type,'x-upsert':'true'},
+          body:file
+        }).then(function(r){
+          if(!r.ok) return r.text().then(function(t){console.error('Upload error:',t);});
+          var fileUrl=SB+'/storage/v1/object/public/documents/'+path;
+          return sb('purchase_orders?id=eq.'+poId,{method:'PATCH',body:JSON.stringify({file_url:fileUrl})});
+        });
+      }
+    });
   }).then(function(){
     closeModal();toast(id?'PO updated':'PO created');loadAll();
   }).catch(function(e){toast('Error: '+e.message,'error');});
