@@ -211,10 +211,10 @@ ul{list-style:none;}
       <h2>How much lawn do you maintain?</h2>
 
       <div class="input-group">
-        <label>Property Size</label>
+        <label>Property Size (acres)</label>
         <div class="slider-wrap">
           <input type="range" id="acresSlider" min="0.25" max="10" step="0.25" value="1">
-          <span class="slider-val" id="acresVal">1 acre</span>
+          <input type="number" id="acresInput" min="0.25" max="100" step="0.25" value="1" style="width:80px;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:.95rem;font-weight:700;text-align:right;font-family:inherit;" oninput="syncFromInput('acres')">
         </div>
       </div>
 
@@ -222,7 +222,7 @@ ul{list-style:none;}
         <label>What do you currently pay per cut?</label>
         <div class="slider-wrap">
           <input type="range" id="costSlider" min="25" max="2000" step="25" value="150">
-          <span class="slider-val" id="costVal">$150</span>
+          <input type="number" id="costInput" min="0" max="50000" step="25" value="150" style="width:100px;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:.95rem;font-weight:700;text-align:right;font-family:inherit;" oninput="syncFromInput('cost')">
         </div>
         <div class="hint">Average per visit from your current crew</div>
       </div>
@@ -379,11 +379,10 @@ function getBestSetup(acres){
 // SAMPLE PROPERTIES
 // ═══════════════════════════════════
 function loadSample(acres,cost){
+  if(acres>parseFloat(document.getElementById('acresSlider').max)) document.getElementById('acresSlider').max=acres;
+  if(cost>parseFloat(document.getElementById('costSlider').max)) document.getElementById('costSlider').max=cost;
   document.getElementById('acresSlider').value=acres;
   document.getElementById('costSlider').value=cost;
-  // Update slider max if needed
-  if(acres>10) document.getElementById('acresSlider').max=acres;
-  if(cost>2000) document.getElementById('costSlider').max=cost;
   updateDisplayValues();
   calculate();
   document.querySelectorAll('.sample-btn').forEach(function(b){b.style.background='';b.style.color='';});
@@ -396,8 +395,23 @@ function loadSample(acres,cost){
 function updateDisplayValues(){
   var acres=parseFloat(document.getElementById('acresSlider').value);
   var cost=parseFloat(document.getElementById('costSlider').value);
-  document.getElementById('acresVal').textContent=acres<1?(acres*43560/1000).toFixed(0)+'k sq ft':acres+' acre'+(acres!==1?'s':'');
-  document.getElementById('costVal').textContent='$'+Number(cost).toLocaleString();
+  document.getElementById('acresInput').value=acres;
+  document.getElementById('costInput').value=cost;
+}
+
+function syncFromInput(which){
+  if(which==='acres'){
+    var v=parseFloat(document.getElementById('acresInput').value)||0.25;
+    var slider=document.getElementById('acresSlider');
+    if(v>parseFloat(slider.max)) slider.max=v;
+    slider.value=v;
+  } else {
+    var v=parseFloat(document.getElementById('costInput').value)||25;
+    var slider=document.getElementById('costSlider');
+    if(v>parseFloat(slider.max)) slider.max=v;
+    slider.value=v;
+  }
+  calculate();
 }
 
 // ═══════════════════════════════════
