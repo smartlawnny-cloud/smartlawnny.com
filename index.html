@@ -2839,12 +2839,26 @@ function _onPropMapReady() {
     }
     var d = _buildQuoteData();
     var zoneLines = d.zones.map(function(z){ return z.name+': '+z.acres+' ac — '+z.units+'x '+z.mowerName+' ($'+z.subtotal.toLocaleString()+')'; }).join(', ');
-    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4EdYGft-clzGx4b9X5C2J-OOKBk6r7kIGvRghZ3wd4NwDSNh2uJ2xvtkRDYSX6PqWpw/exec';
-    fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
-      type:'QUOTE_EMAIL', email:email, street:d.addr, lawnSize:d.totalAcres+' acres',
-      message:zoneLines+' | Total: $'+d.grandTotal.toLocaleString(),
-      date:new Date().toISOString(), source:'Checkout Email Capture'
-    })});
+    // Save lead to Supabase
+    fetch('https://hsjodrniizoctxsznjsy.supabase.co/rest/v1/customers',{
+      method:'POST',headers:{
+        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
+        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
+        'Content-Type':'application/json'},
+      body:JSON.stringify({name:email.split('@')[0],email:email,address:d.addr||'',notes:'Quote: '+zoneLines+' | Total: $'+d.grandTotal.toLocaleString(),tags:'{quote-lead}',state:'NY'})
+    }).catch(function(){});
+    // Send email via mailto (opens user's email client with quote)
+    var subject='Your Smart Lawn NY Quote — '+d.totalAcres+' acres';
+    var body='Smart Lawn NY — Property Quote\n\n';
+    body+='Property: '+(d.addr||'Your Property')+'\n';
+    body+='Total Area: '+d.totalAcres+' acres\n\n';
+    body+='ZONES:\n';
+    d.zones.forEach(function(z){body+=z.name+': '+z.acres+' ac — '+z.units+'x '+z.mowerName+' ($'+z.subtotal.toLocaleString()+')\n';});
+    body+='\nEquipment Total: $'+d.fleetCost.toLocaleString()+'\n';
+    body+='Installation: $'+d.installCost.toLocaleString()+'\n';
+    body+='Grand Total: $'+d.grandTotal.toLocaleString()+'\n\n';
+    body+='Questions? Call (914) 647-7276\nsmartlawnny.com\n';
+    window.open('mailto:'+email+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body),'_blank');
     var section = document.getElementById('checkoutEmailSection');
     if(section) section.innerHTML = '<div style="padding:14px;font-size:1rem;font-weight:700;color:#4a8a10;">✓ Quote sent to ' + email + '</div>';
     if (window.gtag) gtag('event', 'generate_lead', {method: 'quote_email', email_provided: true});
@@ -2856,6 +2870,7 @@ function _onPropMapReady() {
     'SPRING15': {pct: 15, label: '15% off equipment'},
     'WELCOME10': {pct: 10, label: '10% off equipment'},
     'SHEA20': {pct: 20, label: '20% off equipment'},
+    'SHEA5': {pct: 5, label: '5% off equipment'},
   };
   var _activeDiscount = null;
 
