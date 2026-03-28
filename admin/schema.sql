@@ -284,3 +284,37 @@ CREATE TRIGGER trg_update_customer_totals
 ALTER TABLE serial_numbers ADD COLUMN IF NOT EXISTS warranty_start DATE;
 ALTER TABLE serial_numbers ADD COLUMN IF NOT EXISTS warranty_end DATE;
 ALTER TABLE serial_numbers ADD COLUMN IF NOT EXISTS warranty_type TEXT DEFAULT '2-year manufacturer';
+
+-- ============================================================
+-- MAAS SUBSCRIPTIONS (Mower-as-a-Service)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id UUID REFERENCES customers(id),
+  customer_name TEXT,
+  product_id UUID REFERENCES products(id),
+  serial_number_id UUID REFERENCES serial_numbers(id),
+  plan_name TEXT NOT NULL,
+  monthly_rate NUMERIC(10,2) NOT NULL,
+  billing_months INT DEFAULT 6,
+  season_start DATE,
+  season_end DATE,
+  property_address TEXT,
+  property_acres NUMERIC(5,2),
+  status TEXT DEFAULT 'active' CHECK (status IN ('active','paused','cancelled','completed','pending')),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_subs_customer ON subscriptions(customer_id);
+CREATE INDEX IF NOT EXISTS idx_subs_status ON subscriptions(status);
+
+ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'subscriptions' AND policyname = 'anon_all_subscriptions') THEN
+    CREATE POLICY "anon_all_subscriptions" ON subscriptions FOR ALL USING (true) WITH CHECK (true);
+  END IF;
+END $$;
