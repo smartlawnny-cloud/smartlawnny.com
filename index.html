@@ -2511,9 +2511,9 @@ function _onPropMapReady() {
       // Show current lawn care cost estimate
       var costEstEl=document.getElementById('currentCostEstimate');
       if(costEstEl){
-        var lowEst=Math.round(total*75*25);
-        var highEst=Math.round(total*150*25);
-        document.getElementById('estCurrentCost').textContent='$'+lowEst.toLocaleString()+'–$'+highEst.toLocaleString();
+        var lowEst=Math.round(total*100*25);
+        var highEst=Math.round(total*100*25);
+        document.getElementById('estCurrentCost').textContent='$'+lowEst.toLocaleString();
         costEstEl.style.display='block';
       }
       // Recommendation now handled by per-zone mower selectors
