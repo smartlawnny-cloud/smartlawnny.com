@@ -333,10 +333,10 @@ var currentUser = null;
 // ====================================================================
 // STATE
 // ====================================================================
-var products = [], customers = [], sales = [], orders = [], invoices = [], categories = [], activityLog = [], purchaseOrders = [];
+var products = [], customers = [], sales = [], orders = [], invoices = [], categories = [], activityLog = [], purchaseOrders = [], serialNumbers = [];
 var cart = [];
 var currentPage = 'dashboard';
-var settings = {taxRate:0.08375,bizName:'Smart Lawn NY',bizPhone:'(914) 391-5233',bizEmail:'info@smartlawnny.com',bizAddr:'Westchester County, NY',receiptFooter:'Thank you for your purchase!'};
+var settings = {taxRate:0.08375,bizName:'Smart Lawn NY',bizPhone:'(914) 391-5233',bizEmail:'smartlawnny@gmail.com',bizAddr:'Westchester County, NY',receiptFooter:'Thank you for your purchase!'};
 
 // ====================================================================
 // AUTH
@@ -405,6 +405,7 @@ function loadAll(){
     sb('invoices?select=*&order=created_at.desc&limit=100').then(function(d){invoices=d||[];}).catch(function(){invoices=[];}),
     sb('categories?select=*&order=sort_order').then(function(d){categories=d||[];}).catch(function(){categories=[];}),
     sb('inventory_log?select=*,products(name)&order=created_at.desc&limit=200').then(function(d){activityLog=d||[];}).catch(function(){activityLog=[];}),
+    sb('serial_numbers?select=*,products(name,sku)&order=created_at.desc').then(function(d){serialNumbers=d||[];}).catch(function(){serialNumbers=[];}),
     sb('purchase_orders?select=*&order=created_at.desc&limit=100').then(function(d){purchaseOrders=d||[];}).catch(function(){purchaseOrders=[];})
   ]).then(function(){
     // Load saved settings from localStorage
@@ -899,7 +900,8 @@ function renderProducts(){
     html+='<td><strong style="color:'+(margin>=.3?'var(--green)':margin>=.15?'var(--orange)':'var(--red)')+';">'+pct(margin)+'</strong></td>';
     html+='<td>'+statusBadge(stockSt)+' <strong>'+p.quantity+'</strong></td>';
     html+='<td>'+statusBadge(p.status||'active')+'</td>';
-    html+='<td><button class="btn-icon" onclick="openProductModal(\''+p.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="openStockModal(\''+p.id+'\')" title="Stock"><i class="fas fa-boxes-stacked"></i></button> <button class="btn-icon" onclick="printLabel(\''+p.id+'\')" title="Print Label"><i class="fas fa-barcode"></i></button></td>';
+    var snCount=serialNumbers.filter(function(s){return s.product_id===p.id;}).length;
+    html+='<td><button class="btn-icon" onclick="openProductModal(\''+p.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="openStockModal(\''+p.id+'\')" title="Stock"><i class="fas fa-boxes-stacked"></i></button> <button class="btn-icon" onclick="printLabel(\''+p.id+'\')" title="Print Label"><i class="fas fa-barcode"></i></button>'+(snCount>0?' <button class="btn-icon" onclick="viewSerials(\''+p.id+'\')" title="'+snCount+' Serial Numbers" style="color:var(--blue);"><i class="fas fa-fingerprint"></i></button>':'')+'</td>';
     html+='</tr>';
   });
   html+='</tbody></table></div></div>';
@@ -1457,6 +1459,30 @@ function renderReports(){
   html+='</tbody></table></div></div>';
 
   return html;
+}
+
+// ====================================================================
+// SERIAL NUMBERS
+// ====================================================================
+function viewSerials(pid){
+  var p=products.find(function(x){return x.id===pid;});
+  if(!p)return;
+  var sns=serialNumbers.filter(function(s){return s.product_id===pid;});
+  var html='<p style="margin-bottom:12px;color:var(--g500);font-size:.85rem;">'+sns.length+' serial number'+(sns.length!==1?'s':'')+' registered for <strong>'+escHtml(p.name)+'</strong></p>';
+  html+='<table class="data-table"><thead><tr><th>Serial Number</th><th>Status</th><th>PO</th><th>Customer</th><th>Notes</th></tr></thead><tbody>';
+  sns.forEach(function(s){
+    var custName='—';
+    if(s.customer_id){var c=customers.find(function(x){return x.id===s.customer_id;});if(c)custName=c.name;}
+    html+='<tr>';
+    html+='<td class="mono" style="font-weight:600;">'+escHtml(s.serial_number)+'</td>';
+    html+='<td>'+statusBadge(s.status)+'</td>';
+    html+='<td class="mono">'+escHtml(s.po_number||'—')+'</td>';
+    html+='<td>'+escHtml(custName)+'</td>';
+    html+='<td style="font-size:.8rem;color:var(--g500);">'+escHtml(s.notes||'—')+'</td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  openModal('Serial Numbers — '+escHtml(p.name),html,'<button class="btn btn-outline" onclick="closeModal()">Close</button>');
 }
 
 function initCharts(){/* Charts rendered inline via CSS */}
