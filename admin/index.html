@@ -1512,6 +1512,23 @@ function renderReports(){
   var totalRev=0,totalTx=0;
   sales.forEach(function(s){if(s.status!=='voided'&&s.status!=='refunded'){totalRev+=Number(s.total)||0;totalTx++;}});
   var avgTicket=totalTx>0?totalRev/totalTx:0;
+  // P&L calculation
+  var totalCOGS=0;
+  purchaseOrders.forEach(function(po){if(po.status==='received')totalCOGS+=Number(po.total)||0;});
+  var serviceRev=0,serviceCost=0;
+  serviceTickets.forEach(function(t){if(t.status==='completed'){if(!t.is_warranty)serviceRev+=Number(t.total_cost)||0;serviceCost+=Number(t.parts_cost)||0;}});
+  var grossProfit=totalRev-totalCOGS;
+  var grossMargin=totalRev>0?grossProfit/totalRev:0;
+  var netProfit=grossProfit+serviceRev-serviceCost;
+
+  html+='<div class="stat-card" style="margin-bottom:20px;background:linear-gradient(135deg,#f0f8e8,#e8f5d8);border:2px solid var(--green);"><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;text-align:center;">';
+  html+='<div><div style="font-size:.72rem;font-weight:600;color:var(--g500);text-transform:uppercase;">Revenue</div><div style="font-size:1.4rem;font-weight:800;color:var(--green);">'+money(totalRev)+'</div></div>';
+  html+='<div><div style="font-size:.72rem;font-weight:600;color:var(--g500);text-transform:uppercase;">COGS</div><div style="font-size:1.4rem;font-weight:800;color:var(--red);">'+money(totalCOGS)+'</div></div>';
+  html+='<div><div style="font-size:.72rem;font-weight:600;color:var(--g500);text-transform:uppercase;">Gross Profit</div><div style="font-size:1.4rem;font-weight:800;color:'+(grossProfit>=0?'var(--green)':'var(--red)')+';">'+money(grossProfit)+'</div></div>';
+  html+='<div><div style="font-size:.72rem;font-weight:600;color:var(--g500);text-transform:uppercase;">Gross Margin</div><div style="font-size:1.4rem;font-weight:800;color:'+(grossMargin>=.3?'var(--green)':'var(--orange)')+';">'+pct(grossMargin)+'</div></div>';
+  html+='<div><div style="font-size:.72rem;font-weight:600;color:var(--g500);text-transform:uppercase;">Service Rev</div><div style="font-size:1.4rem;font-weight:800;color:var(--blue);">'+money(serviceRev)+'</div></div>';
+  html+='</div></div>';
+
   html+='<div class="stat-card"><div class="label">Total Revenue</div><div class="value" style="color:var(--green);">'+money(totalRev)+'</div></div>';
   html+='<div class="stat-card"><div class="label">Avg Ticket</div><div class="value">'+money(avgTicket)+'</div></div>';
   html+='<div class="stat-card"><div class="label">Total Transactions</div><div class="value">'+totalTx+'</div></div>';
