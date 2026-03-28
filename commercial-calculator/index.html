@@ -560,6 +560,10 @@ function submitLead(e){
     document.getElementById('leadForm').style.display='none';
     document.getElementById('leadSuccess').style.display='block';
     if(typeof gtag==='function') gtag('event','lead_capture',{event_category:'Calculator',event_label:data.name});
+    // Also send to Tawk.to as a visitor event (shows in chat dashboard)
+    if(typeof Tawk_API!=='undefined'&&Tawk_API.addEvent){
+      Tawk_API.addEvent('calculator-lead',{name:data.name,phone:data.phone,email:data.email||'',address:data.address||''},function(){});
+    }
   }).catch(function(){
     document.getElementById('leadForm').style.display='none';
     document.getElementById('leadSuccess').style.display='block';
