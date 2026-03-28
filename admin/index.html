@@ -320,8 +320,13 @@ input,select,textarea{font-family:inherit;}
 // ====================================================================
 var SB = 'https://hsjodrniizoctxsznjsy.supabase.co';
 var KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk';
-var PASS = 'smartlawn2026';
 var TAX_RATE = 0.08375; // Westchester County NY
+var USERS = [
+  {user:'admin',pass:'smartlawn2026',role:'owner',name:'Doug'},
+  {user:'crew1',pass:'crew2026',role:'employee',name:'Crew 1'},
+  {user:'crew2',pass:'crew2026',role:'employee',name:'Crew 2'}
+];
+var currentUser = null;
 
 // ====================================================================
 // STATE
@@ -335,17 +340,39 @@ var settings = {taxRate:0.08375,bizName:'Smart Lawn NY',bizPhone:'(914) 391-5233
 // AUTH
 // ====================================================================
 function doLogin(){
-  if(document.getElementById('loginPass').value===PASS){
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('app').style.display='block';
-    loadAll();
-  } else alert('Wrong password');
+  var pass=document.getElementById('loginPass').value;
+  var user=USERS.find(function(u){return u.pass===pass;});
+  if(!user){alert('Wrong password');return;}
+  currentUser=user;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  // Apply role restrictions
+  applyRole();
+  loadAll();
 }
 function logout(){
+  currentUser=null;
   document.getElementById('app').style.display='none';
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('loginPass').value='';
 }
+function applyRole(){
+  if(!currentUser)return;
+  var isOwner=currentUser.role==='owner';
+  // Show/hide nav items based on role
+  var restricted=['reports','history','activity','settings'];
+  document.querySelectorAll('.nav-item').forEach(function(btn){
+    var page=btn.getAttribute('onclick')||'';
+    var match=page.match(/go\('(\w+)'/);
+    if(match&&restricted.indexOf(match[1])>=0){
+      btn.style.display=isOwner?'':'none';
+    }
+  });
+  // Update sidebar footer with user info
+  var footer=document.querySelector('.sidebar-footer');
+  if(footer) footer.innerHTML='<div style="padding:4px 20px 0;font-size:.7rem;color:var(--g500);">Signed in as <strong>'+escHtml(currentUser.name)+'</strong> ('+currentUser.role+')</div><button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>';
+}
+function isOwner(){return currentUser&&currentUser.role==='owner';}
 
 // ====================================================================
 // SUPABASE FETCH
@@ -853,7 +880,7 @@ function showReceipt(sale,items,subtotal,tax,discount,total,custName,payment){
 // PRODUCTS
 // ====================================================================
 function renderProducts(){
-  var html='<div class="search-bar"><input type="text" id="productSearch" placeholder="Search products..." oninput="filterProducts()"><div style="display:flex;gap:8px;"><button class="btn btn-outline" onclick="exportProductsCSV()"><i class="fas fa-download"></i> CSV</button><button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button></div></div>';
+  var html='<div class="search-bar"><input type="text" id="productSearch" placeholder="Search products..." oninput="filterProducts()"><div style="display:flex;gap:8px;"><button class="btn btn-outline" onclick="printAllLabels()"><i class="fas fa-barcode"></i> Labels</button><button class="btn btn-outline" onclick="exportProductsCSV()"><i class="fas fa-download"></i> CSV</button><button class="btn btn-primary" onclick="openProductModal()"><i class="fas fa-plus"></i> Add Product</button></div></div>';
 
   html+='<div class="card"><div style="overflow-x:auto;"><table class="data-table" id="productsTable"><thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Cost</th><th>Margin</th><th>Stock</th><th>Status</th><th></th></tr></thead><tbody>';
   if(products.length===0) html+='<tr><td colspan="8" class="empty-state">No products yet</td></tr>';
@@ -868,7 +895,7 @@ function renderProducts(){
     html+='<td><strong style="color:'+(margin>=.3?'var(--green)':margin>=.15?'var(--orange)':'var(--red)')+';">'+pct(margin)+'</strong></td>';
     html+='<td>'+statusBadge(stockSt)+' <strong>'+p.quantity+'</strong></td>';
     html+='<td>'+statusBadge(p.status||'active')+'</td>';
-    html+='<td><button class="btn-icon" onclick="openProductModal(\''+p.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="openStockModal(\''+p.id+'\')" title="Stock"><i class="fas fa-boxes-stacked"></i></button></td>';
+    html+='<td><button class="btn-icon" onclick="openProductModal(\''+p.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="openStockModal(\''+p.id+'\')" title="Stock"><i class="fas fa-boxes-stacked"></i></button> <button class="btn-icon" onclick="printLabel(\''+p.id+'\')" title="Print Label"><i class="fas fa-barcode"></i></button></td>';
     html+='</tr>';
   });
   html+='</tbody></table></div></div>';
@@ -1221,7 +1248,7 @@ function renderInvoices(){
   if(invoices.length===0) html+='<tr><td colspan="7" class="empty-state">No invoices yet</td></tr>';
   else invoices.forEach(function(inv){
     var overdue=inv.due_date&&inv.status!=='paid'&&inv.status!=='cancelled'&&new Date(inv.due_date)<new Date();
-    html+='<tr><td class="mono"><strong>'+escHtml(inv.invoice_number||'—')+'</strong></td><td>'+fmtDate(inv.created_at)+'</td><td>'+escHtml(inv.customer_name||'—')+'</td><td'+(overdue?' style="color:var(--red);font-weight:600;"':'')+'>'+fmtDate(inv.due_date)+'</td><td><strong>'+money(inv.total)+'</strong></td><td>'+statusBadge(overdue?'overdue':(inv.status||'draft'))+'</td><td><button class="btn-icon" onclick="openInvoiceModal(\''+inv.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="viewInvoice(\''+inv.id+'\')" title="View"><i class="fas fa-eye"></i></button></td></tr>';
+    html+='<tr><td class="mono"><strong>'+escHtml(inv.invoice_number||'—')+'</strong></td><td>'+fmtDate(inv.created_at)+'</td><td>'+escHtml(inv.customer_name||'—')+'</td><td'+(overdue?' style="color:var(--red);font-weight:600;"':'')+'>'+fmtDate(inv.due_date)+'</td><td><strong>'+money(inv.total)+'</strong></td><td>'+statusBadge(overdue?'overdue':(inv.status||'draft'))+'</td><td><button class="btn-icon" onclick="openInvoiceModal(\''+inv.id+'\')" title="Edit"><i class="fas fa-pen"></i></button> <button class="btn-icon" onclick="viewInvoice(\''+inv.id+'\')" title="View"><i class="fas fa-eye"></i></button>'+(inv.customer_email?' <button class="btn-icon" onclick="emailInvoice(\''+inv.id+'\')" title="Email Invoice"><i class="fas fa-envelope"></i></button>':'')+'</td></tr>';
   });
   html+='</tbody></table></div></div>';
   return html;
@@ -1325,7 +1352,11 @@ function viewInvoice(id){
   html+='<div style="text-align:center;margin-top:16px;">'+statusBadge(inv.status)+'</div>';
   if(inv.notes) html+='<div style="margin-top:12px;font-size:.82rem;color:var(--g500);">Note: '+escHtml(inv.notes)+'</div>';
   html+='</div>';
-  openModal('Invoice '+escHtml(inv.invoice_number||''),html,'<button class="btn btn-outline" onclick="closeModal()">Close</button> <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print</button>');
+  var footer='<button class="btn btn-outline" onclick="closeModal()">Close</button>';
+  if(inv.customer_email) footer+=' <button class="btn btn-outline" onclick="emailInvoice(\''+inv.id+'\')"><i class="fas fa-envelope"></i> Email</button>';
+  footer+=' <button class="btn btn-outline" onclick="copyPortalLink(\''+inv.id+'\')"><i class="fas fa-link"></i> Copy Link</button>';
+  footer+=' <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print</button>';
+  openModal('Invoice '+escHtml(inv.invoice_number||''),html,footer);
 }
 
 // ====================================================================
@@ -1612,6 +1643,19 @@ function renderSettings(){
   html+='<div class="form-row"><div class="form-group"><label>Sales Tax Rate (%)</label><input type="number" step="0.001" id="setTaxRate" value="'+(settings.taxRate*100).toFixed(3)+'"><p style="font-size:.75rem;color:var(--g500);margin-top:4px;">Westchester County NY default: 8.375%</p></div><div class="form-group"><label>Receipt Footer</label><input id="setFooter" value="'+escHtml(settings.receiptFooter)+'"></div></div>';
   html+='</div></div>';
 
+  // User Management
+  if(isOwner()){
+    html+='<div class="card" style="margin-bottom:20px;"><div class="card-header"><h3><i class="fas fa-users-cog" style="color:var(--blue);margin-right:6px;"></i>User Accounts</h3></div><div class="card-body">';
+    html+='<p style="font-size:.85rem;color:var(--g500);margin-bottom:12px;">Employees can access POS, Products, Customers, Orders, and Invoices. Only the owner sees Reports, Sales History, Activity Log, and Settings.</p>';
+    html+='<table class="data-table"><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Password</th></tr></thead><tbody>';
+    USERS.forEach(function(u){
+      html+='<tr><td class="mono">'+escHtml(u.user)+'</td><td><strong>'+escHtml(u.name)+'</strong></td><td>'+statusBadge(u.role)+'</td><td class="mono" style="font-size:.8rem;">'+escHtml(u.pass)+'</td></tr>';
+    });
+    html+='</tbody></table>';
+    html+='<p style="font-size:.75rem;color:var(--g400);margin-top:8px;">To add/change users, edit the USERS array in index.html or ask your developer.</p>';
+    html+='</div></div>';
+  }
+
   // Category Management
   html+='<div class="card" style="margin-bottom:20px;"><div class="card-header"><h3><i class="fas fa-tags" style="color:var(--orange);margin-right:6px;"></i>Categories</h3></div><div class="card-body">';
   html+=renderCategoryManager();
@@ -1795,6 +1839,130 @@ function deleteCategory(id){
   sb('categories?id=eq.'+id,{method:'DELETE'}).then(function(){
     toast('Category deleted');loadAll();
   }).catch(function(e){toast('Error: '+e.message,'error');});
+}
+
+// ====================================================================
+// EMAIL INVOICES
+// ====================================================================
+function emailInvoice(id){
+  var inv=invoices.find(function(x){return x.id===id;});
+  if(!inv){toast('Invoice not found','error');return;}
+  if(!inv.customer_email){toast('No email address for this customer','error');return;}
+
+  var portalUrl=window.location.origin+window.location.pathname.replace('index.html','')+'portal.html?id='+id;
+  var html='<div class="form-group"><label>To</label><input id="emailTo" value="'+escHtml(inv.customer_email)+'"></div>';
+  html+='<div class="form-group"><label>Subject</label><input id="emailSubj" value="Invoice '+escHtml(inv.invoice_number||'')+' from '+escHtml(settings.bizName)+'"></div>';
+  html+='<div class="form-group"><label>Message</label><textarea id="emailBody" rows="8">Hi '+escHtml(inv.customer_name||'there')+',\n\nPlease find your invoice details below:\n\nInvoice: '+escHtml(inv.invoice_number||'')+'\nAmount Due: '+money(inv.total)+'\nDue Date: '+fmtDate(inv.due_date)+'\n\nView your invoice online:\n'+portalUrl+'\n\nPayment Methods:\n- Venmo: @SmartLawnNY\n- Zelle: '+settings.bizEmail+'\n- Check: payable to "Smart Lawn NY"\n\nThank you for your business!\n'+settings.bizName+'\n'+settings.bizPhone+'</textarea></div>';
+  html+='<div style="padding:10px;background:var(--blue-light);border-radius:8px;font-size:.8rem;color:var(--blue);"><i class="fas fa-info-circle"></i> This will open your email client with the invoice details pre-filled. For automated SendGrid emails, add your API key in Settings.</div>';
+
+  var footer='<button class="btn btn-outline" onclick="closeModal()">Cancel</button> <button class="btn btn-primary" onclick="sendEmailInvoice(\''+id+'\')"><i class="fas fa-paper-plane"></i> Open Email Client</button>';
+  openModal('Email Invoice '+escHtml(inv.invoice_number||''),html,footer);
+}
+
+function sendEmailInvoice(id){
+  var to=$('emailTo').value.trim();
+  var subj=$('emailSubj').value.trim();
+  var body=$('emailBody').value;
+  if(!to){toast('Email address required','error');return;}
+
+  // Use mailto: to open default email client (works everywhere, no API key needed)
+  var mailto='mailto:'+encodeURIComponent(to)+'?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+  window.open(mailto,'_blank');
+
+  // Mark invoice as sent
+  sb('invoices?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:'sent',sent_at:new Date().toISOString()})}).then(function(){
+    closeModal();toast('Email opened — invoice marked as sent');loadAll();
+  }).catch(function(e){toast('Email opened but status update failed','error');closeModal();});
+}
+
+function copyPortalLink(id){
+  var portalUrl=window.location.origin+window.location.pathname.replace('index.html','')+'portal.html?id='+id;
+  navigator.clipboard.writeText(portalUrl).then(function(){
+    toast('Portal link copied to clipboard');
+  }).catch(function(){
+    prompt('Copy this link:',portalUrl);
+  });
+}
+
+// ====================================================================
+// BARCODE / LABEL GENERATOR
+// ====================================================================
+function generateBarcodeSVG(text){
+  // Simple Code 128B barcode generator (SVG)
+  var CODE128B=[
+    '11011001100','11001101100','11001100110','10010011000','10010001100',
+    '10001001100','10011001000','10011000100','10001100100','11001001000',
+    '11001000100','11000100100','10110011100','10011011100','10011001110',
+    '10111001100','10011101100','10011100110','11001110010','11001011100',
+    '11001001110','11011100100','11001110100','11100101100','11100100110',
+    '11101100100','11100110100','11100110010','11011011000','11011000110',
+    '11000110110','10100011000','10001011000','10001000110','10110001000',
+    '10001101000','10001100010','11010001000','11000101000','11000100010',
+    '10110111000','10110001110','10001101110','10111011000','10111000110',
+    '10001110110','11101110110','11010001110','11000101110','11011101000',
+    '11011100010','11011101110','11101011000','11101000110','11100010110',
+    '11101101000','11101100010','11100011010','11101111010','11001000010',
+    '11110001010','10100110000','10100001100','10010110000','10010000110',
+    '10000101100','10000100110','10110010000','10110000100','10011010000',
+    '10011000010','10000110100','10000110010','11000010010','11001010000',
+    '11110111010','11000010100','10001111010','10100111100','10010111100',
+    '10010011110','10111100100','10011110100','10011110010','11110100100',
+    '11110010100','11110010010','11011011110','11011110110','11110110110',
+    '10101111000','10100011110','10001011110','10111101000','10111100010',
+    '10001111010','11110101000','11110100010','10111011110','10111101110',
+    '11101011110','11110101110','11010000100','11010010000','11010011100',
+    '1100011101011'
+  ];
+  var startB=104;
+  var checksum=startB;
+  var bars=CODE128B[startB];
+  for(var i=0;i<text.length;i++){
+    var code=text.charCodeAt(i)-32;
+    if(code<0||code>95) code=0;
+    bars+=CODE128B[code];
+    checksum+=(i+1)*code;
+  }
+  bars+=CODE128B[checksum%103];
+  bars+=CODE128B[106]; // stop
+
+  var w=bars.length;
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' 60" width="'+w*2+'" height="120">';
+  svg+='<rect width="100%" height="100%" fill="white"/>';
+  for(var j=0;j<bars.length;j++){
+    if(bars[j]==='1') svg+='<rect x="'+j+'" y="0" width="1" height="50" fill="black"/>';
+  }
+  svg+='<text x="'+(w/2)+'" y="58" text-anchor="middle" font-family="monospace" font-size="8">'+text.replace(/</g,'&lt;')+'</text>';
+  svg+='</svg>';
+  return svg;
+}
+
+function printLabel(id){
+  var p=products.find(function(x){return x.id===id;});
+  if(!p)return;
+  var sku=p.sku||'NO-SKU';
+  var html='<div style="text-align:center;padding:20px;">';
+  html+='<div style="font-weight:800;font-size:1.1rem;margin-bottom:4px;">'+escHtml(p.name)+'</div>';
+  html+='<div style="color:var(--g500);font-size:.8rem;margin-bottom:12px;">'+escHtml(p.brand||'')+' | '+money(p.price)+'</div>';
+  html+='<div id="barcodeArea">'+generateBarcodeSVG(sku)+'</div>';
+  html+='<div style="margin-top:16px;font-size:.75rem;color:var(--g400);">'+escHtml(settings.bizName)+'</div>';
+  html+='</div>';
+  openModal('Product Label',html,'<button class="btn btn-outline" onclick="closeModal()">Close</button> <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print Label</button>');
+}
+
+function printAllLabels(){
+  var html='<div id="allLabels" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">';
+  products.forEach(function(p){
+    if(p.status==='active'){
+      var sku=p.sku||'NO-SKU';
+      html+='<div style="text-align:center;padding:16px;border:1px dashed var(--g300);border-radius:8px;">';
+      html+='<div style="font-weight:700;font-size:.85rem;">'+escHtml(p.name)+'</div>';
+      html+='<div style="color:var(--g500);font-size:.7rem;margin-bottom:8px;">'+money(p.price)+'</div>';
+      html+=generateBarcodeSVG(sku);
+      html+='</div>';
+    }
+  });
+  html+='</div>';
+  openModal('All Product Labels ('+products.filter(function(p){return p.status==='active';}).length+')',html,'<button class="btn btn-outline" onclick="closeModal()">Close</button> <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print All</button>');
 }
 </script>
 </body>
