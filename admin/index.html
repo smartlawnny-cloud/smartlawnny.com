@@ -207,6 +207,44 @@ input,select,textarea{font-family:inherit;}
   .modal{max-width:95%;}
   #globalSearchWrap{display:none;}
   .page-title{font-size:1rem !important;}
+
+  /* ============ NATIVE APP FEEL ============ */
+  /* Bottom tab bar */
+  .bottom-tabs{display:flex !important;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--g200);z-index:400;padding:4px 0 env(safe-area-inset-bottom,8px);box-shadow:0 -2px 10px rgba(0,0,0,.06);}
+  .bottom-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border:none;background:none;color:var(--g400);font-size:.6rem;font-weight:600;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+  .bottom-tab i{font-size:1.1rem;}
+  .bottom-tab.active{color:var(--green);}
+  .bottom-tab:active{transform:scale(.92);opacity:.7;}
+
+  /* Safe areas */
+  .top-bar{padding-top:max(12px,env(safe-area-inset-top)) !important;}
+  .main-content{padding-bottom:90px !important;}
+  .toast{bottom:90px !important;}
+
+  /* Hide sidebar completely on mobile */
+  .sidebar{display:none !important;}
+  .sidebar-overlay{display:none !important;}
+  .menu-toggle{display:none !important;}
+
+  /* Native scroll */
+  .main-content{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+
+  /* Larger tap targets */
+  .btn,.btn-icon,.nav-item{min-height:44px;}
+  .data-table td{padding:12px 14px;}
+
+  /* More menu grid items */
+  .more-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border:none;background:var(--g50);border-radius:12px;color:var(--g700);font-size:.75rem;font-weight:600;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+  .more-item i{font-size:1.3rem;color:var(--green);}
+  .more-item:active{background:var(--green-light);transform:scale(.95);}
+
+  /* Pull to refresh indicator */
+  .pull-refresh{text-align:center;padding:12px;color:var(--g400);font-size:.8rem;display:none;}
+  .pull-refresh.show{display:block;}
+
+  /* Top bar tweaks for mobile app feel */
+  .top-bar{background:var(--white) !important;border-bottom:1px solid var(--g200) !important;padding:12px 16px !important;padding-top:max(12px,env(safe-area-inset-top)) !important;}
+  .main-area{margin-left:0 !important;}
   .top-bar{padding:10px 12px !important;}
   .stat-card .value{font-size:1.3rem;}
   .stat-card .label{font-size:.6rem;}
@@ -215,10 +253,14 @@ input,select,textarea{font-family:inherit;}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;}
 .sidebar-overlay.show{display:block;}
 
+/* Bottom tabs hidden on desktop */
+.bottom-tabs{display:none;}
+#moreMenu,#moreOverlay{display:none;}
+
 /* ============ PRINT ============ */
 @media print{
   body{background:#fff!important;overflow:visible!important;}
-  #app,.sidebar,.sidebar-overlay,.top-bar,.main-area{display:none!important;}
+  #app,.sidebar,.sidebar-overlay,.top-bar,.main-area,.bottom-tabs{display:none!important;}
   .modal-overlay{position:static!important;background:none!important;display:block!important;padding:0!important;}
   .modal-overlay.show{display:block!important;}
   .modal{max-width:100%!important;box-shadow:none!important;border:none!important;}
@@ -318,6 +360,32 @@ input,select,textarea{font-family:inherit;}
     <div class="modal-footer" id="modalFooter"></div>
   </div>
 </div>
+
+<!-- ============ BOTTOM TAB BAR (mobile only) ============ -->
+<div class="bottom-tabs" id="bottomTabs" style="display:none;">
+  <button class="bottom-tab active" onclick="goTab('dashboard',this)" id="tab-dashboard"><i class="fas fa-chart-line"></i><span>Home</span></button>
+  <button class="bottom-tab" onclick="goTab('pos',this)" id="tab-pos"><i class="fas fa-cash-register"></i><span>Sell</span></button>
+  <button class="bottom-tab" onclick="goTab('products',this)" id="tab-products"><i class="fas fa-box"></i><span>Products</span></button>
+  <button class="bottom-tab" onclick="goTab('customers',this)" id="tab-customers"><i class="fas fa-users"></i><span>Customers</span></button>
+  <button class="bottom-tab" onclick="goTab('more',this)" id="tab-more"><i class="fas fa-ellipsis-h"></i><span>More</span></button>
+</div>
+
+<!-- ============ MORE MENU (mobile) ============ -->
+<div id="moreMenu" style="display:none;position:fixed;bottom:70px;right:8px;left:8px;background:var(--white);border-radius:16px;box-shadow:0 -4px 30px rgba(0,0,0,.15);z-index:450;padding:12px;max-height:60vh;overflow-y:auto;">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+    <button class="more-item" onclick="goTab('orders');closeMore()"><i class="fas fa-truck"></i><span>Orders</span></button>
+    <button class="more-item" onclick="goTab('invoices');closeMore()"><i class="fas fa-file-invoice-dollar"></i><span>Invoices</span></button>
+    <button class="more-item" onclick="goTab('purchasing');closeMore()"><i class="fas fa-shopping-bag"></i><span>Purchasing</span></button>
+    <button class="more-item" onclick="goTab('service');closeMore()"><i class="fas fa-wrench"></i><span>Service</span></button>
+    <button class="more-item" onclick="goTab('maas');closeMore()"><i class="fas fa-leaf"></i><span>MaaS</span></button>
+    <button class="more-item" onclick="goTab('reports');closeMore()"><i class="fas fa-chart-bar"></i><span>Reports</span></button>
+    <button class="more-item" onclick="goTab('history');closeMore()"><i class="fas fa-receipt"></i><span>Sales</span></button>
+    <button class="more-item" onclick="goTab('activity');closeMore()"><i class="fas fa-clipboard-list"></i><span>Activity</span></button>
+    <button class="more-item" onclick="goTab('settings');closeMore()"><i class="fas fa-cog"></i><span>Settings</span></button>
+  </div>
+  <button onclick="logout()" style="width:100%;margin-top:12px;padding:12px;border:none;background:var(--g100);border-radius:10px;color:var(--red);font-weight:600;font-family:inherit;font-size:.9rem;"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+</div>
+<div id="moreOverlay" onclick="closeMore()" style="display:none;position:fixed;inset:0;z-index:440;"></div>
 
 <!-- ============ TOAST ============ -->
 <div class="toast" id="toast"></div>
@@ -443,6 +511,55 @@ function toggleSidebar(){
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+// ====================================================================
+// BOTTOM TAB BAR (mobile native feel)
+// ====================================================================
+function goTab(page,btn){
+  if(page==='more'){
+    toggleMore();
+    return;
+  }
+  closeMore();
+  currentPage=page;
+  // Update bottom tabs
+  document.querySelectorAll('.bottom-tab').forEach(function(t){t.classList.remove('active');});
+  var mainTabs=['dashboard','pos','products','customers'];
+  if(mainTabs.indexOf(page)>=0){
+    var tab=document.getElementById('tab-'+page);
+    if(tab) tab.classList.add('active');
+  } else {
+    document.getElementById('tab-more').classList.add('active');
+  }
+  // Update sidebar nav too
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  renderPage();
+  // Scroll to top
+  var mc=document.getElementById('mainContent');
+  if(mc) mc.scrollTop=0;
+}
+
+function toggleMore(){
+  var menu=document.getElementById('moreMenu');
+  var overlay=document.getElementById('moreOverlay');
+  if(menu.style.display==='none'){
+    menu.style.display='block';
+    overlay.style.display='block';
+    // Animate in
+    menu.style.transform='translateY(20px)';menu.style.opacity='0';
+    setTimeout(function(){menu.style.transition='all .2s ease';menu.style.transform='translateY(0)';menu.style.opacity='1';},10);
+  } else {
+    closeMore();
+  }
+}
+
+function closeMore(){
+  var menu=document.getElementById('moreMenu');
+  var overlay=document.getElementById('moreOverlay');
+  menu.style.display='none';
+  overlay.style.display='none';
+  menu.style.transition='none';
 }
 
 // ====================================================================
