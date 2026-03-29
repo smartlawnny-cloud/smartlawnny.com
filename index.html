@@ -2739,7 +2739,7 @@ function _onPropMapReady() {
     var payBtn = document.getElementById('stripePayBtn');
     if (payBtn) payBtn.innerHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:1.5rem;">⏳</div><div style="font-size:.85rem;font-weight:600;margin-top:4px;">Connecting to secure checkout...</div></div>';
 
-    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
 
     fetch(SCRIPT_URL, {
       method: 'POST',
@@ -2801,7 +2801,7 @@ function _onPropMapReady() {
       '</div>';
 
     // Send notification
-    fetch('https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec', {
       method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({type:'CONTACT', firstName:'MaaS Request', street:d.addr, lawnSize:d.totalAcres+' acres', interest:'Mowing as a Service', message:'$'+weekly+'/week, '+d.totalAcres+' acres', date:new Date().toISOString(), source:'MaaS Checkout'})
     });
@@ -2819,7 +2819,7 @@ function _onPropMapReady() {
     }
     var data = window._pendingOrderData || {};
     data.email = email;
-    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
     fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
     emailEl.style.display = 'none';
     emailEl.parentElement.innerHTML = '<div style="padding:14px;background:#f0f8e8;border-radius:10px;font-size:1rem;font-weight:700;color:#4a8a10;">✓ Quote sent to ' + email + '</div>';
@@ -3182,7 +3182,7 @@ function _onPropMapReady() {
       'DFY: $' + Number(d.weeklyDFY).toLocaleString() + '/week\n\n' +
       'Map link: ' + window.location.href;
     // Send via Apps Script to text Doug
-    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
     fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'MAP QUOTE', address:d.addr, totalAcres:d.totalAcres, zones:d.zones.length, mower:mowerNames, units:d.totalUnits, fleetCost:d.totalFleetCost, weeklyDFY:d.weeklyDFY, date:new Date().toISOString()}) });
     // Also open SMS to Doug
     var sms = 'sms:9146477276&body=' + encodeURIComponent('New quote request: ' + d.addr + ' - ' + d.totalAcres + ' acres, ' + d.zones.length + ' zones, ' + mowerNames + ' x' + d.totalUnits + '. $' + Number(d.weeklyDFY).toLocaleString() + '/wk DFY');
@@ -3341,7 +3341,7 @@ function _flyToProperty(lat, lng, name) {
   document.getElementById('propAddrLabel').textContent = name.split(',').slice(0,2).join(',');
 
   // Log address lookup to sheet + send SMS
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
   fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
     body:JSON.stringify({type:'ADDRESS_LOOKUP', firstName:'Property Lookup', lastName:'', email:'', phone:'',
       street:name, city:'', state:'', zip:'', county:'', lawnSize:'',
@@ -3742,7 +3742,7 @@ function submitContactForm(e) {
   data.date = new Date().toISOString();
   btn.textContent = 'Sending...';
   btn.disabled = true;
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
   fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
   .then(function() {
     if (typeof gtag === 'function') gtag('event', 'contact_form_submitted', {interest: data.interest || 'general', county: data.county || 'unknown'});
@@ -3780,7 +3780,7 @@ function submitNewsletter(e) {
   var msg = document.getElementById('newsletterMsg');
   btn.textContent = '...';
   btn.disabled = true;
-  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
   fetch(SHEET_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -3850,7 +3850,7 @@ function checkoutCart() {
   var items = cart.map(function(c){return c.name+' ($'+c.price.toLocaleString()+')';}).join(', ');
   var total = cart.reduce(function(s,c){return s+c.price;},0);
   // Send to Apps Script
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
   fetch(SCRIPT_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
     body:JSON.stringify({firstName:'Cart Checkout', lastName:'', email:'', phone:'',
       street:'', city:'', state:'', zip:'', county:'', lawnSize:'',
@@ -4002,7 +4002,7 @@ function _addMsg(text,type){
   msgs.scrollTop=msgs.scrollHeight;
 }
 function _sendToDoug(msg){
-  var SCRIPT_URL='https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
+  var SCRIPT_URL='https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
   fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({type:'LIVE_CHAT',firstName:'Website Chat',message:msg,
       date:new Date().toISOString(),source:'Live Chat Widget',
