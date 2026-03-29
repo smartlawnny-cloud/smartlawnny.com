@@ -112,7 +112,7 @@
     if (sid) {
       document.getElementById('sessionInfo').textContent = 'Order reference: ' + sid;
       // Tell Apps Script to send confirmation email + update order status
-      var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4EdYGft-clzGx4b9X5C2J-OOKBk6r7kIGvRghZ3wd4NwDSNh2uJ2xvtkRDYSX6PqWpw/exec';
+      var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwf7lCsIWX6u-Ir0YPz-97xtQscYzRVGKAoP5JP14WeClomxt7IeMcytzvdp7vbuwRy0w/exec';
       fetch(SCRIPT_URL, {
         method: 'POST',
         headers: {'Content-Type': 'text/plain'},
