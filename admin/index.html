@@ -696,7 +696,15 @@ function renderDashboard(){
   var pendingTotal=0;
   pendingInv.forEach(function(i){pendingTotal+=Number(i.total)||0;});
 
-  var html='<div class="stat-grid">';
+  // Quick Actions (Square-style)
+  var html='<div style="display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;padding:2px 0;-webkit-overflow-scrolling:touch;">';
+  html+='<button onclick="goTab?goTab(\'pos\'):go(\'pos\')" style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--green);color:white;border:none;border-radius:14px;font-family:inherit;font-size:.88rem;font-weight:700;box-shadow:0 2px 8px rgba(106,187,30,.3);cursor:pointer;"><i class="fas fa-dollar-sign"></i> New Sale</button>';
+  html+='<button onclick="openInvoiceModal()" style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--white);color:var(--g700);border:1px solid var(--g200);border-radius:14px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;"><i class="fas fa-file-invoice-dollar" style="color:var(--blue);"></i> Invoice</button>';
+  html+='<button onclick="openOrderModal()" style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--white);color:var(--g700);border:1px solid var(--g200);border-radius:14px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;"><i class="fas fa-truck" style="color:var(--purple);"></i> Order</button>';
+  html+='<button onclick="openCustomerModal()" style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--white);color:var(--g700);border:1px solid var(--g200);border-radius:14px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer;"><i class="fas fa-user-plus" style="color:var(--teal);"></i> Customer</button>';
+  html+='</div>';
+
+  html+='<div class="stat-grid">';
   html+='<div class="stat-card"><div class="label">Today\'s Revenue</div><div class="value" style="color:var(--green);">'+money(todayRev)+'</div><div class="change">'+todaySales+' sale'+(todaySales!==1?'s':'')+'</div></div>';
   html+='<div class="stat-card"><div class="label">This Month</div><div class="value">'+money(monthRev)+'</div></div>';
   html+='<div class="stat-card"><div class="label">All-Time Revenue</div><div class="value">'+money(totalRev)+'</div><div class="change">'+totalSales+' transactions</div></div>';
