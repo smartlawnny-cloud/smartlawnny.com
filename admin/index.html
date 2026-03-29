@@ -210,44 +210,80 @@ input,select,textarea{font-family:inherit;}
 
   /* ============ NATIVE APP FEEL ============ */
   /* Bottom tab bar */
-  .bottom-tabs{display:flex !important;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--g200);z-index:400;padding:4px 0 env(safe-area-inset-bottom,8px);box-shadow:0 -2px 10px rgba(0,0,0,.06);}
-  .bottom-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border:none;background:none;color:var(--g400);font-size:.6rem;font-weight:600;font-family:inherit;-webkit-tap-highlight-color:transparent;}
-  .bottom-tab i{font-size:1.1rem;}
+  /* ============ SQUARE-STYLE NATIVE APP ============ */
+
+  /* Bottom tab bar — Square style */
+  .bottom-tabs{display:flex !important;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--g200);z-index:400;padding:6px 0 env(safe-area-inset-bottom,8px);box-shadow:0 -4px 20px rgba(0,0,0,.08);}
+  .bottom-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;border:none;background:none;color:var(--g400);font-size:.62rem;font-weight:600;font-family:inherit;letter-spacing:.02em;-webkit-tap-highlight-color:transparent;transition:color .15s;}
+  .bottom-tab i{font-size:1.2rem;transition:transform .15s;}
   .bottom-tab.active{color:var(--green);}
-  .bottom-tab:active{transform:scale(.92);opacity:.7;}
+  .bottom-tab.active i{transform:scale(1.1);}
+  .bottom-tab:active{transform:scale(.9);}
+
+  /* Green floating sell button (Square style) */
+  .bottom-tab.sell-btn{position:relative;top:-12px;background:var(--green);color:var(--white) !important;width:56px;height:56px;border-radius:50%;flex:none;margin:0 4px;box-shadow:0 4px 12px rgba(106,187,30,.4);padding:0;justify-content:center;gap:0;}
+  .bottom-tab.sell-btn i{font-size:1.4rem;color:var(--white);}
+  .bottom-tab.sell-btn span{display:none;}
+  .bottom-tab.sell-btn.active{background:var(--green-dark);}
 
   /* Safe areas */
-  .top-bar{padding-top:max(12px,env(safe-area-inset-top)) !important;}
-  .main-content{padding-bottom:90px !important;}
-  .toast{bottom:90px !important;}
+  .top-bar{padding-top:max(10px,env(safe-area-inset-top)) !important;}
+  .main-content{padding-bottom:88px !important;}
+  .toast{bottom:96px !important;left:16px !important;right:16px !important;border-radius:12px !important;}
 
-  /* Hide sidebar completely on mobile */
+  /* Hide sidebar on mobile */
   .sidebar{display:none !important;}
   .sidebar-overlay{display:none !important;}
   .menu-toggle{display:none !important;}
 
   /* Native scroll */
   .main-content{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  .main-area{margin-left:0 !important;}
 
-  /* Larger tap targets */
-  .btn,.btn-icon,.nav-item{min-height:44px;}
+  /* Top bar — minimal like Square */
+  .top-bar{background:var(--white) !important;border-bottom:1px solid var(--g200) !important;padding:10px 16px !important;padding-top:max(10px,env(safe-area-inset-top)) !important;}
+  .page-title{font-size:1.15rem !important;font-weight:800 !important;}
+  #globalSearchWrap{display:none !important;}
+  .sync{font-size:.65rem !important;}
+
+  /* Larger tap targets (Apple HIG: 44pt minimum) */
+  .btn,.btn-icon{min-height:44px;}
   .data-table td{padding:12px 14px;}
+  .form-group input,.form-group select,.form-group textarea{padding:14px 14px;font-size:1rem;border-radius:12px;}
+  .form-group label{font-size:.82rem;margin-bottom:6px;}
 
-  /* More menu grid items */
-  .more-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px;border:none;background:var(--g50);border-radius:12px;color:var(--g700);font-size:.75rem;font-weight:600;font-family:inherit;-webkit-tap-highlight-color:transparent;}
-  .more-item i{font-size:1.3rem;color:var(--green);}
+  /* Cards — rounder, more padding like Square */
+  .card{border-radius:16px !important;overflow:hidden;}
+  .card-header{padding:16px 20px !important;}
+  .stat-card{border-radius:16px !important;padding:16px !important;}
+  .stat-card .value{font-size:1.4rem;}
+  .stat-card .label{font-size:.65rem;letter-spacing:.5px;}
+  .stat-grid{gap:10px !important;}
+
+  /* More menu — slide up sheet like Square */
+  .more-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 8px;border:none;background:var(--g50);border-radius:14px;color:var(--g700);font-size:.75rem;font-weight:600;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+  .more-item i{font-size:1.4rem;color:var(--green);}
   .more-item:active{background:var(--green-light);transform:scale(.95);}
 
-  /* Pull to refresh indicator */
-  .pull-refresh{text-align:center;padding:12px;color:var(--g400);font-size:.8rem;display:none;}
-  .pull-refresh.show{display:block;}
+  /* POS grid — bigger cards on mobile */
+  .pos-product-grid{grid-template-columns:repeat(2,1fr) !important;gap:10px !important;}
+  .pos-product-card{border-radius:14px !important;padding:16px !important;}
+  .pos-product-card .pname{font-size:.9rem !important;}
+  .pos-product-card .pprice{font-size:1.1rem !important;}
 
-  /* Top bar tweaks for mobile app feel */
-  .top-bar{background:var(--white) !important;border-bottom:1px solid var(--g200) !important;padding:12px 16px !important;padding-top:max(12px,env(safe-area-inset-top)) !important;}
-  .main-area{margin-left:0 !important;}
-  .top-bar{padding:10px 12px !important;}
-  .stat-card .value{font-size:1.3rem;}
-  .stat-card .label{font-size:.6rem;}
+  /* Modal — full screen on mobile like Square */
+  .modal{max-width:100% !important;max-height:100vh !important;border-radius:20px 20px 0 0 !important;margin-top:auto;}
+  .modal-overlay{align-items:flex-end !important;}
+  .modal-header{padding:20px 20px 16px !important;}
+  .modal-body{padding:16px 20px !important;}
+
+  /* Search bar */
+  .search-bar{flex-direction:column;gap:10px;}
+  .search-bar input{border-radius:12px !important;padding:14px 16px !important;font-size:.95rem !important;}
+
+  /* Buttons — rounder, bolder */
+  .btn-primary{border-radius:14px !important;padding:14px 20px !important;font-size:.95rem !important;}
+  .btn-outline{border-radius:14px !important;}
 }
 @keyframes spin{to{transform:rotate(360deg);}}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;}
@@ -363,11 +399,11 @@ input,select,textarea{font-family:inherit;}
 
 <!-- ============ BOTTOM TAB BAR (mobile only) ============ -->
 <div class="bottom-tabs" id="bottomTabs" style="display:none;">
-  <button class="bottom-tab active" onclick="goTab('dashboard',this)" id="tab-dashboard"><i class="fas fa-chart-line"></i><span>Home</span></button>
-  <button class="bottom-tab" onclick="goTab('pos',this)" id="tab-pos"><i class="fas fa-cash-register"></i><span>Sell</span></button>
-  <button class="bottom-tab" onclick="goTab('products',this)" id="tab-products"><i class="fas fa-box"></i><span>Products</span></button>
-  <button class="bottom-tab" onclick="goTab('customers',this)" id="tab-customers"><i class="fas fa-users"></i><span>Customers</span></button>
-  <button class="bottom-tab" onclick="goTab('more',this)" id="tab-more"><i class="fas fa-ellipsis-h"></i><span>More</span></button>
+  <button class="bottom-tab active" onclick="goTab('dashboard',this)" id="tab-dashboard"><i class="fas fa-home"></i><span>Home</span></button>
+  <button class="bottom-tab" onclick="goTab('products',this)" id="tab-products"><i class="fas fa-th-large"></i><span>Items</span></button>
+  <button class="bottom-tab sell-btn" onclick="goTab('pos',this)" id="tab-pos"><i class="fas fa-dollar-sign"></i><span>Sell</span></button>
+  <button class="bottom-tab" onclick="goTab('customers',this)" id="tab-customers"><i class="fas fa-user"></i><span>Clients</span></button>
+  <button class="bottom-tab" onclick="goTab('more',this)" id="tab-more"><i class="fas fa-bars"></i><span>More</span></button>
 </div>
 
 <!-- ============ MORE MENU (mobile) ============ -->
