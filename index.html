@@ -2505,14 +2505,7 @@ function _onPropMapReady() {
     // Update recommendations based on zones
     if(total>0){
       var propertyData={totalAcres:total,mowableAcres:total};
-      // Show current lawn care cost estimate
-      var costEstEl=document.getElementById('currentCostEstimate');
-      if(costEstEl){
-        var lowEst=Math.round(total*100*25);
-        var highEst=Math.round(total*100*25);
-        document.getElementById('estCurrentCost').textContent='$'+lowEst.toLocaleString();
-        costEstEl.style.display='block';
-      }
+      // Cost estimate removed — real calc is in the Finance tab below
       // Recommendation now handled by per-zone mower selectors
       // Auto-fill Finance tab sq ft
       var sqft=Math.round(total*43560);
@@ -4036,6 +4029,30 @@ Tawk_API.customStyle = {
 
 // Pre-chat form: require name/email before chatting (acts as lead capture when offline)
 Tawk_API.visitor = { name:'', email:'' };
+
+// Auto-form: if no agent responds in 60 seconds, show offline form
+Tawk_API.onChatStarted = function(){
+  setTimeout(function(){
+    try {
+      if(typeof Tawk_API.getStatus === 'function' && Tawk_API.getStatus() !== 'online'){
+        Tawk_API.setAttributes({
+          'note': 'Auto-triggered: no agent responded in 60s'
+        });
+      }
+    } catch(e){}
+  }, 60000);
+};
+
+// Notify Doug via webhook when chat opens
+Tawk_API.onChatStarted = function(){
+  try {
+    fetch('https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec', {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'CHAT_OPENED',source:'Tawk.to',date:new Date().toISOString(),message:'Customer opened chat on smartlawnny.com'})
+    });
+  } catch(e){}
+};
 
 (function(){
 var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
