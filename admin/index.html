@@ -453,6 +453,14 @@ var currentPage = 'dashboard';
 var settings = {taxRate:0.08375,bizName:'Smart Lawn NY',bizPhone:'(914) 647-7276',bizEmail:'smartlawnny@gmail.com',bizAddr:'Westchester County, NY',receiptFooter:'Thank you for your purchase!'};
 
 // ====================================================================
+// SUPABASE WARMUP (fire on page load to wake free tier before login)
+// ====================================================================
+(function(){
+  sb('products?select=id&limit=1').catch(function(){});
+  sb('categories?select=id&limit=1').catch(function(){});
+})();
+
+// ====================================================================
 // AUTH
 // ====================================================================
 function doLogin(){
