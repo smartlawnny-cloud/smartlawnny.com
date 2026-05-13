@@ -614,7 +614,33 @@ function toggleFaq(el) {
 
 <!-- Form Submission -->
 <script>
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
+// Leads helpers — duplicated from index.html. If a 3rd page needs this, extract to js/leads.js.
+window.SLNY_SB_URL = 'https://hsjodrniizoctxsznjsy.supabase.co';
+window.SLNY_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk';
+window.slnySaveLead = function(source, formData) {
+  var d = formData || {};
+  var row = {
+    source: source, raw_payload: d,
+    first_name: d.firstName || d.first_name || null,
+    last_name:  d.lastName  || d.last_name  || null,
+    email: d.email || null, phone: d.phone || null,
+    street: d.street || null, city: d.city || null, state: d.state || null, zip: d.zip || null,
+    county: d.county || null, lawn_size: d.lawnSize || null, interest: d.interest || null, message: d.message || null,
+    user_agent: navigator.userAgent, referrer: document.referrer || null, page_url: location.href
+  };
+  return fetch(window.SLNY_SB_URL + '/rest/v1/leads', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','apikey':window.SLNY_SB_KEY,'Authorization':'Bearer '+window.SLNY_SB_KEY,'Prefer':'return=minimal'},
+    body: JSON.stringify(row)
+  }).then(function(r){ if (!r.ok) throw new Error('Supabase HTTP '+r.status); return true; });
+};
+window.slnyNotifyAppsScript = function(payload) {
+  try {
+    fetch('https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec',
+      {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .catch(function(){});
+  } catch (e) {}
+};
 
 function submitHoaForm(e) {
   e.preventDefault();
@@ -642,12 +668,8 @@ function submitHoaForm(e) {
     source: 'HOA Landing Page'
   };
 
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(data)
-  }).then(function() {
+  window.slnyNotifyAppsScript(data);
+  window.slnySaveLead('hoa', data).then(function() {
     msg.style.display = 'block';
     msg.style.color = '#6abb1e';
     msg.textContent = 'Thank you! We\'ll be in touch within 24 hours.';
@@ -655,7 +677,8 @@ function submitHoaForm(e) {
     if (typeof gtag === 'function') {
       gtag('event', 'generate_lead', {event_category: 'HOA', event_label: data.email});
     }
-  }).catch(function() {
+  }).catch(function(err) {
+    console.error('[hoa] Supabase write failed:', err);
     msg.style.display = 'block';
     msg.style.color = '#ff3b30';
     msg.textContent = 'Something went wrong. Please call us at (914) 647-7276.';

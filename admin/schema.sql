@@ -652,3 +652,64 @@ WHERE bi.product_id IS NULL
     (bi.mfg_item_number = 'CM 240M1'    AND p.sku = 'navimow-terranox-cm240m1') OR
     (bi.mfg_item_number = 'i1A11N'      AND p.sku = 'navimow-mowgate')
   );
+
+-- ============================================================
+-- LEADS — public-form submissions (contact / newsletter / hoa / quote / chat)
+-- Built to replace the dead Google Apps Script webhook as the source of truth.
+-- Apps Script becomes fire-and-forget for email/SMS notification only.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS leads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  source TEXT NOT NULL CHECK (source IN ('contact','newsletter','hoa','quote','chat','map_checkout','property_count','other')),
+  raw_payload JSONB,
+  first_name TEXT,
+  last_name TEXT,
+  email TEXT,
+  phone TEXT,
+  street TEXT,
+  city TEXT,
+  state TEXT,
+  zip TEXT,
+  county TEXT,
+  lawn_size TEXT,
+  interest TEXT,
+  message TEXT,
+  status TEXT DEFAULT 'new' CHECK (status IN ('new','contacted','qualified','quoted','converted','lost','spam')),
+  notes TEXT,
+  user_agent TEXT,
+  referrer TEXT,
+  page_url TEXT,
+  contacted_at TIMESTAMPTZ,
+  converted_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
+CREATE INDEX IF NOT EXISTS idx_leads_source ON leads(source);
+CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
+CREATE INDEX IF NOT EXISTS idx_leads_phone ON leads(phone);
+CREATE INDEX IF NOT EXISTS idx_leads_created_desc ON leads(created_at DESC);
+
+ALTER TABLE leads ENABLE ROW LEVEL SECURITY;
+
+DO $$
+BEGIN
+  -- public site needs INSERT only; admin uses anon role for read/update too
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'leads' AND policyname = 'anon_all_leads') THEN
+    CREATE POLICY "anon_all_leads" ON leads FOR ALL USING (true) WITH CHECK (true);
+  END IF;
+END $$;
+
+CREATE OR REPLACE FUNCTION update_leads_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at := NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_leads_updated_at ON leads;
+CREATE TRIGGER trg_leads_updated_at
+  BEFORE UPDATE ON leads
+  FOR EACH ROW EXECUTE FUNCTION update_leads_updated_at();

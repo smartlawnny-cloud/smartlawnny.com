@@ -1668,6 +1668,62 @@
 </script>
 
 <script>
+// === LEADS FALLBACK — Supabase as source of truth ===
+// The Apps Script webhook silently failed for an unknown duration in 2026
+// (mode:'no-cors' meant the form always showed "Sent!" regardless of whether
+// the backend responded). Supabase write is now the success criterion;
+// Apps Script is best-effort for email/SMS notification only.
+window.SLNY_SB_URL = 'https://hsjodrniizoctxsznjsy.supabase.co';
+window.SLNY_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk';
+
+// Persist a lead to Supabase. Returns Promise<bool> — true on success.
+// Maps form fields to leads-table columns; raw_payload preserves the original.
+window.slnySaveLead = function(source, formData) {
+  var d = formData || {};
+  var row = {
+    source: source,
+    raw_payload: d,
+    first_name: d.firstName || d.first_name || null,
+    last_name:  d.lastName  || d.last_name  || null,
+    email:      d.email     || null,
+    phone:      d.phone     || null,
+    street:     d.street    || d.address    || null,
+    city:       d.city      || null,
+    state:      d.state     || null,
+    zip:        d.zip       || d.zipcode    || null,
+    county:     d.county    || null,
+    lawn_size:  d.lawnSize  || d.lawn_size  || null,
+    interest:   d.interest  || null,
+    message:    d.message   || null,
+    user_agent: navigator.userAgent,
+    referrer:   document.referrer || null,
+    page_url:   location.href
+  };
+  return fetch(window.SLNY_SB_URL + '/rest/v1/leads', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': window.SLNY_SB_KEY,
+      'Authorization': 'Bearer ' + window.SLNY_SB_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(row)
+  }).then(function(r) {
+    if (!r.ok) throw new Error('Supabase HTTP ' + r.status);
+    return true;
+  });
+};
+
+// Fire-and-forget Apps Script ping (notification only — never blocks UX).
+// Always wrapped in a no-await fetch so the user flow never depends on it.
+window.slnyNotifyAppsScript = function(payload) {
+  try {
+    var url = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
+    fetch(url, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+      .catch(function(){ /* swallow — Supabase is the source of truth */ });
+  } catch (e) { /* never block */ }
+};
+
 // === HERO PRODUCT CROSSFADE ===
 (function() {
   var links = document.querySelectorAll('.hero-product-link');
@@ -3735,11 +3791,10 @@ function submitContactForm(e) {
   data.date = new Date().toISOString();
   btn.textContent = 'Sending...';
   btn.disabled = true;
-  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
-  fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
-  .then(function() {
+  // Source of truth = Supabase. Apps Script fires alongside as notification.
+  window.slnyNotifyAppsScript(data);
+  window.slnySaveLead('contact', data).then(function() {
     if (typeof gtag === 'function') gtag('event', 'contact_form_submitted', {interest: data.interest || 'general', county: data.county || 'unknown'});
-    // Hide form fields and show success message
     var formFields = form.querySelectorAll('.form-row, .form-group, #contactBtn');
     for (var i = 0; i < formFields.length; i++) formFields[i].style.display = 'none';
     var successDiv = document.createElement('div');
@@ -3754,18 +3809,18 @@ function submitContactForm(e) {
       for (var i = 0; i < formFields.length; i++) formFields[i].style.display = '';
       btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = '';
     }, 5000);
-  })
-  .catch(function() {
-    btn.textContent = 'Error — try again';
+  }).catch(function(err) {
+    console.error('[contact] Supabase write failed:', err);
+    btn.textContent = 'Error — try again or call (914) 647-7276';
     btn.style.background = '#ff3b30';
-    setTimeout(function() { btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = ''; }, 3000);
+    setTimeout(function() { btn.textContent = 'Submit Request'; btn.disabled = false; btn.style.background = ''; }, 5000);
   });
   return false;
 }
 
 /* Demo form removed */
 
-/* Newsletter → Google Sheets */
+/* Newsletter → Supabase (source of truth) + Apps Script (notification) */
 function submitNewsletter(e) {
   e.preventDefault();
   var email = document.getElementById('newsletterEmail').value;
@@ -3773,18 +3828,14 @@ function submitNewsletter(e) {
   var msg = document.getElementById('newsletterMsg');
   btn.textContent = '...';
   btn.disabled = true;
-  var SHEET_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
-  fetch(SHEET_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({type: 'NEWSLETTER', email: email, date: new Date().toISOString()})
-  }).then(function() {
+  window.slnyNotifyAppsScript({type: 'NEWSLETTER', email: email, date: new Date().toISOString()});
+  window.slnySaveLead('newsletter', {email: email}).then(function() {
     msg.style.display = 'block';
     msg.style.color = '#4caf50';
     msg.textContent = 'Thanks! You\'re on the list.';
     document.getElementById('newsletterEmail').value = '';
-  }).catch(function() {
+  }).catch(function(err) {
+    console.error('[newsletter] Supabase write failed:', err);
     msg.style.display = 'block';
     msg.style.color = '#ff3b30';
     msg.textContent = 'Something went wrong. Please try again.';
