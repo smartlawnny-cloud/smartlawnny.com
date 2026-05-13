@@ -617,6 +617,8 @@ function toggleFaq(el) {
 // Leads helpers — duplicated from index.html. If a 3rd page needs this, extract to js/leads.js.
 window.SLNY_SB_URL = 'https://hsjodrniizoctxsznjsy.supabase.co';
 window.SLNY_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk';
+// Canonical Apps Script URL — keep in sync with index.html. Replace one place when redeployed.
+window.SLNY_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
 window.slnySaveLead = function(source, formData) {
   var d = formData || {};
   var row = {
@@ -636,7 +638,7 @@ window.slnySaveLead = function(source, formData) {
 };
 window.slnyNotifyAppsScript = function(payload) {
   try {
-    fetch('https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec',
+    fetch(window.SLNY_SCRIPT_URL,
       {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
       .catch(function(){});
   } catch (e) {}
