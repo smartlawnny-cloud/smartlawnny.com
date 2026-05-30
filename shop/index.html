@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6abb1e">
+<meta name="description" content="Pick the right robotic mower for your lawn — measured on satellite, shipped or installed. Smart Lawn NY.">
+<title>Shop robotic mowers — Smart Lawn NY</title>
+<script>
+// Inline config — shop/index.html is served from smartlawnny.com but talks
+// to the Smart Lawn OS CRM project (catalog RPCs, stripe-checkout function).
+// Anon key + tenant are public by design.
+window.APP_CONFIG = {
+  supabaseUrl:  'https://zjqpzqpvovvuaxikyksq.supabase.co',
+  supabaseKey:  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqcXB6cXB2b3Z2dWF4aWt5a3NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDM4NDYsImV4cCI6MjA5NDgxOTg0Nn0.T6s7o38wKFVPn6XPmJSMQxSflPFV4bjI7oGOqo7dOJg',
+  tenantId:     '9ca9340a-bbea-4945-a656-35187423d509',
+  bizShortName: 'Smart Lawn NY',
+  bizWebsite:   'smartlawnny.com',
+  bizPhone:     '(914) 647-7276',
+  themeColor:   '#6abb1e'
+};
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#6abb1e;--green-dark:#4f8d15;--green-light:#e8f5d8;
+  --ink:#1a1a2e;--bg:#f8faf3;
+  --g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;--g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;
+  --shadow-sm:0 2px 8px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--g800);line-height:1.55;}
+body{min-height:100vh;}
+a{color:var(--green-dark);text-decoration:none;}
+a:hover{text-decoration:underline;}
+.wrap{max-width:960px;margin:0 auto;padding:24px 18px 96px;}
+@media(max-width:600px){.wrap{padding:16px 14px 96px;}}
+
+/* Header / progress */
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.topbar .logo{font-size:1.25rem;font-weight:900;color:var(--ink);line-height:1;}
+.topbar .logo span{color:var(--green);font-weight:400;font-size:.7rem;display:block;line-height:1.4;}
+.topbar .right{margin-left:auto;display:flex;gap:14px;align-items:center;font-size:.82rem;color:var(--g500);}
+.topbar .right a{font-weight:600;}
+
+.progress{display:flex;gap:6px;margin-bottom:18px;}
+.progress .seg{flex:1;height:5px;border-radius:99px;background:var(--g200);}
+.progress .seg.done{background:var(--green);}
+.progress .seg.active{background:var(--green);box-shadow:0 0 0 3px rgba(106,187,30,.18);}
+
+.step-label{font-size:.72rem;font-weight:800;color:var(--green-dark);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.step-title{font-size:1.55rem;font-weight:900;color:var(--ink);margin-bottom:6px;letter-spacing:-.01em;}
+@media(max-width:600px){.step-title{font-size:1.3rem;}}
+.step-sub{font-size:.92rem;color:var(--g600);margin-bottom:18px;}
+
+/* Card */
+.card{background:#fff;border-radius:18px;padding:22px;box-shadow:var(--shadow-md);margin-bottom:14px;border:1px solid rgba(106,187,30,.08);}
+@media(max-width:600px){.card{padding:18px;border-radius:14px;}}
+
+/* Address input */
+.addr-card{background:#fff;border-radius:18px;padding:26px;box-shadow:var(--shadow-lg);}
+.addr-card h1{font-size:1.7rem;font-weight:900;color:var(--ink);margin-bottom:8px;letter-spacing:-.015em;}
+.addr-card p{font-size:.95rem;color:var(--g600);margin-bottom:18px;}
+.addr-input-wrap{position:relative;}
+.addr-input{width:100%;padding:18px 18px 18px 50px;border:2px solid var(--g200);border-radius:14px;font-family:inherit;font-size:1.05rem;color:var(--ink);background:#fff;}
+.addr-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 4px rgba(106,187,30,.14);}
+.addr-input-wrap::before{content:'\1F50D';position:absolute;left:18px;top:50%;transform:translateY(-50%);font-size:1.1rem;opacity:.55;}
+
+/* Step 2 — Map */
+.map-grid{display:grid;grid-template-columns:1fr 280px;gap:0;border-radius:16px;overflow:hidden;border:1px solid var(--g200);}
+@media(max-width:760px){.map-grid{grid-template-columns:1fr;}}
+#propertyMap{width:100%;height:460px;background:var(--g100);}
+@media(max-width:760px){#propertyMap{height:340px;}}
+.map-side{background:#fff;padding:18px;border-left:1px solid var(--g200);display:flex;flex-direction:column;gap:14px;}
+@media(max-width:760px){.map-side{border-left:none;border-top:1px solid var(--g200);}}
+.map-tool-row{display:flex;gap:8px;}
+.map-tool{flex:1;background:#fff;border:1.5px solid var(--g200);border-radius:10px;padding:10px;font-family:inherit;font-weight:700;font-size:.82rem;color:var(--g700);cursor:pointer;}
+.map-tool:hover{border-color:var(--green);}
+.map-tool.active{background:var(--green);border-color:var(--green);color:#fff;}
+.measure-row{background:var(--green-light);border-radius:12px;padding:14px;text-align:center;}
+.measure-row .lbl{font-size:.68rem;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.7px;}
+.measure-row .val{font-size:1.8rem;font-weight:900;color:var(--ink);line-height:1.1;margin-top:4px;}
+.measure-row .sub{font-size:.78rem;color:var(--g600);margin-top:2px;}
+
+/* Mower grid */
+.mower-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.mower-card{background:#fff;border:2px solid var(--g200);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;}
+.mower-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.mower-card.selected{border-color:var(--green);box-shadow:0 0 0 4px rgba(106,187,30,.18);}
+.mower-img{background:linear-gradient(135deg,#f0f8e8,#fafff0);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.mower-img img{width:100%;height:100%;object-fit:contain;padding:14px;}
+.mower-img .ph{font-size:3.5rem;opacity:.45;}
+.mower-badge{position:absolute;top:10px;left:10px;background:var(--green);color:#fff;padding:4px 10px;border-radius:99px;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;}
+.mower-body{padding:14px 16px 16px;flex:1;display:flex;flex-direction:column;}
+.mower-brand{font-size:.72rem;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.6px;}
+.mower-name{font-size:1.05rem;font-weight:800;color:var(--ink);margin:3px 0 6px;}
+.mower-specs{font-size:.78rem;color:var(--g600);margin-bottom:10px;line-height:1.4;}
+.mower-price-row{display:flex;align-items:baseline;gap:8px;margin-top:auto;padding-top:10px;border-top:1px solid var(--g100);}
+.mower-price{font-size:1.25rem;font-weight:900;color:var(--ink);}
+.mower-install{font-size:.74rem;color:var(--g500);}
+.mower-select-btn{margin-top:10px;background:var(--green);color:#fff;border:none;border-radius:10px;padding:11px;font-family:inherit;font-weight:800;font-size:.86rem;cursor:pointer;}
+.mower-card.selected .mower-select-btn{background:var(--ink);}
+.mower-select-btn:hover{background:var(--green-dark);}
+
+.mower-empty{text-align:center;padding:32px 20px;color:var(--g500);}
+.mower-empty .ico{font-size:2.4rem;opacity:.35;margin-bottom:8px;}
+
+/* Add-ons */
+.addon-row{display:flex;align-items:center;gap:14px;padding:14px;border:1.5px solid var(--g200);border-radius:12px;cursor:pointer;background:#fff;transition:all .12s;margin-bottom:8px;}
+.addon-row:hover{border-color:var(--green);background:var(--green-light);}
+.addon-row.selected{border-color:var(--green);background:var(--green-light);}
+.addon-check{width:24px;height:24px;border:2px solid var(--g300);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;}
+.addon-row.selected .addon-check{background:var(--green);border-color:var(--green);color:#fff;}
+.addon-row.selected .addon-check::after{content:'\2713';font-weight:900;font-size:.95rem;color:#fff;}
+.addon-body{flex:1;}
+.addon-name{font-size:.95rem;font-weight:800;color:var(--ink);}
+.addon-desc{font-size:.78rem;color:var(--g500);margin-top:2px;}
+.addon-price{font-weight:800;color:var(--ink);font-size:.98rem;white-space:nowrap;}
+
+/* Summary */
+.sum-line{display:flex;justify-content:space-between;padding:8px 0;font-size:.92rem;color:var(--g700);}
+.sum-line .lbl{flex:1;padding-right:8px;}
+.sum-line .val{font-weight:700;color:var(--ink);}
+.sum-line.total{border-top:2px solid var(--g200);margin-top:10px;padding-top:14px;font-size:1.15rem;}
+.sum-line.total .val{font-size:1.4rem;font-weight:900;color:var(--green-dark);}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr;}}
+.form-field{display:flex;flex-direction:column;}
+.form-field label{font-size:.72rem;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px;}
+.form-field input{padding:12px 14px;border:1.5px solid var(--g200);border-radius:10px;font-family:inherit;font-size:.95rem;color:var(--ink);background:#fff;}
+.form-field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(106,187,30,.14);}
+
+/* Buttons */
+.btn{background:var(--green);color:#fff;border:none;border-radius:14px;padding:16px 24px;font-family:inherit;font-weight:800;font-size:1rem;cursor:pointer;transition:all .12s;}
+.btn:hover{background:var(--green-dark);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-block{width:100%;}
+.btn-ghost{background:transparent;color:var(--g600);}
+.btn-ghost:hover{background:var(--g100);color:var(--ink);}
+
+/* Sticky CTA on mobile */
+.sticky-cta{position:sticky;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--g200);padding:12px 18px;display:none;z-index:50;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
+.sticky-cta .row{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:14px;}
+.sticky-cta .row .left{flex:1;}
+.sticky-cta .row .left .l1{font-size:.7rem;color:var(--g500);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.sticky-cta .row .left .l2{font-size:1.1rem;font-weight:900;color:var(--ink);}
+.sticky-cta .row .btn{padding:14px 22px;font-size:.9rem;}
+@media(max-width:760px){.sticky-cta.show{display:block;}}
+
+/* Step navigation */
+.step{display:none;}
+.step.active{display:block;}
+
+/* Trust signals */
+.trust{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:.78rem;color:var(--g500);justify-content:center;}
+.trust .item{display:flex;align-items:center;gap:5px;}
+.trust .item::before{content:'\2713';color:var(--green);font-weight:900;}
+
+/* Why Smart Lawn NY band */
+.why-band{margin-top:32px;padding:28px 0 8px;}
+.why-label{font-size:.72rem;font-weight:800;color:var(--green-dark);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px;text-align:center;}
+.why-title{font-size:1.5rem;font-weight:900;color:var(--ink);text-align:center;letter-spacing:-.015em;line-height:1.2;margin-bottom:8px;}
+@media(max-width:600px){.why-title{font-size:1.2rem;}}
+.why-sub{font-size:.92rem;color:var(--g600);text-align:center;margin-bottom:22px;max-width:560px;margin-left:auto;margin-right:auto;}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.why-card{background:#fff;border:1px solid var(--g200);border-radius:14px;padding:18px 18px 16px;box-shadow:var(--shadow-sm);transition:transform .15s, box-shadow .15s;}
+.why-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);border-color:rgba(106,187,30,.4);}
+.why-ico{font-size:1.8rem;line-height:1;margin-bottom:8px;}
+.why-h{font-size:1rem;font-weight:800;color:var(--ink);margin-bottom:6px;line-height:1.25;}
+.why-p{font-size:.85rem;color:var(--g600);line-height:1.5;}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:99px;font-size:.88rem;font-weight:700;box-shadow:var(--shadow-lg);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;}
+.toast.show{opacity:1;}
+
+/* Loading shimmer */
+.shimmer{background:linear-gradient(90deg,#f3f4f6 0%,#fff 50%,#f3f4f6 100%);background-size:200% 100%;animation:shim 1.4s linear infinite;border-radius:8px;}
+@keyframes shim{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.skel-card{border:1px solid var(--g200);border-radius:14px;padding:14px;}
+.skel-card .a{height:180px;margin-bottom:10px;}
+.skel-card .b{height:14px;width:60%;margin-bottom:8px;}
+.skel-card .c{height:22px;width:40%;}
+
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--g500);font-size:.85rem;font-weight:600;cursor:pointer;background:transparent;border:none;font-family:inherit;padding:0;margin-bottom:14px;}
+.back-link:hover{color:var(--green-dark);}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="topbar">
+    <div class="logo" id="brandLogo">Smart Lawn <span style="color:var(--green);font-weight:900;">NY</span></div>
+    <div class="right">
+      <a href="why.html">Why us</a>
+      <a href="book.html">Book a demo</a>
+      <a href="me.html">My orders</a>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress">
+    <div class="seg" id="pseg1"></div>
+    <div class="seg" id="pseg2"></div>
+    <div class="seg" id="pseg3"></div>
+    <div class="seg" id="pseg4"></div>
+  </div>
+
+  <!-- ============================================================
+       STEP 1 — Address
+       ============================================================ -->
+  <div class="step active" id="step1">
+    <div class="addr-card">
+      <h1>Get the right mower for your lawn — in 60 seconds.</h1>
+      <p>We'll measure your lawn from satellite, then show you the mowers that fit it. No salesperson, no quote-form runaround.</p>
+      <div class="addr-input-wrap">
+        <input type="text" id="addrInput" class="addr-input" placeholder="Enter your home address" autocomplete="off">
+      </div>
+      <div class="trust">
+        <span class="item">Free shipping in NY</span>
+        <span class="item">2-yr warranty</span>
+        <span class="item">Try $99 on-site demo</span>
+        <span class="item">Installed by us</span>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:16px;font-size:.82rem;color:var(--g500);">
+      Or skip — <a href="#" id="skipAddr">browse all mowers</a>
+    </div>
+
+    <!-- ▾ Why Smart Lawn NY ▾ -->
+    <div class="why-band">
+      <div class="why-label">Why Smart Lawn NY</div>
+      <h2 class="why-title">Robotic mowers are the easy part. The dealer is the hard part.</h2>
+      <p class="why-sub">Sold for less online, sure. Then you're on your own. Here's what you actually get from a local dealer.</p>
+
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-ico">🛠</div>
+          <div class="why-h">We install it for you</div>
+          <div class="why-p">Boundary mapping, charging station, app setup, first cut supervised. Skip the YouTube tutorials — we leave when it's mowing.</div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico">🛡</div>
+          <div class="why-h">2-year manufacturer warranty</div>
+          <div class="why-p">Every mower carries the full 2-year Navimow / Yarbo factory warranty. We handle the registration with the manufacturer for you. No 90-day reseller fine print.</div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico">🌱</div>
+          <div class="why-h">Try it on YOUR lawn — $99</div>
+          <div class="why-p">We bring a demo unit to your property and run it on your actual grass. Like it? The $99 credits back toward your purchase.</div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico">📍</div>
+          <div class="why-h">Real shop in Peekskill</div>
+          <div class="why-p">Westchester &amp; Putnam local. Drop in, call (914) 647-7276, or text. Service issues? Loaner mower while yours is on the bench.</div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico">🤝</div>
+          <div class="why-h">Multi-brand, honest fit</div>
+          <div class="why-p">Navimow, Yarbo, Husqvarna. Big lawn, wooded, steep slopes — different mowers win different yards. We recommend what fits, not what we overstock.</div>
+        </div>
+        <div class="why-card">
+          <div class="why-ico">💳</div>
+          <div class="why-h">0% financing with Affirm</div>
+          <div class="why-p">Spread the cost over 12-24 months interest-free on most mowers. Quick decision, no impact to your credit to check.</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:18px;font-size:.85rem;">
+        <a href="why.html" style="color:var(--green-dark);font-weight:700;">Read the full story →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 2 — Map (measure lawn)
+       ============================================================ -->
+  <div class="step" id="step2">
+    <button class="back-link" onclick="goStep(1)">&larr; Change address</button>
+    <div class="step-label">Step 2 of 4</div>
+    <div class="step-title">Outline your lawn</div>
+    <div class="step-sub">Tap the green corners around the edge of your lawn. We'll auto-calculate the size. (Skip this if you already know your lot size.)</div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="map-grid">
+        <div id="propertyMap"></div>
+        <div class="map-side">
+          <div>
+            <div style="font-size:.72rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Tools</div>
+            <div class="map-tool-row">
+              <button class="map-tool active" id="toolDraw" onclick="setMapTool('draw')">&#x270F; Draw</button>
+              <button class="map-tool" id="toolClear" onclick="clearLawn()">&#x21BA; Clear</button>
+            </div>
+          </div>
+          <div class="measure-row">
+            <div class="lbl">Lawn area</div>
+            <div class="val" id="sqftDisplay">— sq ft</div>
+            <div class="sub" id="acresDisplay">tap the map to start</div>
+          </div>
+          <div>
+            <div style="font-size:.72rem;font-weight:800;color:var(--g500);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Don't want to draw?</div>
+            <select id="sizePreset" onchange="onSizePreset()" style="width:100%;padding:11px 12px;border:1.5px solid var(--g200);border-radius:10px;font-family:inherit;font-size:.9rem;color:var(--ink);background:#fff;">
+              <option value="">— pick a size —</option>
+              <option value="5000">Small (~5,000 sq ft)</option>
+              <option value="10000">Medium (~10,000 sq ft / ¼ acre)</option>
+              <option value="21780">Half acre (~21,780 sq ft)</option>
+              <option value="43560">1 acre</option>
+              <option value="87120">2 acres</option>
+              <option value="130680">3 acres</option>
+              <option value="217800">5 acres</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-block" id="step2NextBtn" onclick="goStep(3)" disabled>See compatible mowers &rarr;</button>
+  </div>
+
+  <!-- ============================================================
+       STEP 3 — Mower picker
+       ============================================================ -->
+  <div class="step" id="step3">
+    <button class="back-link" onclick="goStep(2)">&larr; Re-measure</button>
+    <div class="step-label">Step 3 of 4</div>
+    <div class="step-title">Pick your mower</div>
+    <div class="step-sub" id="step3Sub">All compatible with your lawn size.</div>
+
+    <div id="mowerGrid" class="mower-grid">
+      <div class="skel-card"><div class="a shimmer"></div><div class="b shimmer"></div><div class="c shimmer"></div></div>
+      <div class="skel-card"><div class="a shimmer"></div><div class="b shimmer"></div><div class="c shimmer"></div></div>
+      <div class="skel-card"><div class="a shimmer"></div><div class="b shimmer"></div><div class="c shimmer"></div></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 4 — Add-ons + checkout
+       ============================================================ -->
+  <div class="step" id="step4">
+    <button class="back-link" onclick="goStep(3)">&larr; Change mower</button>
+    <div class="step-label">Step 4 of 4</div>
+    <div class="step-title">Add on installation &amp; care</div>
+    <div class="step-sub">Most customers pick install + extended warranty. You can skip these and add later.</div>
+
+    <div class="card">
+      <div id="addonList"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:1.05rem;font-weight:800;color:var(--ink);margin-bottom:12px;">Your order</h3>
+      <div id="summaryLines"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:1.05rem;font-weight:800;color:var(--ink);margin-bottom:12px;">Your info</h3>
+      <div class="form-grid">
+        <div class="form-field"><label>First name</label><input type="text" id="ciFirst" autocomplete="given-name"></div>
+        <div class="form-field"><label>Last name</label><input type="text" id="ciLast" autocomplete="family-name"></div>
+        <div class="form-field" style="grid-column:1/-1;"><label>Email</label><input type="email" id="ciEmail" autocomplete="email"></div>
+        <div class="form-field" style="grid-column:1/-1;"><label>Phone</label><input type="tel" id="ciPhone" autocomplete="tel"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-block" id="checkoutBtn" onclick="startCheckout()">Continue to secure payment &rarr;</button>
+    <div style="text-align:center;font-size:.78rem;color:var(--g500);margin-top:10px;">Powered by Stripe. Cards never touch our servers.</div>
+  </div>
+
+</div>
+
+<!-- Sticky CTA on mobile after a selection -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="row">
+    <div class="left"><div class="l1" id="stickyL1">Selected</div><div class="l2" id="stickyL2">—</div></div>
+    <button class="btn" id="stickyBtn" onclick="stickyNext()">Next &rarr;</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =============================================================
+   STATE
+   ============================================================= */
+var STATE = {
+  step: 1,
+  addr: '',
+  lat: null,
+  lng: null,
+  lawnSqft: null,
+  catalog: { mowers: [], addons: [] },
+  pickedMower: null,
+  pickedAddons: new Set(),
+};
+
+var SUPA = window.APP_CONFIG || {};
+var SB_HEAD = { apikey: SUPA.supabaseKey, Authorization: 'Bearer ' + SUPA.supabaseKey };
+
+/* Apply brand from config */
+(function(){
+  if (SUPA.bizShortName) {
+    document.getElementById('brandLogo').innerHTML = SUPA.bizShortName + ' <span style="color:var(--green);font-weight:900;">' + (SUPA.bizShortAccent||'') + '</span>';
+    document.title = 'Shop robotic mowers — ' + (SUPA.bizName || 'Smart Lawn');
+  }
+})();
+
+/* =============================================================
+   STEP NAVIGATION
+   ============================================================= */
+function goStep(n){
+  STATE.step = n;
+  ['step1','step2','step3','step4'].forEach(function(id, i){
+    document.getElementById(id).classList.toggle('active', i+1 === n);
+  });
+  // Progress bar
+  for (var i=1; i<=4; i++){
+    var seg = document.getElementById('pseg'+i);
+    seg.classList.remove('done','active');
+    if (i < n) seg.classList.add('done');
+    if (i === n) seg.classList.add('active');
+  }
+  // Sticky CTA visibility
+  updateStickyCta();
+  // Scroll to top of new step
+  window.scrollTo({top:0, behavior:'smooth'});
+  // Lazy load map for step 2
+  if (n === 2) ensureMap();
+  if (n === 3) loadMowers();
+  if (n === 4) renderAddons();
+}
+
+function updateStickyCta(){
+  var s = document.getElementById('stickyCta');
+  if (STATE.step === 3 && STATE.pickedMower) {
+    document.getElementById('stickyL1').textContent = STATE.pickedMower.brand || 'Selected';
+    document.getElementById('stickyL2').textContent = STATE.pickedMower.name + ' — $' + fmtMoney(STATE.pickedMower.price);
+    document.getElementById('stickyBtn').textContent = 'Continue →';
+    s.classList.add('show');
+  } else if (STATE.step === 4) {
+    var tot = computeTotal();
+    document.getElementById('stickyL1').textContent = 'Total';
+    document.getElementById('stickyL2').textContent = '$' + fmtMoney(tot);
+    document.getElementById('stickyBtn').textContent = 'Check out →';
+    s.classList.add('show');
+  } else {
+    s.classList.remove('show');
+  }
+}
+function stickyNext(){
+  if (STATE.step === 3) goStep(4);
+  else if (STATE.step === 4) startCheckout();
+}
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+
+function fmtMoney(n){
+  return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+}
+
+/* =============================================================
+   STEP 1 — Address
+   ============================================================= */
+document.getElementById('skipAddr').addEventListener('click', function(e){
+  e.preventDefault();
+  STATE.lawnSqft = null;        // no measurement
+  goStep(3);                    // jump straight to "all mowers"
+});
+
+document.getElementById('addrInput').addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && this.value.trim().length > 4){
+    STATE.addr = this.value.trim();
+    goStep(2);
+  }
+});
+
+/* =============================================================
+   STEP 2 — Map (Google Maps + drawing)
+   ============================================================= */
+var GMAPS_KEY = (SUPA.googleMapsKey) || 'AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk'; // legacy site key, referrer-restricted
+var _gmapReady = false, _propMap = null, _polygon = null, _autocomplete = null, _drawListener = null;
+
+function ensureMap(){
+  if (_gmapReady) {
+    // Already loaded — if there's an address typed in step 1, geocode + center
+    if (STATE.addr && !STATE.lat) geocodeAndCenter(STATE.addr);
+    return;
+  }
+  if (window.google && window.google.maps) {
+    _onGmapReady();
+    return;
+  }
+  var s = document.createElement('script');
+  s.src = 'https://maps.googleapis.com/maps/api/js?key=' + GMAPS_KEY +
+          '&libraries=drawing,geometry,places&callback=_onGmapReady';
+  s.async = true; s.defer = true;
+  document.head.appendChild(s);
+}
+window._onGmapReady = function(){
+  _gmapReady = true;
+  _propMap = new google.maps.Map(document.getElementById('propertyMap'), {
+    center: {lat: 41.2895, lng: -73.9209}, // Peekskill default
+    zoom: 19,
+    mapTypeId: 'hybrid',
+    tilt: 0,
+    streetViewControl: false,
+    mapTypeControl: false,
+    fullscreenControl: false,
+  });
+
+  // Re-attach autocomplete to step 1 address box (also lets you re-enter from step 2 if we add it)
+  var ai = document.getElementById('addrInput');
+  if (ai) {
+    _autocomplete = new google.maps.places.Autocomplete(ai, {
+      types: ['address'],
+      componentRestrictions: { country: ['us'] },
+      fields: ['formatted_address','geometry'],
+    });
+    _autocomplete.addListener('place_changed', function(){
+      var p = _autocomplete.getPlace();
+      if (!p || !p.geometry) return;
+      STATE.addr = p.formatted_address || ai.value;
+      STATE.lat = p.geometry.location.lat();
+      STATE.lng = p.geometry.location.lng();
+      goStep(2);
+      _propMap.setCenter(p.geometry.location);
+      _propMap.setZoom(20);
+    });
+  }
+
+  // Attach the click-to-draw handler
+  _drawListener = _propMap.addListener('click', _onMapClick);
+
+  // If user typed and hit Enter (no autocomplete), geocode
+  if (STATE.addr && !STATE.lat) geocodeAndCenter(STATE.addr);
+};
+
+function geocodeAndCenter(addr){
+  if (!window.google) return;
+  var gc = new google.maps.Geocoder();
+  gc.geocode({ address: addr }, function(results, status){
+    if (status === 'OK' && results[0]){
+      STATE.lat = results[0].geometry.location.lat();
+      STATE.lng = results[0].geometry.location.lng();
+      _propMap.setCenter(results[0].geometry.location);
+      _propMap.setZoom(20);
+    }
+  });
+}
+
+var _drawPath = [];
+function _onMapClick(e){
+  _drawPath.push(e.latLng);
+  redrawPolygon();
+}
+function redrawPolygon(){
+  if (_polygon) _polygon.setMap(null);
+  if (_drawPath.length < 1) { updateMeasure(0); return; }
+  _polygon = new google.maps.Polygon({
+    paths: _drawPath,
+    strokeColor: '#6abb1e',
+    strokeWeight: 3,
+    fillColor: '#6abb1e',
+    fillOpacity: 0.32,
+    editable: true,
+    map: _propMap,
+  });
+  _polygon.getPath().addListener('set_at', recomputeFromPolygon);
+  _polygon.getPath().addListener('insert_at', recomputeFromPolygon);
+  _polygon.getPath().addListener('remove_at', recomputeFromPolygon);
+  recomputeFromPolygon();
+}
+function recomputeFromPolygon(){
+  if (!_polygon || !window.google) return;
+  var areaM2 = google.maps.geometry.spherical.computeArea(_polygon.getPath());
+  var sqft = Math.round(areaM2 * 10.7639);
+  updateMeasure(sqft);
+}
+function updateMeasure(sqft){
+  STATE.lawnSqft = sqft || null;
+  document.getElementById('sqftDisplay').textContent = sqft ? sqft.toLocaleString() + ' sq ft' : '— sq ft';
+  document.getElementById('acresDisplay').textContent = sqft ? (sqft/43560).toFixed(2) + ' acres' : 'tap the map to start';
+  document.getElementById('step2NextBtn').disabled = !sqft || sqft < 100;
+}
+function clearLawn(){
+  _drawPath = [];
+  if (_polygon) { _polygon.setMap(null); _polygon = null; }
+  updateMeasure(0);
+  document.getElementById('sizePreset').value = '';
+}
+function setMapTool(t){
+  document.getElementById('toolDraw').classList.toggle('active', t==='draw');
+}
+function onSizePreset(){
+  var v = parseInt(document.getElementById('sizePreset').value, 10);
+  if (!v) return;
+  clearLawn();
+  updateMeasure(v);
+}
+
+/* =============================================================
+   STEP 3 — Mower picker
+   ============================================================= */
+function loadMowers(){
+  var grid = document.getElementById('mowerGrid');
+  var sub = document.getElementById('step3Sub');
+  if (STATE.lawnSqft) {
+    sub.textContent = 'These all cover ' + STATE.lawnSqft.toLocaleString() + ' sq ft (' + (STATE.lawnSqft/43560).toFixed(2) + ' acres).';
+  } else {
+    sub.textContent = 'Browse our full lineup. Bigger lawn? Pick a wider-coverage model.';
+  }
+
+  // Call public_shop_catalog RPC. Pass null sqft to get all.
+  var body = { p_tenant_id: SUPA.tenantId, p_lawn_sqft: STATE.lawnSqft };
+  fetch(SUPA.supabaseUrl + '/rest/v1/rpc/public_shop_catalog', {
+    method: 'POST',
+    headers: Object.assign({'Content-Type':'application/json'}, SB_HEAD),
+    body: JSON.stringify(body),
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      STATE.catalog = data || { mowers:[], addons:[] };
+      renderMowers();
+    })
+    .catch(function(err){
+      console.error('Catalog load failed', err);
+      grid.innerHTML = '<div class="mower-empty"><div class="ico">⚠️</div>Couldn\'t load mowers. <a href="javascript:loadMowers()">Retry</a></div>';
+    });
+}
+
+function renderMowers(){
+  var grid = document.getElementById('mowerGrid');
+  var ms = STATE.catalog.mowers || [];
+  if (ms.length === 0) {
+    grid.innerHTML = '<div class="mower-empty" style="grid-column:1/-1;"><div class="ico">🌱</div>No mowers in stock right now.<br><a href="book.html">Book a free demo</a> and we\'ll show you what\'s coming in.</div>';
+    return;
+  }
+  grid.innerHTML = ms.map(function(m){
+    var img = m.image_url ? '<img src="'+esc(m.image_url)+'" alt="'+esc(m.name)+'">' : '<div class="ph">🤖</div>';
+    var badge = m.badge_label ? '<div class="mower-badge" style="background:'+(m.badge_color||'var(--green)')+';">'+esc(m.badge_label)+'</div>' : '';
+    var specs = [];
+    if (m.max_sqft) {
+      var ac = m.max_sqft / 43560;
+      specs.push(ac >= 0.5 ? ('Up to ' + ac.toFixed(ac >= 1 ? 1 : 2) + ' acres') : ('Up to ' + m.max_sqft.toLocaleString() + ' sq ft'));
+    }
+    if (m.nav_tech) specs.push(m.nav_tech);
+    if (m.max_slope_deg) specs.push(m.max_slope_deg + '° slopes');
+    var sel = (STATE.pickedMower && STATE.pickedMower.id === m.id);
+    return '<div class="mower-card '+(sel?'selected':'')+'" onclick="pickMower(\''+m.id+'\')">' +
+      '<div class="mower-img">' + badge + img + '</div>' +
+      '<div class="mower-body">' +
+        '<div class="mower-brand">' + esc(m.brand || '') + '</div>' +
+        '<div class="mower-name">' + esc(m.name) + '</div>' +
+        '<div class="mower-specs">' + esc(specs.join(' · ')) + '</div>' +
+        (m.short_pitch ? '<div style="font-size:.82rem;color:var(--g600);margin-bottom:8px;">' + esc(m.short_pitch) + '</div>' : '') +
+        '<div class="mower-price-row"><span class="mower-price">$'+fmtMoney(m.price)+'</span>' +
+          (m.install_price ? '<span class="mower-install">+ install from $'+fmtMoney(m.install_price)+'</span>' : '') +
+        '</div>' +
+        '<button class="mower-select-btn">' + (sel ? '✓ Selected' : 'Choose this mower') + '</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function pickMower(id){
+  var m = (STATE.catalog.mowers || []).find(function(x){ return x.id === id; });
+  if (!m) return;
+  STATE.pickedMower = m;
+  // Auto-add install add-on if there's one matching
+  STATE.pickedAddons.clear();
+  var installer = (STATE.catalog.addons||[]).find(function(a){ return /install/i.test(a.name); });
+  if (installer && m.install_price) {
+    STATE.pickedAddons.add(installer.id);
+  }
+  renderMowers();
+  updateStickyCta();
+  // Auto-advance on desktop too — but give visual confirm first
+  setTimeout(function(){ goStep(4); }, 280);
+}
+
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+/* =============================================================
+   STEP 4 — Add-ons + checkout
+   ============================================================= */
+function renderAddons(){
+  var box = document.getElementById('addonList');
+  var addons = STATE.catalog.addons || [];
+  if (addons.length === 0) {
+    box.innerHTML = '<div style="text-align:center;color:var(--g500);padding:14px 0;">No add-ons configured yet.</div>';
+    renderSummary();
+    return;
+  }
+  box.innerHTML = addons.map(function(a){
+    var sel = STATE.pickedAddons.has(a.id);
+    return '<div class="addon-row '+(sel?'selected':'')+'" onclick="toggleAddon(\''+a.id+'\')">' +
+      '<div class="addon-check"></div>' +
+      '<div class="addon-body">' +
+        '<div class="addon-name">' + esc(a.name) + '</div>' +
+        '<div class="addon-desc">' + esc(a.short_pitch || a.description || '') + '</div>' +
+      '</div>' +
+      '<div class="addon-price">$' + fmtMoney(a.price) + '</div>' +
+    '</div>';
+  }).join('');
+  renderSummary();
+}
+function toggleAddon(id){
+  if (STATE.pickedAddons.has(id)) STATE.pickedAddons.delete(id);
+  else STATE.pickedAddons.add(id);
+  renderAddons();
+  updateStickyCta();
+}
+function computeSubtotal(){
+  var sub = STATE.pickedMower ? Number(STATE.pickedMower.price||0) : 0;
+  (STATE.catalog.addons||[]).forEach(function(a){
+    if (STATE.pickedAddons.has(a.id)) sub += Number(a.price||0);
+  });
+  return sub;
+}
+function computeTax(sub){
+  var rate = Number(SUPA.taxRate || 0);
+  return Math.round(sub * rate * 100) / 100;
+}
+function computeTotal(){
+  var sub = computeSubtotal();
+  return sub + computeTax(sub);
+}
+function renderSummary(){
+  var lines = [];
+  if (STATE.pickedMower) {
+    lines.push('<div class="sum-line"><div class="lbl">'+esc(STATE.pickedMower.name)+'</div><div class="val">$'+fmtMoney(STATE.pickedMower.price)+'</div></div>');
+  }
+  (STATE.catalog.addons||[]).forEach(function(a){
+    if (STATE.pickedAddons.has(a.id)) {
+      lines.push('<div class="sum-line"><div class="lbl">'+esc(a.name)+'</div><div class="val">$'+fmtMoney(a.price)+'</div></div>');
+    }
+  });
+  var sub = computeSubtotal();
+  var tax = computeTax(sub);
+  if (tax > 0) {
+    lines.push('<div class="sum-line"><div class="lbl">Tax</div><div class="val">$'+fmtMoney(tax)+'</div></div>');
+  }
+  lines.push('<div class="sum-line total"><div class="lbl">Total today</div><div class="val">$'+fmtMoney(sub+tax)+'</div></div>');
+  document.getElementById('summaryLines').innerHTML = lines.join('');
+}
+
+/* =============================================================
+   CHECKOUT — calls Edge Function which creates Stripe Session
+   ============================================================= */
+function startCheckout(){
+  if (!STATE.pickedMower) { toast('Pick a mower first'); goStep(3); return; }
+  var em = document.getElementById('ciEmail').value.trim();
+  if (!em || !/@/.test(em)) { toast('Enter a valid email'); document.getElementById('ciEmail').focus(); return; }
+
+  var btn = document.getElementById('checkoutBtn');
+  btn.disabled = true;
+  btn.textContent = 'Opening secure checkout…';
+
+  var items = [{ product_id: STATE.pickedMower.id, qty: 1 }];
+  STATE.pickedAddons.forEach(function(id){ items.push({ product_id: id, qty: 1 }); });
+
+  var payload = {
+    tenant_id: SUPA.tenantId,
+    items: items,
+    customer: {
+      first_name: document.getElementById('ciFirst').value.trim(),
+      last_name:  document.getElementById('ciLast').value.trim(),
+      email:      em,
+      phone:      document.getElementById('ciPhone').value.trim(),
+      address:    STATE.addr,
+    },
+    meta: {
+      lawn_sqft: STATE.lawnSqft,
+      lat: STATE.lat,
+      lng: STATE.lng,
+    },
+    success_url: window.location.origin + '/paid.html?session_id={CHECKOUT_SESSION_ID}',
+    cancel_url:  window.location.href,
+  };
+
+  fetch(SUPA.supabaseUrl + '/functions/v1/stripe-checkout', {
+    method: 'POST',
+    headers: Object.assign({'Content-Type':'application/json'}, SB_HEAD),
+    body: JSON.stringify(payload),
+  })
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, body:j}; }); })
+    .then(function(res){
+      if (!res.ok || !res.body || !res.body.url) {
+        throw new Error((res.body && res.body.error) || 'Checkout failed');
+      }
+      window.location.href = res.body.url;
+    })
+    .catch(function(err){
+      console.error(err);
+      toast('Checkout error — ' + (err.message || 'try again'));
+      btn.disabled = false;
+      btn.textContent = 'Continue to secure payment →';
+    });
+}
+
+/* =============================================================
+   Deep-link support — ?mower=NVM-X430 jumps straight to that mower.
+   Useful for sharing on Facebook Marketplace, texting a customer
+   the exact link, or running ads with the right product pre-selected.
+   ============================================================= */
+function tryDeepLink(){
+  var qs = new URLSearchParams(window.location.search);
+  var mowerSku = qs.get('mower');
+  if (!mowerSku) return false;
+
+  // Load the full catalog first, then auto-pick by SKU/id
+  STATE.lawnSqft = null;  // skip the lawn measurement
+  fetch(SUPA.supabaseUrl + '/rest/v1/rpc/public_shop_catalog', {
+    method: 'POST',
+    headers: Object.assign({'Content-Type':'application/json'}, SB_HEAD),
+    body: JSON.stringify({ p_tenant_id: SUPA.tenantId, p_lawn_sqft: null }),
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      STATE.catalog = data || { mowers: [], addons: [] };
+      // Match the SKU param to a mower (case-insensitive, also matches "X430" → "NVM-X430")
+      var m = (STATE.catalog.mowers || []).find(function(x){
+        return x.sku && (x.sku.toLowerCase() === mowerSku.toLowerCase()
+                      || x.sku.toLowerCase().indexOf(mowerSku.toLowerCase()) !== -1);
+      });
+      if (!m) {
+        // SKU not found — fall back to step 3 with full list
+        goStep(3);
+        renderMowers();
+        return;
+      }
+      STATE.pickedMower = m;
+      // Auto-add install if available
+      STATE.pickedAddons.clear();
+      var installer = (STATE.catalog.addons||[]).find(function(a){ return /install/i.test(a.name); });
+      if (installer && m.install_price) STATE.pickedAddons.add(installer.id);
+      // Jump to step 4 (add-ons + checkout) with mower pre-picked
+      goStep(4);
+    });
+  return true;
+}
+
+/* =============================================================
+   Boot
+   ============================================================= */
+ensureMap(); // pre-warm the Google JS so step 2 is instant (if needed)
+if (!tryDeepLink()) {
+  goStep(1);
+}
+</script>
+</body>
+</html>
