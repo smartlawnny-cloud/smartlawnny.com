@@ -155,6 +155,8 @@ ul{list-style:none;}
   .tab{border-radius:0;}
 }
 </style>
+<!-- Central lead-submission helper — routes form to the CRM submit_lead RPC -->
+<script src="/js/slny-leads.js"></script>
 </head>
 <body>
 
@@ -547,26 +549,31 @@ function submitLead(e){
     tags:'{calculator-lead}',
     total_spent:0,total_orders:0
   };
-  // Save to Supabase customers table
-  fetch('https://hsjodrniizoctxsznjsy.supabase.co/rest/v1/customers',{
-    method:'POST',
-    headers:{
-      'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
-      'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify(data)
+  // Save to Smart Lawn OS CRM via submit_lead RPC (replaces dead direct write).
+  var firstName = (data.name || '').split(' ')[0] || null;
+  var lastName  = (data.name || '').split(' ').slice(1).join(' ') || null;
+  window.slnySubmitLead('commercial-calculator', {
+    first_name: firstName,
+    last_name:  lastName,
+    phone:      data.phone || null,
+    email:      data.email || null,
+    address:    data.address || null,
+    message:    data.notes || null
   }).then(function(){
     document.getElementById('leadForm').style.display='none';
     document.getElementById('leadSuccess').style.display='block';
     if(typeof gtag==='function') gtag('event','lead_capture',{event_category:'Calculator',event_label:data.name});
-    // Also send to Tawk.to as a visitor event (shows in chat dashboard)
     if(typeof Tawk_API!=='undefined'&&Tawk_API.addEvent){
       Tawk_API.addEvent('calculator-lead',{name:data.name,phone:data.phone,email:data.email||'',address:data.address||''},function(){});
     }
-  }).catch(function(){
+  }).catch(function(err){
+    console.error('Lead save failed:', err);
+    // Show the success screen but include a fallback note so we don't lose the lead silently.
     document.getElementById('leadForm').style.display='none';
-    document.getElementById('leadSuccess').style.display='block';
+    var box = document.getElementById('leadSuccess');
+    box.style.display='block';
+    box.insertAdjacentHTML('beforeend',
+      '<div style="font-size:.82rem;color:#dc2626;margin-top:10px;">Heads up: we couldn’t reach our system. Please also call <a href="tel:+19146477276" style="color:#dc2626;text-decoration:underline;">(914) 647-7276</a> so we don’t miss you.</div>');
   });
 }
 </script>

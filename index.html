@@ -37,8 +37,13 @@
       --sh: 0 4px 6px -1px rgba(0,0,0,.1); --sh-lg: 0 10px 15px -3px rgba(0,0,0,.1);
       --sh-xl: 0 20px 25px -5px rgba(0,0,0,.1);
     }
-    body { font-family: 'Inter', sans-serif; color: var(--g800); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    img { max-width: 100%; display: block; }
+    /* Lock horizontal scroll everywhere — body alone wasn't enough; html needs it
+       too, otherwise iOS Safari still side-scrolls the whole document. */
+    html { overflow-x: hidden; max-width: 100%; }
+    body { font-family: 'Inter', sans-serif; color: var(--g800); line-height: 1.6; overflow-x: hidden; max-width: 100vw; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    /* Safety net for any embed wider than its container */
+    img, video, iframe, table { max-width: 100%; }
+    img { display: block; }
     a { text-decoration: none; color: inherit; }
     ul { list-style: none; }
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
@@ -484,6 +489,8 @@
     .fade-in { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
+  <!-- Central lead-submission helper — routes every public form to the CRM submit_lead RPC -->
+  <script src="/js/slny-leads.js"></script>
 </head>
 <body>
 
@@ -1673,8 +1680,13 @@
 // (mode:'no-cors' meant the form always showed "Sent!" regardless of whether
 // the backend responded). Supabase write is now the success criterion;
 // Apps Script is best-effort for email/SMS notification only.
-window.SLNY_SB_URL = 'https://hsjodrniizoctxsznjsy.supabase.co';
-window.SLNY_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk';
+// Legacy SLNY_SB_URL/KEY pointed at a paused Supabase project — every form
+// submission was silently failing. Lead capture now goes through slnySubmitLead()
+// (see /js/slny-leads.js, included near </body>), which calls the Smart Lawn OS
+// CRM submit_lead RPC. Variables kept defined-but-unused for any 3rd-party
+// integrations that still read window.SLNY_SB_URL.
+window.SLNY_SB_URL = null;
+window.SLNY_SB_KEY = null;
 // Single source of truth for the Apps Script URL. When the script is
 // redeployed, swap this one line. All call sites read from window.SLNY_SCRIPT_URL.
 // This URL was DEAD as of 2026-05-13 (HTTP 401). Replace after redeploying from _dev/contact-form-apps-script.js.
@@ -2888,14 +2900,22 @@ function _onPropMapReady() {
     }
     var d = _buildQuoteData();
     var zoneLines = d.zones.map(function(z){ return z.name+': '+z.acres+' ac — '+z.units+'x '+z.mowerName+' ($'+z.subtotal.toLocaleString()+')'; }).join(', ');
-    // Save lead to Supabase
-    fetch('https://hsjodrniizoctxsznjsy.supabase.co/rest/v1/customers',{
-      method:'POST',headers:{
-        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
-        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk',
-        'Content-Type':'application/json'},
-      body:JSON.stringify({name:email.split('@')[0],email:email,address:d.addr||'',notes:'Quote: '+zoneLines+' | Total: $'+d.grandTotal.toLocaleString(),tags:'{quote-lead}',state:'NY'})
-    }).catch(function(){});
+    // Save lead to Smart Lawn OS CRM (replaces silent direct-write to a paused project).
+    if (window.slnySubmitLead) {
+      window.slnySubmitLead('website-quote', {
+        first_name: email.split('@')[0],
+        email: email,
+        address: d.addr || '',
+        message: 'Quote: ' + zoneLines + ' | Total: $' + d.grandTotal.toLocaleString()
+      }).catch(function(err){
+        console.error('Lead save failed:', err);
+        var section = document.getElementById('checkoutEmailSection');
+        if (section) section.insertAdjacentHTML('beforeend',
+          '<div style="font-size:.82rem;color:#dc2626;margin-top:8px;">Heads up: we couldn’t save your quote to our system. Please also call <a href="tel:+19146477276" style="color:#dc2626;text-decoration:underline;">(914) 647-7276</a> so we don’t miss you.</div>');
+      });
+    } else {
+      console.error('slnySubmitLead helper missing — include /js/slny-leads.js');
+    }
     // Send email via mailto (opens user's email client with quote)
     var subject='Your Smart Lawn NY Quote — '+d.totalAcres+' acres';
     var body='Smart Lawn NY — Property Quote\n\n';

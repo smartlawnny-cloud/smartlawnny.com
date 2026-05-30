@@ -613,29 +613,11 @@ function toggleFaq(el) {
 </script>
 
 <!-- Form Submission -->
+<!-- Central lead-submission helper — defines window.slnySubmitLead + back-compat window.slnySaveLead. -->
+<script src="/js/slny-leads.js"></script>
 <script>
-// Leads helpers — duplicated from index.html. If a 3rd page needs this, extract to js/leads.js.
-window.SLNY_SB_URL = 'https://hsjodrniizoctxsznjsy.supabase.co';
-window.SLNY_SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhzam9kcm5paXpvY3R4c3puanN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODkxNzUsImV4cCI6MjA5MDA2NTE3NX0.Yu8JUBc5TQrVr_1XsAVHsr66LiZZrMEgeYZ8dog1VWk';
 // Canonical Apps Script URL — keep in sync with index.html. Replace one place when redeployed.
 window.SLNY_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUGJjJLh539v7P9Iey7Qqw4DwaKPgRBINeEyRT0IM9PsLMF3Vdd5fLVPYH9FVCu8RG0w/exec';
-window.slnySaveLead = function(source, formData) {
-  var d = formData || {};
-  var row = {
-    source: source, raw_payload: d,
-    first_name: d.firstName || d.first_name || null,
-    last_name:  d.lastName  || d.last_name  || null,
-    email: d.email || null, phone: d.phone || null,
-    street: d.street || null, city: d.city || null, state: d.state || null, zip: d.zip || null,
-    county: d.county || null, lawn_size: d.lawnSize || null, interest: d.interest || null, message: d.message || null,
-    user_agent: navigator.userAgent, referrer: document.referrer || null, page_url: location.href
-  };
-  return fetch(window.SLNY_SB_URL + '/rest/v1/leads', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json','apikey':window.SLNY_SB_KEY,'Authorization':'Bearer '+window.SLNY_SB_KEY,'Prefer':'return=minimal'},
-    body: JSON.stringify(row)
-  }).then(function(r){ if (!r.ok) throw new Error('Supabase HTTP '+r.status); return true; });
-};
 window.slnyNotifyAppsScript = function(payload) {
   try {
     fetch(window.SLNY_SCRIPT_URL,
