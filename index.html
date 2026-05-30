@@ -3938,6 +3938,114 @@ function checkoutCart() {
 }
 // Init cart UI on load
 document.addEventListener('DOMContentLoaded', updateCartUI);
+
+// ───────────────────────────────────────────────────────────────────
+// Click-anywhere-on-product-card support
+// Doug's ask 2026-05-30: clicking a product image (anywhere on the card)
+// should add to cart, not require hitting the small "Add to Cart" button.
+// ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.product-card').forEach(function(card){
+    var btn = card.querySelector('.btn-cart');
+    if (!btn) return; // skip non-shoppable cards
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', function(e){
+      // Let real buttons / links inside the card handle their own clicks
+      if (e.target.closest('button, a')) return;
+      btn.click();
+      toggleCart();
+    });
+  });
+});
+
+// ───────────────────────────────────────────────────────────────────
+// Cart → Buy Now (real Stripe Checkout)
+// Calls the existing stripe-checkout Edge Function on the CRM project.
+// Local install only, no shipping.
+// ───────────────────────────────────────────────────────────────────
+function cartBuyNow(){
+  if (cart.length === 0) return;
+  var first = (document.getElementById('cartFirst')||{}).value || '';
+  var phone = (document.getElementById('cartPhone')||{}).value || '';
+  var email = (document.getElementById('cartEmail')||{}).value || '';
+  var addr  = (document.getElementById('cartAddress')||{}).value || '';
+  first = first.trim(); phone = phone.trim(); email = email.trim(); addr = addr.trim();
+  if (!first || !phone || !addr) { alert('Please fill name, phone, and install address — we install locally only.'); return; }
+  if (phone.replace(/[^\d]/g,'').length < 7) { alert('Please enter a valid phone number that can receive texts.'); return; }
+  var btn = document.getElementById('cartBuyBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = 'Opening secure checkout…'; }
+  var items = cart.map(function(c){
+    return {
+      sku: (c.sku || c.name || '').toUpperCase().replace(/\s+/g,'-'),
+      name: c.name,
+      price: c.price,
+      qty: 1,
+      image: c.img || null
+    };
+  });
+  var payload = {
+    tenant_id: '9ca9340a-bbea-4945-a656-35187423d509',
+    items: items,
+    customer: { first_name: first, last_name: '', email: email || null, phone: phone, address: addr },
+    success_url: window.location.origin + '/success.html?session_id={CHECKOUT_SESSION_ID}',
+    cancel_url:  window.location.href
+  };
+  var CRM_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqcXB6cXB2b3Z2dWF4aWt5a3NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDM4NDYsImV4cCI6MjA5NDgxOTg0Nn0.T6s7o38wKFVPn6XPmJSMQxSflPFV4bjI7oGOqo7dOJg';
+  fetch('https://zjqpzqpvovvuaxikyksq.supabase.co/functions/v1/stripe-checkout', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'apikey':CRM_KEY, 'Authorization':'Bearer ' + CRM_KEY },
+    body: JSON.stringify(payload)
+  })
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, body:j}; }); })
+    .then(function(res){
+      if (!res.ok || !res.body || !res.body.url) {
+        throw new Error((res.body && res.body.error) || 'Checkout failed');
+      }
+      window.location.href = res.body.url;
+    })
+    .catch(function(err){
+      console.error('Buy Now failed:', err);
+      alert('Couldn\'t open Stripe Checkout. Please call (914) 647-7276 — we\'ll take it from there.');
+      if (btn) { btn.disabled = false; btn.innerHTML = 'Buy Now <i class="fas fa-credit-card" style="margin-left:6px;"></i>'; }
+    });
+}
+
+// ───────────────────────────────────────────────────────────────────
+// Cart → Request Install (lead, no charge)
+// Calls the central slnySubmitLead helper. Lands in CRM Requests inbox.
+// ───────────────────────────────────────────────────────────────────
+function cartRequestInstall(){
+  if (cart.length === 0) return;
+  var first = (document.getElementById('cartFirst')||{}).value || '';
+  var phone = (document.getElementById('cartPhone')||{}).value || '';
+  var email = (document.getElementById('cartEmail')||{}).value || '';
+  var addr  = (document.getElementById('cartAddress')||{}).value || '';
+  first = first.trim(); phone = phone.trim(); email = email.trim(); addr = addr.trim();
+  if (!first || !phone) { alert('Please fill name and phone so Doug can reach you.'); return; }
+  if (phone.replace(/[^\d]/g,'').length < 7) { alert('Please enter a valid phone number.'); return; }
+  if (!window.slnySubmitLead) { alert('Lead helper not loaded — please call (914) 647-7276.'); return; }
+  var btn = document.getElementById('cartInstallBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  var lines = cart.map(function(c){ return c.name + ' ($' + c.price.toLocaleString() + ')'; }).join(', ');
+  var total = cart.reduce(function(s,c){ return s + c.price; }, 0);
+  window.slnySubmitLead('website-install-request', {
+    first_name: first, phone: phone, email: email || null, address: addr,
+    message: 'Wants install for: ' + lines + ' | Subtotal: $' + total.toLocaleString()
+  })
+    .then(function(){
+      // Replace cart UI with success message
+      var box = document.getElementById('cartItems');
+      box.innerHTML = '<div style="text-align:center;padding:36px 18px;"><i class="fas fa-check-circle" style="font-size:2.6rem;color:var(--green);margin-bottom:12px;display:block;"></i><div style="font-weight:800;font-size:1.1rem;margin-bottom:8px;color:#1d1d1f;">Install request sent</div><div style="font-size:.9rem;color:var(--g500);line-height:1.5;">Doug will text or call you at<br><strong style="color:#1d1d1f;">' + phone + '</strong> shortly to schedule.</div></div>';
+      document.getElementById('cartFooter').style.display = 'none';
+      cart = []; saveCart();
+      if (typeof gtag === 'function') gtag('event', 'generate_lead', {method:'cart_request_install', value: total});
+    })
+    .catch(function(err){
+      console.error('Install request failed:', err);
+      alert('Couldn\'t reach our system. Please call (914) 647-7276 directly — we don\'t want to miss you.');
+      if (btn) { btn.disabled = false; btn.innerHTML = 'Request Install <i class="fas fa-tools" style="margin-left:6px;"></i>'; }
+    });
+}
 </script>
 <!-- Cart Drawer -->
 <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
@@ -3951,7 +4059,17 @@ document.addEventListener('DOMContentLoaded', updateCartUI);
   </div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
     <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
-    <button class="cart-checkout" onclick="checkoutCart()">Request Quote <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
+    <!-- Inline contact form — required for both Buy Now and Request Install -->
+    <div style="background:#fff;padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid var(--g200);">
+      <div style="font-size:.72rem;font-weight:800;color:var(--g700);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Your info</div>
+      <input id="cartFirst" placeholder="First name *" style="width:100%;padding:9px 11px;font-size:.88rem;border:1px solid var(--g200);border-radius:8px;margin-bottom:6px;font-family:inherit;">
+      <input id="cartPhone" type="tel" placeholder="Phone — must accept texts *" style="width:100%;padding:9px 11px;font-size:.88rem;border:1px solid var(--g200);border-radius:8px;margin-bottom:6px;font-family:inherit;">
+      <input id="cartEmail" type="email" placeholder="Email (optional)" style="width:100%;padding:9px 11px;font-size:.88rem;border:1px solid var(--g200);border-radius:8px;margin-bottom:6px;font-family:inherit;">
+      <input id="cartAddress" placeholder="Install address — Westchester or Putnam *" style="width:100%;padding:9px 11px;font-size:.88rem;border:1px solid var(--g200);border-radius:8px;font-family:inherit;">
+    </div>
+    <button class="cart-checkout" onclick="cartBuyNow()" id="cartBuyBtn">Buy Now <i class="fas fa-credit-card" style="margin-left:6px;"></i></button>
+    <button onclick="cartRequestInstall()" id="cartInstallBtn" style="width:100%;margin-top:8px;padding:14px;background:#fff;color:#1d1d1f;border:2px solid #1d1d1f;border-radius:980px;font-weight:700;cursor:pointer;font-family:inherit;font-size:.92rem;">Request Install <i class="fas fa-tools" style="margin-left:6px;"></i></button>
+    <div style="font-size:.68rem;color:var(--g500);text-align:center;margin-top:8px;line-height:1.4;"><i class="fas fa-truck" style="margin-right:3px;"></i> Local install only — Smart Lawn NY doesn't ship.</div>
     <button onclick="clearCart()" style="width:100%;margin-top:8px;padding:8px;background:none;border:1px solid var(--g300);border-radius:980px;font-size:.8rem;color:var(--g500);cursor:pointer;font-family:'Inter',sans-serif;">Clear Cart</button>
   </div>
 </div>
