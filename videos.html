@@ -134,6 +134,8 @@
     .fade-in { opacity: 0; transform: translateY(20px); transition: all .6s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
   </style>
+  <!-- Mobile scroll lock: body alone isn't enough on iOS Safari, html needs it too. -->
+  <style>html{overflow-x:hidden;max-width:100%;}body{overflow-x:hidden;max-width:100vw;}img,video,iframe,table{max-width:100%;}</style>
 </head>
 <body>
 <header>
