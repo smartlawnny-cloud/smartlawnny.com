@@ -632,7 +632,6 @@
               <!-- Mower picker cards -->
               <div id="homeMowerCards" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:6px;"></div>
               <select id="homeMowerSelect" onchange="_updateHomeZones()" style="display:none;">
-                <option value="25" data-name="FJD RM21" data-price="29999">FJD RM21 &mdash; $29,999</option>
                 <option value="6.0" data-name="TerraNox CM240M1" data-price="6999">TerraNox CM240M1</option>
                 <option value="3.0" data-name="TerraNox CM120M1" data-price="5499">TerraNox CM120M1</option>
                 <option value="0.75" data-name="Navimow X450" data-price="2999">Navimow X450</option>
@@ -913,19 +912,22 @@
           <button class="btn-cart" onclick="addToCart('Terranox CM240M1',6999,'images/products/terranox-robotic-mower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
-      <!-- Navimow Terranox CM120M1 -->
+      <!-- Navimow Terranox CM120M1 — demo unit, 15% off -->
       <div class="product-card fade-in" data-brand="navimow" data-size="large">
         <div class="product-card-image">
-          <span class="product-badge teal">Commercial</span>
-          <img src="images/products/terranox-robotic-mower.webp" alt="Navimow Terranox CM120M1">
+          <span class="product-badge" style="background:#d97706;">Demo Unit — 15% Off</span>
+          <img src="images/products/terranox-robotic-mower.webp" alt="Navimow Terranox CM120M1 — demo unit">
         </div>
         <div class="product-card-body">
           <div class="brand-label">Segway Navimow</div>
-          <h3>Terranox CM120M1</h3>
-          <div class="price">$5,499</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $499</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$504/mo with Affirm</div>
+          <h3>Terranox CM120M1 <span style="font-size:.7rem;font-weight:700;color:#d97706;background:#fef3c7;padding:2px 7px;border-radius:5px;margin-left:4px;text-transform:uppercase;letter-spacing:.4px;">Demo</span></h3>
+          <div class="price"><span style="color:#9ca3af;text-decoration:line-through;font-size:.85rem;font-weight:500;margin-right:6px;">$5,499</span>$4,674</div>
+          <div style="font-size:.75rem;color:var(--g500);">+ Install from $499</div>
+          <div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> 1 demo unit available</div>
+          <div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$429/mo with Affirm</div>
           <div class="specs">Up to 3 acres | 4WD | 40&deg; Slopes | NRTK+Vision</div>
           <a href="products/navimow-terranox-cm120m1.html" class="btn-details">View Details</a>
-          <button class="btn-cart" onclick="addToCart('Terranox CM120M1',5499,'images/products/terranox-robotic-mower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+          <button class="btn-cart" onclick="addToCart('Terranox CM120M1 (Demo)',4674,'images/products/terranox-robotic-mower.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         </div>
       </div>
       <!-- Navimow X450 -->
@@ -1112,35 +1114,7 @@
       </div>
     </div>
 
-    <!-- ▸ FJD Dynamics -->
-    <div class="brand-section fade-in" style="margin-bottom:16px;border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;">
-      <div onclick="toggleBrand('fjd')" style="display:flex;align-items:center;gap:16px;padding:16px 20px;cursor:pointer;background:#fff;transition:background .2s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
-        <img src="images/products/fjd-rm21-hero.webp" alt="FJD Dynamics" style="width:80px;height:56px;object-fit:cover;border-radius:10px;">
-        <div style="flex:1;">
-          <h3 style="font-size:1.1rem;font-weight:700;margin:0;">FJD Dynamics — Estate &amp; Commercial</h3>
-          <span style="font-size:.8rem;color:#86868b;">25" industrial deck — $29,999</span>
-        </div>
-        <span id="fjd-arrow" style="font-size:1.2rem;color:#86868b;transition:transform .2s;">▸</span>
-      </div>
-      <div id="fjd-products" style="display:none;padding:0 16px 16px;">
-        <div class="product-grid" style="display:grid;">
-          <div class="product-card fade-in" data-brand="fjd" data-size="large">
-            <div class="product-card-image">
-              <span class="product-badge" style="background:#2c5f2d;">Estate</span>
-              <img src="images/products/fjd-rm21-hero.webp" alt="FJD Dynamics RM21">
-            </div>
-            <div class="product-card-body">
-              <div class="brand-label">FJD Dynamics</div>
-              <h3>FJD RM21</h3>
-              <div class="price">$29,999</div><div style="font-size:.75rem;color:var(--g500);">+ Install from $999</div><div style="font-size:.7rem;color:#4caf50;font-weight:600;margin-top:4px;"><i class="fas fa-check-circle"></i> In Stock</div><div style="font-size:.7rem;color:#2563eb;font-weight:600;margin-top:2px;">or ~$2,750/mo with Affirm</div>
-              <div class="specs">Up to 27 acres | 25" Deck | 20&deg; Slopes | RTK+LiDAR</div>
-              <a href="products/fjd-rm21.html" class="btn-details">View Details</a>
-              <button class="btn-cart" onclick="addToCart('FJD Dynamics RM21',29999,'images/products/fjd-rm21-hero.webp')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- FJD Dynamics removed 2026-05-30: not a brand Smart Lawn NY actually carries. -->
 
   </div>
 </section>
@@ -1257,7 +1231,6 @@
             <option value="5499">Navimow Terranox CM120M1 — $5,499</option>
             <option value="6999">Navimow Terranox CM240M1 — $6,999</option>
             <option value="6194">Yarbo Complete Bundle — $6,194</option>
-            <option value="29999">FJD Dynamics RM21 — $29,999</option>
           </select>
         </div>
         <div class="input-group">
@@ -2372,7 +2345,6 @@ function _onPropMapReady() {
 
   // Mower specs for per-zone assignment
   var _mowerSpecs = {
-    'rm21':{name:'FJD RM21',price:29999,acres:25},
     'terranox-cm240':{name:'TerraNox CM240M1',price:6999,acres:6},
     'terranox-cm120':{name:'TerraNox CM120M1',price:5499,acres:4},
     'x450':{name:'Navimow X450',price:2999,acres:1},
@@ -2453,7 +2425,6 @@ function _onPropMapReady() {
 
         // Mower dropdown — only show models that fit this zone's acreage
         var mowerList=[
-          {key:'rm21',name:'FJD RM21',price:29999,acres:25},
           {key:'terranox-cm240',name:'TerraNox CM240',price:6999,acres:6},
           {key:'terranox-cm120',name:'TerraNox CM120',price:5499,acres:4},
           {key:'x450',name:'Navimow X450',price:2999,acres:1},
@@ -2595,7 +2566,6 @@ function _onPropMapReady() {
     {val:'0.75',name:'X450',price:2999,acres:0.75,img:'images/products/x4-black-pdp.png'},
     {val:'3.0',name:'CM120M1',price:5499,acres:3.0,img:'images/products/terranox-robotic-mower.webp'},
     {val:'6.0',name:'CM240M1',price:6999,acres:6.0,img:'images/products/terranox-robotic-mower.webp'},
-    {val:'25',name:'FJD RM21',price:29999,acres:25,img:'images/products/fjd-rm21-hero.webp'}
   ];
 
   function _renderMowerCards(totalAc){
@@ -3145,7 +3115,6 @@ function _onPropMapReady() {
 
   // Detailed mower info for proposal
   var _mowerDetails = {
-    'rm21':{name:'FJD Dynamics RM21',img:'images/products/fjd-rm21-hero.webp',width:'25"',slope:'20°',nav:'RTK + LiDAR',battery:'4 kWh / 48V',runtime:'5 hrs',weight:'375 lbs',ip:'IPX4',features:['25" commercial deck — widest in class','Multi-functional: mow, ball pick, line mark, collect, dew brush','RTK + LiDAR fusion for reliable signal','360° obstacle detection + emergency stop','Auto docking & fast charge (3 hrs)','Remote app monitoring & scheduling']},
     'terranox-cm240':{name:'Segway Navimow TerraNox CM240M1',img:'images/products/terranox-robotic-mower.webp',width:'9.4"',slope:'43°',nav:'RTK + Vision AI',battery:'Li-Ion',runtime:'Auto',weight:'22 lbs',ip:'IPX6',features:['43° slope capability — handles nearly any terrain','RTK + Vision AI navigation — centimeter precision','Wire-free boundary — no buried wire needed','IPX6 all-weather — operates in rain','OTA firmware updates','NavimowFleet commercial app']},
     'terranox-cm120':{name:'Segway Navimow TerraNox CM120M1',img:'images/products/terranox-robotic-mower.webp',width:'9.4"',slope:'43°',nav:'RTK + Vision AI',battery:'Li-Ion',runtime:'Auto',weight:'22 lbs',ip:'IPX6',features:['43° slope capability','RTK + Vision AI navigation','Wire-free install','IPX6 all-weather','Up to 4 acres per unit','NavimowFleet app']},
     'x450':{name:'Segway Navimow X450',img:'images/products/x4-black-pdp.png',width:'10.2"',slope:'27°',nav:'EFLS + Vision',battery:'5.2 Ah',runtime:'180 min',weight:'24 lbs',ip:'IPX6',features:['4WD for slopes up to 27°','EFLS + Vision AI navigation','Up to 1 acre coverage','Wire-free, no perimeter wire','Ultra-quiet < 60 dB','Navimow app control']},
