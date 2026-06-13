@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Leave a Review — Smart Lawn NY</title>
+<style>
+ :root{--green:#6abb1e;--green-dark:#4f8d15;--teal:#1a5c5c;--ink:#1a1a2e;--bg:#f8faf3;--line:#e6e6e1;--gold:#f4b400;}
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:ui-sans-serif,system-ui,-apple-system,Inter,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+ .card{background:#fff;border-radius:22px;box-shadow:0 12px 44px rgba(0,0,0,.08);max-width:480px;width:100%;overflow:hidden}
+ .top{background:linear-gradient(135deg,var(--teal),#124444);color:#fff;padding:30px 26px 24px;text-align:center}
+ .top svg{height:58px;width:58px;margin-bottom:8px}
+ .top .name{font-weight:900;font-size:1.3rem}.top .name span{color:var(--green)}
+ .top .tag{font-size:.66rem;letter-spacing:2px;text-transform:uppercase;opacity:.85;margin-top:4px}
+ .body{padding:28px 26px 30px;text-align:center}
+ .stars{color:var(--gold);font-size:1.7rem;letter-spacing:5px}
+ h1{font-size:1.3rem;font-weight:800;margin:10px 0 6px}
+ p{color:#555a63;font-size:.95rem;margin-bottom:20px}
+ .btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border-radius:13px;font-weight:800;font-size:1.02rem;text-decoration:none;margin-bottom:12px;border:none;cursor:pointer}
+ .g{background:#fff;color:var(--ink);border:1.5px solid #dadce0}.g:hover{border-color:var(--ink)}
+ .fb{background:#1877f2;color:#fff}
+ .foot{color:#555a63;font-size:.82rem;margin-top:16px;line-height:1.6}
+ .foot a{color:var(--green-dark);text-decoration:none;font-weight:600}
+</style></head><body>
+ <div class="card">
+  <div class="top">
+   <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+     <circle cx="30" cy="30" r="29" fill="#f5f7f0" stroke="#e0e8d0" stroke-width="1"/>
+     <rect x="15" y="30" width="30" height="13" rx="4" fill="#1a5c5c"/><circle cx="30" cy="34" r="2.5" fill="#fff" opacity=".7"/>
+     <rect x="18" y="43" width="6" height="4" rx="2" fill="#333"/><rect x="36" y="43" width="6" height="4" rx="2" fill="#333"/>
+     <path d="M26 24 L30 16 L34 24" stroke="#6abb1e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+     <path d="M22 20 L30 10 L38 20" stroke="#6abb1e" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
+   </svg>
+   <div class="name">Smart <span>Lawn</span> NY</div><div class="tag">Automation &amp; Robotics</div>
+  </div>
+  <div class="body">
+   <div class="stars">★★★★★</div>
+   <h1>How's your robot mower?</h1>
+   <p>A quick review means the world to a small local business. Thank you!</p>
+   <a class="btn g" id="rev-google" target="_blank" rel="noopener" style="display:none">⭐ Review us on Google</a>
+   <a class="btn fb" id="rev-fb" target="_blank" rel="noopener">Review us on Facebook</a>
+   <div class="foot"><strong>Smart Lawn NY</strong><br>(914) 647-7276 · <a href="https://smartlawnny.com">smartlawnny.com</a></div>
+  </div>
+ </div>
+<script>
+ // Swap GOOGLE in once the Business Profile verifies (g.page/r/.../review). Until then, only Facebook shows.
+ var GOOGLE="";
+ var FB="https://www.facebook.com/profile.php?id=61588462546665&sk=reviews";
+ if(GOOGLE){var g=document.getElementById('rev-google');g.href=GOOGLE;g.style.display='flex';}
+ document.getElementById('rev-fb').href=FB;
+</script>
+</body></html>
