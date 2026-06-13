@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6abb1e">
+<title>Your Invoice — Smart Lawn NY</title>
+<meta name="robots" content="noindex,nofollow">
+<!-- =====================================================================
+  Permanent (non-expiring) invoice / cart page.
+  The order is encoded in the URL (?d=<base64 JSON>), so the LINK never
+  expires. A fresh Stripe Checkout session is minted only when the customer
+  taps "Pay securely" — so the 24h session limit never affects the link.
+
+  Encoded payload shape:
+    { "to":"Elizabeth",
+      "items":[ {"label":"...","amount":2199,"qty":1}, ... ],
+      "note":"optional note" }
+  amount = dollars per unit. Include a "Sales Tax (...)" line item, or omit
+  and set "tax":true to let Stripe auto-calc.
+===================================================================== -->
+<script>window.APP_CONFIG={supabaseUrl:"https://zjqpzqpvovvuaxikyksq.supabase.co",supabaseKey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqcXB6cXB2b3Z2dWF4aWt5a3NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyNDM4NDYsImV4cCI6MjA5NDgxOTg0Nn0.T6s7o38wKFVPn6XPmJSMQxSflPFV4bjI7oGOqo7dOJg",tenantId:"9ca9340a-bbea-4945-a656-35187423d509"};</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--green:#6abb1e;--green-dark:#4f8d15;--teal:#1a5c5c;--ink:#1a1a2e;--bg:#f8faf3;
+        --g200:#e5e7eb;--g300:#d1d5db;--g500:#6b7280;--g700:#374151;--red:#dc2626;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh;}
+  .wrap{max-width:540px;margin:0 auto;padding:24px 16px 80px;}
+  .card{background:#fff;border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,.07);overflow:hidden;}
+  .head{background:linear-gradient(135deg,var(--teal),#124444);color:#fff;padding:26px 26px 22px;display:flex;align-items:center;gap:14px;}
+  .head svg{height:54px;width:54px;flex:0 0 54px;}
+  .head .name{font-weight:900;font-size:1.35rem;line-height:1;}
+  .head .name span{color:var(--green);}
+  .head .tag{font-size:.66rem;letter-spacing:2px;text-transform:uppercase;opacity:.8;margin-top:5px;}
+  .body{padding:24px 26px 28px;}
+  .hello{font-size:1.05rem;font-weight:800;margin-bottom:2px;}
+  .sub{font-size:.86rem;color:var(--g500);margin-bottom:18px;}
+  .line{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--g200);font-size:.95rem;}
+  .line .lbl{color:var(--g700);}
+  .line .amt{font-weight:700;white-space:nowrap;}
+  .total{display:flex;justify-content:space-between;align-items:baseline;padding-top:16px;margin-top:4px;}
+  .total .lbl{font-weight:800;font-size:1.05rem;}
+  .total .amt{font-weight:900;font-size:1.7rem;color:var(--teal);}
+  .pay{display:block;width:100%;margin-top:22px;padding:17px;border:none;border-radius:13px;background:var(--green);
+       color:#fff;font-family:inherit;font-weight:800;font-size:1.08rem;cursor:pointer;box-shadow:0 6px 18px rgba(106,187,30,.35);}
+  .pay:hover{background:var(--green-dark);}
+  .pay:disabled{opacity:.6;cursor:default;}
+  .secure{text-align:center;font-size:.78rem;color:var(--g500);margin-top:12px;}
+  .secure b{color:var(--g700);}
+  .note{background:#f0f7e6;border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--green-dark);margin-bottom:16px;}
+  .foot{text-align:center;font-size:.78rem;color:var(--g500);margin-top:22px;line-height:1.7;}
+  .foot a{color:var(--green-dark);text-decoration:none;font-weight:600;}
+  .err{display:none;background:#fef2f2;color:var(--red);border:1px solid #fecaca;border-radius:10px;padding:12px 14px;font-size:.88rem;margin-top:14px;}
+  .ovl{position:fixed;inset:0;background:rgba(255,255,255,.85);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:50;font-weight:700;color:var(--teal);}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="29" fill="#f5f7f0" stroke="#e0e8d0" stroke-width="1"/>
+          <rect x="15" y="30" width="30" height="13" rx="4" fill="#1a5c5c"/>
+          <circle cx="30" cy="34" r="2.5" fill="#fff" opacity=".7"/>
+          <rect x="18" y="43" width="6" height="4" rx="2" fill="#333"/>
+          <rect x="36" y="43" width="6" height="4" rx="2" fill="#333"/>
+          <path d="M26 24 L30 16 L34 24" stroke="#6abb1e" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 20 L30 10 L38 20" stroke="#6abb1e" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
+        </svg>
+        <div>
+          <div class="name">Smart <span>Lawn</span> NY</div>
+          <div class="tag">Automation &amp; Robotics</div>
+        </div>
+      </div>
+      <div class="body">
+        <div class="hello" id="hello">Your invoice</div>
+        <div class="sub">Review your order below, then pay securely by card.</div>
+        <div class="note" id="note" style="display:none;"></div>
+        <div id="lines"></div>
+        <div class="total"><div class="lbl">Total</div><div class="amt" id="total">$0.00</div></div>
+        <button class="pay" id="payBtn">Pay securely &rarr;</button>
+        <div class="err" id="err"></div>
+        <div class="secure">🔒 Secure checkout by <b>Stripe</b> · cards &amp; Apple Pay accepted</div>
+        <div class="foot">
+          <b>Smart Lawn NY</b><br>
+          Questions? Call or text <a href="tel:+19146477276">(914) 647-7276</a><br>
+          <a href="https://smartlawnny.com">smartlawnny.com</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ovl" id="ovl">Taking you to secure checkout…</div>
+
+<script>
+  var CFG = window.APP_CONFIG || {};
+  var SB_HEAD = { apikey: CFG.supabaseKey, Authorization: 'Bearer ' + CFG.supabaseKey };
+  function money(n){ return '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function showErr(m){ var e=document.getElementById('err'); e.textContent=m; e.style.display='block'; }
+
+  var data = {
+    "to":"Elizabeth",
+    "items":[
+      {"label":"Navimow H220 Robotic Mower","amount":2199,"qty":1},
+      {"label":"Garage","amount":299,"qty":1},
+      {"label":"Professional Install","amount":299,"qty":1},
+      {"label":"Service Plan — 1 Year","amount":299,"qty":1},
+      {"label":"Sales Tax (8.375%)","amount":259.29,"qty":1}
+    ]
+  };
+
+  if (!data || !Array.isArray(data.items) || !data.items.length) {
+    showErr('This invoice link looks incomplete. Please ask Smart Lawn NY to resend it.');
+    document.getElementById('payBtn').disabled = true;
+  } else {
+    if (data.to) document.getElementById('hello').textContent = 'Hi ' + data.to + ' — here’s your invoice';
+    if (data.note){ var n=document.getElementById('note'); n.textContent=data.note; n.style.display='block'; }
+    var total = 0, html = '';
+    data.items.forEach(function(it){
+      var qty = Number(it.qty)||1, amt = Number(it.amount)||0, line = amt*qty;
+      total += line;
+      var lbl = it.label + (qty>1 ? ' ×'+qty : '');
+      html += '<div class="line"><div class="lbl">'+lbl+'</div><div class="amt">'+money(line)+'</div></div>';
+    });
+    document.getElementById('lines').innerHTML = html;
+    document.getElementById('total').textContent = money(total);
+  }
+
+  document.getElementById('payBtn').addEventListener('click', function(){
+    if (!data) return;
+    var btn = this; btn.disabled = true; document.getElementById('ovl').style.display='flex';
+    document.getElementById('err').style.display='none';
+    var payload = {
+      tenant_id: CFG.tenantId,
+      automatic_tax: data.tax === true,   // default false; we pass a tax line item
+      items: data.items.map(function(it){ return { label: it.label, amount: Number(it.amount)||0, qty: Number(it.qty)||1 }; }),
+      customer: { first_name: data.to || '', last_name: '', email: data.email || null, phone: data.phone || '(914) 647-7276' },
+      meta: { source: 'smartlawn invoice link' },
+      success_url: 'https://smartlawn-admin.icy-field-9c38.workers.dev/paid?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url:  location.href
+    };
+    fetch(CFG.supabaseUrl + '/functions/v1/stripe-checkout', {
+      method:'POST', headers: Object.assign({'Content-Type':'application/json'}, SB_HEAD), body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, body:j}; }); })
+    .then(function(res){
+      if (!res.ok || !res.body || !res.body.url){ throw new Error((res.body&&res.body.error)||'Checkout could not start.'); }
+      window.location = res.body.url;
+    })
+    .catch(function(e){
+      document.getElementById('ovl').style.display='none';
+      showErr(e.message || 'Something went wrong — please try again or call (914) 647-7276.');
+      btn.disabled = false;
+    });
+  });
+</script>
+</body>
+</html>
