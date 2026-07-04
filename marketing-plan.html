@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Smart Lawn NY — Marketing Plan</title>
+<style>
+  :root{
+    --ink:#1d1d1f; --grey:#f5f5f7; --mut:#86868b; --line:#e5e5ea;
+    --lime:#6abb1e; --lime-dk:#4a8a10; --lime-bg:#eef7e3;
+    --sky:#2f80c4; --amber:#c47a1e;
+    --certain:#4a8a10; --likely:#c49a1e; --guessing:#c47a1e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);
+    font:16px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px 96px}
+  a{color:var(--sky);text-decoration:none} a:hover{text-decoration:underline}
+  header{padding:60px 0 26px;border-bottom:1px solid var(--line)}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--lime-dk);font-weight:700;margin-bottom:14px}
+  h1{font-size:clamp(30px,6vw,46px);line-height:1.06;margin:0 0 14px;font-weight:800;letter-spacing:-.03em}
+  .sub{color:var(--mut);font-size:17px;max-width:640px}
+  .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font-size:12.5px;background:var(--grey);border:1px solid var(--line);color:var(--mut);padding:5px 12px;border-radius:980px}
+  .chip b{color:var(--ink);font-weight:600}
+  .legend{margin:26px 0 6px;background:var(--grey);border:1px solid var(--line);border-radius:16px;padding:16px 18px;font-size:13.5px;color:var(--mut)}
+  .legend .row{display:flex;flex-wrap:wrap;gap:16px;margin-top:8px}
+  .tag{display:inline-flex;align-items:center;font-weight:700;font-size:11px;letter-spacing:.03em;text-transform:uppercase;padding:2px 9px;border-radius:6px;color:#fff}
+  .tag.c{background:var(--certain)} .tag.l{background:var(--likely)} .tag.g{background:var(--guessing)}
+  section{padding:38px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:13px;letter-spacing:.13em;text-transform:uppercase;color:var(--lime-dk);font-weight:700;margin:0 0 6px}
+  h2 + .lead{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 20px;line-height:1.2}
+  p{margin:0 0 14px} .mut{color:var(--mut)}
+  ul{margin:0 0 14px;padding-left:20px} li{margin:6px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:680px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .card h4{margin:0 0 6px;font-size:16px} .card p{font-size:14.5px;color:var(--mut);margin:0 0 8px}
+  .card .who{font-size:12px;color:var(--lime-dk);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+  .callout{background:var(--lime-bg);border:1px solid var(--lime);border-radius:14px;padding:14px 16px;color:#254d0c;font-size:14.5px;margin:14px 0}
+  .pillars{counter-reset:p}
+  .pillar{display:flex;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+  .pillar:before{counter-increment:p;content:counter(p);flex:0 0 34px;height:34px;background:var(--lime);color:#fff;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:15px}
+  .pillar h4{margin:2px 0 4px;font-size:16.5px} .pillar p{margin:0;color:var(--mut);font-size:14.5px}
+  .flywheel{background:var(--lime-bg);border:1px solid var(--lime);border-radius:18px;padding:22px;margin-top:8px}
+  .flywheel ol{margin:12px 0 0;padding-left:0;list-style:none;counter-reset:f}
+  .flywheel li{counter-increment:f;position:relative;padding:10px 0 10px 40px;font-size:15px;color:#254d0c}
+  .flywheel li:before{content:counter(f);position:absolute;left:0;top:8px;width:26px;height:26px;background:var(--lime);color:#fff;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800}
+  .flywheel li:not(:last-child):after{content:"";position:absolute;left:12.5px;top:34px;bottom:-2px;width:1px;background:var(--lime)}
+  table.cat,.cal{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
+  .cat th,.cal th{text-align:left;color:var(--mut);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .cat td,.cal td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .cat td:first-child,.cal td:first-child{color:var(--lime-dk);font-weight:700;white-space:nowrap}
+  .cat td:last-child{font-weight:700;color:var(--ink);text-align:right;white-space:nowrap}
+  .pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;color:#fff}
+  .p-b2b{background:var(--lime-dk)} .p-ed{background:var(--sky)} .p-map{background:var(--lime)} .p-social{background:var(--amber)}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .metric{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-top:1px solid var(--line);gap:12px}
+  .ph{color:var(--guessing);font-weight:700;font-size:12px;border:1px dashed var(--guessing);padding:1px 7px;border-radius:5px;white-space:nowrap}
+  .todo{background:var(--grey);border:1px solid var(--line);border-radius:16px;padding:6px 18px}
+  .todo .item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+  .todo .item:last-child{border-bottom:none}
+  .box{flex:0 0 18px;height:18px;border:2px solid var(--lime);border-radius:5px;margin-top:2px}
+  .todo b{display:block;margin-bottom:2px} .todo small{color:var(--mut)}
+  footer{padding:30px 0 0;color:var(--mut);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">Internal Strategy · Not customer-facing</span>
+  <h1>Smart Lawn NY<br>Marketing Plan</h1>
+  <p class="sub">Selling a category most people don't know exists yet. The plan: educate homeowners, and let one landscaper deploy a whole fleet.</p>
+  <div class="meta">
+    <span class="chip">Scarsdale · Bedford · Chappaqua · Westchester</span>
+    <span class="chip">Authorized <b>Navimow</b> dealer</span>
+    <span class="chip">Sell · install · service</span>
+    <span class="chip">Drafted <b>Jul 4, 2026</b></span>
+  </div>
+  <div class="legend">
+    Every forward-looking claim is tagged so an assumption never reads as a fact:
+    <div class="row">
+      <span><span class="tag c">Certain</span> from your live catalog / systems</span>
+      <span><span class="tag l">Likely</span> strong market inference</span>
+      <span><span class="tag g">Guessing</span> placeholder — needs your number</span>
+    </div>
+  </div>
+</header>
+
+<!-- READ FIRST -->
+<section>
+  <h2>00 · Read this first</h2>
+  <div class="lead">Your problem is the opposite of the tree company's.</div>
+  <p><span class="tag l">Likely</span> Here marketing genuinely moves the needle — but not because you need more <em>posts</em>. You're selling a <b>new category</b>: most Westchester homeowners don't know a wire-free robot can mow their whole yard. The job is <b>education + local trust</b>, because the fear ("does it work on my slope? who fixes it?") is what kills the sale, and that fear is exactly what an online box-seller can't answer and you can.</p>
+  <div class="callout"><b>The single highest-leverage play isn't a homeowner at all — it's the landscaper.</b> One Lucente-type contractor deploying units across the properties he already maintains = a fleet sale + recurring service, from one relationship. B2B is the lead motion; retail education feeds it.</div>
+</section>
+
+<!-- POSITIONING -->
+<section>
+  <h2>01 · Positioning</h2>
+  <div class="lead">The local dealer who installs, services, and stands behind it.</div>
+  <p><span class="tag c">Certain</span> Your live edge over Amazon: the <b>30-day trade-in</b> (full trade value if they bought the wrong unit — no online retailer offers that) and the <b>property-assessment map tool</b> (address → terrain → right mower + quote — no other local dealer has it).</p>
+  <div class="callout"><b>Positioning line:</b> <em>Never mow again — and never gamble on it. We map your lawn, install the right Navimow, and service it locally. Buy the wrong one? Trade it in 30 days.</em></div>
+  <div class="grid g3">
+    <div class="card"><h4>Local install &amp; service</h4><p>A box on a porch can't set RTK, tune slopes, or fix it in August. You can. This is the whole moat vs. online.</p></div>
+    <div class="card"><h4>30-day trade-in</h4><p><span class="tag c">Certain</span> De-risks the biggest objection ("what if it's wrong for my yard?"). Nobody online matches it. Put it in every ad.</p></div>
+    <div class="card"><h4>The map tool</h4><p><span class="tag c">Certain</span> "Analyze My Lawn" turns a browser into a qualified quote. A lead magnet competitors don't have.</p></div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section>
+  <h2>02 · Audiences — ranked by leverage</h2>
+  <div class="lead">Three buyers. The first one buys ten at a time.</div>
+  <div class="grid g2">
+    <div class="card">
+      <div class="who">Highest leverage · B2B fleet</div>
+      <h4>Landscapers &amp; property managers</h4>
+      <p><span class="tag c">Certain</span> Lucente Landscaping (Dennis Lucente, one of lower Westchester's largest) wants to deploy units on properties he maintains. <span class="tag l">Likely</span> there are 10 more like him.</p>
+      <p>They buy fleets + recurring service, and they resell your labor. This is the growth engine — you already built the interactive fleet-builder for exactly this pitch.</p>
+    </div>
+    <div class="card">
+      <div class="who">Volume · Premium retail</div>
+      <h4>Affluent homeowners, ½–1.5 ac</h4>
+      <p><span class="tag l">Likely</span> Scarsdale / Bedford / Chappaqua: big lawns, high income, low tolerance for lawn hassle, early-adopter friendly. The X430/X450 sweet spot.</p>
+      <p>Won by education + the map tool + a local face to trust.</p>
+    </div>
+    <div class="card">
+      <div class="who">Entry · Small-lot &amp; curious</div>
+      <h4>Suburban ¼-acre homeowners</h4>
+      <p>The i105E ($799) / i210 ($948) tier. <span class="tag l">Likely</span> lower margin, but a wide top-of-funnel and word-of-mouth that a robot mower actually works.</p>
+    </div>
+    <div class="card">
+      <div class="who">Commercial · Big acreage</div>
+      <h4>HOAs, campuses, municipal grounds</h4>
+      <p><span class="tag c">Certain</span> TerraNox CM120 (3 ac) / CM240 (6 ac) in the catalog. <span class="tag l">Likely</span> the Westchester gas-equipment noise/emission rules are a real tailwind here.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FLYWHEEL -->
+<section>
+  <h2>03 · The growth engine</h2>
+  <div class="lead">The landscaper channel is the flywheel. Retail proof feeds it.</div>
+  <p>Chasing homeowners one at a time is slow in a category nobody's heard of. But a landscaper who already has trust with 50 homeowners can put your mowers on their lawns — and every installed unit is a working demo the neighbors see.</p>
+  <div class="flywheel">
+    <b style="color:var(--lime-dk)">The fleet flywheel</b>
+    <ol>
+      <li>Sign one landscaper (Lucente is the template) → fleet sale + recurring service contract.</li>
+      <li>Their crews install your units across the properties they maintain → dozens of live demos in the best neighborhoods.</li>
+      <li>Neighbors see a silent robot mowing a perfect lawn → they ask who → homeowner leads flow back to you.</li>
+      <li>Those retail installs become the proof (video, reviews) that closes the <em>next</em> landscaper. Loop widens.</li>
+    </ol>
+    <p class="mut" style="margin:14px 0 0;font-size:13.5px;color:#254d0c"><span class="tag l">Likely</span> One landscaper is worth 20 cold homeowners of effort. <b>Priority #1: turn the Lucente conversation into a signed fleet + a repeatable landscaper pitch you can run 10 more times.</b></p>
+  </div>
+</section>
+
+<!-- CATALOG -->
+<section>
+  <h2>04 · What you're selling</h2>
+  <div class="lead">The real live catalog — match the mower to the buyer.</div>
+  <div class="scroll">
+  <table class="cat">
+    <thead><tr><th>Model</th><th>Coverage</th><th>Best for</th><th>Price</th></tr></thead>
+    <tbody>
+      <tr><td>Navimow i105E</td><td>5,500 sq ft</td><td>Small suburban lot / entry</td><td>$799</td></tr>
+      <tr><td>Navimow i210-AWD</td><td>0.5 ac</td><td>Slopes on a budget (AWD)</td><td>$948</td></tr>
+      <tr><td>Navimow i215 LiDAR</td><td>0.37 ac</td><td>Obstacle-heavy / complex yards</td><td>$1,599</td></tr>
+      <tr><td>Navimow H220</td><td>0.5 ac</td><td>Premium half-acre</td><td>$2,199</td></tr>
+      <tr><td>Navimow X430</td><td>1.0 ac</td><td>Large residential</td><td>$2,499</td></tr>
+      <tr><td>Navimow X450</td><td>1.5 ac</td><td>Estate lots</td><td>$2,999</td></tr>
+      <tr><td>TerraNox CM120M1</td><td>3 ac</td><td>Commercial / HOA</td><td>$5,499</td></tr>
+      <tr><td>TerraNox CM240M1</td><td>6 ac</td><td>Largest commercial</td><td>$6,999</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="mut" style="margin-top:12px;font-size:14px"><span class="tag c">Certain</span> Prices from your live product pages. Install ≈ $300/unit; turnkey residential ≈ $3,299. All wire-free RTK, ~45° slope capability. The map tool's job is to land each visitor on the right row.</p>
+</section>
+
+<!-- PILLARS -->
+<section>
+  <h2>05 · Content pillars</h2>
+  <div class="lead">Education over hype. Show it working, on a real lawn.</div>
+  <div class="pillars">
+    <div class="pillar"><div><h4>"Does it actually work?" proof</h4><p>Real installs on real Westchester lawns — the robot mowing, the before/after stripe, the slope it climbed. Kills the #1 doubt. This is 40% of everything.</p></div></div>
+    <div class="pillar"><div><h4>Education: why daily robotic mowing wins</h4><p>Whisper-quiet vs 95dB gas, zero-emissions (+ the local gas-equipment rules), healthier turf via daily ⅓-cut. Teach the category you're selling into.</p></div></div>
+    <div class="pillar"><div><h4>The map tool as lead magnet</h4><p>"Enter your address, see which mower fits + what it costs." Push it relentlessly — it's your best qualifier and competitors don't have it.</p></div></div>
+    <div class="pillar"><div><h4>Trade-in &amp; local-service trust</h4><p>The 30-day trade-in, local install, real service. The reasons to buy from you and not a box online.</p></div></div>
+  </div>
+</section>
+
+<!-- CHANNELS -->
+<section>
+  <h2>06 · Channels — where to actually spend</h2>
+  <div class="lead">B2B outreach + local search + demo proof. In that order.</div>
+  <div class="grid g2">
+    <div class="card"><h4>Direct landscaper outreach</h4><p>The fleet-builder pitch → lower-Westchester landscapers &amp; property managers. Highest ROI motion you have. It's calls, demos, and the Lucente-style deck — not ads.</p></div>
+    <div class="card"><h4>Google Business + local SEO</h4><p><span class="tag l">Likely</span> "robotic mower installer near me" is low-competition and high-intent. Own it. The map tool + reviews convert the click.</p></div>
+    <div class="card"><h4>Meta ads (geo + interest)</h4><p><span class="tag g">Guessing</span> a modest budget targeting affluent Westchester zips, homeowner + tech/early-adopter interests, leading with the trade-in and map tool. Measurable; scale only what pays.</p></div>
+    <div class="card"><h4>Video / social demos</h4><p>The category sells on <em>seeing</em> it. Short install &amp; mowing clips are the proof engine — reusable in ads, on-site, and in the landscaper pitch.</p></div>
+    <div class="card"><h4>smartlawnny.com + map tool</h4><p><span class="tag c">Certain</span> Your conversion hub. Keep the "Analyze My Lawn" tool healthy (it depends on Maps billing staying enabled) — it's the whole funnel.</p></div>
+    <div class="card"><h4>Local presence &amp; referrals</h4><p><span class="tag l">Likely</span> yard signs at installs, HOA/garden-club talks, and a referral incentive. Every silent robot in a good neighborhood is an ad.</p></div>
+  </div>
+</section>
+
+<!-- CALENDAR -->
+<section>
+  <h2>07 · First 30 days — rhythm</h2>
+  <div class="lead">Repeatable weekly cadence, education-forward.</div>
+  <div class="scroll">
+  <table class="cal">
+    <thead><tr><th>Day</th><th>Post / action</th><th>Pillar</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Mon</td><td>Install/mowing demo clip from a real yard</td><td><span class="pill p-ed">Proof</span></td><td>Kills "does it work?" doubt</td></tr>
+      <tr><td>Wed</td><td>Education card (noise / emissions / turf health)</td><td><span class="pill p-social">Educate</span></td><td>Builds the category</td></tr>
+      <tr><td>Fri</td><td>"Analyze My Lawn" push + a fit example</td><td><span class="pill p-map">Lead tool</span></td><td>Drives qualified quotes</td></tr>
+      <tr><td>Weekly</td><td><b>Contact 5 landscapers / property managers</b></td><td><span class="pill p-b2b">B2B</span></td><td>The fleet engine — highest leverage</td></tr>
+      <tr><td>At every install</td><td>Grab a clip + review + yard sign</td><td><span class="pill p-ed">Proof</span></td><td>Feeds ads, site, and the next pitch</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section>
+  <h2>08 · What to measure</h2>
+  <div class="lead">A handful of numbers, checked weekly. No vanity metrics.</div>
+  <div>
+    <div class="metric"><span>Landscaper/PM conversations → fleets signed</span><span class="ph">your baseline</span></div>
+    <div class="metric"><span>"Analyze My Lawn" completions / week</span><span class="ph">your baseline</span></div>
+    <div class="metric"><span>Quotes → units sold (close rate)</span><span class="ph">your baseline</span></div>
+    <div class="metric"><span>Units installed / month (retail vs fleet)</span><span class="ph">your baseline</span></div>
+    <div class="metric"><span>Service contracts / recurring revenue</span><span class="ph">your baseline</span></div>
+    <div class="metric"><span>Cost per lead (paid) vs close value</span><span class="ph">your baseline</span></div>
+  </div>
+  <p class="mut" style="margin-top:14px;font-size:13.5px"><span class="tag g">Guessing</span> Blanks are on purpose — I won't invent your sales figures. Send the real ones and this becomes a live dashboard.</p>
+</section>
+
+<!-- NEXT 7 -->
+<section style="border-bottom:none">
+  <h2>09 · The next 7 days</h2>
+  <div class="lead">Five moves. The first one is worth the other four combined.</div>
+  <div class="todo">
+    <div class="item"><span class="box"></span><span><b>Close the Lucente fleet — and template the pitch</b><small>Turn the interactive fleet-builder into a signed deal + a repeatable landscaper deck you can run 10 more times. Priority zero.</small></span></div>
+    <div class="item"><span class="box"></span><span><b>Confirm the map tool + Maps billing are healthy</b><small>The "Analyze My Lawn" funnel dies if Google Maps billing lapses. Verify it's on (console.cloud.google.com as smartlawnny@gmail.com).</small></span></div>
+    <div class="item"><span class="box"></span><span><b>Film one clean install + mowing demo</b><small>The single most reusable asset — powers ads, the site, and every landscaper pitch. The category sells on seeing it.</small></span></div>
+    <div class="item"><span class="box"></span><span><b>Build the Google Business Profile</b><small>"Robotic mower installer near me" is high-intent and uncontested locally. Free.</small></span></div>
+    <div class="item"><span class="box"></span><span><b>Send me your unit costs + sales to date</b><small>So targets and paid-ad math are real numbers, not placeholders.</small></span></div>
+  </div>
+</section>
+
+<footer>
+  <p><b>Note on numbers:</b> Prices and product specs tagged <span class="tag c">Certain</span> come from your live smartlawnny.com catalog and confirmed inputs (install $300/unit, 30-day trade-in, map tool). <span class="tag l">Likely</span> = market inference; <span class="tag g">Guessing</span> = placeholder awaiting your real sales data. Nothing here is a fabricated metric.</p>
+  <p style="margin-top:10px">Internal document · Smart Lawn NY · smartlawnny.com/marketing-plan · not indexed, not customer-facing.</p>
+</footer>
+
+</div>
+</body>
+</html>
