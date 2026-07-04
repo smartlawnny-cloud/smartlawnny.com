@@ -1835,7 +1835,7 @@ function initPropertyMap() {
   if (window._propMapInit) return;
   window._propMapInit = true;
   var script = document.createElement('script');
-  script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk&libraries=drawing,geometry,places&callback=_onPropMapReady';
+  script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDRfDjlBh0yk4iIO1B_K0f90z8_soMEqY0&libraries=drawing,geometry,places&callback=_onPropMapReady';
   document.head.appendChild(script);
 }
 // Init map on page load (map is always visible now)
@@ -3041,7 +3041,7 @@ function _onPropMapReady() {
         paths += '&path=color:0x6abb1e80|weight:2';
         _propPolygon.getPath().forEach(function(p){ paths += '|'+p.lat().toFixed(5)+','+p.lng().toFixed(5); });
       }
-      mapImg = 'https://maps.googleapis.com/maps/api/staticmap?center='+center.lat()+','+center.lng()+'&zoom='+(zoom-1)+'&size='+Math.min(w,640)+'x'+Math.min(h,400)+'&maptype=satellite'+paths+'&key=AIzaSyBjfbAgb62aAEEMt45hqPdPUT4vm2wdUkk';
+      mapImg = 'https://maps.googleapis.com/maps/api/staticmap?center='+center.lat()+','+center.lng()+'&zoom='+(zoom-1)+'&size='+Math.min(w,640)+'x'+Math.min(h,400)+'&maptype=satellite'+paths+'&key=AIzaSyDRfDjlBh0yk4iIO1B_K0f90z8_soMEqY0';
     } catch(e) { console.log('Map capture failed:', e); }
 
     var today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
