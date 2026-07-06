@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Receipt — Smart Lawn NY</title>
+<style>
+  :root{--ink:#1d1d1f;--mut:#86868b;--line:#e5e5ea;--lime:#6abb1e;--lime-dk:#4a8a10}
+  *{box-sizing:border-box}
+  body{margin:0;background:#f5f5f7;color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif}
+  .sheet{max-width:640px;margin:28px auto;background:#fff;border:1px solid var(--line);border-radius:18px;padding:36px 40px}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--lime);padding-bottom:14px;margin-bottom:18px}
+  .brand b{font-size:20px;font-weight:800;letter-spacing:-.01em}
+  .brand small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+  .rno{text-align:right;font-size:12.5px;color:var(--mut)} .rno b{display:block;color:var(--ink);font-size:15px}
+  h2{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--lime-dk);margin:18px 0 6px;font-weight:800}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em;padding:7px 0;border-bottom:1px solid var(--line)}
+  td{padding:9px 0;border-bottom:1px solid #f0f0f2;vertical-align:top}
+  td:last-child,th:last-child{text-align:right;white-space:nowrap}
+  .tot td{font-weight:800;font-size:16px;border-bottom:none;border-top:2px solid var(--ink);padding-top:12px}
+  .paid{display:inline-block;background:#eef7e3;border:1.5px solid var(--lime);color:#254d0c;font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:980px;margin-top:10px}
+  .foot{margin-top:24px;padding-top:14px;border-top:1px solid var(--line);color:var(--mut);font-size:11.5px;line-height:1.6}
+  @media print{body{background:#fff}.sheet{margin:0;border:none;border-radius:0;max-width:100%}@page{margin:14mm}}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="top">
+    <div class="brand"><b>🌱 Smart Lawn NY</b><small>Robotic Mower Sales · Install · Service<br>smartlawnny.com · (914) 647-7276 · smartlawnny@gmail.com</small></div>
+    <div class="rno"><b>RECEIPT {{RECEIPT_NO}}</b>Date of sale: {{SALE_DATE}}<br>Issued: {{ISSUE_DATE}}</div>
+  </div>
+
+  <h2>Sold to</h2>
+  <div style="font-size:14.5px"><b>{{CUSTOMER_NAME}}</b><br><span style="color:var(--mut)">{{CUSTOMER_ADDRESS}}<br>{{CUSTOMER_PHONE}} · {{CUSTOMER_EMAIL}}</span></div>
+
+  <h2>Items</h2>
+  <table>
+    <thead><tr><th>Item</th><th>Serial / Detail</th><th>Amount</th></tr></thead>
+    <tbody>
+      {{LINE_ITEMS}}
+      <tr><td>Sales tax ({{TAX_RATE}})</td><td></td><td>{{TAX_AMOUNT}}</td></tr>
+      <tr class="tot"><td>Total paid</td><td></td><td>{{TOTAL}}</td></tr>
+    </tbody>
+  </table>
+  <span class="paid">✓ Paid in full — {{PAYMENT_METHOD}} · {{PAYMENT_DATE}}</span>
+
+  <div class="foot">
+    Thank you for buying local. Your purchase includes the manufacturer's warranty{{WARRANTY_NOTE}} and Smart Lawn NY's 30-day trade-in guarantee — if this model isn't right for your property, full trade value toward another within 30 days.<br><br>
+    Smart Lawn NY · Peekskill, NY · Authorized Segway Navimow dealer. Keep this receipt for warranty and insurance purposes.
+  </div>
+</div>
+</body>
+</html>
