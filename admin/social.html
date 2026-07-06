@@ -1,0 +1,470 @@
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Lawn NY — Social</title>
+<style>
+  :root {
+    --bg: #ffffff; --surface: #f5f5f7; --ink: #1d1d1f; --muted: #86868b;
+    --lime: #6abb1e; --lime-dark: #4a8a10; --border: #e5e5ea;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 15px; line-height: 1.45; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px 20px 60px; }
+  header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+  header h1 span { color: var(--lime-dark); }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .tabs { display: flex; gap: 6px; margin: 20px 0 22px; flex-wrap: wrap; }
+  .tab { border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+    padding: 8px 18px; border-radius: 980px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit; }
+  .tab.active { background: var(--lime); border-color: var(--lime); color: #fff; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+    padding: 18px; margin-bottom: 16px; }
+  .card h3 { margin: 0 0 12px; font-size: 16px; font-weight: 700; }
+  .btn { border: none; background: var(--lime); color: #fff; padding: 10px 22px;
+    border-radius: 980px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .btn:hover { background: var(--lime-dark); }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--border); font-weight: 600; }
+  .btn.sm { padding: 6px 14px; font-size: 12px; }
+  .chip { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 10px;
+    border-radius: 980px; text-transform: uppercase; letter-spacing: .3px; }
+  .chip.draft     { background: #ececf0; color: #6b7280; }
+  .chip.scheduled { background: #dbeafe; color: #1e40af; }
+  .chip.posting   { background: #fef3c7; color: #92400e; }
+  .chip.posted    { background: #e4f5d3; color: var(--lime-dark); }
+  .chip.failed    { background: #fee2e2; color: #991b1b; }
+  .row { display: flex; align-items: center; gap: 12px; padding: 10px 0;
+    border-top: 1px solid var(--border); cursor: pointer; }
+  .row:first-of-type { border-top: none; }
+  .row .cap { flex: 1; min-width: 0; }
+  .row .cap div:first-child { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .row .cap div:last-child { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .row .nets { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; }
+  .stat .n { font-size: 24px; font-weight: 800; }
+  .stat .l { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+  label.f { display: block; font-size: 12px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .4px; margin: 16px 0 6px; }
+  textarea, input[type=datetime-local], input[type=url], input[type=text] {
+    width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: 12px;
+    font-size: 14px; font-family: inherit; background: #fff; color: var(--ink); }
+  textarea { resize: vertical; }
+  .netpick { display: flex; flex-wrap: wrap; gap: 8px; }
+  .netpick label { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+    border-radius: 980px; border: 2px solid var(--border); background: #fff; cursor: pointer;
+    font-size: 13px; font-weight: 600; }
+  .netpick label.on { border-color: var(--lime); background: #f2fae7; }
+  .banner { border-radius: 12px; padding: 11px 14px; font-size: 13px; margin-bottom: 14px; }
+  .banner.ok   { background: #e4f5d3; border: 1px solid var(--lime); color: var(--lime-dark); }
+  .banner.warn { background: #fef3c7; border: 1px solid #d97706; color: #92400e; }
+  .cal-head, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-head div { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; padding: 6px 0; }
+  .cal-cell { min-height: 64px; padding: 6px; border: 1px solid var(--border); border-radius: 10px;
+    background: #fff; font-size: 11px; cursor: pointer; }
+  .cal-cell.today { border-color: var(--lime); background: #f2fae7; }
+  .cal-cell .d { font-weight: 700; color: var(--muted); }
+  .cal-cell.today .d { color: var(--lime-dark); }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin: 3px 2px 0 0; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .empty { padding: 20px; text-align: center; color: var(--muted); font-size: 13px; }
+  .tagbtn { background: #fff; border: 1px solid var(--border); padding: 4px 12px;
+    border-radius: 980px; font-size: 11px; cursor: pointer; font-family: inherit; }
+  #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff; padding: 10px 22px; border-radius: 980px;
+    font-size: 13px; font-weight: 600; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 99; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1><span>●</span> Smart Lawn NY — Social</h1>
+    <p>Schedule and publish to your social channels. Nothing sends without your click.</p>
+  </header>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="view"></main>
+</div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+var K = { POSTS:'sl-social-posts', WEBHOOK:'sl-social-webhook', LIB:'sl-content-lib', TAGS:'sl-hashtag-groups' };
+var NETWORKS = [
+  { id:'gmb',       name:'Google Business', color:'#4285F4' },
+  { id:'facebook',  name:'Facebook',        color:'#1877F2' },
+  { id:'instagram', name:'Instagram',       color:'#E4405F' },
+  { id:'tiktok',    name:'TikTok',          color:'#000000' },
+  { id:'youtube',   name:'YouTube',         color:'#FF0000' }
+];
+var COMPOSE_URLS = {
+  gmb:       'https://business.google.com/posts/',
+  facebook:  'https://www.facebook.com/?ref=composer',
+  instagram: 'https://www.instagram.com/',
+  tiktok:    'https://www.tiktok.com/upload',
+  youtube:   'https://www.youtube.com/upload'
+};
+var state = { tab:'dashboard', editing:null, calOffset:0 };
+
+// ── storage ──────────────────────────────────────────────
+function getJSON(k){ try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch(e){ return []; } }
+function getPosts(){ return getJSON(K.POSTS); }
+function setPosts(p){ localStorage.setItem(K.POSTS, JSON.stringify(p)); }
+function upsert(post){
+  var posts = getPosts();
+  var i = posts.findIndex(function(p){ return p.id === post.id; });
+  if (i >= 0) posts[i] = post; else posts.unshift(post);
+  setPosts(posts);
+}
+function getWebhook(){ return localStorage.getItem(K.WEBHOOK) || ''; }
+
+// ── utils ────────────────────────────────────────────────
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+  return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]; }); }
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.style.opacity = '0'; }, 2800);
+}
+function fmtWhen(iso){
+  if (!iso) return '';
+  var d = new Date(iso), now = new Date();
+  var mins = Math.round((d - now) / 60000);
+  if (Math.abs(mins) < 60) return mins < 0 ? Math.abs(mins) + 'm ago' : 'in ' + mins + 'm';
+  var same = d.toDateString() === now.toDateString();
+  return d.toLocaleString('en-US', same ? { hour:'numeric', minute:'2-digit' }
+    : { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+}
+function netNames(ids){
+  return (ids || []).map(function(id){
+    var n = NETWORKS.find(function(x){ return x.id === id; });
+    return n ? n.name : id;
+  }).join(' · ');
+}
+function chip(status){ return '<span class="chip ' + status + '">' + status + '</span>'; }
+
+// ── tabs / render ────────────────────────────────────────
+var TABS = [ ['dashboard','Dashboard'], ['compose','Compose'], ['calendar','Calendar'], ['accounts','Accounts'] ];
+function go(tab){ state.tab = tab; if (tab !== 'compose') state.editing = null; render(); }
+function render(){
+  document.getElementById('tabs').innerHTML = TABS.map(function(t){
+    return '<button class="tab' + (state.tab === t[0] ? ' active' : '') + '" onclick="go(\'' + t[0] + '\')">' + t[1] + '</button>';
+  }).join('');
+  var v = document.getElementById('view');
+  if (state.tab === 'compose') v.innerHTML = renderCompose();
+  else if (state.tab === 'calendar') v.innerHTML = renderCalendar();
+  else if (state.tab === 'accounts') v.innerHTML = renderAccounts();
+  else v.innerHTML = renderDashboard();
+  if (state.tab === 'compose') wireCompose();
+}
+
+// ── dashboard ────────────────────────────────────────────
+function renderDashboard(){
+  var posts = getPosts(), now = Date.now();
+  var scheduled = posts.filter(function(p){ return p.status === 'scheduled'; })
+    .sort(function(a,b){ return new Date(a.scheduledAt) - new Date(b.scheduledAt); });
+  var due = scheduled.filter(function(p){ return p.scheduledAt && new Date(p.scheduledAt) <= now; });
+  var upcoming = scheduled.filter(function(p){ return !p.scheduledAt || new Date(p.scheduledAt) > now; });
+  var recent = posts.filter(function(p){ return p.status === 'posted' || p.status === 'failed'; })
+    .sort(function(a,b){ return new Date(b.postedAt || b.createdAt) - new Date(a.postedAt || a.createdAt); }).slice(0, 8);
+  var drafts = posts.filter(function(p){ return p.status === 'draft'; });
+
+  var h = '';
+  if (!getWebhook())
+    h += '<div class="banner warn">No webhook configured — posts save as drafts and won\'t publish. Set one up in <a href="#" onclick="go(\'accounts\');return false;">Accounts</a>.</div>';
+
+  h += '<div class="stats">'
+    + '<div class="stat"><div class="n">' + scheduled.length + '</div><div class="l">Scheduled</div></div>'
+    + '<div class="stat"><div class="n">' + posts.filter(function(p){ return p.status === 'posted'; }).length + '</div><div class="l">Posted</div></div>'
+    + '<div class="stat"><div class="n">' + drafts.length + '</div><div class="l">Drafts</div></div>'
+    + '<div class="stat"><div class="n">' + due.length + '</div><div class="l">Due now</div></div>'
+    + '</div>';
+
+  // Due now — manual send only (nothing auto-fires)
+  h += '<div class="card"><h3>Due now</h3>';
+  if (!due.length) h += '<div class="empty">Nothing waiting on you. Scheduled posts appear here at their time — you click Send.</div>';
+  else due.forEach(function(p){ h += postRow(p, '<button class="btn sm" onclick="event.stopPropagation();sendNow(\'' + p.id + '\')">Send</button>'); });
+  h += '</div>';
+
+  h += '<div class="card"><h3>Upcoming</h3>';
+  if (!upcoming.length) h += '<div class="empty">No scheduled posts. <a href="#" onclick="go(\'compose\');return false;">Compose one</a>.</div>';
+  else upcoming.slice(0, 6).forEach(function(p){ h += postRow(p); });
+  h += '</div>';
+
+  h += '<div class="card"><h3>Recent</h3>';
+  if (!recent.length && !drafts.length) h += '<div class="empty">Nothing posted yet.</div>';
+  else { recent.forEach(function(p){ h += postRow(p); }); drafts.slice(0, 4).forEach(function(p){ h += postRow(p); }); }
+  h += '</div>';
+  return h;
+}
+function postRow(p, action){
+  var when = p.status === 'scheduled' ? 'Scheduled ' + fmtWhen(p.scheduledAt)
+    : p.postedAt ? (p.status === 'failed' ? 'Failed ' : 'Posted ') + fmtWhen(p.postedAt) : 'Draft';
+  return '<div class="row" onclick="editPost(\'' + p.id + '\')">'
+    + '<div class="cap"><div>' + esc((p.caption || '(no caption)').slice(0, 90)) + '</div><div>' + when + '</div></div>'
+    + '<div class="nets">' + esc(netNames(p.networks)) + '</div>'
+    + chip(p.status) + (action || '') + '</div>';
+}
+function editPost(id){
+  var p = getPosts().find(function(x){ return x.id === id; });
+  if (!p) return;
+  state.editing = JSON.parse(JSON.stringify(p));
+  state.tab = 'compose';
+  render();
+}
+function sendNow(id){
+  var p = getPosts().find(function(x){ return x.id === id; });
+  if (!p) return;
+  p.status = 'posting'; upsert(p); render();
+  publishNow(p);
+}
+
+// ── compose ──────────────────────────────────────────────
+function renderCompose(){
+  var d = state.editing || { caption:'', networks:[], scheduledAt:'' };
+  var tags = getJSON(K.TAGS), lib = getJSON(K.LIB);
+  var h = '<div class="card">'
+    + '<h3>' + (state.editing ? 'Edit post' : 'New post') + '</h3>'
+    + '<label class="f">Caption</label>'
+    + '<textarea id="c-caption" rows="6" placeholder="What\'s growing at Smart Lawn NY?">' + esc(d.caption) + '</textarea>'
+    + '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;">'
+    + '<span>Tip: #smartlawn #roboticmower #westchester work hard on GMB + IG</span><span id="c-count">0 / 2200</span></div>'
+    + '<label class="f">Networks</label><div class="netpick" id="c-nets">'
+    + NETWORKS.map(function(n){
+        var on = (d.networks || []).indexOf(n.id) >= 0;
+        return '<label class="' + (on ? 'on' : '') + '"><input type="checkbox" value="' + n.id + '"' + (on ? ' checked' : '')
+          + ' onchange="this.parentNode.classList.toggle(\'on\',this.checked)" style="margin:0;">'
+          + '<span style="color:' + n.color + ';">●</span> ' + n.name + '</label>';
+      }).join('') + '</div>'
+    + '<label class="f">Schedule (optional)</label>'
+    + '<input type="datetime-local" id="c-when" style="max-width:260px;" value="'
+    + (d.scheduledAt ? localDT(d.scheduledAt) : '') + '">'
+    + '<div class="muted" style="font-size:11px;margin-top:4px;">Scheduled posts wait in "Due now" for your Send click — nothing auto-fires.</div>'
+    + '<div class="muted" style="font-size:12px;margin-top:12px;">Media: attach photos/video via the platform composer for now (v1 is text-only).</div>';
+
+  // hashtag groups + content library
+  h += '<div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">'
+    + '<span style="font-size:11px;color:var(--muted);">Hashtags:</span>'
+    + (tags.length ? tags.map(function(g){ return '<button class="tagbtn" title="' + esc(g.tags) + '" onclick="insertTags(\'' + g.id + '\')">' + esc(g.name) + '</button>'; }).join('') : '<span style="font-size:11px;color:var(--muted);">none yet</span>')
+    + '<button class="tagbtn" onclick="newTagGroup()">+ New</button>'
+    + '<span style="width:12px;"></span><span style="font-size:11px;color:var(--muted);">Library:</span>'
+    + (lib.length ? lib.slice(0, 6).map(function(it){ return '<button class="tagbtn" onclick="insertLib(\'' + it.id + '\')">' + esc(it.label) + '</button>'; }).join('') : '<span style="font-size:11px;color:var(--muted);">empty</span>')
+    + '<button class="tagbtn" onclick="saveToLib()">Save caption →</button>'
+    + '</div>';
+
+  h += '<div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">'
+    + '<button class="btn" onclick="savePost(\'post\')">Post / Schedule</button>'
+    + '<button class="btn ghost" onclick="savePost(\'draft\')">Save draft</button>'
+    + '<button class="btn ghost" onclick="state.editing=null;go(\'dashboard\')">Cancel</button>'
+    + '</div></div>';
+  return h;
+}
+function localDT(iso){
+  var d = new Date(iso);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+function wireCompose(){
+  var ta = document.getElementById('c-caption'), c = document.getElementById('c-count');
+  var upd = function(){ c.textContent = ta.value.length + ' / 2200'; };
+  ta.addEventListener('input', upd); upd();
+}
+function savePost(action){
+  var caption = document.getElementById('c-caption').value;
+  var when = document.getElementById('c-when').value;
+  var networks = Array.prototype.map.call(
+    document.querySelectorAll('#c-nets input:checked'), function(i){ return i.value; });
+  if (action === 'post' && !networks.length) { toast('Pick at least one network'); return; }
+  if (action === 'post' && !caption.trim()) { toast('Write a caption first'); return; }
+
+  var post = state.editing || {};
+  post.id = post.id || ('slp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8));
+  post.caption = caption;
+  post.media = post.media || [];
+  post.networks = networks;
+  post.scheduledAt = when ? new Date(when).toISOString() : '';
+  post.createdAt = post.createdAt || new Date().toISOString();
+  post.status = action === 'draft' ? 'draft' : (when ? 'scheduled' : 'posting');
+  upsert(post);
+  state.editing = null;
+  if (post.status === 'posting') { render(); publishNow(post); }
+  else { toast(post.status === 'scheduled' ? 'Scheduled.' : 'Draft saved.'); go('dashboard'); }
+}
+function insertTags(id){
+  var g = getJSON(K.TAGS).find(function(x){ return x.id === id; }); if (!g) return;
+  var ta = document.getElementById('c-caption');
+  ta.value = (ta.value ? ta.value.replace(/\s+$/, '') + '\n\n' : '') + g.tags;
+  ta.dispatchEvent(new Event('input')); ta.focus();
+}
+function newTagGroup(){
+  var name = prompt('Hashtag group name (e.g. "SmartLawn default"):'); if (!name) return;
+  var tags = prompt('Paste hashtags (space separated):\n\nExample: #smartlawn #roboticmower #navimow'); if (!tags) return;
+  var groups = getJSON(K.TAGS);
+  groups.push({ id:'hg_' + Date.now(), name:name.trim(), tags:tags.trim() });
+  localStorage.setItem(K.TAGS, JSON.stringify(groups));
+  toast('Hashtag group saved.'); render();
+}
+function saveToLib(){
+  var cap = document.getElementById('c-caption').value;
+  if (!cap.trim()) { toast('Write a caption first'); return; }
+  var label = prompt('Save caption as (short label):', cap.slice(0, 40)); if (!label) return;
+  var items = getJSON(K.LIB);
+  items.unshift({ id:'cl_' + Date.now(), label:label.trim(), caption:cap, createdAt:new Date().toISOString() });
+  localStorage.setItem(K.LIB, JSON.stringify(items));
+  toast('Saved to library.');
+}
+function insertLib(id){
+  var it = getJSON(K.LIB).find(function(x){ return x.id === id; }); if (!it) return;
+  var ta = document.getElementById('c-caption');
+  ta.value = it.caption;
+  ta.dispatchEvent(new Event('input')); ta.focus();
+}
+
+// ── publish ──────────────────────────────────────────────
+function publishNow(post){
+  var webhook = getWebhook();
+  if (!webhook) {
+    post.status = 'draft';
+    post.results = { note:'No webhook configured — saved as draft.' };
+    upsert(post);
+    toast('No webhook set — saved as draft. Configure one in Accounts.');
+    go('accounts');
+    return;
+  }
+  var payload = {
+    id: post.id,
+    caption: post.caption,
+    platforms: post.networks,
+    scheduledAt: post.scheduledAt || '',
+    mediaType: 'none',
+    youtubeTitle: (post.caption || '').slice(0, 100)
+  };
+  fetch(webhook, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) })
+    .then(function(r){
+      post.status = r.ok ? 'posted' : 'failed';
+      post.postedAt = new Date().toISOString();
+      post.results = { httpStatus: r.status, backend:'webhook' };
+      upsert(post);
+      toast(r.ok ? 'Post sent.' : 'Post failed — check webhook.');
+      go('dashboard');
+    })
+    .catch(function(e){
+      post.status = 'failed';
+      post.postedAt = new Date().toISOString();
+      post.results = { error: String(e.message || e), backend:'webhook' };
+      upsert(post);
+      toast('Network error — post marked failed.');
+      go('dashboard');
+    });
+}
+
+// ── calendar ─────────────────────────────────────────────
+function renderCalendar(){
+  var posts = getPosts().filter(function(p){
+    return (p.status === 'scheduled' || p.status === 'posted') && (p.scheduledAt || p.postedAt);
+  });
+  var now = new Date();
+  var first = new Date(now.getFullYear(), now.getMonth() + state.calOffset, 1);
+  var days = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+  function keyOf(d){
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function postsOn(key){
+    return posts.filter(function(p){
+      var t = p.scheduledAt || p.postedAt;
+      return t && keyOf(new Date(t)) === key;
+    });
+  }
+  var h = '<div class="card">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">'
+    + '<h3 style="margin:0;">' + first.toLocaleString('en-US', { month:'long', year:'numeric' }) + '</h3>'
+    + '<div style="display:flex;gap:6px;">'
+    + '<button class="btn ghost sm" onclick="state.calOffset--;render()">&larr;</button>'
+    + '<button class="btn ghost sm" onclick="state.calOffset=0;render()">Today</button>'
+    + '<button class="btn ghost sm" onclick="state.calOffset++;render()">&rarr;</button>'
+    + '</div></div>'
+    + '<div class="cal-head">' + ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(function(d){ return '<div>' + d + '</div>'; }).join('') + '</div>'
+    + '<div class="cal-grid">';
+  for (var i = 0; i < first.getDay(); i++) h += '<div></div>';
+  for (var d = 1; d <= days; d++) {
+    var day = new Date(first.getFullYear(), first.getMonth(), d);
+    var key = keyOf(day);
+    var dp = postsOn(key);
+    var dots = dp.slice(0, 5).map(function(p){
+      return '<span class="dot" style="background:' + (p.status === 'posted' ? 'var(--lime-dark)' : 'var(--lime)') + ';"></span>';
+    }).join('');
+    h += '<div class="cal-cell' + (day.toDateString() === now.toDateString() ? ' today' : '')
+      + '" onclick="showDay(\'' + key + '\')"><div class="d">' + d + '</div>' + dots + '</div>';
+  }
+  h += '</div><div class="muted" style="margin-top:10px;font-size:11px;">'
+    + '<span class="dot" style="background:var(--lime);"></span> scheduled&nbsp;&nbsp;'
+    + '<span class="dot" style="background:var(--lime-dark);"></span> posted — click a day to list its posts</div></div>'
+    + '<div id="cal-day"></div>';
+  return h;
+}
+function showDay(key){
+  var posts = getPosts().filter(function(p){
+    var t = p.scheduledAt || p.postedAt;
+    if (!t || (p.status !== 'scheduled' && p.status !== 'posted')) return false;
+    var d = new Date(t);
+    return (d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')) === key;
+  });
+  var title = new Date(key + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  var h = '<div class="card"><h3>' + title + '</h3>';
+  if (!posts.length) h += '<div class="empty">No posts this day.</div>';
+  else posts.forEach(function(p){ h += postRow(p); });
+  h += '</div>';
+  document.getElementById('cal-day').innerHTML = h;
+}
+
+// ── accounts ─────────────────────────────────────────────
+function renderAccounts(){
+  var webhook = getWebhook();
+  var h = webhook
+    ? '<div class="banner ok"><strong>Active</strong> — webhook configured. "Post now" and Due-now Sends route through Zapier/Make.</div>'
+    : '<div class="banner warn"><strong>Inactive</strong> — no webhook. Posts save as drafts; use the manual links below to post by hand.</div>';
+
+  h += '<div class="card"><h3>Zapier / Make webhook</h3>'
+    + '<p class="muted" style="margin:0 0 10px;">Paste your Zapier or Make webhook URL. Posts are sent to it as JSON: {id, caption, platforms, scheduledAt, mediaType, youtubeTitle}.</p>'
+    + '<div style="display:flex;gap:10px;flex-wrap:wrap;">'
+    + '<input type="url" id="a-webhook" placeholder="https://hooks.zapier.com/hooks/catch/…" value="' + esc(webhook) + '" style="flex:1;min-width:240px;">'
+    + '<button class="btn" onclick="saveWebhook()">Save</button></div></div>';
+
+  h += '<div class="card"><h3>Manual posting</h3>'
+    + '<p class="muted" style="margin:0 0 12px;">Copies your latest draft caption, then opens the network\'s composer in a new tab.</p>'
+    + '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">'
+    + NETWORKS.map(function(n){
+        return '<button class="btn ghost sm" onclick="manualPost(\'' + n.id + '\')" style="text-align:left;">'
+          + '<span style="color:' + n.color + ';">●</span> Copy &amp; open ' + n.name + ' →</button>';
+      }).join('')
+    + '</div></div>';
+  return h;
+}
+function saveWebhook(){
+  var v = document.getElementById('a-webhook').value.trim();
+  if (v && !/^https:\/\//i.test(v)) { toast('Webhook must be an https:// URL'); return; }
+  if (v) localStorage.setItem(K.WEBHOOK, v); else localStorage.removeItem(K.WEBHOOK);
+  toast(v ? 'Webhook saved.' : 'Webhook cleared.');
+  render();
+}
+function manualPost(netId){
+  var url = COMPOSE_URLS[netId];
+  var draft = getPosts().filter(function(p){
+    return (p.status === 'draft' || p.status === 'scheduled') && p.caption;
+  }).sort(function(a, b){
+    return new Date(b.scheduledAt || b.createdAt || 0) - new Date(a.scheduledAt || a.createdAt || 0);
+  })[0];
+  var open = function(){ window.open(url, '_blank', 'noopener,noreferrer'); };
+  if (draft && navigator.clipboard) {
+    navigator.clipboard.writeText(draft.caption)
+      .then(function(){ toast('Copied latest draft — paste it in.'); })
+      .catch(function(){ toast('Could not copy — opening blank.'); })
+      .finally(open);
+  } else {
+    if (!draft) toast('No draft caption found — opening blank.');
+    open();
+  }
+}
+
+render();
+</script>
