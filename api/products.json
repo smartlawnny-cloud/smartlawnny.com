@@ -11,8 +11,50 @@
     {
       "name": "Navimow i210 AWD",
       "url": "https://smartlawnny.com/products/navimow-i210-awd.html",
-      "price": "$948",
+      "price": "$1,299",
       "description": "All-wheel-drive, up to 0.25 acre, handles slopes"
+    },
+    {
+      "name": "Navimow X390",
+      "url": "https://smartlawnny.com/#shop",
+      "price": "$3,599",
+      "description": "Wire-free NRTK, up to 2.5 acres"
+    },
+    {
+      "name": "Navimow X350",
+      "url": "https://smartlawnny.com/#shop",
+      "price": "$2,239",
+      "description": "Wire-free NRTK, up to 1.5 acres"
+    },
+    {
+      "name": "Navimow X330",
+      "url": "https://smartlawnny.com/#shop",
+      "price": "$1,839",
+      "description": "Wire-free NRTK, up to 1 acre"
+    },
+    {
+      "name": "Navimow X315",
+      "url": "https://smartlawnny.com/#shop",
+      "price": "$1,600",
+      "description": "Wire-free NRTK, up to 0.5 acre"
+    },
+    {
+      "name": "Navimow H210",
+      "url": "https://smartlawnny.com/#shop",
+      "price": "$1,799",
+      "description": "Wire-free RTK, up to 0.25 acre"
+    },
+    {
+      "name": "Navimow i110",
+      "url": "https://smartlawnny.com/#shop",
+      "price": "$1,099",
+      "description": "Wire-free, up to 0.25 acre"
+    },
+    {
+      "name": "Navimow i206 AWD",
+      "url": "https://smartlawnny.com/#shop",
+      "price": "$999",
+      "description": "All-wheel-drive, up to 0.15 acre"
     },
     {
       "name": "Navimow H220",
@@ -81,5 +123,5 @@
       "description": "Commercial mower, up to 27 acres, 25\" deck"
     }
   ],
-  "updated": "2026-07-15"
+  "updated": "2026-07-16"
 }

@@ -6,7 +6,14 @@ Machine-readable JSON: https://smartlawnny.com/api/index.json
 
 ## Products (robotic mowers)
 - [Navimow i105E](https://smartlawnny.com/products/navimow-i105e.html): Entry-level wire-free robotic mower, up to ~0.12 acre — $799
-- [Navimow i210 AWD](https://smartlawnny.com/products/navimow-i210-awd.html): All-wheel-drive, up to 0.25 acre, handles slopes — $948
+- [Navimow i210 AWD](https://smartlawnny.com/products/navimow-i210-awd.html): All-wheel-drive, up to 0.25 acre, handles slopes — $1,299
+- [Navimow X390](https://smartlawnny.com/#shop): Wire-free NRTK, up to 2.5 acres — $3,599
+- [Navimow X350](https://smartlawnny.com/#shop): Wire-free NRTK, up to 1.5 acres — $2,239
+- [Navimow X330](https://smartlawnny.com/#shop): Wire-free NRTK, up to 1 acre — $1,839
+- [Navimow X315](https://smartlawnny.com/#shop): Wire-free NRTK, up to 0.5 acre — $1,600
+- [Navimow H210](https://smartlawnny.com/#shop): Wire-free RTK, up to 0.25 acre — $1,799
+- [Navimow i110](https://smartlawnny.com/#shop): Wire-free, up to 0.25 acre — $1,099
+- [Navimow i206 AWD](https://smartlawnny.com/#shop): All-wheel-drive, up to 0.15 acre — $999
 - [Navimow H220](https://smartlawnny.com/products/navimow-h220.html): Wire-free RTK robotic mower for larger lawns — $2,199
 - [Navimow X430](https://smartlawnny.com/products/navimow-x430.html): Wire-free, larger-yard capacity — $2,499
 - [Navimow X450](https://smartlawnny.com/products/navimow-x450.html): Top consumer wire-free model, largest yards — $2,999
