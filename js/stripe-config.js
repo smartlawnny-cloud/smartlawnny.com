@@ -70,3 +70,24 @@ if (document.readyState === 'loading') {
 } else {
   initStripeButtons();
 }
+
+// ── slnyBuyNow (Jul 2026): real Stripe checkout for product pages via the
+// stripe-checkout edge function (dynamic price, creates a POS sale, webhook
+// marks it paid → bm-mirror-sale emails Doug + books it in Branch Manager).
+async function slnyBuyNow(name, price) {
+  var phone = prompt('Your mobile number (we text to schedule delivery & install):');
+  if (phone === null) return;
+  if ((phone || '').replace(/[^\d]/g, '').length < 7) { alert('Please enter a valid phone number.'); return; }
+  if (typeof gtag === 'function') gtag('event', 'begin_checkout', { value: price, items: name });
+  try {
+    var r = await fetch('https://zjqpzqpvovvuaxikyksq.supabase.co/functions/v1/stripe-checkout', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: [{ name: name, price: price, qty: 1 }], customer: { phone: phone, first_name: '', last_name: '' } })
+    });
+    var d = await r.json();
+    if (d && d.url) { location.href = d.url; }
+    else { alert((d && d.error) || 'Checkout hiccup — call/text (914) 647-7276 and we’ll take care of you.'); }
+  } catch (e) {
+    alert('Checkout hiccup — call/text (914) 647-7276 and we’ll take care of you.');
+  }
+}
