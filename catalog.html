@@ -41,6 +41,15 @@ header a { color:var(--green); text-decoration:none; }
     <button onclick="tab('acc',this)">Accessories</button>
     <button onclick="tab('part',this)">Parts</button>
   </div>
+  <div class="tabs" id="seriesTabs" style="margin-top:6px;">
+    <button class="on" onclick="serTab('all',this)">All models</button>
+    <button onclick="serTab('x',this)">X Series</button>
+    <button onclick="serTab('i',this)">i Series</button>
+    <button onclick="serTab('h',this)">H Series</button>
+    <button onclick="serTab('cm',this)">TerraNox</button>
+    <button onclick="serTab('yarbo',this)">Yarbo</button>
+  </div>
+  <div id="seriesNote" style="display:none;font-size:.78rem;color:#86868b;margin:8px 2px 0;">Showing items marked for this series. Many CADCO parts aren't labeled by model — search under “All models,” or text us the part + your mower: (914) 647-7276.</div>
   <div id="list">
 <div class="row acc" data-q="ad1200140057 blade assembly plus"><div class="rn"><b>Blade Assembly Plus</b><span class="sku">AD1200140057</span></div><div class="rp">$23.99</div><button onclick="addItem(this,'AD1200140057 Blade Assembly Plus',23.99)">Add</button></div>
 <div class="row acc" data-q="ad1200140107 bulk blade pack (300 pack)"><div class="rn"><b>Bulk Blade Pack (300 pack)</b><span class="sku">AD1200140107</span></div><div class="rp">$479.99</div><button onclick="addItem(this,'AD1200140107 Bulk Blade Pack (300 pack)',479.99)">Add</button></div>
@@ -724,15 +733,29 @@ function addItem(btn, name, price) {
   document.getElementById('barTxt').textContent = cart.length + ' item' + (cart.length>1?'s':'') + ' in cart';
 }
 var mode = 'all';
-function tab(m, el) { mode = m; document.querySelectorAll('.tabs button').forEach(function(b){b.classList.remove('on')}); el.classList.add('on'); filt(); }
+var series = 'all';
+var SER_RX = { x: /\bx[- ]?series|x4|x3[0-9]|x1[0-9]|garage x/, i: /\bi[- ]?series|i10[0-9]|i2[0-9]{2}|i1[0-9]{2}/, h: /\bh[- ]?series|h[0-9]{3}|h1a/, cm: /terranox|cm[0-9]/, yarbo: /yarbo/ };
+document.querySelectorAll('#list .row').forEach(function(r){
+  var ql = r.getAttribute('data-q').toLowerCase();
+  for (var k in SER_RX) { if (SER_RX[k].test(ql)) { r.dataset.series = k; return; } }
+  r.dataset.series = '';
+});
+function tab(m, el) { mode = m; el.parentElement.querySelectorAll('button').forEach(function(b){b.classList.remove('on')}); el.classList.add('on'); filt(); }
+function serTab(sv, el) { series = sv; document.querySelectorAll('#seriesTabs button').forEach(function(b){b.classList.remove('on')}); el.classList.add('on'); document.getElementById('seriesNote').style.display = sv==='all' ? 'none' : 'block'; filt(); }
 function filt() {
   var q = document.getElementById('q').value.toLowerCase();
   document.querySelectorAll('#list .row').forEach(function(r) {
     var okM = (mode==='all') || r.classList.contains(mode);
+    var okS = (series==='all') || r.dataset.series === series;
     var okQ = !q || r.getAttribute('data-q').indexOf(q) !== -1;
-    r.style.display = (okM && okQ) ? 'flex' : 'none';
+    r.style.display = (okM && okS && okQ) ? 'flex' : 'none';
   });
 }
+// deep link: catalog.html?series=x pre-selects the chip
+(function(){
+  var sv = new URLSearchParams(location.search).get('series');
+  if (sv) { var btns = document.querySelectorAll('#seriesTabs button'); var map={x:1,i:2,h:3,cm:4,yarbo:5}; if (map[sv]) serTab(sv, btns[map[sv]]); }
+})();
 if (cart.length) { document.getElementById('bar').style.display='block'; document.getElementById('barTxt').textContent = cart.length + ' item' + (cart.length>1?'s':'') + ' in cart'; }
 </script>
 </body>
