@@ -82,7 +82,7 @@ async function slnyBuyNow(name, price) {
   try {
     var r = await fetch('https://zjqpzqpvovvuaxikyksq.supabase.co/functions/v1/stripe-checkout', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: [{ name: name, price: price, qty: 1 }], customer: { phone: phone, first_name: '', last_name: '' } })
+      body: JSON.stringify({ items: [{ name: name, price: price, qty: 1 }], customer: { phone: phone, first_name: '', last_name: '' }, success_url: location.origin + '/success.html', cancel_url: location.href })
     });
     var d = await r.json();
     if (d && d.url) { location.href = d.url; }
