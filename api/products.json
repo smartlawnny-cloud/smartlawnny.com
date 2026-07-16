@@ -1,0 +1,85 @@
+{
+  "provider": "Smart Lawn NY",
+  "note": "Authorized dealer catalog. Prices are MSRP/showroom starting prices and may change \u2014 confirm current pricing by phone.",
+  "products": [
+    {
+      "name": "Navimow i105E",
+      "url": "https://smartlawnny.com/products/navimow-i105e.html",
+      "price": "$799",
+      "description": "Entry-level wire-free robotic mower, up to ~0.12 acre"
+    },
+    {
+      "name": "Navimow i210 AWD",
+      "url": "https://smartlawnny.com/products/navimow-i210-awd.html",
+      "price": "$948",
+      "description": "All-wheel-drive, up to 0.25 acre, handles slopes"
+    },
+    {
+      "name": "Navimow H220",
+      "url": "https://smartlawnny.com/products/navimow-h220.html",
+      "price": "$2,199",
+      "description": "Wire-free RTK robotic mower for larger lawns"
+    },
+    {
+      "name": "Navimow X430",
+      "url": "https://smartlawnny.com/products/navimow-x430.html",
+      "price": "$2,499",
+      "description": "Wire-free, larger-yard capacity"
+    },
+    {
+      "name": "Navimow X450",
+      "url": "https://smartlawnny.com/products/navimow-x450.html",
+      "price": "$2,999",
+      "description": "Top consumer wire-free model, largest yards"
+    },
+    {
+      "name": "Navimow i215 LiDAR",
+      "url": "https://smartlawnny.com/products/navimow-i215-lidar.html",
+      "price": "$1,599",
+      "description": "LiDAR obstacle avoidance, no antenna needed"
+    },
+    {
+      "name": "Navimow Terranox CM120M1",
+      "url": "https://smartlawnny.com/products/navimow-terranox-cm120m1.html",
+      "price": "$5,499",
+      "description": "Commercial robotic mower"
+    },
+    {
+      "name": "Navimow Terranox CM240M1",
+      "url": "https://smartlawnny.com/products/navimow-terranox-cm240m1.html",
+      "price": "$6,999",
+      "description": "Commercial robotic mower, larger capacity"
+    },
+    {
+      "name": "Navimow Mowgate",
+      "url": "https://smartlawnny.com/products/navimow-mowgate.html",
+      "price": "$449",
+      "description": "Mower garage / dock accessory"
+    },
+    {
+      "name": "Yarbo Core Platform",
+      "url": "https://smartlawnny.com/products/yarbo-core.html",
+      "price": "$3,994",
+      "description": "Multi-function robot base platform"
+    },
+    {
+      "name": "Yarbo Lawn Mower Module",
+      "url": "https://smartlawnny.com/products/yarbo-lawn-mower.html",
+      "price": "$1,294",
+      "description": "Mower attachment for the Yarbo platform"
+    },
+    {
+      "name": "Yarbo Snow Blower Module",
+      "url": "https://smartlawnny.com/products/yarbo-snow-blower.html",
+      "price": "$1,294",
+      "description": "Snow blower attachment for the Yarbo platform"
+    },
+    {
+      "name": "FJD Dynamics RM21",
+      "url": "https://smartlawnny.com/products/fjd-rm21.html",
+      "price": "$29,999",
+      "description": "Commercial mower, up to 27 acres, 25\" deck"
+    }
+  ],
+  "updated": "2026-07-15"
+}

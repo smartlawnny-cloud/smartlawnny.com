@@ -5,3 +5,7 @@ Disallow: /_dev/
 Disallow: /js/stripe-config.js
 
 Sitemap: https://smartlawnny.com/sitemap.xml
+
+# LLM / AI-assistant resources
+# llms.txt index:  https://smartlawnny.com/llms.txt
+# JSON data API:   https://smartlawnny.com/api/index.json

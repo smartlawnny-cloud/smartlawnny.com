@@ -1,0 +1,32 @@
+{
+  "legal_name": "Smart Lawn NY",
+  "type": "Robotic lawn mower dealer and showroom",
+  "positioning": "Westchester County's first robotic mower showroom; authorized Navimow & Yarbo dealer",
+  "showroom": {
+    "streetAddress": "1 Highland Industrial Park",
+    "city": "Peekskill",
+    "state": "NY",
+    "postalCode": "10566",
+    "country": "US"
+  },
+  "contact": {
+    "phone": "(914) 647-7276",
+    "phone_e164": "+19146477276",
+    "sms": true,
+    "email": "smartlawnny@gmail.com",
+    "website": "https://smartlawnny.com"
+  },
+  "hours": [
+    "Mon-Fri 09:00-17:00",
+    "Sat by appointment"
+  ],
+  "brands_carried": [
+    "Navimow",
+    "Yarbo",
+    "FJD Dynamics"
+  ],
+  "price_range": "$799 - $29,999",
+  "services_summary": "Sales, professional installation, annual service plans, seasonal care, and mowing-as-a-service",
+  "service_area": "Westchester, Putnam & southern Dutchess Counties, NY",
+  "updated": "2026-07-15"
+}

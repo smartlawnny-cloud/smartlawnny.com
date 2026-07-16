@@ -1,0 +1,34 @@
+{
+  "provider": "Smart Lawn NY",
+  "services_page": "https://smartlawnny.com/services.html",
+  "professional_installation": [
+    "Basic install",
+    "Standard install",
+    "Premium install (1+ acre / complex)"
+  ],
+  "annual_service_plans": [
+    {
+      "name": "Essentials",
+      "price": "$199/yr",
+      "description": "Annual service plan \u2014 basics"
+    },
+    {
+      "name": "Pro",
+      "price": "$249/yr",
+      "description": "Annual service plan (recommended)"
+    },
+    {
+      "name": "All-In",
+      "price": "$399/yr",
+      "description": "Annual service plan \u2014 full coverage"
+    }
+  ],
+  "seasonal_care": [
+    "Spring Startup",
+    "Mid-Season Tune-Up",
+    "Winterization",
+    "Seasonal Bundle"
+  ],
+  "mowing_as_a_service": true,
+  "updated": "2026-07-15"
+}

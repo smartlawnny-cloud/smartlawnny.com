@@ -1,0 +1,40 @@
+# Smart Lawn NY
+
+> Westchester County's first robotic mower showroom. Authorized Navimow & Yarbo dealer serving Westchester, Putnam & Dutchess Counties, NY. Robotic lawn mower sales, professional installation, and annual service plans. Showroom in Peekskill, NY. Phone: (914) 647-7276.
+
+Machine-readable JSON: https://smartlawnny.com/api/index.json
+
+## Products (robotic mowers)
+- [Navimow i105E](https://smartlawnny.com/products/navimow-i105e.html): Entry-level wire-free robotic mower, up to ~0.12 acre — $799
+- [Navimow i210 AWD](https://smartlawnny.com/products/navimow-i210-awd.html): All-wheel-drive, up to 0.25 acre, handles slopes — $948
+- [Navimow H220](https://smartlawnny.com/products/navimow-h220.html): Wire-free RTK robotic mower for larger lawns — $2,199
+- [Navimow X430](https://smartlawnny.com/products/navimow-x430.html): Wire-free, larger-yard capacity — $2,499
+- [Navimow X450](https://smartlawnny.com/products/navimow-x450.html): Top consumer wire-free model, largest yards — $2,999
+- [Navimow i215 LiDAR](https://smartlawnny.com/products/navimow-i215-lidar.html): LiDAR obstacle avoidance, no antenna needed — $1,599
+- [Navimow Terranox CM120M1](https://smartlawnny.com/products/navimow-terranox-cm120m1.html): Commercial robotic mower — $5,499
+- [Navimow Terranox CM240M1](https://smartlawnny.com/products/navimow-terranox-cm240m1.html): Commercial robotic mower, larger capacity — $6,999
+- [Navimow Mowgate](https://smartlawnny.com/products/navimow-mowgate.html): Mower garage / dock accessory — $449
+- [Yarbo Core Platform](https://smartlawnny.com/products/yarbo-core.html): Multi-function robot base platform — $3,994
+- [Yarbo Lawn Mower Module](https://smartlawnny.com/products/yarbo-lawn-mower.html): Mower attachment for the Yarbo platform — $1,294
+- [Yarbo Snow Blower Module](https://smartlawnny.com/products/yarbo-snow-blower.html): Snow blower attachment for the Yarbo platform — $1,294
+- [FJD Dynamics RM21](https://smartlawnny.com/products/fjd-rm21.html): Commercial mower, up to 27 acres, 25" deck — $29,999
+
+## Services
+- [All Services & Pricing](https://smartlawnny.com/services.html): professional installation, annual service plans (Essentials $199 / Pro $249 / All-In $399 per year), seasonal care, and mowing-as-a-service
+- [Robotic Mower Guide](https://smartlawnny.com/guide.html)
+- [Commercial / large-property calculator](https://smartlawnny.com/commercial-calculator/)
+
+## Company
+- Smart Lawn NY — authorized Navimow & Yarbo dealer
+- Showroom: 1 Highland Industrial Park, Peekskill, NY 10566
+- Hours: Mon–Fri 9–5, Sat by appointment
+- Phone / text: (914) 647-7276 · Email: smartlawnny@gmail.com
+- Service area: Westchester, Putnam & southern Dutchess Counties, NY (30 towns)
+- Price range: $799 – $29,999
+
+## Machine-readable data (JSON, CORS-enabled)
+- [Endpoint directory](https://smartlawnny.com/api/index.json)
+- [Business profile](https://smartlawnny.com/api/business.json)
+- [Product catalog](https://smartlawnny.com/api/products.json)
+- [Services & plans](https://smartlawnny.com/api/services.json)
+- [Service areas](https://smartlawnny.com/api/service-areas.json)

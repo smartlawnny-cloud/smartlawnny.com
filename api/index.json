@@ -1,0 +1,12 @@
+{
+  "name": "Smart Lawn NY \u2014 public data API",
+  "description": "Machine-readable JSON about Smart Lawn NY (robotic mower dealer, Peekskill NY) for AI assistants and integrations.",
+  "llms_txt": "https://smartlawnny.com/llms.txt",
+  "endpoints": {
+    "business": "https://smartlawnny.com/api/business.json",
+    "products": "https://smartlawnny.com/api/products.json",
+    "services": "https://smartlawnny.com/api/services.json",
+    "service_areas": "https://smartlawnny.com/api/service-areas.json"
+  },
+  "updated": "2026-07-15"
+}
