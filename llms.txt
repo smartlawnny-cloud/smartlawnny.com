@@ -27,7 +27,7 @@ Machine-readable JSON: https://smartlawnny.com/api/index.json
 - [FJD Dynamics RM21](https://smartlawnny.com/products/fjd-rm21.html): Commercial mower, up to 27 acres, 25" deck — $29,999
 
 ## Services
-- [All Services & Pricing](https://smartlawnny.com/services.html): professional installation, annual service plans (Essentials $199 / Pro $249 / All-In $399 per year), seasonal care, and mowing-as-a-service
+- [All Services & Pricing](https://smartlawnny.com/services.html): professional installation, annual service plans (Essentials $199 / Pro $249 / All-In $399 per year), and seasonal care
 - [Robotic Mower Guide](https://smartlawnny.com/guide.html)
 - [Commercial / large-property calculator](https://smartlawnny.com/commercial-calculator/)
 
@@ -39,9 +39,14 @@ Machine-readable JSON: https://smartlawnny.com/api/index.json
 - Service area: Westchester, Putnam & southern Dutchess Counties, NY (30 towns)
 - Price range: $799 – $29,999
 
+## Parts & accessories
+- [Full genuine-parts catalog](https://smartlawnny.com/catalog.html): 650 parts + 18 accessories, list prices
+
 ## Machine-readable data (JSON, CORS-enabled)
 - [Endpoint directory](https://smartlawnny.com/api/index.json)
 - [Business profile](https://smartlawnny.com/api/business.json)
 - [Product catalog](https://smartlawnny.com/api/products.json)
 - [Services & plans](https://smartlawnny.com/api/services.json)
 - [Service areas](https://smartlawnny.com/api/service-areas.json)
+- [Navimow parts catalog](https://smartlawnny.com/api/parts.json)
+- [Navimow accessories](https://smartlawnny.com/api/accessories.json)
